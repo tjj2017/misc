@@ -3,4 +3,4 @@
 *#
 *.ali
 *.out
-*.jason_symtab
+*.json_symtab
