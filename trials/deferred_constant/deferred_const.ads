@@ -3,11 +3,11 @@ package Deferred_Const is
    
    Def_Const : constant Priv;
    
-   function Where (N : Natural) return Priv;
+   procedure Inc (P : in out Priv);
    
 private
-   type Priv is (Empty, Half_Full, Full);
+   type Priv is range 1 .. 10;
    
-   Def_Const : constant Priv := Empty;
+   Def_Const : constant Priv := 1;
 end Deferred_Const;
 

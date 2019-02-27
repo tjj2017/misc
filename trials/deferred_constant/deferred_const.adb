@@ -1,16 +1,8 @@
 package body Deferred_Const is
-   function Where (N : Natural) return Priv is
-      Result : Priv;
+   procedure Inc (P : in out Priv) is
    begin
-      if N < 5 then
-	 Result := Empty;
-      elsif N >5 and N < 10 then
-	 Result := Half_Full;
-      else
-	 Result := Full;
-      end if;
-      return Result;
-   end Where;
+      P := P + Def_Const;
+   end Inc;
    
  end Deferred_Const;
 
