@@ -1,0 +1,55 @@
+Trevors-iMac:deferred_constant trevorj$ cbmc use_const_func.json_symtab --show-goto-functions
+CBMC version 5.11 (cbmc-5.11-850-g71bdebf63) 64-bit x86_64 macos
+Parsing use_const_func.json_symtab
+Converting
+Generating GOTO Program
+Adding CPROVER library (x86_64)
+Removal of function pointers and virtual functions
+Generic Property Instrumentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+__CPROVER__start /* __CPROVER__start */
+        // 0 
+        __CPROVER_rounding_mode = 0;
+        // 1 
+        void return';
+        // 2 
+        return'=use_const_func();
+        // 3 no location
+        dead return';
+        // 4 no location
+        END_FUNCTION
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+expr_func__const_func /* expr_func__const_func */
+        // 15 file expr_func.ads line 2 column 43
+        expr_func__const_func#return_value = 42;
+        // 16 no location
+        END_FUNCTION
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+use_const_func /* use_const_func */
+        // 5 file use_const_func.adb line 3 column 4
+        int use_const_func__no_use;
+        // 6 file use_const_func.adb line 3 column 4
+        use_const_func__no_use = 1;
+        // 7 file use_const_func.adb line 5 column 23
+        int return_value_expr_func__const_func;
+        // 8 
+        expr_func__const_func();
+        // 9 
+        return_value_expr_func__const_func = expr_func__const_func#return_value;
+        // 10 
+        dead expr_func__const_func#return_value;
+        // 11 file use_const_func.adb line 5 column 11
+        use_const_func__no_use = use_const_func__no_use + return_value_expr_func__const_func;
+        // 12 no location
+        dead return_value_expr_func__const_func;
+        // 13 no location
+        dead use_const_func__no_use;
+        // 14 no location
+        END_FUNCTION
+
+Trevors-iMac:deferred_constant trevorj$ 
