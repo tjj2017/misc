@@ -1,3 +1,4 @@
+pragma SPARK_MODE;
 package body Deferred_Const is
    procedure Inc (P : in out Priv) is
    begin

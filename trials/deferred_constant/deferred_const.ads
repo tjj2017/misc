@@ -1,3 +1,4 @@
+pragma SPARK_MODE;
 package Deferred_Const is
    type Priv is private;
    

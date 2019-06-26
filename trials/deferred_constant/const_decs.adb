@@ -1,3 +1,4 @@
+pragma SPARK_MODE;
 package body Const_Decs is
    procedure Inc (P : in out Integer) is
    begin

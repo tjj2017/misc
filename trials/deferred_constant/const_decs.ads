@@ -1,3 +1,4 @@
+pragma SPARK_MODE;
 package Const_Decs is
    Var : Integer := 3;
    
