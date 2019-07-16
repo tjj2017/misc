@@ -1,0 +1,24 @@
+project P is
+
+   Output_Dir := "./outputs";
+   
+   for Object_Dir use Output_Dir;
+   -- for Main use ("p.adb");
+
+   package Compiler is
+      -- Use gnat2goto instead of the Ada compiler
+      for Driver ("Ada") use "gnat2goto";
+      for Object_File_Suffix ("Ada") use ".json_symtab";
+   end Compiler;
+
+   package Binder is
+      for Driver ("Ada") use "echo";
+   end Binder;
+
+   package Linker is
+      -- Use symtab2gb as the linker
+      for Default_Switches ("Ada") use ("-d " & Output_Dir);
+      for Driver use "symtab_link/symtab_link";
+   end Linker;
+
+end P;
