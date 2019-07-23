@@ -2,15 +2,15 @@
 
 # Parse the command line from gprbuild for the linker
 
-directory=""
+# gprbuild assumes the files to be linked are in the directory
+# specified as the Object_Dir specified in the gpr file
+
+input_files="*.json_symtab"
 out_file=""
 
 OPTIND=2 # Ignore the file name given as the first argument
 while getopts ":d:o:" opt ; do
     case $opt in
-	d)
-	    directory="${OPTARG}/"
-	    ;;
 	o)
 	    out_file="${OPTARG}"
 	    ;;
@@ -25,11 +25,19 @@ while getopts ":d:o:" opt ; do
     esac
 done
 
-if [[ out_file != "" ]] ; then
-   full_out_file="${directory}${out_file}.out"
-   else
+if [[ ${out_file} != "" ]] ; then
+    out_file_name=$(basename "$out_file")
+    echo out_file_name $out_file_name
+    out_ext="${out_file_name##*.}"
+    echo out_ext $out_ext
+    if [[ ${out_ext} == "" ]] || [[ ${out_ext} == ${out_file_name} ]] ; then
+	full_out_file="--out ${out_file_name}.out"
+    else
+	full_out_file="--out ${out_file_name}"
+    fi
+else
        full_out_file=""
 fi
 
-input_files=${directory}*.json_symtab
-symtab2gb ${input_files} --out ${full_out_file}
+echo symtab2gb ${input_files} ${full_out_file}
+symtab2gb ${input_files} ${full_out_file}

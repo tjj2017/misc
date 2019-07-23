@@ -1,8 +1,6 @@
 project P is
 
-   Output_Dir := "/Volumes/G-DRIVE/oxford/misc/trials/gprbuild/outputs";
-   
-   for Object_Dir use Output_Dir;
+   for Object_Dir use "./outputs";
    -- for Main use ("p.adb");
 
    package Compiler is
@@ -17,8 +15,7 @@ project P is
 
    package Linker is
       -- Use symtab2gb as the linker
-      for Default_Switches ("Ada") use ("-d " & Output_Dir);
-      for Driver use "bash_symtab_link/symtab_link";
+      for Driver use "symtab_link/symtab_link";
    end Linker;
 
 end P;
