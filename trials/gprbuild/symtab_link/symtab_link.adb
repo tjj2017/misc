@@ -60,7 +60,7 @@ begin
 
       Full_Out_File : constant String :=
         (if Out_File /= "" then
-            "-- out " &
+            " --out " &
          (if GNAT.Directory_Operations.File_Extension (Out_File) = "" then
                Out_File & ".out"
             else
@@ -98,10 +98,11 @@ begin
          Argument_List : GNAT.OS_Lib.Argument_List_Access;
       begin
 
-         Text_IO.Put_Line ("Expanded files: " & Fixed_Arg_String);
+         Text_IO.Put_Line ("Expanded files: " &
+                             Fixed_Arg_String & Full_Out_File);
          if Fixed_Arg_String /= "" then
             Argument_List := GNAT.OS_Lib.Argument_String_To_List
-              (Fixed_Arg_String);
+              (Fixed_Arg_String & Full_Out_File);
          else
             Text_IO.Put_Line ("At least one json_symtab file must be given");
          end if;
