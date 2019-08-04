@@ -41,11 +41,11 @@ begin
    loop
       case GNAT.Command_Line.Getopt ("o:") is
          when ASCII.NUL =>
-            Text_IO.Put_Line ("NUL found");
+--            Text_IO.Put_Line ("NUL found");
             exit;
          when 'o' =>
-            Text_IO.Put ("-o found: ");
-            Text_IO.Put_Line (GNAT.Command_Line.Parameter);
+--            Text_IO.Put ("-o found: ");
+--            Text_IO.Put_Line (GNAT.Command_Line.Parameter);
             Out_File_String := Ada.Strings.Unbounded.To_Unbounded_String
               (Ada.Strings.Fixed.Trim (GNAT.Command_Line.Parameter,
                Ada.Strings.Both));
@@ -98,8 +98,8 @@ begin
          Argument_List : GNAT.OS_Lib.Argument_List_Access;
       begin
 
-         Text_IO.Put_Line ("Expanded files: " &
-                             Fixed_Arg_String & Full_Out_File);
+--         Text_IO.Put_Line ("Expanded files: " &
+--                             Fixed_Arg_String & Full_Out_File);
          if Fixed_Arg_String /= "" then
             Argument_List := GNAT.OS_Lib.Argument_String_To_List
               (Fixed_Arg_String & Full_Out_File);
@@ -108,9 +108,9 @@ begin
          end if;
 
          -- GNAT.OS_LIB.Normalize_Arguments (Argument_List.all);
-         for I in Argument_List.all'Range loop
-            Text_IO.Put_Line (Argument_List (I).all);
-         end loop;
+--         for I in Argument_List.all'Range loop
+--            Text_IO.Put_Line (Argument_List (I).all);
+--         end loop;
 
          Text_IO.Put_Line (Symtab2gb_Exe & " " & Fixed_Arg_String);
          GNAT.OS_Lib.Spawn (Symtab2gb_Exe, Argument_List.all, Success);
