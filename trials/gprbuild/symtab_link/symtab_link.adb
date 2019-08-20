@@ -37,7 +37,7 @@ begin
       return;
    end if;
 
-   Text_IO.Put_Line ("The number of arguments is " & No_Of_Args'Image);
+--   Text_IO.Put_Line ("The number of arguments is " & No_Of_Args'Image);
    loop
       case GNAT.Command_Line.Getopt ("o:") is
          when ASCII.NUL =>
