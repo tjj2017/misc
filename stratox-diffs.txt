@@ -1,0 +1,107 @@
+--------------- turn_on_ali ---------------------------------------------------
++===========================GNAT BUG DETECTED==============================+
+| GNU Ada (ada2goto) Constraint_Error Symbol_Table_Info.Symbol_Maps.Constant_Reference: key not in map|
+| Error detected at system.ads:208:5                                       |
+| Please submit a bug report; see https://gcc.gnu.org/bugs/ .              |
+| Use a subject line meaningful to you and us to track the bug.            |
+| Include the entire contents of this bug box in the report.               |
+| Include the exact command that you entered.                              |
+| Also include sources listed below.                                       |
++==========================================================================+
+
+Please include these source files with error report
+Note that list may not be accurate in some cases,
+so please double check that the problem can still
+be reproduced with the set of files listed.
+Consider also -gnatd.n switch (see debug.adb).
+
+/home/trevorj/oxford/gnat2goto/experiments/ada-ci-projects/StratoX/runtime/ravenscar-sfp-stm32f427/arch/system.ads
+/home/trevorj/oxford/gnat2goto/experiments/ada-ci-projects/StratoX/software/hal/boards/common/tools/generic_queue.adb
+/home/trevorj/oxford/gnat2goto/experiments/ada-ci-projects/StratoX/software/hal/boards/common/tools/generic_queue.ads
+
+----------------------- master ---------------------------------------------
++===========================GNAT BUG DETECTED==============================+
+| GNU Ada (ada2goto) Constraint_Error Symbol_Table_Info.Symbol_Maps.Constant_Reference: key not in map|
+| Error detected at system.ads:208:5                                       |
+
+Execution terminated by unhandled exception
+raised SYSTEM.ASSERTIONS.ASSERT_FAILURE : namet.adb:148
+Call stack traceback locations:
+0x11ec17f 0xb1c46d 0xb20ba5 0x547989 0x5512c1 0x71487d 0x406a61 0x408e59 0x7f12cf825099 0x403ce8 0xfffffffffffffffe
+-
+--------------- turn_on_ali ---------------------------------------------------
++===========================GNAT BUG DETECTED==============================+
+| GNU Ada (ada2goto) Assert_Failure tree_walk.adb:4728                     |
+| Error detected at stm32-exti.adb:47:19                                   |
+
+Execution terminated by unhandled exception
+raised SYSTEM.ASSERTIONS.ASSERT_FAILURE : namet.adb:148
+Call stack traceback locations:
+0x11ec17f 0xb1c46d 0xb20ba5 0x547989 0x5512c1 0x71487d 0x4069e7 0x408e59 0x7f24fdefe099 0x403ce8 0xfffffffffffffffe
+gnat2goto exit code: 1
+
+----------------------- master ---------------------------------------------
++===========================GNAT BUG DETECTED==============================+
+| GNU Ada (ada2goto) Assert_Failure tree_walk.adb:4728                     |
+| Error detected at stm32-exti.adb:47:19                                   |
+| Please submit a bug report; see https://gcc.gnu.org/bugs/ .              |
+| Use a subject line meaningful to you and us to track the bug.            |
+| Include the entire contents of this bug box in the report.               |
+| Include the exact command that you entered.                              |
+| Also include sources listed below.                                       |
++==========================================================================+
+
+Please include these source files with error report
+Note that list may not be accurate in some cases,
+so please double check that the problem can still
+be reproduced with the set of files listed.
+Consider also -gnatd.n switch (see debug.adb).
+
+/home/trevorj/oxford/gnat2goto/experiments/ada-ci-projects/StratoX/runtime/ravenscar-sfp-stm32f427/arch/system.ads
+/home/trevorj/oxford/gnat2goto/experiments/ada-ci-projects/StratoX/software/hal/hpl/STM32/drivers/stm32-exti.adb
+/home/trevorj/oxford/gnat2goto/experiments/ada-ci-projects/StratoX/software/hal/hpl/STM32/drivers/stm32-exti.ads
+/home/trevorj/oxford/gnat2goto/experiments/ada-ci-projects/StratoX/software/hal/hpl/STM32/drivers/stm32.ads
+/home/trevorj/oxford/gnat2goto/experiments/ada-ci-projects/StratoX/runtime/ravenscar-sfp-stm32f427/common/interfac.ads
+/home/trevorj/oxford/gnat2goto/experiments/ada-ci-projects/StratoX/software/hal/hal/src/hal.ads
+/home/trevorj/oxford/gnat2goto/experiments/ada-ci-projects/StratoX/software/hal/hpl/STM32/svd/stm32f40x/stm32_svd.ads
+/home/trevorj/oxford/gnat2goto/experiments/ada-ci-projects/StratoX/software/hal/hpl/STM32/svd/stm32f40x/stm32_svd-exti.ads
+/home/trevorj/oxford/gnat2goto/experiments/ada-ci-projects/StratoX/runtime/ravenscar-sfp-stm32f427/common/s-stoele.ads
+/home/trevorj/oxford/gnat2goto/experiments/ada-ci-projects/StratoX/runtime/ravenscar-sfp-stm32f427/common/s-unstyp.ads
+
+compilation abandoned
+
+--------------- turn_on_ali ---------------------------------------------------
++===========================GNAT BUG DETECTED==============================+
+| GNU Ada (ada2goto) Assert_Failure tree_walk.adb:1042                     |
+| Error detected at system.ads:208:5                                       |
+| Please submit a bug report; see https://gcc.gnu.org/bugs/ .              |
+| Use a subject line meaningful to you and us to track the bug.            |
+| Include the entire contents of this bug box in the report.               |
+| Include the exact command that you entered.                              |
+| Also include sources listed below.                                       |
++==========================================================================+
+
+lease include these source files with error report
+Note that list may not be accurate in some cases,
+so please double check that the problem can still
+be reproduced with the set of files listed.
+Consider also -gnatd.n switch (see debug.adb).
+
+/home/trevorj/oxford/gnat2goto/experiments/ada-ci-projects/StratoX/runtime/ravenscar-sfp-stm32f427/arch/system.ads
+/home/trevorj/oxford/gnat2goto/experiments/ada-ci-projects/StratoX/software/libsparklemma/src/spark-constrained_array_lemmas.adb
+/home/trevorj/oxford/gnat2goto/experiments/ada-ci-projects/StratoX/software/libsparklemma/src/spark-constrained_array_lemmas.ads
+/home/trevorj/oxford/gnat2goto/experiments/ada-ci-projects/StratoX/software/libsparklemma/src/spark.ads
+/home/trevorj/oxford/gnat2goto/experiments/ada-ci-projects/StratoX/software/libsparklemma/src/spark-unconstrained_array_lemmas.ads
+/home/trevorj/oxford/gnat2goto/experiments/ada-ci-projects/StratoX/software/libsparklemma/src/spark-unconstrained_array_lemmas.adb
+
+compilation abandoned
+
+----------------------- master ---------------------------------------------
++===========================GNAT BUG DETECTED==============================+
+| GNU Ada (ada2goto) Assert_Failure tree_walk.adb:1042                     |
+| Error detected at system.ads:208:5                                       |
+
+Execution terminated by unhandled exception
+raised SYSTEM.ASSERTIONS.ASSERT_FAILURE : namet.adb:148
+Call stack traceback locations:
+0x11ec17f 0xb1c46d 0xb20ba5 0x547989 0x5512c1 0x71487d 
