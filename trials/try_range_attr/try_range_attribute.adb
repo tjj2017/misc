@@ -15,17 +15,9 @@ procedure Try_Range_Attribute (X : Integer) is
    subtype S_7 is E_T range One .. Five;
    subtype S_8 is S_7 range S_7'Range;
    subtype S_9 is Integer range X + 1 .. X - 1;
---   subtype S_10 is Integer range S_7'Range;
---  subtype S_11 is Integer range B'Range;
+   subtype S_10 is Integer range A_T'Range;
+   subtype S_11 is Integer range B'Range;
 begin
-
---     Put_Line ("S_1 Low bound is " & S_1'Image (S_1'First));
---     Put_Line ("S_1 High bound is " & S_1'Image (S_1'Last));
---     Put_Line ("S_3 Low bound is " & S_3'Image (S_3'First));
---     Put_Line ("S_3 High bound is " & S_3'Image (S_3'Last));
---     Put_Line ("S_4 Low bound is " & S_4'Image (S_4'First));
---     Put_Line ("S_4 High bound is " & S_4'Image (S_4'Last));
-
    pragma Assert (S_1'First = Integer'First);
    pragma Assert (S_1'Last = Integer'Last);
    pragma Assert (S_2'First = 11);
@@ -36,5 +28,17 @@ begin
    pragma Assert (S_4'Last = 10);
    pragma Assert (S_5'First = 11);
    pragma Assert (S_5'Last = 20);
+   pragma Assert (S_6'First = 12);
+   pragma Assert (S_6'Last = 19);
+   pragma Assert (S_6'First = 12);
+   pragma Assert (S_6'Last = 19);
+   pragma Assert (S_7'First = One);
+   pragma Assert (S_7'Last = Five);
+   pragma Assert (S_8'First = One);
+   pragma Assert (S_8'Last = Five);
+   pragma Assert (S_10'First = 1);
+   pragma Assert (S_10'Last = 10);
+--   pragma Assert (S_11'First = 1);
+--   pragma Assert (S_11'Last = 10);
    pragma Assert (A (I) = 7);
 end Try_Range_Attribute;
