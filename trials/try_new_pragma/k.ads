@@ -16,15 +16,15 @@ is
    pragma Import (Ada, Y, "Represents",
                   "Try_New_Pragma.Y:Try_New_Pragma.Co_Ord");
 
-   procedure Update
-     with Global => (In_Out => (X, Y, To_Be_Updated)),
-         Annotate => ASVAT, --  (ASVAT, Nondet_In_Type),
-         Import => True,
-         External_Name => "Nondet";
---     Convention => Ada;
+   procedure Update;
+--   with Global => (In_Out => (X, Y, To_Be_Updated));
+--         Annotate => (ASVAT, Nondet_In_Type);
+--         Import => True,
+--         External_Name => "Nondet",
+--         Convention => Ada;
 
---   pragma Global (In_Out => (X, Y, To_Be_Updated));
---   pragma Import (Ada, Update, "Nondet_In_Type");
+   pragma Global (In_Out => (X, Y, To_Be_Updated));
+   pragma Import (Ada, Update, "Nondet_In_Type");
 
 --   pragma Annotate (ASVAT, Nondet_In_Type, Update);
 --     Import => True,

@@ -1,0 +1,7 @@
+project Test_Dec_Only is
+
+   package Compiler is
+      for Driver ("Ada") use "gnat2goto";
+   end Compiler;
+
+end Test_Dec_Only;
