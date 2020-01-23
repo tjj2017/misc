@@ -44,16 +44,16 @@ begin
    The_Size := To_Be_Updated'Size;
    My_Address := Z'Address;
 
-   pragma Assert (To_Be_Updated'Valid);
-   pragma Assert (O_R.A'Valid);
-   pragma Assert (O_R.B (3)'Valid);
-   pragma Assert (O_RR.RecRec.A'Valid);
-   pragma Assert (O_RR.RecRec.B (5)'Valid);
-   pragma Assert (O_RR.ArrRec (4).A'Valid);
-   pragma Assert (O_RR.ArrRec (7).B (8)'Valid);
-   pragma Assert (FI'Valid);
-   pragma Assert (FR.A'Valid);
-   pragma Assert (FR.B (1)'Valid);
-   pragma Assert (FRR.RecRec.A'Valid);
-   pragma Assert (FRR.ArrRec (2).A'Valid);
+--     pragma Assert (To_Be_Updated'Valid);
+--     pragma Assert (O_R.A'Valid);
+--     pragma Assert (O_R.B (3)'Valid);
+--     pragma Assert (O_RR.RecRec.A'Valid);
+--     pragma Assert (O_RR.RecRec.B (5)'Valid);
+--     pragma Assert (O_RR.ArrRec (4).A'Valid);
+--     pragma Assert (O_RR.ArrRec (7).B (8)'Valid);
+--     pragma Assert (FI'Valid);
+--     pragma Assert (FR.A'Valid);
+--     pragma Assert (FR.B (1)'Valid);
+--     pragma Assert (FRR.RecRec.A'Valid);
+--     pragma Assert (FRR.ArrRec (2).A'Valid);
 end Try_New_Pragma;
