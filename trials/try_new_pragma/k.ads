@@ -19,7 +19,7 @@ is
 
    procedure Update
      with Global => (In_Out => (X, Y, To_Be_Updated)),
-     Annotate => (ASVAT, Nondet_In_Type),
+     Annotate => (ASVAT, Nondet_in_Type),
      Import => True;
 --           External_Name => "Nondet";
 --     Convention => Ada;
