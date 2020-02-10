@@ -9,10 +9,10 @@ begin
 --   Visible_Vars.Var_My_Fixed := Pi/4.0;
    Visible_Vars.Var_My_Enum := Visible_Types.four;
 --   Visible_Vars.Var_Sub_Int := 5;
-   Visible_Vars.Var_My_Sub_Int := 6;
+--   Visible_Vars.Var_My_Sub_Int := 6;
 --   Visible_Vars.Var_My_Sub_Real := 7.0;
 --   Visible_Vars.Var_My_Sub_Fixed := Pi/8.0;
-   Visible_Vars.Var_My_Sub_Enum := Visible_Types.two;
+--   Visible_Vars.Var_My_Sub_Enum := Visible_Types.two;
 
    pragma Assert (Visible_Vars.Var_Int = 0);
    pragma Assert (Visible_Vars.Var_My_Int = 1);
