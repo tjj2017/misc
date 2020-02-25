@@ -4,6 +4,7 @@ with Hidden_Vars;
 with Hidden_Types;  use type Hidden_Types.My_Int, Hidden_Types.My_Enum;
 with The_Model; use The_Model;
 procedure Modelling is
+   Local_Int_1, Local_Int_2, Local_Int_3 : Visible_Types.My_Sub_Int;
 begin
    Visible_Vars.Var_Int := 0;
    Visible_Vars.Var_My_Int := 1;
@@ -407,5 +408,29 @@ begin
    pragma Assert (Hidden_Types.Hid_My_Sub_Int in Hidden_Types.My_Sub_Int);
    pragma Assert (Hidden_Types.Hid_My_Sub_Enum in Hidden_Types.My_Enum);
    pragma Assert (Hidden_Types.Hid_My_Sub_Enum in Hidden_Types.My_Sub_Enum);
+
+   Local_Int_1 := 3;
+   Local_Int_2 := 5;
+   Local_Int_3 := 7;
+
+   pragma Assert (Local_Int_1 = 3);
+   pragma Assert (Local_Int_2 = 5);
+   pragma Assert (Local_Int_3 = 7);
+
+   pragma Assert (Local_Int_1 in Visible_Types.My_Sub_Int);
+   pragma Assert (Local_Int_2 in Visible_Types.My_Sub_Int);
+   pragma Assert (Local_Int_3 in Visible_Types.My_Sub_Int);
+
+   Local_Int_1 := Nondet_Integer_Anno;
+   Local_Int_2 := Nondet_Integer_Import;
+   Local_Int_3 := Nondet_Integer_With_Body (Local_Int_3);
+
+   pragma Assert (Local_Int_1 = 3);
+   pragma Assert (Local_Int_2 = 5);
+   pragma Assert (Local_Int_3 = 7);
+
+   pragma Assert (Local_Int_1 in Visible_Types.My_Sub_Int);
+   pragma Assert (Local_Int_2 in Visible_Types.My_Sub_Int);
+   pragma Assert (Local_Int_3 in Visible_Types.My_Sub_Int);
 
 end Modelling;
