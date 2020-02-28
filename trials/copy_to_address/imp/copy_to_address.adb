@@ -1,23 +1,24 @@
 with Buffers; use type Buffers.Smaller_Buf;
 with Copy_From;
 with Mem_Copy;
-with Ada.Numerics.Float_Random; use Ada.Numerics.Float_Random;
+with Model_Random; use Model_Random;
 with Text_IO; use Text_IO;
 procedure Copy_To_Address is
-   Local_B, Remote_B : Buffers.Smaller_Buf := (0, (others => 0));
+   Local_B, Remote_B : Buffers.Smaller_Buf;
    R : Uniformly_Distributed;
-   G : Generator;
    N : Integer;
 begin
+   Local_B  := (0, (others => 0));
+   Remote_B := Local_B;
    for Iters in 1 .. 5 loop
-      R := Random (G);
+      R := Random;
       Put_Line ("R = " & Float'Image (R));
       N := Integer (R * Float (Buffers.Smaller_Buf_Size));
       Put_Line ("N = " & Integer'Image (N));
       Local_B.Size := N;
 
       for I in Buffers.Count'First .. Local_B.Size - 1 loop
-         Local_B.Data (I) := Natural (Random (G) * Float (Natural'Last));
+         Local_B.Data (I) := Natural (Random * Float (Natural'Last));
       end loop;
 
       Mem_Copy (Remote_B'Address,
