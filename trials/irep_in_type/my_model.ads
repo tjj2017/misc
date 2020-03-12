@@ -1,6 +1,6 @@
 package My_Model is
    type Small is range 0 .. 63;
-   subtype Smaller is Small range 1 .. 5;
+   subtype Smaller is Small range 1 .. 2;
 
    type My_Fixed_Array is array (Smaller) of Small;
 
@@ -18,25 +18,25 @@ package My_Model is
    end record;
 
 
-   procedure Int_In_Type (I : in out Integer)
-   with Annotate => (ASVAT, Nondet_In_Type),
-        Global   => null,
-        Import   => True;
-
+--     procedure Int_In_Type (I : in out Integer)
+--     with Annotate => (ASVAT, Nondet),
+--          Global   => null,
+--          Import   => True;
+--
    procedure Small_In_Type (M : in out Small)
    with Annotate => (ASVAT, Nondet_In_Type),
         Global   => null,
         Import   => True;
 
-   procedure My_Enum_In_Type (M :in out My_Enum)
-   with Annotate => (ASVAT, Nondet_In_Type),
-        Global   => null,
-        Import   => True;
-
-   procedure My_Mod_In_Type (M : in out My_Mod)
-   with Annotate => (ASVAT, Nondet_In_Type),
-        Global   => null,
-        Import   => True;
+--     procedure My_Enum_In_Type (M :in out My_Enum)
+--     with Annotate => (ASVAT, Nondet_In_Type),
+--          Global   => null,
+--          Import   => True;
+--
+--     procedure My_Mod_In_Type (M : in out My_Mod)
+--     with Annotate => (ASVAT, Nondet_In_Type),
+--          Global   => null,
+--          Import   => True;
 
    procedure My_Fixed_Array_In_Type (A : in out My_Fixed_Array)
    with Annotate => (ASVAT, Nondet_In_Type),
@@ -44,19 +44,19 @@ package My_Model is
         Import   => True;
 
 
-   procedure My_Unconstrained_Array_In_Type (U : in out My_Unconstrained_Array)
-   with Annotate => (ASVAT, Nondet_In_Type),
-        Global   => null,
-        Import   => True;
-
-   procedure Array_Of_Arrays_In_Type (AA : in out Array_Of_Arrays)
-   with Annotate => (ASVAT, Nondet_In_Type),
-        Global   => null,
-        Import   => True;
-
-   procedure In_Type_R (Rec : in out R)
-   with Annotate => (ASVAT, Nondet_In_Type),
-        Global   => null,
-        Import   => True;
+--     procedure My_Unconstrained_Array_In_Type (U : in out My_Unconstrained_Array)
+--     with Annotate => (ASVAT, Nondet_In_Type),
+--          Global   => null,
+--          Import   => True;
+--
+--     procedure Array_Of_Arrays_In_Type (AA : in out Array_Of_Arrays)
+--     with Annotate => (ASVAT, Nondet_In_Type),
+--          Global   => null,
+--          Import   => True;
+--
+--     procedure In_Type_R (Rec : in out R)
+--     with Annotate => (ASVAT, Nondet_In_Type),
+--          Global   => null,
+--          Import   => True;
 
 end My_Model;

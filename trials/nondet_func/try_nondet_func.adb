@@ -34,11 +34,11 @@ begin
    J := 3;
    pragma Assert (I = 1);
    pragma Assert (J = 3);
-   pragma Assert (I in Small);
+   pragma Assert (I >= 1 and I <= 10);
    I := My_Nondet (1, 2, 3, J);
    pragma Assert (I = 1);
    pragma Assert (J = 3);
-   pragma Assert (I in Small);
+   pragma Assert (I >= 1 and I <= 10);
 
    I := 1;
    J := 3;
@@ -48,5 +48,5 @@ begin
    P_Nondet (J);
    pragma Assert (I = 1);
    pragma Assert (J = 3);
-   pragma Assert (I in Small);
+   pragma Assert (I >= 1 and I <= 10);
 end Try_Nondet_Func;
