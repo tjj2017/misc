@@ -1,0 +1,30 @@
+project Modelling is
+
+   for Languages use ("Ada");
+
+   for Source_Dirs use (".");
+   for Object_Dir use "ASVAT_Outputs/";
+--   for Main use ("main.adb");
+
+   package Compiler is
+      -- Use gnat2goto instead of the Ada compiler
+      for Driver ("Ada") use "gnat2goto";
+      for Object_File_Suffix ("Ada") use ".json_symtab";
+    end Compiler;
+
+   package Naming is
+      for Body_Suffix ("Ada") use ".adb";
+      for Separate_Suffix use ".adb";
+   end Naming;
+   
+   package Binder is
+      for Driver ("Ada") use "echo";
+   end Binder;
+
+   package Linker is
+      -- Use symtab2gb as the linker
+      for Driver use "symtab_link";
+   end Linker;
+
+end  Modelling;
+

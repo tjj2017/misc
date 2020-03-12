@@ -1,10 +1,10 @@
 procedure Selectors is
 
-   type Models is (Not_A_Model, Nondet, Nondet_In_Type, Represents);
+ type Models is (Not_A_Model, Nondet, Nondet_In_Type, Represents);
 
-   subtype Small_Int is Integer range 0 .. 10;
+ subtype Small_Int is Integer range 0 .. 10;
 
-   subtype My_Positive is Integer range 1 .. Integer'Last;
+ subtype My_Positive is Integer range 1 .. Integer'Last;
 
    type R1 is record
       A : Integer;
@@ -62,4 +62,5 @@ begin
    pragma Assert (VR2.B = 23);
    pragma Assert (VR2.A > 0);
    pragma Assert (VR2.B in Integer);
+   null;
 end Selectors;
