@@ -5,14 +5,16 @@ procedure Irep_In_Type is
      Global   => null,
      Import;
 
-   function Nondet_In_Type return My_Fixed_Array
-     with Annotate => (ASVAT, Nondet_In_Type),
-     Global =>  null,
-     Import;
-
+--     function Nondet_In_Type return My_Fixed_Array
+--       with Annotate => (ASVAT, Nondet),
+--       Global =>  null,
+--       Import;
+--
+--     function Nix return My_Fixed_Array is
+--        ((others => 7));
 
 --     K : Integer := 0;
---     S : Small := 19;
+   S : Small := 19;
 --     L : Smaller := 3;
 --     E : My_Enum := two;
 --     P : Sub_Enum := three;
@@ -28,24 +30,65 @@ procedure Irep_In_Type is
 --     A_Rec_Const : constant R := (1, 2);
 --     A_Rec : R := A_Rec_Const;
 
+   procedure Nondet_Fixed_Array
+     with Annotate => (ASVAT, Nondet_In_Type),
+     Global => (In_Out => Fixed_Array),
+     Import;
+   procedure Nondet_Small
+     with Annotate => (ASVAT, Nondet_In_Type),
+     Global => (In_Out => S),
+     Import;
+
+   function Nondet_Small_Func return Small
+     with Annotate => (ASVAT, Nondet_In_Type),
+     Global => null,
+     Import;
+
 begin
-   for I in Fixed_Array'Range loop
-      pragma Assert (Fixed_Array (I) = 7);
-   end loop;
-   for I in Fixed_Array'Range loop
-      pragma Assert (Fixed_Array (I) >= Small'First and
-                       Fixed_Array (I) <= Small'Last);
-   end loop;
+   pragma Assert (S = 19);
+   pragma Assert (S >= Small'First and S <= Small'Last);
 
-   Fixed_Array := Nondet_In_Type;
+   Small_In_Type (S);
+   pragma Assert (S = 19);
+   pragma Assert (S >= Small'First and S <= Small'Last);
 
    for I in Fixed_Array'Range loop
-      pragma Assert (Fixed_Array (I) = 7);
+      Fixed_Array (I) := 7;
    end loop;
-   for I in Fixed_Array'Range loop
-      pragma Assert (Fixed_Array (I) >= Small'First and
-                       Fixed_Array (I) <= Small'Last);
-   end loop;
+
+   pragma Assert (Fixed_Array (1) = 7);
+   pragma Assert (Fixed_Array (1) >= Small'First and Fixed_Array (1) <= Small'Last);
+
+   Small_In_Type (Fixed_Array (1));
+   pragma Assert (Fixed_Array (1) = 7);
+   pragma Assert (Fixed_Array (1) >= Small'First and Fixed_Array (1) <= Small'Last);
+
+   pragma Assert (Fixed_Array (2) = 7);
+   pragma Assert (Fixed_Array (2) >= Small'First and Fixed_Array (2) <= Small'Last);
+
+   My_Fixed_Array_In_Type (Fixed_Array);
+   pragma Assert (Fixed_Array (2) = 7);
+   pragma Assert (Fixed_Array (2) >= Small'First and Fixed_Array (2) <= Small'Last);
+
+
+
+--     for I in Fixed_Array'Range loop
+--        pragma Assert (Fixed_Array (I) = 7);
+--     end loop;
+--     for I in Fixed_Array'Range loop
+--        pragma Assert (Fixed_Array (I) >= Small'First and
+--                         Fixed_Array (I) <= Small'Last);
+--     end loop;
+--
+--    -- My_Fixed_Array_In_Type (Fixed_Array);
+--
+--     for I in Fixed_Array'Range loop
+--        pragma Assert (Fixed_Array (I) = 7);
+--     end loop;
+--     for I in Fixed_Array'Range loop
+--        pragma Assert (Fixed_Array (I) >= Small'First and
+--                         Fixed_Array (I) <= Small'Last);
+--     end loop;
 
 --   Int_In_Type (K);
 --   pragma Assert (K = 0);

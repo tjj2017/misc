@@ -38,6 +38,7 @@ begin
    I := My_Nondet (1, 2, 3, J);
    pragma Assert (I = 1);
    pragma Assert (J = 3);
+   pragma Assert (J > 0);
    pragma Assert (I >= 1 and I <= 10);
 
    I := 1;
