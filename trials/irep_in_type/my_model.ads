@@ -39,10 +39,9 @@ package My_Model is
 --          Import   => True;
 
    procedure My_Fixed_Array_In_Type (A : in out My_Fixed_Array)
-   with Annotate => (ASVAT, Nondet_In_Type),
+   with Annotate => (ASVAT, Nondet),
         Global   => null,
         Import   => True;
-
 
 --     procedure My_Unconstrained_Array_In_Type (U : in out My_Unconstrained_Array)
 --     with Annotate => (ASVAT, Nondet_In_Type),

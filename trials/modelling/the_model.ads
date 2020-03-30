@@ -84,6 +84,7 @@ package The_Model is
    --  The global variables are specified using pragma Global.
    procedure Update_Nondet_Import;
    pragma Global (In_Out => (Visible_Vars.Var_Int,
+                             Visible_Vars.Var_My_Int,
                              Visible_Vars.Var_My_Enum,
                              Visible_Vars.Var_My_Sub_Int,
                              Visible_Vars.Var_My_Sub_Enum,
