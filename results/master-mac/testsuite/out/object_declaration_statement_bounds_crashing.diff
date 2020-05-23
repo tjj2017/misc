@@ -1,0 +1,81 @@
+--- expected
++++ output
+@@ -0,0 +1,78 @@
++Standard_Output from gnat2goto object_declaration_statement_bounds_crashing:
++----------At: Do_Itype_Integer_Subtype----------
++----------Non-literal bound unsupported----------
++N_Defining_Identifier "T2b" (Entity_Id=2457)
++Parent = <empty>
++Sloc = 12509  object_declaration_statement_bounds_crashing.adb:8:11
++Chars = "T2b" (Name_Id=300001458)
++Scope = N_Defining_Identifier "L_1" (Entity_Id=2345)
++Ekind = E_Signed_Integer_Subtype
++Etype = N_Defining_Identifier "Trange_typeB" (Entity_Id=2388)
++Associated_Node_For_Itype = N_Loop_Parameter_Specification (Node_Id=2307)
++Esize = 8 (Uint = 600032776)
++RM_Size = 8 (Uint = 600032776)
++Alignment = 1 (Uint = 600032769)
++Scalar_Range = N_Range (Node_Id=2316)
++Is_Frozen = True
++Is_Internal = True
++Is_Itype = True
++Needs_Debug_Info = True
++Size_Known_At_Compile_Time = True
++----------At: Do_Type_Reference----------
++----------Type of type not a type----------
++N_Defining_Identifier "T2b" (Entity_Id=2457)
++Parent = <empty>
++Sloc = 12509  object_declaration_statement_bounds_crashing.adb:8:11
++Chars = "T2b" (Name_Id=300001458)
++Scope = N_Defining_Identifier "L_1" (Entity_Id=2345)
++Ekind = E_Signed_Integer_Subtype
++Etype = N_Defining_Identifier "Trange_typeB" (Entity_Id=2388)
++Associated_Node_For_Itype = N_Loop_Parameter_Specification (Node_Id=2307)
++Esize = 8 (Uint = 600032776)
++RM_Size = 8 (Uint = 600032776)
++Alignment = 1 (Uint = 600032769)
++Scalar_Range = N_Range (Node_Id=2316)
++Is_Frozen = True
++Is_Internal = True
++Is_Itype = True
++Needs_Debug_Info = True
++Size_Known_At_Compile_Time = True
++Error from cbmc object_declaration_statement_bounds_crashing:
++--- begin invariant violation report ---
++Invariant check failed
++File: flattening/boolbv_width.cpp:199 function: get_entry
++Condition: false
++Reason: Unimplemented
++Backtrace:
++0   cbmc                                0x0000000101e09b4a _Z15print_backtraceRNSt3__113basic_ostreamIcNS_11char_traitsIcEEEE + 74
++1   cbmc                                0x0000000101e0a0ec _Z13get_backtracev + 252
++2   cbmc                                0x0000000101bc33dc _Z29invariant_violated_structuredI17invariant_failedtJRKNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEEEENS1_9enable_ifIXsr3std10is_base_ofIS0_T_EE5valueEvE4typeES9_S9_iS9_DpOT0_ + 44
++3   cbmc                                0x0000000101bb91b9 _Z25invariant_violated_stringRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEES7_iS7_S7_ + 9
++4   cbmc                                0x0000000101caac1b _ZNK13boolbv_widtht9get_entryERK5typet + 4139
++5   cbmc                                0x0000000101ca3963 _ZN7boolbvt15type_conversionERK5typetRKNSt3__16vectorI8literaltNS3_9allocatorIS5_EEEES2_RS8_ + 307
++6   cbmc                                0x0000000101ca3752 _ZN7boolbvt19convert_bv_typecastERK14typecast_exprt + 146
++7   cbmc                                0x0000000101c7aeee _ZN7boolbvt17convert_bitvectorERK5exprt + 174
++8   cbmc                                0x0000000101cb464f _ZN12bv_pointerst17convert_bitvectorERK5exprt + 1967
++9   cbmc                                0x0000000101c7a795 _ZN7boolbvt10convert_bvERK5exprtN6nonstd13optional_lite8optionalImEE + 293
++10  cbmc                                0x0000000101c858c7 _ZN7boolbvt14convert_bv_relERK21binary_relation_exprt + 119
++11  cbmc                                0x0000000101cafaaa _ZN12bv_pointerst12convert_restERK5exprt + 922
++12  cbmc                                0x0000000101d054f2 _ZN17prop_conv_solvert12convert_boolERK5exprt + 2274
++13  cbmc                                0x0000000101d04b75 _ZN17prop_conv_solvert7convertERK5exprt + 693
++14  cbmc                                0x0000000101d05219 _ZN17prop_conv_solvert12convert_boolERK5exprt + 1545
++15  cbmc                                0x0000000101d04b75 _ZN17prop_conv_solvert7convertERK5exprt + 693
++16  cbmc                                0x0000000101d04efd _ZN17prop_conv_solvert12convert_boolERK5exprt + 749
++17  cbmc                                0x0000000101d04b75 _ZN17prop_conv_solvert7convertERK5exprt + 693
++18  cbmc                                0x0000000101d04294 _ZN17prop_conv_solvert6handleERK5exprt + 68
++19  cbmc                                0x0000000101d043a2 _ZThn8_N17prop_conv_solvert6handleERK5exprt + 18
++20  cbmc                                0x0000000101baefa6 _ZN22symex_target_equationt18convert_assertionsER19decision_proceduret + 1126
++21  cbmc                                0x0000000101bae64f _ZN22symex_target_equationt7convertER19decision_proceduret + 159
++22  cbmc                                0x0000000101a6910b _Z29convert_symex_target_equationR22symex_target_equationtR19decision_proceduretR16message_handlert + 123
++23  cbmc                                0x0000000101a6afd0 _Z24prepare_property_deciderRNSt3__113unordered_mapI8dstringt14property_infotNS_4hashIS1_EENS_8equal_toIS1_EENS_9allocatorINS_4pairIKS1_S2_EEEEEER22symex_target_equationtR28goto_symex_property_decidertR19ui_message_handlert + 224
++24  cbmc                                0x0000000101a72448 _ZN25multi_path_symex_checkertclERNSt3__113unordered_mapI8dstringt14property_infotNS0_4hashIS2_EENS0_8equal_toIS2_EENS0_9allocatorINS0_4pairIKS2_S3_EEEEEE + 264
++25  cbmc                                0x0000000101e9eac2 _ZN43all_properties_verifier_with_trace_storagetI25multi_path_symex_checkertEclEv + 50
++26  cbmc                                0x0000000101e976b2 _ZN19cbmc_parse_optionst4doitEv + 3986
++27  cbmc                                0x0000000101e20ac9 _ZN19parse_options_baset4mainEv + 249
++28  cbmc                                0x0000000101e92b7d main + 45
++29  libdyld.dylib                       0x00007fffa9862235 start + 1
++--- end invariant violation report ---
++ERROR code  -6 returned by cbmc when processing object_declaration_statement_bounds_crashing

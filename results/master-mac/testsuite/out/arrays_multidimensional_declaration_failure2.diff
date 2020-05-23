@@ -1,0 +1,33 @@
+--- expected
++++ output
+@@ -0,0 +1,30 @@
++Standard_Error from gnat2goto arrays_multidimensional_declaration_failure2:
++arrays_multidimensional_declaration_failure2.adb:4:04: warning: variable "AA" is never read and never assigned
++Error from cbmc arrays_multidimensional_declaration_failure2:
++--- begin invariant violation report ---
++Invariant check failed
++File: symex_assign.cpp:134 function: assign_from_struct
++Condition: rhs.operands().size() == components.size()
++Reason: Precondition
++Backtrace:
++0   cbmc                                0x000000010c5e8b4a _Z15print_backtraceRNSt3__113basic_ostreamIcNS_11char_traitsIcEEEE + 74
++1   cbmc                                0x000000010c5e90ec _Z13get_backtracev + 252
++2   cbmc                                0x000000010c3a23dc _Z29invariant_violated_structuredI17invariant_failedtJRKNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEEEENS1_9enable_ifIXsr3std10is_base_ofIS0_T_EE5valueEvE4typeES9_S9_iS9_DpOT0_ + 44
++3   cbmc                                0x000000010c3981b9 _Z25invariant_violated_stringRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEES7_iS7_S7_ + 9
++4   cbmc                                0x000000010c364e19 _ZN13symex_assignt18assign_from_structERK9ssa_exprtRK14expr_skeletontRK12struct_exprtRKNSt3__16vectorI5exprtNS9_9allocatorISB_EEEE + 1577
++5   cbmc                                0x000000010c32c472 _ZN11goto_symext12symex_assignER17goto_symex_statetRK12code_assignt + 1234
++6   cbmc                                0x000000010c383c20 _ZN11goto_symext24execute_next_instructionERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER17goto_symex_statet + 480
++7   cbmc                                0x000000010c3839ca _ZN11goto_symext10symex_stepERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER17goto_symex_statet + 42
++8   cbmc                                0x000000010c267e85 _ZN10symex_bmct10symex_stepERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER17goto_symex_statet + 597
++9   cbmc                                0x000000010c38172d _ZN11goto_symext19symex_threaded_stepER17goto_symex_statetRKNSt3__18functionIFRK14goto_functiontRK8dstringtEEE + 29
++10  cbmc                                0x000000010c381a4f _ZN11goto_symext16symex_with_stateER17goto_symex_statetRKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER13symbol_tablet + 191
++11  cbmc                                0x000000010c382a4d _ZN11goto_symext25symex_from_entry_point_ofERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER13symbol_tablet + 61
++12  cbmc                                0x000000010c25298a _ZN30multi_path_symex_only_checkert17generate_equationEv + 74
++13  cbmc                                0x000000010c251393 _ZN25multi_path_symex_checkertclERNSt3__113unordered_mapI8dstringt14property_infotNS0_4hashIS2_EENS0_8equal_toIS2_EENS0_9allocatorINS0_4pairIKS2_S3_EEEEEE + 83
++14  cbmc                                0x000000010c67dac2 _ZN43all_properties_verifier_with_trace_storagetI25multi_path_symex_checkertEclEv + 50
++15  cbmc                                0x000000010c6766b2 _ZN19cbmc_parse_optionst4doitEv + 3986
++16  cbmc                                0x000000010c5ffac9 _ZN19parse_options_baset4mainEv + 249
++17  cbmc                                0x000000010c671b7d main + 45
++18  libdyld.dylib                       0x00007fffa9862235 start + 1
++--- end invariant violation report ---
++ERROR code  -6 returned by cbmc when processing arrays_multidimensional_declaration_failure2

@@ -1,0 +1,7 @@
+--- expected
++++ output
+@@ -4,3 +4,3 @@
+ N_Pragma (Node_Id=2444) (analyzed)
+-Sloc = 8446  no_corresponding_spec.adb:8:11
++Sloc = 12542  no_corresponding_spec.adb:8:11
+ Pragma_Argument_Associations = List (List_Id=-99999945)

@@ -1,0 +1,12 @@
+--- expected
++++ output
+@@ -4,3 +4,3 @@
+ N_Attribute_Definition_Clause "address" (Node_Id=2277) (source,analyzed)
+-Sloc = 8303  address_clause.adb:5:4
++Sloc = 12399  address_clause.adb:5:4
+ Chars = "address" (Name_Id=300000791)
+@@ -13,3 +13,3 @@
+ N_Attribute_Definition_Clause "address" (Node_Id=2295) (source,analyzed)
+-Sloc = 8387  address_clause.adb:8:4
++Sloc = 12483  address_clause.adb:8:4
+ Chars = "address" (Name_Id=300000791)

@@ -1,0 +1,7 @@
+--- expected
++++ output
+@@ -5,3 +5,3 @@
+ Parent = N_Full_Type_Declaration (Node_Id=2270)
+-Sloc = 8308  indefinite_size.adb:5:9
++Sloc = 12404  indefinite_size.adb:5:9
+ Chars = "a" (Name_Id=300000099)

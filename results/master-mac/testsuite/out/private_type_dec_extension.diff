@@ -1,0 +1,26 @@
+--- expected
++++ output
+@@ -0,0 +1,23 @@
++Standard_Output from gnat2goto private_dec_extension:
++----------At: Process_Declaration----------
++----------Unknown declaration kind----------
++N_Private_Extension_Declaration (Node_Id=2313) (source,analyzed)
++Sloc = 16477  private_dec_extension.ads:3:4
++Defining_Identifier = N_Defining_Identifier "string_input" (Entity_Id=2304)
++Subtype_Indication = N_Identifier "input_source" (Node_Id=2312)
++----------At: Do_Full_Type_Declaration----------
++----------type not in symbol table after declaration----------
++N_Full_Type_Declaration (Node_Id=2354) (source,analyzed)
++Sloc = 16583  private_dec_extension.ads:7:4
++Defining_Identifier = N_Defining_Identifier "input_source" (Entity_Id=2332)
++Type_Definition = N_Record_Definition (Node_Id=2339)
++----------At: Do_Derived_Type_Definition----------
++----------record extension unsupported----------
++N_Derived_Type_Definition (Node_Id=2362) (source)
++Parent = N_Full_Type_Declaration (Node_Id=2378)
++Sloc = 16709  private_dec_extension.ads:11:25
++Subtype_Indication = N_Identifier "input_source" (Node_Id=2363)
++Record_Extension_Part = N_Record_Definition (Node_Id=2364)
++Error from cbmc private_dec_extension:
++SUPPORT FUNCTION GENERATION ERROR
++ERROR code  6 returned by cbmc when processing private_dec_extension

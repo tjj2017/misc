@@ -1,0 +1,17 @@
+--- expected
++++ output
+@@ -0,0 +1,14 @@
++Standard_Output from gnat2goto object_size:
++----------At: Process_Declaration----------
++----------size clause not applied by the front-end----------
++N_Attribute_Definition_Clause "size" (Node_Id=2286) (source,analyzed)
++Sloc = 12478  object_size.adb:8:4
++Chars = "size" (Name_Id=300000899)
++Name = N_Identifier "small_pos" (Node_Id=2283)
++Expression = N_Integer_Literal (Node_Id=2287)
++Entity = N_Defining_Identifier "small_pos" (Entity_Id=2273)
++[object_size.assertion.1] line 15 assertion Small_Pos = 7: SUCCESS
++[object_size.assertion.2] line 22 assertion Small_Pos = 8: SUCCESS
++[object_size.assertion.4] line 29 Ada Check assertion: SUCCESS
++[object_size.assertion.3] line 30 assertion Uncons_SP = 32: SUCCESS
++VERIFICATION SUCCESSFUL

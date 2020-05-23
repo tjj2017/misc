@@ -1,0 +1,3 @@
+[double.assertion.1] line 12 Ada Check assertion: SUCCESS
+[subpackage_local_initialisers.assertion.1] line 15 assertion Subpackage.Get_Value = Double (21): FAILURE
+VERIFICATION FAILED

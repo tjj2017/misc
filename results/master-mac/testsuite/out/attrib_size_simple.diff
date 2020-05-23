@@ -1,0 +1,36 @@
+--- expected
++++ output
+@@ -0,0 +1,33 @@
++Error from cbmc good_size:
++--- begin invariant violation report ---
++Invariant check failed
++File: flattening/boolbv_width.cpp:199 function: get_entry
++Condition: false
++Reason: Unimplemented
++Backtrace:
++0   cbmc                                0x000000010b7acb4a _Z15print_backtraceRNSt3__113basic_ostreamIcNS_11char_traitsIcEEEE + 74
++1   cbmc                                0x000000010b7ad0ec _Z13get_backtracev + 252
++2   cbmc                                0x000000010b5663dc _Z29invariant_violated_structuredI17invariant_failedtJRKNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEEEENS1_9enable_ifIXsr3std10is_base_ofIS0_T_EE5valueEvE4typeES9_S9_iS9_DpOT0_ + 44
++3   cbmc                                0x000000010b55c1b9 _Z25invariant_violated_stringRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEES7_iS7_S7_ + 9
++4   cbmc                                0x000000010b64dc1b _ZNK13boolbv_widtht9get_entryERK5typet + 4139
++5   cbmc                                0x000000010b6201ce _ZN7boolbvt14convert_symbolERK5exprt + 62
++6   cbmc                                0x000000010b61deee _ZN7boolbvt17convert_bitvectorERK5exprt + 174
++7   cbmc                                0x000000010b65764f _ZN12bv_pointerst17convert_bitvectorERK5exprt + 1967
++8   cbmc                                0x000000010b61d795 _ZN7boolbvt10convert_bvERK5exprtN6nonstd13optional_lite8optionalImEE + 293
++9   cbmc                                0x000000010b6309bf _ZN7boolbvt16convert_equalityERK11equal_exprt + 255
++10  cbmc                                0x000000010b652aaa _ZN12bv_pointerst12convert_restERK5exprt + 922
++11  cbmc                                0x000000010b6a84f2 _ZN17prop_conv_solvert12convert_boolERK5exprt + 2274
++12  cbmc                                0x000000010b6a7b75 _ZN17prop_conv_solvert7convertERK5exprt + 693
++13  cbmc                                0x000000010b6a7294 _ZN17prop_conv_solvert6handleERK5exprt + 68
++14  cbmc                                0x000000010b6a73a2 _ZThn8_N17prop_conv_solvert6handleERK5exprt + 18
++15  cbmc                                0x000000010b551619 _ZN22symex_target_equationt7convertER19decision_proceduret + 105
++16  cbmc                                0x000000010b40c10b _Z29convert_symex_target_equationR22symex_target_equationtR19decision_proceduretR16message_handlert + 123
++17  cbmc                                0x000000010b40dfd0 _Z24prepare_property_deciderRNSt3__113unordered_mapI8dstringt14property_infotNS_4hashIS1_EENS_8equal_toIS1_EENS_9allocatorINS_4pairIKS1_S2_EEEEEER22symex_target_equationtR28goto_symex_property_decidertR19ui_message_handlert + 224
++18  cbmc                                0x000000010b415448 _ZN25multi_path_symex_checkertclERNSt3__113unordered_mapI8dstringt14property_infotNS0_4hashIS2_EENS0_8equal_toIS2_EENS0_9allocatorINS0_4pairIKS2_S3_EEEEEE + 264
++19  cbmc                                0x000000010b841ac2 _ZN43all_properties_verifier_with_trace_storagetI25multi_path_symex_checkertEclEv + 50
++20  cbmc                                0x000000010b83a6b2 _ZN19cbmc_parse_optionst4doitEv + 3986
++21  cbmc                                0x000000010b7c3ac9 _ZN19parse_options_baset4mainEv + 249
++22  cbmc                                0x000000010b835b7d main + 45
++23  libdyld.dylib                       0x00007fffa9862235 start + 1
++--- end invariant violation report ---
++ERROR code  -6 returned by cbmc when processing good_size

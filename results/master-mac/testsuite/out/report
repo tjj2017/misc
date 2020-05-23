@@ -1,0 +1,1335 @@
+Out of 165 tests:
+  165 executed test(s) (non dead)
+    0 crash(es) detected
+    5 other potential regression(s)
+   28 expected regression(s)
+    0 unexpected passed test(s)
+    0 invalid test(s)
+    0 new dead test(s)
+    0 test(s) removed
+
+---------------- 5 new regression(s)
+attrib_size_indefinite:DIFF:output
+no_corresponding_spec:DIFF:output
+procedure_pointer:DIFF:output
+function_pointer:DIFF:output
+address_clause:DIFF:output
+
+---------------- 0 already detected regression(s)
+
+---------------- 28 expected regression(s)
+arrays:XFAIL:CBMC fails with __new_array not found
+arrays_multidimensional_declaration_failure1:XFAIL:GNU Ada (ada2goto) Assert_Failure failed postcondition from arrays.ads
+arrays_multidimensional_declaration_failure2:XFAIL:gnat2goto fails with "GNU Ada (ada2goto) Assert_Failure sinfo.adb:2232"
+arrays_multidimensional_type_instantiation_failure:XFAIL:CBMC fails with invariant failure "Condition: op.operands()[number].type() == expr.type()"
+attrib_size_object:XFAIL:gnat2goto does not handle size attribute clauses applied to an object
+attrib_size_simple:XFAIL:cbmc fails with "reason unimplemented"
+attributes_continuous:XFAIL:gnat2goto fails precondition failure
+character_subtype:XFAIL:gnat2goto reports invalid range types and cbmc fails with an invariant violation
+deferred_constant_import:XFAIL:gnat2goto fails with unsupported feature (import pragma)
+dynamic_range_variable:XFAIL:gnat2goto fails with unsupported upper range kind: N_Identifier "dynamic_range_type_LAST"
+limited_private_record_type:XFAIL:Limited private record types don't work right now
+loop_array_range:XFAIL:gnat2goto fails with contraint_error (loop_array_range__TTmy_arrSP1 is not is symbol table)
+object_declaration_statement_bounds_crashing:XFAIL:gnat2goto fails because bounds are non constant expressions (#326)
+op_concat:XFAIL:CBMC fails with __new_array not found
+private_type_dec_abstract:XFAIL:gnat2goto fails with abstract type declaration unsupported
+private_type_dec_extension:XFAIL:gnat2goto fails private extension declaration
+range_second:XFAIL:Doesn't crash anymore but cbmc does not perform range assertion checks
+record_extension:XFAIL:gnat2goto fails with unsupported record extension
+record_init:XFAIL:CBMC fails with invariant violation Condition: op.operands()[number].type() == expr.type()
+representation_clause_component_size_change:XFAIL:gnat2goto fails with changing component size unsupported
+reverse:XFAIL:reverse currently not supported because we handle negative integers incorrectly
+separate_subprog_assert_check:XFAIL:Assert statement in p.adb should succeed.
+size_attribute_clause:XFAIL:gnat2goto does not handle anonymous type declarations in variable decs
+size_integer_and_objects:XFAIL:gnat2goto fails when Size representation clause applied to standard types and their derivations or to objects.
+string_assert:XFAIL:CBMC fails types of expressions on each side of equality should match
+string_equality:XFAIL:CBMC fails a precondition in can_cast_type<array_typet> in to_array_type in util/std_types.h
+subpackage_local_initialisers:XFAIL:Initialisers for local packages haven't been implemented yet
+variant_record:XFAIL:cbmc fails with type mismatch
+
+---------------- differences in output
+================ Bug address_clause 
+---------------- expected output
+Standard_Output from gnat2goto address_clause:
+----------At: Process_Declaration----------
+----------Address representation clauses are not currently supported----------
+N_Attribute_Definition_Clause "address" (Node_Id=2277) (source,analyzed)
+ Sloc = 8303  address_clause.adb:5:4
+ Chars = "address" (Name_Id=300000791)
+ Name = N_Identifier "var_addr_1" (Node_Id=2274)
+ Expression = N_Function_Call (Node_Id=2280)
+ Entity = N_Defining_Identifier "var_addr_1" (Entity_Id=2264)
+ Check_Address_Alignment = True
+----------At: Process_Declaration----------
+----------Address representation clauses are not currently supported----------
+N_Attribute_Definition_Clause "address" (Node_Id=2295) (source,analyzed)
+ Sloc = 8387  address_clause.adb:8:4
+ Chars = "address" (Name_Id=300000791)
+ Name = N_Identifier "var_addr_2" (Node_Id=2292)
+ Expression = N_Function_Call (Node_Id=2302)
+ Entity = N_Defining_Identifier "var_addr_2" (Entity_Id=2282)
+ Check_Address_Alignment = True
+
+[address_clause.assertion.1] line 12 Ada Check assertion: SUCCESS
+[address_clause.assertion.2] line 12 assertion Var_Addr_1 + Var_Addr_2 = 3: SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+Standard_Output from gnat2goto address_clause:
+----------At: Process_Declaration----------
+----------Address representation clauses are not currently supported----------
+N_Attribute_Definition_Clause "address" (Node_Id=2277) (source,analyzed)
+ Sloc = 12399  address_clause.adb:5:4
+ Chars = "address" (Name_Id=300000791)
+ Name = N_Identifier "var_addr_1" (Node_Id=2274)
+ Expression = N_Function_Call (Node_Id=2280)
+ Entity = N_Defining_Identifier "var_addr_1" (Entity_Id=2264)
+ Check_Address_Alignment = True
+----------At: Process_Declaration----------
+----------Address representation clauses are not currently supported----------
+N_Attribute_Definition_Clause "address" (Node_Id=2295) (source,analyzed)
+ Sloc = 12483  address_clause.adb:8:4
+ Chars = "address" (Name_Id=300000791)
+ Name = N_Identifier "var_addr_2" (Node_Id=2292)
+ Expression = N_Function_Call (Node_Id=2302)
+ Entity = N_Defining_Identifier "var_addr_2" (Entity_Id=2282)
+ Check_Address_Alignment = True
+
+[address_clause.assertion.1] line 12 Ada Check assertion: SUCCESS
+[address_clause.assertion.2] line 12 assertion Var_Addr_1 + Var_Addr_2 = 3: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug attrib_size_indefinite 
+---------------- expected output
+Standard_Output from gnat2goto indefinite_size:
+----------At: Do_Expression----------
+----------Size attribute applied to indefinite type is implementation defined----------
+N_Defining_Identifier "a" (Entity_Id=2259) (source,analyzed)
+ Parent = N_Full_Type_Declaration (Node_Id=2270)
+ Sloc = 8308  indefinite_size.adb:5:9
+ Chars = "a" (Name_Id=300000099)
+ Next_Entity = N_Defining_Operator_Symbol "Oconcat" (Entity_Id=2290)
+ Scope = N_Defining_Identifier "indefinite_size" (Entity_Id=2245)
+ Ekind = E_Array_Type
+ Etype = N_Defining_Identifier "a" (Entity_Id=2259)
+ Freeze_Node = N_Freeze_Entity (Node_Id=2311)
+ Esize = 0 (Uint = 600032768)
+ RM_Size = 0 (Uint = 600032768)
+ Alignment = 0 (Uint = 600032768)
+ First_Index = N_Identifier "positive" (Node_Id=2266)
+ Component_Type = N_Defining_Identifier "integer" (Entity_Id=37s)
+ Component_Size = 32 (Uint = 600032800)
+ Component_Alignment = Calign_Default
+ Has_Delayed_Freeze = True
+ Has_Qualified_Name = True
+ Has_Xref_Entry = True
+ Is_First_Subtype = True
+ Is_Frozen = True
+ Needs_Debug_Info = True
+ Referenced = True
+
+[indefinite_size.assertion.1] line 8 assertion A'Size = 21: FAILURE
+VERIFICATION FAILED
+---------------- actual output
+Standard_Output from gnat2goto indefinite_size:
+----------At: Do_Expression----------
+----------Size attribute applied to indefinite type is implementation defined----------
+N_Defining_Identifier "a" (Entity_Id=2259) (source,analyzed)
+ Parent = N_Full_Type_Declaration (Node_Id=2270)
+ Sloc = 12404  indefinite_size.adb:5:9
+ Chars = "a" (Name_Id=300000099)
+ Next_Entity = N_Defining_Operator_Symbol "Oconcat" (Entity_Id=2290)
+ Scope = N_Defining_Identifier "indefinite_size" (Entity_Id=2245)
+ Ekind = E_Array_Type
+ Etype = N_Defining_Identifier "a" (Entity_Id=2259)
+ Freeze_Node = N_Freeze_Entity (Node_Id=2311)
+ Esize = 0 (Uint = 600032768)
+ RM_Size = 0 (Uint = 600032768)
+ Alignment = 0 (Uint = 600032768)
+ First_Index = N_Identifier "positive" (Node_Id=2266)
+ Component_Type = N_Defining_Identifier "integer" (Entity_Id=37s)
+ Component_Size = 32 (Uint = 600032800)
+ Component_Alignment = Calign_Default
+ Has_Delayed_Freeze = True
+ Has_Qualified_Name = True
+ Has_Xref_Entry = True
+ Is_First_Subtype = True
+ Is_Frozen = True
+ Needs_Debug_Info = True
+ Referenced = True
+
+[indefinite_size.assertion.1] line 8 assertion A'Size = 21: FAILURE
+VERIFICATION FAILED
+================ Bug function_pointer 
+---------------- expected output
+Standard_Output from gnat2goto test:
+----------At: Do_Itype_Definition----------
+----------Unknown Ekind E_ACCESS_SUBTYPE----------
+N_Defining_Identifier "T6b" (Entity_Id=2491)
+ Parent = <empty>
+ Sloc = 8480  test.adb:13:4
+ Chars = "T6b" (Name_Id=300001463)
+ Next_Entity = N_Defining_Identifier "assert_compare" (Entity_Id=2476)
+ Scope = N_Defining_Identifier "test" (Entity_Id=2245)
+ Ekind = E_Access_Subtype
+ Etype = N_Defining_Identifier "comparator" (Entity_Id=2304)
+ Associated_Node_For_Itype = N_Procedure_Specification (Node_Id=2473)
+ Esize = 64 (Uint = 600032832)
+ RM_Size = 64 (Uint = 600032832)
+ Alignment = 4 (Uint = 600032772)
+ Directly_Designated_Type = N_Defining_Identifier "T3b" (Entity_Id=2451)
+ Can_Never_Be_Null = True
+ Has_Qualified_Name = True
+ Is_Frozen = True
+ Is_Internal = True
+ Is_Itype = True
+ Size_Known_At_Compile_Time = True
+
+[assert_compare.assertion.1] line 15 assertion Func.all(5): FAILURE
+VERIFICATION FAILED
+---------------- actual output
+Standard_Output from gnat2goto test:
+----------At: Do_Itype_Definition----------
+----------Unknown Ekind E_ACCESS_SUBTYPE----------
+N_Defining_Identifier "T6b" (Entity_Id=2491)
+ Parent = <empty>
+ Sloc = 12576  test.adb:13:4
+ Chars = "T6b" (Name_Id=300001463)
+ Next_Entity = N_Defining_Identifier "assert_compare" (Entity_Id=2476)
+ Scope = N_Defining_Identifier "test" (Entity_Id=2245)
+ Ekind = E_Access_Subtype
+ Etype = N_Defining_Identifier "comparator" (Entity_Id=2304)
+ Associated_Node_For_Itype = N_Procedure_Specification (Node_Id=2473)
+ Esize = 64 (Uint = 600032832)
+ RM_Size = 64 (Uint = 600032832)
+ Alignment = 4 (Uint = 600032772)
+ Directly_Designated_Type = N_Defining_Identifier "T3b" (Entity_Id=2451)
+ Can_Never_Be_Null = True
+ Has_Qualified_Name = True
+ Is_Frozen = True
+ Is_Internal = True
+ Is_Itype = True
+ Size_Known_At_Compile_Time = True
+
+[assert_compare.assertion.1] line 15 assertion Func.all(5): FAILURE
+VERIFICATION FAILED
+================ Bug no_corresponding_spec 
+---------------- expected output
+Standard_Output from gnat2goto no_corresponding_spec:
+----------At: Process_Pragma_Declaration----------
+----------Unsupported pragma: Global----------
+N_Pragma (Node_Id=2444) (analyzed)
+ Sloc = 8446  no_corresponding_spec.adb:8:11
+ Pragma_Argument_Associations = List (List_Id=-99999945)
+ Corresponding_Aspect = N_Aspect_Specification (Node_Id=2279)
+ Pragma_Identifier = N_Identifier "global" (Node_Id=2443)
+ From_Aspect_Specification = True
+ Is_Analyzed_Pragma = True
+
+[assertion.1] file no_corresponding_spec.adb line 15 Ada Check assertion: SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+Standard_Output from gnat2goto no_corresponding_spec:
+----------At: Process_Pragma_Declaration----------
+----------Unsupported pragma: Global----------
+N_Pragma (Node_Id=2444) (analyzed)
+ Sloc = 12542  no_corresponding_spec.adb:8:11
+ Pragma_Argument_Associations = List (List_Id=-99999945)
+ Corresponding_Aspect = N_Aspect_Specification (Node_Id=2279)
+ Pragma_Identifier = N_Identifier "global" (Node_Id=2443)
+ From_Aspect_Specification = True
+ Is_Analyzed_Pragma = True
+
+[assertion.1] file no_corresponding_spec.adb line 15 Ada Check assertion: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug procedure_pointer 
+---------------- expected output
+Standard_Output from gnat2goto test:
+----------At: Do_Itype_Definition----------
+----------Unknown Ekind E_ACCESS_SUBTYPE----------
+N_Defining_Identifier "T4b" (Entity_Id=2491)
+ Parent = <empty>
+ Sloc = 8525  test.adb:14:4
+ Chars = "T4b" (Name_Id=300001462)
+ Next_Entity = N_Defining_Identifier "assert_modify" (Entity_Id=2476)
+ Scope = N_Defining_Identifier "test" (Entity_Id=2245)
+ Ekind = E_Access_Subtype
+ Etype = N_Defining_Identifier "modifier" (Entity_Id=2315)
+ Associated_Node_For_Itype = N_Procedure_Specification (Node_Id=2473)
+ Esize = 64 (Uint = 600032832)
+ RM_Size = 64 (Uint = 600032832)
+ Alignment = 4 (Uint = 600032772)
+ Directly_Designated_Type = N_Defining_Identifier "T1b" (Entity_Id=2451)
+ Can_Never_Be_Null = True
+ Has_Qualified_Name = True
+ Is_Frozen = True
+ Is_Internal = True
+ Is_Itype = True
+ Size_Known_At_Compile_Time = True
+
+[assert_modify.assertion.1] line 17 assertion Global_Number = 5: FAILURE
+[increment_by.assertion.1] line 5 Ada Check assertion: SUCCESS
+VERIFICATION FAILED
+---------------- actual output
+Standard_Output from gnat2goto test:
+----------At: Do_Itype_Definition----------
+----------Unknown Ekind E_ACCESS_SUBTYPE----------
+N_Defining_Identifier "T4b" (Entity_Id=2491)
+ Parent = <empty>
+ Sloc = 12621  test.adb:14:4
+ Chars = "T4b" (Name_Id=300001462)
+ Next_Entity = N_Defining_Identifier "assert_modify" (Entity_Id=2476)
+ Scope = N_Defining_Identifier "test" (Entity_Id=2245)
+ Ekind = E_Access_Subtype
+ Etype = N_Defining_Identifier "modifier" (Entity_Id=2315)
+ Associated_Node_For_Itype = N_Procedure_Specification (Node_Id=2473)
+ Esize = 64 (Uint = 600032832)
+ RM_Size = 64 (Uint = 600032832)
+ Alignment = 4 (Uint = 600032772)
+ Directly_Designated_Type = N_Defining_Identifier "T1b" (Entity_Id=2451)
+ Can_Never_Be_Null = True
+ Has_Qualified_Name = True
+ Is_Frozen = True
+ Is_Internal = True
+ Is_Itype = True
+ Size_Known_At_Compile_Time = True
+
+[assert_modify.assertion.1] line 17 assertion Global_Number = 5: FAILURE
+[increment_by.assertion.1] line 5 Ada Check assertion: SUCCESS
+VERIFICATION FAILED
+
+---------------- XFAIL differences in output
+================ Bug arrays 
+---------------- unexpected output
+Standard_Error from gnat2goto arrays:
++===========================GNAT BUG DETECTED==============================+
+| GNU Ada (ada2goto) Assert_Failure failed postcondition from arrays.ads:52|
+| Error detected at arrays.adb:2:11                                        |
+| Please submit a bug report; see https://gcc.gnu.org/bugs/ .              |
+| Use a subject line meaningful to you and us to track the bug.            |
+| Include the entire contents of this bug box in the report.               |
+| Include the exact command that you entered.                              |
+| Also include sources listed below.                                       |
++==========================================================================+
+
+Please include these source files with error report
+Note that list may not be accurate in some cases,
+so please double check that the problem can still
+be reproduced with the set of files listed.
+Consider also -gnatd.n switch (see debug.adb).
+
+arrays.adb
+
+compilation abandoned
+
+ERROR code  5  returned by gnat2goto when translating arrays
+CBMC not run
+================ Bug arrays_multidimensional_declaration_failure1 
+---------------- unexpected output
+Standard_Error from gnat2goto arrays_multidimensional_declaration_failure1:
++===========================GNAT BUG DETECTED==============================+
+| GNU Ada (ada2goto) Assert_Failure failed postcondition from arrays.ads:52|
+| Error detected at arrays_multidimensional_declaration_failure1.adb:2:11  |
+| Please submit a bug report; see https://gcc.gnu.org/bugs/ .              |
+| Use a subject line meaningful to you and us to track the bug.            |
+| Include the entire contents of this bug box in the report.               |
+| Include the exact command that you entered.                              |
+| Also include sources listed below.                                       |
++==========================================================================+
+
+Please include these source files with error report
+Note that list may not be accurate in some cases,
+so please double check that the problem can still
+be reproduced with the set of files listed.
+Consider also -gnatd.n switch (see debug.adb).
+
+arrays_multidimensional_declaration_failure1.adb
+
+arrays_multidimensional_declaration_failure1.adb:4:04: warning: variable "AA1" is never read and never assigned
+compilation abandoned
+
+ERROR code  5  returned by gnat2goto when translating arrays_multidimensional_declaration_failure1
+CBMC not run
+================ Bug arrays_multidimensional_declaration_failure2 
+---------------- unexpected output
+Standard_Error from gnat2goto arrays_multidimensional_declaration_failure2:
+arrays_multidimensional_declaration_failure2.adb:4:04: warning: variable "AA" is never read and never assigned
+
+Error from cbmc arrays_multidimensional_declaration_failure2:
+--- begin invariant violation report ---
+Invariant check failed
+File: symex_assign.cpp:134 function: assign_from_struct
+Condition: rhs.operands().size() == components.size()
+Reason: Precondition
+Backtrace:
+0   cbmc                                0x000000010c5e8b4a _Z15print_backtraceRNSt3__113basic_ostreamIcNS_11char_traitsIcEEEE + 74
+1   cbmc                                0x000000010c5e90ec _Z13get_backtracev + 252
+2   cbmc                                0x000000010c3a23dc _Z29invariant_violated_structuredI17invariant_failedtJRKNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEEEENS1_9enable_ifIXsr3std10is_base_ofIS0_T_EE5valueEvE4typeES9_S9_iS9_DpOT0_ + 44
+3   cbmc                                0x000000010c3981b9 _Z25invariant_violated_stringRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEES7_iS7_S7_ + 9
+4   cbmc                                0x000000010c364e19 _ZN13symex_assignt18assign_from_structERK9ssa_exprtRK14expr_skeletontRK12struct_exprtRKNSt3__16vectorI5exprtNS9_9allocatorISB_EEEE + 1577
+5   cbmc                                0x000000010c32c472 _ZN11goto_symext12symex_assignER17goto_symex_statetRK12code_assignt + 1234
+6   cbmc                                0x000000010c383c20 _ZN11goto_symext24execute_next_instructionERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER17goto_symex_statet + 480
+7   cbmc                                0x000000010c3839ca _ZN11goto_symext10symex_stepERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER17goto_symex_statet + 42
+8   cbmc                                0x000000010c267e85 _ZN10symex_bmct10symex_stepERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER17goto_symex_statet + 597
+9   cbmc                                0x000000010c38172d _ZN11goto_symext19symex_threaded_stepER17goto_symex_statetRKNSt3__18functionIFRK14goto_functiontRK8dstringtEEE + 29
+10  cbmc                                0x000000010c381a4f _ZN11goto_symext16symex_with_stateER17goto_symex_statetRKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER13symbol_tablet + 191
+11  cbmc                                0x000000010c382a4d _ZN11goto_symext25symex_from_entry_point_ofERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER13symbol_tablet + 61
+12  cbmc                                0x000000010c25298a _ZN30multi_path_symex_only_checkert17generate_equationEv + 74
+13  cbmc                                0x000000010c251393 _ZN25multi_path_symex_checkertclERNSt3__113unordered_mapI8dstringt14property_infotNS0_4hashIS2_EENS0_8equal_toIS2_EENS0_9allocatorINS0_4pairIKS2_S3_EEEEEE + 83
+14  cbmc                                0x000000010c67dac2 _ZN43all_properties_verifier_with_trace_storagetI25multi_path_symex_checkertEclEv + 50
+15  cbmc                                0x000000010c6766b2 _ZN19cbmc_parse_optionst4doitEv + 3986
+16  cbmc                                0x000000010c5ffac9 _ZN19parse_options_baset4mainEv + 249
+17  cbmc                                0x000000010c671b7d main + 45
+18  libdyld.dylib                       0x00007fffa9862235 start + 1
+
+
+--- end invariant violation report ---
+
+ERROR code  -6 returned by cbmc when processing arrays_multidimensional_declaration_failure2
+
+================ Bug arrays_multidimensional_type_instantiation_failure 
+---------------- unexpected output
+Standard_Error from gnat2goto arrays_multidimensional_type_instantiation_failure:
+arrays_multidimensional_type_instantiation_failure.adb:3:04: warning: variable "AA1_One" is never read and never assigned
+
+Error from cbmc arrays_multidimensional_type_instantiation_failure:
+--- begin invariant violation report ---
+Invariant check failed
+File: symex_assign.cpp:134 function: assign_from_struct
+Condition: rhs.operands().size() == components.size()
+Reason: Precondition
+Backtrace:
+0   cbmc                                0x000000010a0afb4a _Z15print_backtraceRNSt3__113basic_ostreamIcNS_11char_traitsIcEEEE + 74
+1   cbmc                                0x000000010a0b00ec _Z13get_backtracev + 252
+2   cbmc                                0x0000000109e693dc _Z29invariant_violated_structuredI17invariant_failedtJRKNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEEEENS1_9enable_ifIXsr3std10is_base_ofIS0_T_EE5valueEvE4typeES9_S9_iS9_DpOT0_ + 44
+3   cbmc                                0x0000000109e5f1b9 _Z25invariant_violated_stringRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEES7_iS7_S7_ + 9
+4   cbmc                                0x0000000109e2be19 _ZN13symex_assignt18assign_from_structERK9ssa_exprtRK14expr_skeletontRK12struct_exprtRKNSt3__16vectorI5exprtNS9_9allocatorISB_EEEE + 1577
+5   cbmc                                0x0000000109df3472 _ZN11goto_symext12symex_assignER17goto_symex_statetRK12code_assignt + 1234
+6   cbmc                                0x0000000109e4ac20 _ZN11goto_symext24execute_next_instructionERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER17goto_symex_statet + 480
+7   cbmc                                0x0000000109e4a9ca _ZN11goto_symext10symex_stepERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER17goto_symex_statet + 42
+8   cbmc                                0x0000000109d2ee85 _ZN10symex_bmct10symex_stepERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER17goto_symex_statet + 597
+9   cbmc                                0x0000000109e4872d _ZN11goto_symext19symex_threaded_stepER17goto_symex_statetRKNSt3__18functionIFRK14goto_functiontRK8dstringtEEE + 29
+10  cbmc                                0x0000000109e48a4f _ZN11goto_symext16symex_with_stateER17goto_symex_statetRKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER13symbol_tablet + 191
+11  cbmc                                0x0000000109e49a4d _ZN11goto_symext25symex_from_entry_point_ofERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER13symbol_tablet + 61
+12  cbmc                                0x0000000109d1998a _ZN30multi_path_symex_only_checkert17generate_equationEv + 74
+13  cbmc                                0x0000000109d18393 _ZN25multi_path_symex_checkertclERNSt3__113unordered_mapI8dstringt14property_infotNS0_4hashIS2_EENS0_8equal_toIS2_EENS0_9allocatorINS0_4pairIKS2_S3_EEEEEE + 83
+14  cbmc                                0x000000010a144ac2 _ZN43all_properties_verifier_with_trace_storagetI25multi_path_symex_checkertEclEv + 50
+15  cbmc                                0x000000010a13d6b2 _ZN19cbmc_parse_optionst4doitEv + 3986
+16  cbmc                                0x000000010a0c6ac9 _ZN19parse_options_baset4mainEv + 249
+17  cbmc                                0x000000010a138b7d main + 45
+18  libdyld.dylib                       0x00007fffa9862235 start + 1
+19  ???                                 0x0000000000000002 0x0 + 2
+
+
+--- end invariant violation report ---
+
+ERROR code  -6 returned by cbmc when processing arrays_multidimensional_type_instantiation_failure
+
+================ Bug attrib_size_object 
+---------------- unexpected output
+Standard_Output from gnat2goto object_size:
+----------At: Process_Declaration----------
+----------size clause not applied by the front-end----------
+N_Attribute_Definition_Clause "size" (Node_Id=2286) (source,analyzed)
+ Sloc = 12478  object_size.adb:8:4
+ Chars = "size" (Name_Id=300000899)
+ Name = N_Identifier "small_pos" (Node_Id=2283)
+ Expression = N_Integer_Literal (Node_Id=2287)
+ Entity = N_Defining_Identifier "small_pos" (Entity_Id=2273)
+
+[object_size.assertion.1] line 15 assertion Small_Pos = 7: SUCCESS
+[object_size.assertion.2] line 22 assertion Small_Pos = 8: SUCCESS
+[object_size.assertion.4] line 29 Ada Check assertion: SUCCESS
+[object_size.assertion.3] line 30 assertion Uncons_SP = 32: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug attrib_size_simple 
+---------------- unexpected output
+Error from cbmc good_size:
+--- begin invariant violation report ---
+Invariant check failed
+File: flattening/boolbv_width.cpp:199 function: get_entry
+Condition: false
+Reason: Unimplemented
+Backtrace:
+0   cbmc                                0x000000010b7acb4a _Z15print_backtraceRNSt3__113basic_ostreamIcNS_11char_traitsIcEEEE + 74
+1   cbmc                                0x000000010b7ad0ec _Z13get_backtracev + 252
+2   cbmc                                0x000000010b5663dc _Z29invariant_violated_structuredI17invariant_failedtJRKNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEEEENS1_9enable_ifIXsr3std10is_base_ofIS0_T_EE5valueEvE4typeES9_S9_iS9_DpOT0_ + 44
+3   cbmc                                0x000000010b55c1b9 _Z25invariant_violated_stringRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEES7_iS7_S7_ + 9
+4   cbmc                                0x000000010b64dc1b _ZNK13boolbv_widtht9get_entryERK5typet + 4139
+5   cbmc                                0x000000010b6201ce _ZN7boolbvt14convert_symbolERK5exprt + 62
+6   cbmc                                0x000000010b61deee _ZN7boolbvt17convert_bitvectorERK5exprt + 174
+7   cbmc                                0x000000010b65764f _ZN12bv_pointerst17convert_bitvectorERK5exprt + 1967
+8   cbmc                                0x000000010b61d795 _ZN7boolbvt10convert_bvERK5exprtN6nonstd13optional_lite8optionalImEE + 293
+9   cbmc                                0x000000010b6309bf _ZN7boolbvt16convert_equalityERK11equal_exprt + 255
+10  cbmc                                0x000000010b652aaa _ZN12bv_pointerst12convert_restERK5exprt + 922
+11  cbmc                                0x000000010b6a84f2 _ZN17prop_conv_solvert12convert_boolERK5exprt + 2274
+12  cbmc                                0x000000010b6a7b75 _ZN17prop_conv_solvert7convertERK5exprt + 693
+13  cbmc                                0x000000010b6a7294 _ZN17prop_conv_solvert6handleERK5exprt + 68
+14  cbmc                                0x000000010b6a73a2 _ZThn8_N17prop_conv_solvert6handleERK5exprt + 18
+15  cbmc                                0x000000010b551619 _ZN22symex_target_equationt7convertER19decision_proceduret + 105
+16  cbmc                                0x000000010b40c10b _Z29convert_symex_target_equationR22symex_target_equationtR19decision_proceduretR16message_handlert + 123
+17  cbmc                                0x000000010b40dfd0 _Z24prepare_property_deciderRNSt3__113unordered_mapI8dstringt14property_infotNS_4hashIS1_EENS_8equal_toIS1_EENS_9allocatorINS_4pairIKS1_S2_EEEEEER22symex_target_equationtR28goto_symex_property_decidertR19ui_message_handlert + 224
+18  cbmc                                0x000000010b415448 _ZN25multi_path_symex_checkertclERNSt3__113unordered_mapI8dstringt14property_infotNS0_4hashIS2_EENS0_8equal_toIS2_EENS0_9allocatorINS0_4pairIKS2_S3_EEEEEE + 264
+19  cbmc                                0x000000010b841ac2 _ZN43all_properties_verifier_with_trace_storagetI25multi_path_symex_checkertEclEv + 50
+20  cbmc                                0x000000010b83a6b2 _ZN19cbmc_parse_optionst4doitEv + 3986
+21  cbmc                                0x000000010b7c3ac9 _ZN19parse_options_baset4mainEv + 249
+22  cbmc                                0x000000010b835b7d main + 45
+23  libdyld.dylib                       0x00007fffa9862235 start + 1
+
+
+--- end invariant violation report ---
+
+ERROR code  -6 returned by cbmc when processing good_size
+
+================ Bug attributes_continuous 
+---------------- unexpected output
+Standard_Error from gnat2goto attributes_continuous:
++===========================GNAT BUG DETECTED==============================+
+| GNU Ada (ada2goto) Assert_Failure failed precondition from tree_walk.adb:391|
+| Error detected at attributes_continuous.adb:1:11                         |
+| Please submit a bug report; see https://gcc.gnu.org/bugs/ .              |
+| Use a subject line meaningful to you and us to track the bug.            |
+| Include the entire contents of this bug box in the report.               |
+| Include the exact command that you entered.                              |
+| Also include sources listed below.                                       |
++==========================================================================+
+
+Please include these source files with error report
+Note that list may not be accurate in some cases,
+so please double check that the problem can still
+be reproduced with the set of files listed.
+Consider also -gnatd.n switch (see debug.adb).
+
+attributes_continuous.adb
+
+compilation abandoned
+
+ERROR code  5  returned by gnat2goto when translating attributes_continuous
+CBMC not run
+================ Bug character_subtype 
+---------------- expected output
+Standard_Output from gnat2goto char_subtype:
+N_Character_Literal "QU41" (Node_Id=2264) (source,analyzed)
+ Parent = N_Range (Node_Id=2265)
+ Sloc = 12353  char_subtype.adb:2:40
+ Chars = "QU41" (Name_Id=300001450)
+ Is_Static_Expression = True
+ Etype = N_Defining_Identifier "character" (Entity_Id=100s)
+ Char_Literal_Value = 65 (Uint = 600032833)
+N_Character_Literal "QU5a" (Node_Id=2266) (source,analyzed)
+ Parent = N_Range (Node_Id=2265)
+ Sloc = 12360  char_subtype.adb:2:47
+ Chars = "QU5a" (Name_Id=300001451)
+ Is_Static_Expression = True
+ Etype = N_Defining_Identifier "character" (Entity_Id=100s)
+ Char_Literal_Value = 90 (Uint = 600032858)
+N_In (Node_Id=2286) (source,analyzed)
+ Parent = N_Pragma_Argument_Association <No_Name> (Node_Id=2290)
+ Sloc = 12434  char_subtype.adb:7:25
+ Left_Opnd = N_Identifier "var_c" (Node_Id=2283)
+ Right_Opnd = N_Identifier "capitals" (Node_Id=2285)
+ Etype = N_Defining_Identifier "boolean" (Entity_Id=16s)
+
+Standard_Error from gnat2goto char_subtype:
+----------At: Do_Base_Range_Constraint----------
+----------unsupported lower range kind----------
+----------At: Do_Base_Range_Constraint----------
+----------unsupported upper range kind----------
+----------At: Do_Expression----------
+----------In----------
+
+Error from cbmc char_subtype:
+--- begin invariant violation report ---
+Invariant check failed
+File: symex_assign.cpp:35 function: symex_assign
+Condition: lhs.type() == rhs.type()
+Reason: assignments must be type consistent
+Backtrace:
+0   cbmc                                0x0000000108a5edba _Z15print_backtraceRNSt3__113basic_ostreamIcNS_11char_traitsIcEEEE + 74
+1   cbmc                                0x0000000108a5f38c _Z13get_backtracev + 252
+2   cbmc                                0x000000010880b6ac _Z29invariant_violated_structuredI17invariant_failedtJRKNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEEEENS1_9enable_ifIXsr3std10is_base_ofIS0_T_EE5valueEvE4typeES9_S9_iS9_DpOT0_ + 44
+3   cbmc                                0x00000001087cf784 _ZN11goto_symext12symex_assignER17goto_symex_statetRK12code_assignt + 1236
+4   cbmc                                0x00000001087f0e6e _ZN11goto_symext24execute_next_instructionERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER17goto_symex_statet + 718
+5   cbmc                                0x00000001087f0b2a _ZN11goto_symext10symex_stepERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER17goto_symex_statet + 42
+6   cbmc                                0x00000001086db94c _ZN10symex_bmct10symex_stepERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER17goto_symex_statet + 588
+7   cbmc                                0x00000001087ee80d _ZN11goto_symext19symex_threaded_stepER17goto_symex_statetRKNSt3__18functionIFRK14goto_functiontRK8dstringtEEE + 29
+8   cbmc                                0x00000001087eeb3f _ZN11goto_symext16symex_with_stateER17goto_symex_statetRKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER13symbol_tablet + 191
+9   cbmc                                0x00000001087efadd _ZN11goto_symext25symex_from_entry_point_ofERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER13symbol_tablet + 61
+10  cbmc                                0x00000001086c69ea _ZN30multi_path_symex_only_checkert17generate_equationEv + 74
+11  cbmc                                0x00000001086c5303 _ZN25multi_path_symex_checkertclERNSt3__113unordered_mapI8dstringt14property_infotNS0_4hashIS2_EENS0_8equal_toIS2_EENS0_9allocatorINS0_4pairIKS2_S3_EEEEEE + 83
+12  cbmc                                0x0000000108ae8e64 _ZN43all_properties_verifier_with_trace_storagetI25multi_path_symex_checkertEclEv + 52
+13  cbmc                                0x0000000108ae176d _ZN19cbmc_parse_optionst4doitEv + 4125
+14  cbmc                                0x0000000108a77619 _ZN19parse_options_baset4mainEv + 249
+15  cbmc                                0x0000000108add09d main + 45
+16  libdyld.dylib                       0x00007fff7c363015 start + 1
+
+
+--- end invariant violation report ---
+
+ERROR code  -6 returned by cbmc when processing char_subtype
+
+---------------- actual output
+Standard_Output from gnat2goto char_subtype:
+----------At: Do_Base_Range_Constraint----------
+----------unsupported lower range kind----------
+N_Character_Literal "QU41" (Node_Id=2264) (source,analyzed)
+ Parent = N_Range (Node_Id=2265)
+ Sloc = 12353  char_subtype.adb:2:40
+ Chars = "QU41" (Name_Id=300001450)
+ Is_Static_Expression = True
+ Etype = N_Defining_Identifier "character" (Entity_Id=100s)
+ Char_Literal_Value = 65 (Uint = 600032833)
+
+Error from cbmc char_subtype:
+--- begin invariant violation report ---
+Invariant check failed
+File: flattening/boolbv_width.cpp:199 function: get_entry
+Condition: false
+Reason: Unimplemented
+Backtrace:
+0   cbmc                                0x0000000107c73b4a _Z15print_backtraceRNSt3__113basic_ostreamIcNS_11char_traitsIcEEEE + 74
+1   cbmc                                0x0000000107c740ec _Z13get_backtracev + 252
+2   cbmc                                0x0000000107a2d3dc _Z29invariant_violated_structuredI17invariant_failedtJRKNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEEEENS1_9enable_ifIXsr3std10is_base_ofIS0_T_EE5valueEvE4typeES9_S9_iS9_DpOT0_ + 44
+3   cbmc                                0x0000000107a231b9 _Z25invariant_violated_stringRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEES7_iS7_S7_ + 9
+4   cbmc                                0x0000000107b14c1b _ZNK13boolbv_widtht9get_entryERK5typet + 4139
+5   cbmc                                0x0000000107b0d963 _ZN7boolbvt15type_conversionERK5typetRKNSt3__16vectorI8literaltNS3_9allocatorIS5_EEEES2_RS8_ + 307
+6   cbmc                                0x0000000107b0d752 _ZN7boolbvt19convert_bv_typecastERK14typecast_exprt + 146
+7   cbmc                                0x0000000107ae4eee _ZN7boolbvt17convert_bitvectorERK5exprt + 174
+8   cbmc                                0x0000000107b1e64f _ZN12bv_pointerst17convert_bitvectorERK5exprt + 1967
+9   cbmc                                0x0000000107ae4795 _ZN7boolbvt10convert_bvERK5exprtN6nonstd13optional_lite8optionalImEE + 293
+10  cbmc                                0x0000000107ae91bc _ZN7boolbvt27boolbv_set_equality_to_trueERK11equal_exprt + 204
+11  cbmc                                0x0000000107ae9295 _ZN7boolbvt6set_toERK5exprtb + 101
+12  cbmc                                0x0000000107a188d4 _ZN22symex_target_equationt19convert_assignmentsER19decision_proceduret + 196
+13  cbmc                                0x0000000107a185d4 _ZN22symex_target_equationt7convertER19decision_proceduret + 36
+14  cbmc                                0x00000001078d310b _Z29convert_symex_target_equationR22symex_target_equationtR19decision_proceduretR16message_handlert + 123
+15  cbmc                                0x00000001078d4fd0 _Z24prepare_property_deciderRNSt3__113unordered_mapI8dstringt14property_infotNS_4hashIS1_EENS_8equal_toIS1_EENS_9allocatorINS_4pairIKS1_S2_EEEEEER22symex_target_equationtR28goto_symex_property_decidertR19ui_message_handlert + 224
+16  cbmc                                0x00000001078dc448 _ZN25multi_path_symex_checkertclERNSt3__113unordered_mapI8dstringt14property_infotNS0_4hashIS2_EENS0_8equal_toIS2_EENS0_9allocatorINS0_4pairIKS2_S3_EEEEEE + 264
+17  cbmc                                0x0000000107d08ac2 _ZN43all_properties_verifier_with_trace_storagetI25multi_path_symex_checkertEclEv + 50
+18  cbmc                                0x0000000107d016b2 _ZN19cbmc_parse_optionst4doitEv + 3986
+19  cbmc                                0x0000000107c8aac9 _ZN19parse_options_baset4mainEv + 249
+20  cbmc                                0x0000000107cfcb7d main + 45
+21  libdyld.dylib                       0x00007fffa9862235 start + 1
+22  ???                                 0x0000000000000002 0x0 + 2
+
+
+--- end invariant violation report ---
+
+ERROR code  -6 returned by cbmc when processing char_subtype
+
+================ Bug deferred_constant_import 
+---------------- expected output
+Standard_Error from gnat2goto deferred_const_import:
+Warning: Pragmas in declarations unhandled
+
+[assertion.1] Range Check: SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+Standard_Error from gnat2goto deferred_const_import:
+Warning: Multi-language analysis unsupported.
+
+Error from cbmc deferred_const_import:
+SUPPORT FUNCTION GENERATION ERROR
+
+ERROR code  6 returned by cbmc when processing deferred_const_import
+
+================ Bug dynamic_range_variable 
+---------------- unexpected output
+Standard_Output from gnat2goto dynamic_range_variable:
+----------At: Do_Range_Constraint----------
+----------only static ranges are supported----------
+N_Integer_Literal (Node_Id=2285) (source,analyzed)
+ Parent = N_Range (Node_Id=2286)
+ Sloc = 12466  dynamic_range_variable.adb:4:58
+ Is_Static_Expression = True
+ Etype = N_Defining_Identifier "Tstatic_range_typeB" (Entity_Id=2312)
+ Intval = 1 (Uint = 600032769)
+----------At: Do_Constant----------
+----------Unsupported constant type----------
+N_Integer_Literal (Node_Id=2298) (source,analyzed)
+ Parent = N_Object_Declaration (Node_Id=2297)
+ Sloc = 12513  dynamic_range_variable.adb:5:32
+ Do_Range_Check = True
+ Is_Static_Expression = True
+ Etype = N_Defining_Identifier "dynamic_range_type" (Entity_Id=2276)
+ Intval = 20 (Uint = 600032788)
+
+Standard_Error from gnat2goto dynamic_range_variable:
++===========================GNAT BUG DETECTED==============================+
+| GNU Ada (ada2goto) Assert_Failure failed precondition from range_check.ads:54|
+| Error detected at dynamic_range_variable.adb:1:11                        |
+| Please submit a bug report; see https://gcc.gnu.org/bugs/ .              |
+| Use a subject line meaningful to you and us to track the bug.            |
+| Include the entire contents of this bug box in the report.               |
+| Include the exact command that you entered.                              |
+| Also include sources listed below.                                       |
++==========================================================================+
+
+Please include these source files with error report
+Note that list may not be accurate in some cases,
+so please double check that the problem can still
+be reproduced with the set of files listed.
+Consider also -gnatd.n switch (see debug.adb).
+
+dynamic_range_variable.adb
+
+compilation abandoned
+
+ERROR code  5  returned by gnat2goto when translating dynamic_range_variable
+CBMC not run
+================ Bug limited_private_record_type 
+---------------- expected output
+[test.assertion.1] line 5 assertion Counter.Value_Equals (C, 0): SUCCESS
+[test.assertion.2] line 7 assertion Counter.Value_Equals (C, 1): SUCCESS
+[test.assertion.3] line 8 assertion False: FAILURE
+VERIFICATION FAILED
+---------------- actual output
+Standard_Output from gnat2goto counter:
+----------At: Do_Aggregate_Literal----------
+----------Unhandled aggregate kind: E_LIMITED_PRIVATE_TYPE----------
+N_Aggregate (Node_Id=2274) (source,analyzed)
+ Rewritten: original node = N_Aggregate (Node_Id=2518)
+ Parent = N_Simple_Return_Statement (Node_Id=2500)
+ Sloc = 12368  counter.adb:3:6
+ Paren_Count = 1
+ Etype = N_Defining_Identifier "t" (Entity_Id=2360)
+ Component_Associations = List (List_Id=-99999943)
+
+Error from cbmc test:
+--- begin invariant violation report ---
+Invariant check failed
+File: goto_convert.cpp:1266 function: convert_return
+Condition: function must return value
+Reason: new_code.has_return_value()
+Backtrace:
+0   cbmc                                0x00000001041ffb4a _Z15print_backtraceRNSt3__113basic_ostreamIcNS_11char_traitsIcEEEE + 74
+1   cbmc                                0x00000001042000ec _Z13get_backtracev + 252
+2   cbmc                                0x000000010421ee00 _Z29invariant_violated_structuredI34invariant_with_diagnostics_failedtJRNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEES7_EENS1_9enable_ifIXsr3std10is_base_ofI17invariant_failedtT_EE5valueEvE4typeERKS7_SF_iSF_DpOT0_ + 48
+3   cbmc                                0x0000000103ec2084 _Z24report_invariant_failureIJRK16source_locationtEEvRKNSt3__112basic_stringIcNS3_11char_traitsIcEENS3_9allocatorIcEEEESB_iS9_S9_DpOT_ + 68
+4   cbmc                                0x0000000103e9d65e _ZN13goto_convertt14convert_returnERK12code_returntR13goto_programtRK8dstringt + 1966
+5   cbmc                                0x0000000103e96d52 _ZN13goto_convertt7convertERK5codetR13goto_programtRK8dstringt + 898
+6   cbmc                                0x0000000103e991a1 _ZN13goto_convertt13convert_blockERK11code_blocktR13goto_programtRK8dstringt + 129
+7   cbmc                                0x0000000103e96a28 _ZN13goto_convertt7convertERK5codetR13goto_programtRK8dstringt + 88
+8   cbmc                                0x0000000103e991a1 _ZN13goto_convertt13convert_blockERK11code_blocktR13goto_programtRK8dstringt + 129
+9   cbmc                                0x0000000103e96a28 _ZN13goto_convertt7convertERK5codetR13goto_programtRK8dstringt + 88
+10  cbmc                                0x0000000103e964f2 _ZN13goto_convertt16goto_convert_recERK5codetR13goto_programtRK8dstringt + 34
+11  cbmc                                0x0000000103ea8786 _ZN23goto_convert_functionst16convert_functionERK8dstringtR14goto_functiont + 1158
+12  cbmc                                0x0000000103ea8234 _ZN23goto_convert_functionst12goto_convertER15goto_functionst + 388
+13  cbmc                                0x0000000103ea99d9 _Z12goto_convertR18symbol_table_basetR15goto_functionstR16message_handlert + 121
+14  cbmc                                0x0000000103ed0916 _Z21initialize_goto_modelRKNSt3__16vectorINS_12basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEENS4_IS6_EEEER16message_handlertRK8optionst + 3222
+15  cbmc                                0x000000010428e46c _ZN19cbmc_parse_optionst16get_goto_programER11goto_modeltRK8optionstRK8cmdlinetR19ui_message_handlert + 124
+16  cbmc                                0x000000010428cb87 _ZN19cbmc_parse_optionst4doitEv + 1127
+17  cbmc                                0x0000000104216ac9 _ZN19parse_options_baset4mainEv + 249
+18  cbmc                                0x0000000104288b7d main + 45
+19  libdyld.dylib                       0x00007fffa9862235 start + 1
+
+Diagnostics: 
+<< EXTRA DIAGNOSTICS >>
+source location: file counter.adb line 3 column 6
+<< END EXTRA DIAGNOSTICS >>
+
+--- end invariant violation report ---
+
+ERROR code  -6 returned by cbmc when processing test
+
+================ Bug loop_array_range 
+---------------- unexpected output
+[precondition_instance.1] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.2] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.3] file <internal> memcpy destination region writeable: SUCCESS
+[loop_array_range.assertion.1] line 8 Ada Check assertion: SUCCESS
+[loop_array_range.assertion.3] line 8 Ada Check assertion: SUCCESS
+[loop_array_range.assertion.2] line 11 assertion Sum=6: FAILURE
+VERIFICATION FAILED
+================ Bug object_declaration_statement_bounds_crashing 
+---------------- unexpected output
+Standard_Output from gnat2goto object_declaration_statement_bounds_crashing:
+----------At: Do_Itype_Integer_Subtype----------
+----------Non-literal bound unsupported----------
+N_Defining_Identifier "T2b" (Entity_Id=2457)
+ Parent = <empty>
+ Sloc = 12509  object_declaration_statement_bounds_crashing.adb:8:11
+ Chars = "T2b" (Name_Id=300001458)
+ Scope = N_Defining_Identifier "L_1" (Entity_Id=2345)
+ Ekind = E_Signed_Integer_Subtype
+ Etype = N_Defining_Identifier "Trange_typeB" (Entity_Id=2388)
+ Associated_Node_For_Itype = N_Loop_Parameter_Specification (Node_Id=2307)
+ Esize = 8 (Uint = 600032776)
+ RM_Size = 8 (Uint = 600032776)
+ Alignment = 1 (Uint = 600032769)
+ Scalar_Range = N_Range (Node_Id=2316)
+ Is_Frozen = True
+ Is_Internal = True
+ Is_Itype = True
+ Needs_Debug_Info = True
+ Size_Known_At_Compile_Time = True
+----------At: Do_Type_Reference----------
+----------Type of type not a type----------
+N_Defining_Identifier "T2b" (Entity_Id=2457)
+ Parent = <empty>
+ Sloc = 12509  object_declaration_statement_bounds_crashing.adb:8:11
+ Chars = "T2b" (Name_Id=300001458)
+ Scope = N_Defining_Identifier "L_1" (Entity_Id=2345)
+ Ekind = E_Signed_Integer_Subtype
+ Etype = N_Defining_Identifier "Trange_typeB" (Entity_Id=2388)
+ Associated_Node_For_Itype = N_Loop_Parameter_Specification (Node_Id=2307)
+ Esize = 8 (Uint = 600032776)
+ RM_Size = 8 (Uint = 600032776)
+ Alignment = 1 (Uint = 600032769)
+ Scalar_Range = N_Range (Node_Id=2316)
+ Is_Frozen = True
+ Is_Internal = True
+ Is_Itype = True
+ Needs_Debug_Info = True
+ Size_Known_At_Compile_Time = True
+
+Error from cbmc object_declaration_statement_bounds_crashing:
+--- begin invariant violation report ---
+Invariant check failed
+File: flattening/boolbv_width.cpp:199 function: get_entry
+Condition: false
+Reason: Unimplemented
+Backtrace:
+0   cbmc                                0x0000000101e09b4a _Z15print_backtraceRNSt3__113basic_ostreamIcNS_11char_traitsIcEEEE + 74
+1   cbmc                                0x0000000101e0a0ec _Z13get_backtracev + 252
+2   cbmc                                0x0000000101bc33dc _Z29invariant_violated_structuredI17invariant_failedtJRKNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEEEENS1_9enable_ifIXsr3std10is_base_ofIS0_T_EE5valueEvE4typeES9_S9_iS9_DpOT0_ + 44
+3   cbmc                                0x0000000101bb91b9 _Z25invariant_violated_stringRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEES7_iS7_S7_ + 9
+4   cbmc                                0x0000000101caac1b _ZNK13boolbv_widtht9get_entryERK5typet + 4139
+5   cbmc                                0x0000000101ca3963 _ZN7boolbvt15type_conversionERK5typetRKNSt3__16vectorI8literaltNS3_9allocatorIS5_EEEES2_RS8_ + 307
+6   cbmc                                0x0000000101ca3752 _ZN7boolbvt19convert_bv_typecastERK14typecast_exprt + 146
+7   cbmc                                0x0000000101c7aeee _ZN7boolbvt17convert_bitvectorERK5exprt + 174
+8   cbmc                                0x0000000101cb464f _ZN12bv_pointerst17convert_bitvectorERK5exprt + 1967
+9   cbmc                                0x0000000101c7a795 _ZN7boolbvt10convert_bvERK5exprtN6nonstd13optional_lite8optionalImEE + 293
+10  cbmc                                0x0000000101c858c7 _ZN7boolbvt14convert_bv_relERK21binary_relation_exprt + 119
+11  cbmc                                0x0000000101cafaaa _ZN12bv_pointerst12convert_restERK5exprt + 922
+12  cbmc                                0x0000000101d054f2 _ZN17prop_conv_solvert12convert_boolERK5exprt + 2274
+13  cbmc                                0x0000000101d04b75 _ZN17prop_conv_solvert7convertERK5exprt + 693
+14  cbmc                                0x0000000101d05219 _ZN17prop_conv_solvert12convert_boolERK5exprt + 1545
+15  cbmc                                0x0000000101d04b75 _ZN17prop_conv_solvert7convertERK5exprt + 693
+16  cbmc                                0x0000000101d04efd _ZN17prop_conv_solvert12convert_boolERK5exprt + 749
+17  cbmc                                0x0000000101d04b75 _ZN17prop_conv_solvert7convertERK5exprt + 693
+18  cbmc                                0x0000000101d04294 _ZN17prop_conv_solvert6handleERK5exprt + 68
+19  cbmc                                0x0000000101d043a2 _ZThn8_N17prop_conv_solvert6handleERK5exprt + 18
+20  cbmc                                0x0000000101baefa6 _ZN22symex_target_equationt18convert_assertionsER19decision_proceduret + 1126
+21  cbmc                                0x0000000101bae64f _ZN22symex_target_equationt7convertER19decision_proceduret + 159
+22  cbmc                                0x0000000101a6910b _Z29convert_symex_target_equationR22symex_target_equationtR19decision_proceduretR16message_handlert + 123
+23  cbmc                                0x0000000101a6afd0 _Z24prepare_property_deciderRNSt3__113unordered_mapI8dstringt14property_infotNS_4hashIS1_EENS_8equal_toIS1_EENS_9allocatorINS_4pairIKS1_S2_EEEEEER22symex_target_equationtR28goto_symex_property_decidertR19ui_message_handlert + 224
+24  cbmc                                0x0000000101a72448 _ZN25multi_path_symex_checkertclERNSt3__113unordered_mapI8dstringt14property_infotNS0_4hashIS2_EENS0_8equal_toIS2_EENS0_9allocatorINS0_4pairIKS2_S3_EEEEEE + 264
+25  cbmc                                0x0000000101e9eac2 _ZN43all_properties_verifier_with_trace_storagetI25multi_path_symex_checkertEclEv + 50
+26  cbmc                                0x0000000101e976b2 _ZN19cbmc_parse_optionst4doitEv + 3986
+27  cbmc                                0x0000000101e20ac9 _ZN19parse_options_baset4mainEv + 249
+28  cbmc                                0x0000000101e92b7d main + 45
+29  libdyld.dylib                       0x00007fffa9862235 start + 1
+
+
+--- end invariant violation report ---
+
+ERROR code  -6 returned by cbmc when processing object_declaration_statement_bounds_crashing
+
+================ Bug op_concat 
+---------------- unexpected output
+Standard_Output from gnat2goto op_concat:
+----------At: Do_Operator_General----------
+----------Concat unsupported----------
+N_Op_Concat "Oconcat" (Node_Id=2314) (source,analyzed)
+ Sloc = 12535  op_concat.adb:12:40
+ Chars = "Oconcat" (Name_Id=300000412)
+ Left_Opnd = N_Slice (Node_Id=2313)
+ Right_Opnd = N_Slice (Node_Id=2319)
+ Entity = N_Defining_Operator_Symbol "Oconcat" (Entity_Id=2344)
+ Etype = N_Defining_Identifier "TarrB" (Entity_Id=2337)
+
+Error from cbmc op_concat:
+warning: ignoring nil
+  * type: nil
+  * #source_location: 
+    * file: <internal>
+    * line: 
+    * column: 
+    * comment: 
+    * property_class: 
+    * property_id: 
+    * function: 
+    * working_directory: 
+    * java_bytecode_index: 
+  * range_check: 0
+--- begin invariant violation report ---
+Invariant check failed
+File: flattening/boolbv_width.cpp:199 function: get_entry
+Condition: false
+Reason: Unimplemented
+Backtrace:
+0   cbmc                                0x000000010d5fcb4a _Z15print_backtraceRNSt3__113basic_ostreamIcNS_11char_traitsIcEEEE + 74
+1   cbmc                                0x000000010d5fd0ec _Z13get_backtracev + 252
+2   cbmc                                0x000000010d3b63dc _Z29invariant_violated_structuredI17invariant_failedtJRKNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEEEENS1_9enable_ifIXsr3std10is_base_ofIS0_T_EE5valueEvE4typeES9_S9_iS9_DpOT0_ + 44
+3   cbmc                                0x000000010d3ac1b9 _Z25invariant_violated_stringRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEES7_iS7_S7_ + 9
+4   cbmc                                0x000000010d49dc1b _ZNK13boolbv_widtht9get_entryERK5typet + 4139
+5   cbmc                                0x000000010d46e8b4 _ZN7boolbvt17convert_bitvectorERK5exprt + 2676
+6   cbmc                                0x000000010d4a764f _ZN12bv_pointerst17convert_bitvectorERK5exprt + 1967
+7   cbmc                                0x000000010d46d795 _ZN7boolbvt10convert_bvERK5exprtN6nonstd13optional_lite8optionalImEE + 293
+8   cbmc                                0x000000010d49670a _ZN7boolbvt19convert_bv_typecastERK14typecast_exprt + 74
+9   cbmc                                0x000000010d46deee _ZN7boolbvt17convert_bitvectorERK5exprt + 174
+10  cbmc                                0x000000010d4a764f _ZN12bv_pointerst17convert_bitvectorERK5exprt + 1967
+11  cbmc                                0x000000010d46d795 _ZN7boolbvt10convert_bvERK5exprtN6nonstd13optional_lite8optionalImEE + 293
+12  cbmc                                0x000000010d4721bc _ZN7boolbvt27boolbv_set_equality_to_trueERK11equal_exprt + 204
+13  cbmc                                0x000000010d472295 _ZN7boolbvt6set_toERK5exprtb + 101
+14  cbmc                                0x000000010d3a18d4 _ZN22symex_target_equationt19convert_assignmentsER19decision_proceduret + 196
+15  cbmc                                0x000000010d3a15d4 _ZN22symex_target_equationt7convertER19decision_proceduret + 36
+16  cbmc                                0x000000010d25c10b _Z29convert_symex_target_equationR22symex_target_equationtR19decision_proceduretR16message_handlert + 123
+17  cbmc                                0x000000010d25dfd0 _Z24prepare_property_deciderRNSt3__113unordered_mapI8dstringt14property_infotNS_4hashIS1_EENS_8equal_toIS1_EENS_9allocatorINS_4pairIKS1_S2_EEEEEER22symex_target_equationtR28goto_symex_property_decidertR19ui_message_handlert + 224
+18  cbmc                                0x000000010d265448 _ZN25multi_path_symex_checkertclERNSt3__113unordered_mapI8dstringt14property_infotNS0_4hashIS2_EENS0_8equal_toIS2_EENS0_9allocatorINS0_4pairIKS2_S3_EEEEEE + 264
+19  cbmc                                0x000000010d691ac2 _ZN43all_properties_verifier_with_trace_storagetI25multi_path_symex_checkertEclEv + 50
+20  cbmc                                0x000000010d68a6b2 _ZN19cbmc_parse_optionst4doitEv + 3986
+21  cbmc                                0x000000010d613ac9 _ZN19parse_options_baset4mainEv + 249
+22  cbmc                                0x000000010d685b7d main + 45
+23  libdyld.dylib                       0x00007fffa9862235 start + 1
+24  ???                                 0x0000000000000002 0x0 + 2
+
+
+--- end invariant violation report ---
+
+ERROR code  -6 returned by cbmc when processing op_concat
+
+================ Bug private_type_dec_abstract 
+---------------- unexpected output
+Standard_Output from gnat2goto private_dec_abstract:
+----------At: Do_Full_Type_Declaration----------
+----------type not in symbol table after declaration----------
+N_Full_Type_Declaration (Node_Id=2347) (source,analyzed)
+ Sloc = 16502  private_dec_abstract.ads:7:4
+ Defining_Identifier = N_Defining_Identifier "dec" (Entity_Id=2326)
+ Type_Definition = N_Record_Definition (Node_Id=2333)
+
+Standard_Error from gnat2goto private_dec_abstract:
++===========================GNAT BUG DETECTED==============================+
+| GNU Ada (ada2goto) Constraint_Error Symbol_Table_Info.Symbol_Maps.Constant_Reference: key not in map|
+| Error detected at system.ads:174:5                                       |
+| Please submit a bug report; see https://gcc.gnu.org/bugs/ .              |
+| Use a subject line meaningful to you and us to track the bug.            |
+| Include the entire contents of this bug box in the report.               |
+| Include the exact command that you entered.                              |
+| Also include sources listed below.                                       |
++==========================================================================+
+
+Please include these source files with error report
+Note that list may not be accurate in some cases,
+so please double check that the problem can still
+be reproduced with the set of files listed.
+Consider also -gnatd.n switch (see debug.adb).
+
+private_dec_abstract.adb
+private_dec_abstract.ads
+
+compilation abandoned
+
+ERROR code  5  returned by gnat2goto when translating private_dec_abstract
+CBMC not run
+================ Bug private_type_dec_extension 
+---------------- unexpected output
+Standard_Output from gnat2goto private_dec_extension:
+----------At: Process_Declaration----------
+----------Unknown declaration kind----------
+N_Private_Extension_Declaration (Node_Id=2313) (source,analyzed)
+ Sloc = 16477  private_dec_extension.ads:3:4
+ Defining_Identifier = N_Defining_Identifier "string_input" (Entity_Id=2304)
+ Subtype_Indication = N_Identifier "input_source" (Node_Id=2312)
+----------At: Do_Full_Type_Declaration----------
+----------type not in symbol table after declaration----------
+N_Full_Type_Declaration (Node_Id=2354) (source,analyzed)
+ Sloc = 16583  private_dec_extension.ads:7:4
+ Defining_Identifier = N_Defining_Identifier "input_source" (Entity_Id=2332)
+ Type_Definition = N_Record_Definition (Node_Id=2339)
+----------At: Do_Derived_Type_Definition----------
+----------record extension unsupported----------
+N_Derived_Type_Definition (Node_Id=2362) (source)
+ Parent = N_Full_Type_Declaration (Node_Id=2378)
+ Sloc = 16709  private_dec_extension.ads:11:25
+ Subtype_Indication = N_Identifier "input_source" (Node_Id=2363)
+ Record_Extension_Part = N_Record_Definition (Node_Id=2364)
+
+Error from cbmc private_dec_extension:
+SUPPORT FUNCTION GENERATION ERROR
+
+ERROR code  6 returned by cbmc when processing private_dec_extension
+
+================ Bug range_second 
+---------------- unexpected output
+Standard_Error from gnat2goto range_second:
+range_second.adb:19:13: warning: value not in range of type "Result_Indicator_Type" defined at line 10
+range_second.adb:19:13: warning: "Constraint_Error" will be raised at run time
+
+Standard_Error from gnat2goto range_third:
+range_third.adb:1:11: warning: file name does not match unit name, should be "range_second.adb"
+
+Error from cbmc range_third:
+function '__CPROVER__start' in module '' is shadowed by a definition in module ''
+
+reason for conflict at #this: conflict on POD
+
+int
+short int
+error: conflicting function declarations 'range_second__testable'
+old definition in module '' 
+void (int range_second__testable__result$$range_second__testable__result)
+new definition in module '' 
+void (short int range_second__testable__result$link1$$range_second__testable__result$link1)
+function 'range_second' in module '' is shadowed by a definition in module ''
+CONVERSION ERROR
+
+ERROR code  6 returned by cbmc when processing range_third
+
+================ Bug record_extension 
+---------------- unexpected output
+Standard_Output from gnat2goto record_init:
+----------At: Do_Derived_Type_Definition----------
+----------record extension unsupported----------
+N_Derived_Type_Definition (Node_Id=2295) (source)
+ Parent = N_Full_Type_Declaration (Node_Id=2299)
+ Sloc = 12428  record_init.adb:7:15
+ Subtype_Indication = N_Identifier "r1" (Node_Id=2296)
+ Record_Extension_Part = N_Record_Definition (Node_Id=2297)
+
+Standard_Error from gnat2goto record_init:
+record_init.adb:1:11: warning: file name does not match unit name, should be "record_extension.adb"
+
+[record_extension.assertion.1] line 10 assertion Var.B: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug record_init 
+---------------- unexpected output
+Standard_Error from gnat2goto record_init:
+record_init.adb:4:09: warning: creation of "R1" object may raise Storage_Error
+record_init.adb:12:09: warning: creation of "R3" object may raise Storage_Error
+record_init.adb:23:04: warning: variable "Inst3" is never read and never assigned
+record_init.adb:24:04: warning: variable "Inst4" is never read and never assigned
+record_init.adb:26:04: warning: variable "Inst6" is never read and never assigned
+
+Error from cbmc record_init:
+--- begin invariant violation report ---
+Invariant check failed
+File: ../util/std_types.h:305 function: to_struct_type
+Condition: can_cast_type<struct_typet>(type)
+Reason: Precondition
+Backtrace:
+0   cbmc                                0x00000001073e1b4a _Z15print_backtraceRNSt3__113basic_ostreamIcNS_11char_traitsIcEEEE + 74
+1   cbmc                                0x00000001073e20ec _Z13get_backtracev + 252
+2   cbmc                                0x000000010719b3dc _Z29invariant_violated_structuredI17invariant_failedtJRKNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEEEENS1_9enable_ifIXsr3std10is_base_ofIS0_T_EE5valueEvE4typeES9_S9_iS9_DpOT0_ + 44
+3   cbmc                                0x00000001071911b9 _Z25invariant_violated_stringRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEES7_iS7_S7_ + 9
+4   cbmc                                0x0000000107191dd7 _Z14to_struct_typeRK5typet + 311
+5   cbmc                                0x000000010715d849 _ZN13symex_assignt18assign_from_structERK9ssa_exprtRK14expr_skeletontRK12struct_exprtRKNSt3__16vectorI5exprtNS9_9allocatorISB_EEEE + 89
+6   cbmc                                0x000000010715daf7 _ZN13symex_assignt18assign_from_structERK9ssa_exprtRK14expr_skeletontRK12struct_exprtRKNSt3__16vectorI5exprtNS9_9allocatorISB_EEEE + 775
+7   cbmc                                0x0000000107125472 _ZN11goto_symext12symex_assignER17goto_symex_statetRK12code_assignt + 1234
+8   cbmc                                0x000000010717cc20 _ZN11goto_symext24execute_next_instructionERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER17goto_symex_statet + 480
+9   cbmc                                0x000000010717c9ca _ZN11goto_symext10symex_stepERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER17goto_symex_statet + 42
+10  cbmc                                0x0000000107060e85 _ZN10symex_bmct10symex_stepERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER17goto_symex_statet + 597
+11  cbmc                                0x000000010717a72d _ZN11goto_symext19symex_threaded_stepER17goto_symex_statetRKNSt3__18functionIFRK14goto_functiontRK8dstringtEEE + 29
+12  cbmc                                0x000000010717aa4f _ZN11goto_symext16symex_with_stateER17goto_symex_statetRKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER13symbol_tablet + 191
+13  cbmc                                0x000000010717ba4d _ZN11goto_symext25symex_from_entry_point_ofERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER13symbol_tablet + 61
+14  cbmc                                0x000000010704b98a _ZN30multi_path_symex_only_checkert17generate_equationEv + 74
+15  cbmc                                0x000000010704a393 _ZN25multi_path_symex_checkertclERNSt3__113unordered_mapI8dstringt14property_infotNS0_4hashIS2_EENS0_8equal_toIS2_EENS0_9allocatorINS0_4pairIKS2_S3_EEEEEE + 83
+16  cbmc                                0x0000000107476ac2 _ZN43all_properties_verifier_with_trace_storagetI25multi_path_symex_checkertEclEv + 50
+17  cbmc                                0x000000010746f6b2 _ZN19cbmc_parse_optionst4doitEv + 3986
+18  cbmc                                0x00000001073f8ac9 _ZN19parse_options_baset4mainEv + 249
+19  cbmc                                0x000000010746ab7d main + 45
+20  libdyld.dylib                       0x00007fffa9862235 start + 1
+
+
+--- end invariant violation report ---
+
+ERROR code  -6 returned by cbmc when processing record_init
+
+================ Bug representation_clause_component_size_change 
+---------------- unexpected output
+Standard_Output from gnat2goto test:
+----------At: Process_Declaration----------
+----------Having component sizes be different from the size of their underlying type is currently not supported----------
+N_Attribute_Definition_Clause "component_size" (Node_Id=2335) (source,analyzed)
+ Sloc = 12686  test.adb:13:4
+ Chars = "component_size" (Name_Id=300000806)
+ Name = N_Identifier "storage_array" (Node_Id=2332)
+ Expression = N_Integer_Literal (Node_Id=2336)
+ Entity = N_Defining_Identifier "storage_array" (Entity_Id=2319)
+
+[precondition_instance.1] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.2] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.3] file <internal> memcpy destination region writeable: SUCCESS
+[test.assertion.1] line 17 assertion My_Storage_Array(2)=2: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug reverse 
+---------------- expected output
+VERIFICATION SUCCESSFUL
+---------------- actual output
+[reversep.assertion.1] line 7 assertion A = 1: FAILURE
+VERIFICATION FAILED
+================ Bug separate_subprog_assert_check 
+---------------- expected output
+[2] file p-inc.asu line 6 assertion: SUCCESS
+[1] file p.adb line 16 assertion: SUCCESS
+VERIFICATION SUCCEEDED
+---------------- actual output
+[inc.assertion.1] line 5 Ada Check assertion: FAILURE
+[inc.assertion.2] line 6 assertion N = Old_N + 1: SUCCESS
+[p.assertion.1] line 16 assertion X = Old_X + 1: FAILURE
+VERIFICATION FAILED
+================ Bug size_attribute_clause 
+---------------- unexpected output
+Standard_Output from gnat2goto check_size:
+----------At: Process_Declaration----------
+----------size clause not applied by the front-end----------
+N_Attribute_Definition_Clause "size" (Node_Id=2310) (source,analyzed)
+ Sloc = 12468  check_size.adb:7:4
+ Chars = "size" (Name_Id=300000899)
+ Name = N_Identifier "t_1" (Node_Id=2307)
+ Expression = N_Integer_Literal (Node_Id=2311)
+ Entity = N_Defining_Identifier "t_1" (Entity_Id=2291)
+----------At: Make_Default_Initialiser----------
+----------Unknown Ekind----------
+N_Defining_Identifier "Tvar_size_1S" (Entity_Id=2520)
+ Parent = N_Subtype_Declaration (Node_Id=2528)
+ Sloc = 12668  check_size.adb:18:4
+ Chars = "Tvar_size_1S" (Name_Id=300001465)
+ Next_Entity = N_Defining_Identifier "var_size_2" (Entity_Id=2389)
+ Scope = N_Defining_Identifier "check_size" (Entity_Id=2245)
+ Ekind = E_Signed_Integer_Subtype
+ Etype = N_Defining_Identifier "integer" (Entity_Id=1009s)
+ Esize = 32 (Uint = 600032800)
+ RM_Size = 6 (Uint = 600032774)
+ Alignment = 4 (Uint = 600032772)
+ Scalar_Range = N_Range (Node_Id=2380)
+ Has_Qualified_Name = True
+ Is_Constrained = True
+ Is_Frozen = True
+ Is_Unsigned_Type = True
+ Needs_Debug_Info = True
+ Size_Known_At_Compile_Time = True
+----------At: Process_Declaration----------
+----------size clause not applied by the front-end----------
+N_Attribute_Definition_Clause "size" (Node_Id=2387) (source,analyzed)
+ Sloc = 12707  check_size.adb:19:4
+ Chars = "size" (Name_Id=300000899)
+ Name = N_Identifier "var_size_1" (Node_Id=2384)
+ Expression = N_Integer_Literal (Node_Id=2388)
+ Entity = N_Defining_Identifier "var_size_1" (Entity_Id=2369)
+----------At: Make_Default_Initialiser----------
+----------Unknown Ekind----------
+N_Defining_Identifier "Tvar_size_2S" (Entity_Id=2531)
+ Parent = N_Subtype_Declaration (Node_Id=2539)
+ Sloc = 12743  check_size.adb:21:4
+ Chars = "Tvar_size_2S" (Name_Id=300001466)
+ Next_Entity = N_Defining_Identifier "var_u8" (Entity_Id=2413)
+ Scope = N_Defining_Identifier "check_size" (Entity_Id=2245)
+ Ekind = E_Signed_Integer_Subtype
+ Etype = N_Defining_Identifier "integer" (Entity_Id=1009s)
+ Esize = 32 (Uint = 600032800)
+ RM_Size = 17 (Uint = 600032785)
+ Alignment = 4 (Uint = 600032772)
+ Scalar_Range = N_Range (Node_Id=2400)
+ Has_Qualified_Name = True
+ Is_Constrained = True
+ Is_Frozen = True
+ Is_Unsigned_Type = True
+ Needs_Debug_Info = True
+ Size_Known_At_Compile_Time = True
+----------At: Process_Declaration----------
+----------size clause not applied by the front-end----------
+N_Attribute_Definition_Clause "size" (Node_Id=2426) (source,analyzed)
+ Sloc = 12849  check_size.adb:25:4
+ Chars = "size" (Name_Id=300000899)
+ Name = N_Identifier "var_u8" (Node_Id=2423)
+ Expression = N_Integer_Literal (Node_Id=2427)
+ Entity = N_Defining_Identifier "var_u8" (Entity_Id=2413)
+
+[check_size.assertion.1] line 30 assertion Integer (Var_T_1) + Integer (Var_T_2) = 70: SUCCESS
+[check_size.assertion.2] line 34 assertion Var_Size_1 + Var_Size_2 = 30: SUCCESS
+[check_size.assertion.3] line 37 assertion Var_U8 + 1 = 0: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug size_integer_and_objects 
+---------------- unexpected output
+Standard_Output from gnat2goto check_size:
+----------At: Process_Declaration----------
+----------size clause not applied by the front-end----------
+N_Attribute_Definition_Clause "size" (Node_Id=2310) (source,analyzed)
+ Sloc = 12468  check_size.adb:7:4
+ Chars = "size" (Name_Id=300000899)
+ Name = N_Identifier "t_1" (Node_Id=2307)
+ Expression = N_Integer_Literal (Node_Id=2311)
+ Entity = N_Defining_Identifier "t_1" (Entity_Id=2291)
+----------At: Make_Default_Initialiser----------
+----------Unknown Ekind----------
+N_Defining_Identifier "Tvar_size_1S" (Entity_Id=2520)
+ Parent = N_Subtype_Declaration (Node_Id=2528)
+ Sloc = 12668  check_size.adb:18:4
+ Chars = "Tvar_size_1S" (Name_Id=300001465)
+ Next_Entity = N_Defining_Identifier "var_size_2" (Entity_Id=2389)
+ Scope = N_Defining_Identifier "check_size" (Entity_Id=2245)
+ Ekind = E_Signed_Integer_Subtype
+ Etype = N_Defining_Identifier "integer" (Entity_Id=1009s)
+ Esize = 32 (Uint = 600032800)
+ RM_Size = 6 (Uint = 600032774)
+ Alignment = 4 (Uint = 600032772)
+ Scalar_Range = N_Range (Node_Id=2380)
+ Has_Qualified_Name = True
+ Is_Constrained = True
+ Is_Frozen = True
+ Is_Unsigned_Type = True
+ Needs_Debug_Info = True
+ Size_Known_At_Compile_Time = True
+----------At: Process_Declaration----------
+----------size clause not applied by the front-end----------
+N_Attribute_Definition_Clause "size" (Node_Id=2387) (source,analyzed)
+ Sloc = 12707  check_size.adb:19:4
+ Chars = "size" (Name_Id=300000899)
+ Name = N_Identifier "var_size_1" (Node_Id=2384)
+ Expression = N_Integer_Literal (Node_Id=2388)
+ Entity = N_Defining_Identifier "var_size_1" (Entity_Id=2369)
+----------At: Make_Default_Initialiser----------
+----------Unknown Ekind----------
+N_Defining_Identifier "Tvar_size_2S" (Entity_Id=2531)
+ Parent = N_Subtype_Declaration (Node_Id=2539)
+ Sloc = 12743  check_size.adb:21:4
+ Chars = "Tvar_size_2S" (Name_Id=300001466)
+ Next_Entity = N_Defining_Identifier "var_u8" (Entity_Id=2413)
+ Scope = N_Defining_Identifier "check_size" (Entity_Id=2245)
+ Ekind = E_Signed_Integer_Subtype
+ Etype = N_Defining_Identifier "integer" (Entity_Id=1009s)
+ Esize = 32 (Uint = 600032800)
+ RM_Size = 17 (Uint = 600032785)
+ Alignment = 4 (Uint = 600032772)
+ Scalar_Range = N_Range (Node_Id=2400)
+ Has_Qualified_Name = True
+ Is_Constrained = True
+ Is_Frozen = True
+ Is_Unsigned_Type = True
+ Needs_Debug_Info = True
+ Size_Known_At_Compile_Time = True
+----------At: Process_Declaration----------
+----------size clause not applied by the front-end----------
+N_Attribute_Definition_Clause "size" (Node_Id=2426) (source,analyzed)
+ Sloc = 12849  check_size.adb:25:4
+ Chars = "size" (Name_Id=300000899)
+ Name = N_Identifier "var_u8" (Node_Id=2423)
+ Expression = N_Integer_Literal (Node_Id=2427)
+ Entity = N_Defining_Identifier "var_u8" (Entity_Id=2413)
+
+[check_size.assertion.1] line 30 assertion Integer (Var_T_1) + Integer (Var_T_2) = 70: SUCCESS
+[check_size.assertion.2] line 34 assertion Var_Size_1 + Var_Size_2 = 30: SUCCESS
+[check_size.assertion.3] line 37 assertion Var_U8 + 1 = 0: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug string_assert 
+---------------- unexpected output
+Error from cbmc string_assert:
+--- begin invariant violation report ---
+Invariant check failed
+File: ./std_types.h:1013 function: to_array_type
+Condition: can_cast_type<array_typet>(type)
+Reason: Precondition
+Backtrace:
+0   cbmc                                0x000000010980ab4a _Z15print_backtraceRNSt3__113basic_ostreamIcNS_11char_traitsIcEEEE + 74
+1   cbmc                                0x000000010980b0ec _Z13get_backtracev + 252
+2   cbmc                                0x00000001095c43dc _Z29invariant_violated_structuredI17invariant_failedtJRKNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEEEENS1_9enable_ifIXsr3std10is_base_ofIS0_T_EE5valueEvE4typeES9_S9_iS9_DpOT0_ + 44
+3   cbmc                                0x00000001095ba1b9 _Z25invariant_violated_stringRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEES7_iS7_S7_ + 9
+4   cbmc                                0x0000000109801a93 _Z13to_array_typeRK5typet + 291
+5   cbmc                                0x00000001098774f3 _ZNK16string_constantt13to_array_exprEv + 99
+6   cbmc                                0x000000010967c63a _ZN7boolbvt17convert_bitvectorERK5exprt + 2042
+7   cbmc                                0x00000001096b564f _ZN12bv_pointerst17convert_bitvectorERK5exprt + 1967
+8   cbmc                                0x000000010967b795 _ZN7boolbvt10convert_bvERK5exprtN6nonstd13optional_lite8optionalImEE + 293
+9   cbmc                                0x00000001096801bc _ZN7boolbvt27boolbv_set_equality_to_trueERK11equal_exprt + 204
+10  cbmc                                0x0000000109680295 _ZN7boolbvt6set_toERK5exprtb + 101
+11  cbmc                                0x00000001095af8d4 _ZN22symex_target_equationt19convert_assignmentsER19decision_proceduret + 196
+12  cbmc                                0x00000001095af5d4 _ZN22symex_target_equationt7convertER19decision_proceduret + 36
+13  cbmc                                0x000000010946a10b _Z29convert_symex_target_equationR22symex_target_equationtR19decision_proceduretR16message_handlert + 123
+14  cbmc                                0x000000010946bfd0 _Z24prepare_property_deciderRNSt3__113unordered_mapI8dstringt14property_infotNS_4hashIS1_EENS_8equal_toIS1_EENS_9allocatorINS_4pairIKS1_S2_EEEEEER22symex_target_equationtR28goto_symex_property_decidertR19ui_message_handlert + 224
+15  cbmc                                0x0000000109473448 _ZN25multi_path_symex_checkertclERNSt3__113unordered_mapI8dstringt14property_infotNS0_4hashIS2_EENS0_8equal_toIS2_EENS0_9allocatorINS0_4pairIKS2_S3_EEEEEE + 264
+16  cbmc                                0x000000010989fac2 _ZN43all_properties_verifier_with_trace_storagetI25multi_path_symex_checkertEclEv + 50
+17  cbmc                                0x00000001098986b2 _ZN19cbmc_parse_optionst4doitEv + 3986
+18  cbmc                                0x0000000109821ac9 _ZN19parse_options_baset4mainEv + 249
+19  cbmc                                0x0000000109893b7d main + 45
+20  libdyld.dylib                       0x00007fffa9862235 start + 1
+
+
+--- end invariant violation report ---
+
+ERROR code  -6 returned by cbmc when processing string_assert
+
+================ Bug string_equality 
+---------------- unexpected output
+Error from cbmc string_equality:
+--- begin invariant violation report ---
+Invariant check failed
+File: ./std_types.h:1013 function: to_array_type
+Condition: can_cast_type<array_typet>(type)
+Reason: Precondition
+Backtrace:
+0   cbmc                                0x000000010307fb4a _Z15print_backtraceRNSt3__113basic_ostreamIcNS_11char_traitsIcEEEE + 74
+1   cbmc                                0x00000001030800ec _Z13get_backtracev + 252
+2   cbmc                                0x0000000102e393dc _Z29invariant_violated_structuredI17invariant_failedtJRKNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEEEENS1_9enable_ifIXsr3std10is_base_ofIS0_T_EE5valueEvE4typeES9_S9_iS9_DpOT0_ + 44
+3   cbmc                                0x0000000102e2f1b9 _Z25invariant_violated_stringRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEES7_iS7_S7_ + 9
+4   cbmc                                0x0000000103076a93 _Z13to_array_typeRK5typet + 291
+5   cbmc                                0x00000001030ec4f3 _ZNK16string_constantt13to_array_exprEv + 99
+6   cbmc                                0x0000000102ef163a _ZN7boolbvt17convert_bitvectorERK5exprt + 2042
+7   cbmc                                0x0000000102f2a64f _ZN12bv_pointerst17convert_bitvectorERK5exprt + 1967
+8   cbmc                                0x0000000102ef0795 _ZN7boolbvt10convert_bvERK5exprtN6nonstd13optional_lite8optionalImEE + 293
+9   cbmc                                0x0000000102ef51bc _ZN7boolbvt27boolbv_set_equality_to_trueERK11equal_exprt + 204
+10  cbmc                                0x0000000102ef5295 _ZN7boolbvt6set_toERK5exprtb + 101
+11  cbmc                                0x0000000102e248d4 _ZN22symex_target_equationt19convert_assignmentsER19decision_proceduret + 196
+12  cbmc                                0x0000000102e245d4 _ZN22symex_target_equationt7convertER19decision_proceduret + 36
+13  cbmc                                0x0000000102cdf10b _Z29convert_symex_target_equationR22symex_target_equationtR19decision_proceduretR16message_handlert + 123
+14  cbmc                                0x0000000102ce0fd0 _Z24prepare_property_deciderRNSt3__113unordered_mapI8dstringt14property_infotNS_4hashIS1_EENS_8equal_toIS1_EENS_9allocatorINS_4pairIKS1_S2_EEEEEER22symex_target_equationtR28goto_symex_property_decidertR19ui_message_handlert + 224
+15  cbmc                                0x0000000102ce8448 _ZN25multi_path_symex_checkertclERNSt3__113unordered_mapI8dstringt14property_infotNS0_4hashIS2_EENS0_8equal_toIS2_EENS0_9allocatorINS0_4pairIKS2_S3_EEEEEE + 264
+16  cbmc                                0x0000000103114ac2 _ZN43all_properties_verifier_with_trace_storagetI25multi_path_symex_checkertEclEv + 50
+17  cbmc                                0x000000010310d6b2 _ZN19cbmc_parse_optionst4doitEv + 3986
+18  cbmc                                0x0000000103096ac9 _ZN19parse_options_baset4mainEv + 249
+19  cbmc                                0x0000000103108b7d main + 45
+20  libdyld.dylib                       0x00007fffa9862235 start + 1
+21  ???                                 0x0000000000000002 0x0 + 2
+
+
+--- end invariant violation report ---
+
+ERROR code  -6 returned by cbmc when processing string_equality
+
+================ Bug subpackage_local_initialisers 
+---------------- expected output
+[assertion.1] file subpackage_local_initialisers.adb line 12 Ada Check assertion: SUCCESS
+subpackage_local_initialisers.adb function subpackage_local_initialisers
+[subpackage_local_initialisers.assertion.1] line 15 assertion Subpackage.Get_Value = Double (21): SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+[double.assertion.1] line 12 Ada Check assertion: SUCCESS
+[subpackage_local_initialisers.assertion.1] line 15 assertion Subpackage.Get_Value = Double (21): FAILURE
+VERIFICATION FAILED
+================ Bug variant_record 
+---------------- unexpected output
+Standard_Error from gnat2goto variant_record:
+variant_record.adb:21:04: warning: variable "Immutable_Traffic_Light" is never read and never assigned
+
+Error from cbmc variant_record:
+--- begin invariant violation report ---
+Invariant check failed
+File: ../util/std_types.h:305 function: to_struct_type
+Condition: can_cast_type<struct_typet>(type)
+Reason: Precondition
+Backtrace:
+0   cbmc                                0x0000000106c8cb4a _Z15print_backtraceRNSt3__113basic_ostreamIcNS_11char_traitsIcEEEE + 74
+1   cbmc                                0x0000000106c8d0ec _Z13get_backtracev + 252
+2   cbmc                                0x0000000106a463dc _Z29invariant_violated_structuredI17invariant_failedtJRKNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEEEENS1_9enable_ifIXsr3std10is_base_ofIS0_T_EE5valueEvE4typeES9_S9_iS9_DpOT0_ + 44
+3   cbmc                                0x0000000106a3c1b9 _Z25invariant_violated_stringRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEES7_iS7_S7_ + 9
+4   cbmc                                0x0000000106a3cdd7 _Z14to_struct_typeRK5typet + 311
+5   cbmc                                0x0000000106a08849 _ZN13symex_assignt18assign_from_structERK9ssa_exprtRK14expr_skeletontRK12struct_exprtRKNSt3__16vectorI5exprtNS9_9allocatorISB_EEEE + 89
+6   cbmc                                0x0000000106a08af7 _ZN13symex_assignt18assign_from_structERK9ssa_exprtRK14expr_skeletontRK12struct_exprtRKNSt3__16vectorI5exprtNS9_9allocatorISB_EEEE + 775
+7   cbmc                                0x00000001069d0472 _ZN11goto_symext12symex_assignER17goto_symex_statetRK12code_assignt + 1234
+8   cbmc                                0x0000000106a27c20 _ZN11goto_symext24execute_next_instructionERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER17goto_symex_statet + 480
+9   cbmc                                0x0000000106a279ca _ZN11goto_symext10symex_stepERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER17goto_symex_statet + 42
+10  cbmc                                0x000000010690be85 _ZN10symex_bmct10symex_stepERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER17goto_symex_statet + 597
+11  cbmc                                0x0000000106a2572d _ZN11goto_symext19symex_threaded_stepER17goto_symex_statetRKNSt3__18functionIFRK14goto_functiontRK8dstringtEEE + 29
+12  cbmc                                0x0000000106a25a4f _ZN11goto_symext16symex_with_stateER17goto_symex_statetRKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER13symbol_tablet + 191
+13  cbmc                                0x0000000106a26a4d _ZN11goto_symext25symex_from_entry_point_ofERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER13symbol_tablet + 61
+14  cbmc                                0x00000001068f698a _ZN30multi_path_symex_only_checkert17generate_equationEv + 74
+15  cbmc                                0x00000001068f5393 _ZN25multi_path_symex_checkertclERNSt3__113unordered_mapI8dstringt14property_infotNS0_4hashIS2_EENS0_8equal_toIS2_EENS0_9allocatorINS0_4pairIKS2_S3_EEEEEE + 83
+16  cbmc                                0x0000000106d21ac2 _ZN43all_properties_verifier_with_trace_storagetI25multi_path_symex_checkertEclEv + 50
+17  cbmc                                0x0000000106d1a6b2 _ZN19cbmc_parse_optionst4doitEv + 3986
+18  cbmc                                0x0000000106ca3ac9 _ZN19parse_options_baset4mainEv + 249
+19  cbmc                                0x0000000106d15b7d main + 45
+20  libdyld.dylib                       0x00007fffa9862235 start + 1
+
+
+--- end invariant violation report ---
+
+ERROR code  -6 returned by cbmc when processing variant_record
+

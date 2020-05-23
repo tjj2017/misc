@@ -1,0 +1,7 @@
+--- expected
++++ output
+@@ -5,3 +5,3 @@
+ Parent = <empty>
+-Sloc = 8525  test.adb:14:4
++Sloc = 12621  test.adb:14:4
+ Chars = "T4b" (Name_Id=300001462)

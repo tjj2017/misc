@@ -1,0 +1,48 @@
+Standard_Output from gnat2goto counter:
+----------At: Do_Aggregate_Literal----------
+----------Unhandled aggregate kind: E_LIMITED_PRIVATE_TYPE----------
+N_Aggregate (Node_Id=2274) (source,analyzed)
+ Rewritten: original node = N_Aggregate (Node_Id=2518)
+ Parent = N_Simple_Return_Statement (Node_Id=2500)
+ Sloc = 12368  counter.adb:3:6
+ Paren_Count = 1
+ Etype = N_Defining_Identifier "t" (Entity_Id=2360)
+ Component_Associations = List (List_Id=-99999943)
+
+Error from cbmc test:
+--- begin invariant violation report ---
+Invariant check failed
+File: goto_convert.cpp:1266 function: convert_return
+Condition: function must return value
+Reason: new_code.has_return_value()
+Backtrace:
+0   cbmc                                0x00000001041ffb4a _Z15print_backtraceRNSt3__113basic_ostreamIcNS_11char_traitsIcEEEE + 74
+1   cbmc                                0x00000001042000ec _Z13get_backtracev + 252
+2   cbmc                                0x000000010421ee00 _Z29invariant_violated_structuredI34invariant_with_diagnostics_failedtJRNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEES7_EENS1_9enable_ifIXsr3std10is_base_ofI17invariant_failedtT_EE5valueEvE4typeERKS7_SF_iSF_DpOT0_ + 48
+3   cbmc                                0x0000000103ec2084 _Z24report_invariant_failureIJRK16source_locationtEEvRKNSt3__112basic_stringIcNS3_11char_traitsIcEENS3_9allocatorIcEEEESB_iS9_S9_DpOT_ + 68
+4   cbmc                                0x0000000103e9d65e _ZN13goto_convertt14convert_returnERK12code_returntR13goto_programtRK8dstringt + 1966
+5   cbmc                                0x0000000103e96d52 _ZN13goto_convertt7convertERK5codetR13goto_programtRK8dstringt + 898
+6   cbmc                                0x0000000103e991a1 _ZN13goto_convertt13convert_blockERK11code_blocktR13goto_programtRK8dstringt + 129
+7   cbmc                                0x0000000103e96a28 _ZN13goto_convertt7convertERK5codetR13goto_programtRK8dstringt + 88
+8   cbmc                                0x0000000103e991a1 _ZN13goto_convertt13convert_blockERK11code_blocktR13goto_programtRK8dstringt + 129
+9   cbmc                                0x0000000103e96a28 _ZN13goto_convertt7convertERK5codetR13goto_programtRK8dstringt + 88
+10  cbmc                                0x0000000103e964f2 _ZN13goto_convertt16goto_convert_recERK5codetR13goto_programtRK8dstringt + 34
+11  cbmc                                0x0000000103ea8786 _ZN23goto_convert_functionst16convert_functionERK8dstringtR14goto_functiont + 1158
+12  cbmc                                0x0000000103ea8234 _ZN23goto_convert_functionst12goto_convertER15goto_functionst + 388
+13  cbmc                                0x0000000103ea99d9 _Z12goto_convertR18symbol_table_basetR15goto_functionstR16message_handlert + 121
+14  cbmc                                0x0000000103ed0916 _Z21initialize_goto_modelRKNSt3__16vectorINS_12basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEENS4_IS6_EEEER16message_handlertRK8optionst + 3222
+15  cbmc                                0x000000010428e46c _ZN19cbmc_parse_optionst16get_goto_programER11goto_modeltRK8optionstRK8cmdlinetR19ui_message_handlert + 124
+16  cbmc                                0x000000010428cb87 _ZN19cbmc_parse_optionst4doitEv + 1127
+17  cbmc                                0x0000000104216ac9 _ZN19parse_options_baset4mainEv + 249
+18  cbmc                                0x0000000104288b7d main + 45
+19  libdyld.dylib                       0x00007fffa9862235 start + 1
+
+Diagnostics:
+<< EXTRA DIAGNOSTICS >>
+source location: file counter.adb line 3 column 6
+<< END EXTRA DIAGNOSTICS >>
+
+--- end invariant violation report ---
+
+ERROR code  -6 returned by cbmc when processing test
+

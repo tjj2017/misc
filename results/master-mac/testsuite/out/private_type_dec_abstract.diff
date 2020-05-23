@@ -1,0 +1,30 @@
+--- expected
++++ output
+@@ -0,0 +1,27 @@
++Standard_Output from gnat2goto private_dec_abstract:
++----------At: Do_Full_Type_Declaration----------
++----------type not in symbol table after declaration----------
++N_Full_Type_Declaration (Node_Id=2347) (source,analyzed)
++Sloc = 16502  private_dec_abstract.ads:7:4
++Defining_Identifier = N_Defining_Identifier "dec" (Entity_Id=2326)
++Type_Definition = N_Record_Definition (Node_Id=2333)
++Standard_Error from gnat2goto private_dec_abstract:
+++===========================GNAT BUG DETECTED==============================+
++| GNU Ada (ada2goto) Constraint_Error Symbol_Table_Info.Symbol_Maps.Constant_Reference: key not in map|
++| Error detected at system.ads:174:5                                       |
++| Please submit a bug report; see https://gcc.gnu.org/bugs/ .              |
++| Use a subject line meaningful to you and us to track the bug.            |
++| Include the entire contents of this bug box in the report.               |
++| Include the exact command that you entered.                              |
++| Also include sources listed below.                                       |
+++==========================================================================+
++Please include these source files with error report
++Note that list may not be accurate in some cases,
++so please double check that the problem can still
++be reproduced with the set of files listed.
++Consider also -gnatd.n switch (see debug.adb).
++private_dec_abstract.adb
++private_dec_abstract.ads
++compilation abandoned
++ERROR code  5  returned by gnat2goto when translating private_dec_abstract
++CBMC not run

@@ -1,0 +1,60 @@
+--- expected
++++ output
+@@ -0,0 +1,57 @@
++Standard_Output from gnat2goto op_concat:
++----------At: Do_Operator_General----------
++----------Concat unsupported----------
++N_Op_Concat "Oconcat" (Node_Id=2314) (source,analyzed)
++Sloc = 12535  op_concat.adb:12:40
++Chars = "Oconcat" (Name_Id=300000412)
++Left_Opnd = N_Slice (Node_Id=2313)
++Right_Opnd = N_Slice (Node_Id=2319)
++Entity = N_Defining_Operator_Symbol "Oconcat" (Entity_Id=2344)
++Etype = N_Defining_Identifier "TarrB" (Entity_Id=2337)
++Error from cbmc op_concat:
++warning: ignoring nil
++* type: nil
++* #source_location:
++* file: <internal>
++* line:
++* column:
++* comment:
++* property_class:
++* property_id:
++* function:
++* working_directory:
++* java_bytecode_index:
++* range_check: 0
++--- begin invariant violation report ---
++Invariant check failed
++File: flattening/boolbv_width.cpp:199 function: get_entry
++Condition: false
++Reason: Unimplemented
++Backtrace:
++0   cbmc                                0x000000010d5fcb4a _Z15print_backtraceRNSt3__113basic_ostreamIcNS_11char_traitsIcEEEE + 74
++1   cbmc                                0x000000010d5fd0ec _Z13get_backtracev + 252
++2   cbmc                                0x000000010d3b63dc _Z29invariant_violated_structuredI17invariant_failedtJRKNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEEEENS1_9enable_ifIXsr3std10is_base_ofIS0_T_EE5valueEvE4typeES9_S9_iS9_DpOT0_ + 44
++3   cbmc                                0x000000010d3ac1b9 _Z25invariant_violated_stringRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEES7_iS7_S7_ + 9
++4   cbmc                                0x000000010d49dc1b _ZNK13boolbv_widtht9get_entryERK5typet + 4139
++5   cbmc                                0x000000010d46e8b4 _ZN7boolbvt17convert_bitvectorERK5exprt + 2676
++6   cbmc                                0x000000010d4a764f _ZN12bv_pointerst17convert_bitvectorERK5exprt + 1967
++7   cbmc                                0x000000010d46d795 _ZN7boolbvt10convert_bvERK5exprtN6nonstd13optional_lite8optionalImEE + 293
++8   cbmc                                0x000000010d49670a _ZN7boolbvt19convert_bv_typecastERK14typecast_exprt + 74
++9   cbmc                                0x000000010d46deee _ZN7boolbvt17convert_bitvectorERK5exprt + 174
++10  cbmc                                0x000000010d4a764f _ZN12bv_pointerst17convert_bitvectorERK5exprt + 1967
++11  cbmc                                0x000000010d46d795 _ZN7boolbvt10convert_bvERK5exprtN6nonstd13optional_lite8optionalImEE + 293
++12  cbmc                                0x000000010d4721bc _ZN7boolbvt27boolbv_set_equality_to_trueERK11equal_exprt + 204
++13  cbmc                                0x000000010d472295 _ZN7boolbvt6set_toERK5exprtb + 101
++14  cbmc                                0x000000010d3a18d4 _ZN22symex_target_equationt19convert_assignmentsER19decision_proceduret + 196
++15  cbmc                                0x000000010d3a15d4 _ZN22symex_target_equationt7convertER19decision_proceduret + 36
++16  cbmc                                0x000000010d25c10b _Z29convert_symex_target_equationR22symex_target_equationtR19decision_proceduretR16message_handlert + 123
++17  cbmc                                0x000000010d25dfd0 _Z24prepare_property_deciderRNSt3__113unordered_mapI8dstringt14property_infotNS_4hashIS1_EENS_8equal_toIS1_EENS_9allocatorINS_4pairIKS1_S2_EEEEEER22symex_target_equationtR28goto_symex_property_decidertR19ui_message_handlert + 224
++18  cbmc                                0x000000010d265448 _ZN25multi_path_symex_checkertclERNSt3__113unordered_mapI8dstringt14property_infotNS0_4hashIS2_EENS0_8equal_toIS2_EENS0_9allocatorINS0_4pairIKS2_S3_EEEEEE + 264
++19  cbmc                                0x000000010d691ac2 _ZN43all_properties_verifier_with_trace_storagetI25multi_path_symex_checkertEclEv + 50
++20  cbmc                                0x000000010d68a6b2 _ZN19cbmc_parse_optionst4doitEv + 3986
++21  cbmc                                0x000000010d613ac9 _ZN19parse_options_baset4mainEv + 249
++22  cbmc                                0x000000010d685b7d main + 45
++23  libdyld.dylib                       0x00007fffa9862235 start + 1
++24  ???                                 0x0000000000000002 0x0 + 2
++--- end invariant violation report ---
++ERROR code  -6 returned by cbmc when processing op_concat

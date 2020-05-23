@@ -1,0 +1,17 @@
+--- expected
++++ output
+@@ -0,0 +1,14 @@
++Standard_Output from gnat2goto test:
++----------At: Process_Declaration----------
++----------Having component sizes be different from the size of their underlying type is currently not supported----------
++N_Attribute_Definition_Clause "component_size" (Node_Id=2335) (source,analyzed)
++Sloc = 12686  test.adb:13:4
++Chars = "component_size" (Name_Id=300000806)
++Name = N_Identifier "storage_array" (Node_Id=2332)
++Expression = N_Integer_Literal (Node_Id=2336)
++Entity = N_Defining_Identifier "storage_array" (Entity_Id=2319)
++[precondition_instance.1] file <internal> memcpy src/dst overlap: SUCCESS
++[precondition_instance.2] file <internal> memcpy source region readable: SUCCESS
++[precondition_instance.3] file <internal> memcpy destination region writeable: SUCCESS
++[test.assertion.1] line 17 assertion My_Storage_Array(2)=2: SUCCESS
++VERIFICATION SUCCESSFUL

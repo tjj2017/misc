@@ -1,0 +1,35 @@
+--- expected
++++ output
+@@ -0,0 +1,32 @@
++Standard_Error from gnat2goto variant_record:
++variant_record.adb:21:04: warning: variable "Immutable_Traffic_Light" is never read and never assigned
++Error from cbmc variant_record:
++--- begin invariant violation report ---
++Invariant check failed
++File: ../util/std_types.h:305 function: to_struct_type
++Condition: can_cast_type<struct_typet>(type)
++Reason: Precondition
++Backtrace:
++0   cbmc                                0x0000000106c8cb4a _Z15print_backtraceRNSt3__113basic_ostreamIcNS_11char_traitsIcEEEE + 74
++1   cbmc                                0x0000000106c8d0ec _Z13get_backtracev + 252
++2   cbmc                                0x0000000106a463dc _Z29invariant_violated_structuredI17invariant_failedtJRKNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEEEENS1_9enable_ifIXsr3std10is_base_ofIS0_T_EE5valueEvE4typeES9_S9_iS9_DpOT0_ + 44
++3   cbmc                                0x0000000106a3c1b9 _Z25invariant_violated_stringRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEES7_iS7_S7_ + 9
++4   cbmc                                0x0000000106a3cdd7 _Z14to_struct_typeRK5typet + 311
++5   cbmc                                0x0000000106a08849 _ZN13symex_assignt18assign_from_structERK9ssa_exprtRK14expr_skeletontRK12struct_exprtRKNSt3__16vectorI5exprtNS9_9allocatorISB_EEEE + 89
++6   cbmc                                0x0000000106a08af7 _ZN13symex_assignt18assign_from_structERK9ssa_exprtRK14expr_skeletontRK12struct_exprtRKNSt3__16vectorI5exprtNS9_9allocatorISB_EEEE + 775
++7   cbmc                                0x00000001069d0472 _ZN11goto_symext12symex_assignER17goto_symex_statetRK12code_assignt + 1234
++8   cbmc                                0x0000000106a27c20 _ZN11goto_symext24execute_next_instructionERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER17goto_symex_statet + 480
++9   cbmc                                0x0000000106a279ca _ZN11goto_symext10symex_stepERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER17goto_symex_statet + 42
++10  cbmc                                0x000000010690be85 _ZN10symex_bmct10symex_stepERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER17goto_symex_statet + 597
++11  cbmc                                0x0000000106a2572d _ZN11goto_symext19symex_threaded_stepER17goto_symex_statetRKNSt3__18functionIFRK14goto_functiontRK8dstringtEEE + 29
++12  cbmc                                0x0000000106a25a4f _ZN11goto_symext16symex_with_stateER17goto_symex_statetRKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER13symbol_tablet + 191
++13  cbmc                                0x0000000106a26a4d _ZN11goto_symext25symex_from_entry_point_ofERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER13symbol_tablet + 61
++14  cbmc                                0x00000001068f698a _ZN30multi_path_symex_only_checkert17generate_equationEv + 74
++15  cbmc                                0x00000001068f5393 _ZN25multi_path_symex_checkertclERNSt3__113unordered_mapI8dstringt14property_infotNS0_4hashIS2_EENS0_8equal_toIS2_EENS0_9allocatorINS0_4pairIKS2_S3_EEEEEE + 83
++16  cbmc                                0x0000000106d21ac2 _ZN43all_properties_verifier_with_trace_storagetI25multi_path_symex_checkertEclEv + 50
++17  cbmc                                0x0000000106d1a6b2 _ZN19cbmc_parse_optionst4doitEv + 3986
++18  cbmc                                0x0000000106ca3ac9 _ZN19parse_options_baset4mainEv + 249
++19  cbmc                                0x0000000106d15b7d main + 45
++20  libdyld.dylib                       0x00007fffa9862235 start + 1
++--- end invariant violation report ---
++ERROR code  -6 returned by cbmc when processing variant_record

@@ -1,0 +1,8 @@
+Standard_Error from gnat2goto deferred_const_import:
+Warning: Multi-language analysis unsupported.
+
+Error from cbmc deferred_const_import:
+SUPPORT FUNCTION GENERATION ERROR
+
+ERROR code  6 returned by cbmc when processing deferred_const_import
+

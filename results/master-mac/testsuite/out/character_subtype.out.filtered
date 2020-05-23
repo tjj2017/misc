@@ -1,0 +1,47 @@
+Standard_Output from gnat2goto char_subtype:
+----------At: Do_Base_Range_Constraint----------
+----------unsupported lower range kind----------
+N_Character_Literal "QU41" (Node_Id=2264) (source,analyzed)
+ Parent = N_Range (Node_Id=2265)
+ Sloc = 12353  char_subtype.adb:2:40
+ Chars = "QU41" (Name_Id=300001450)
+ Is_Static_Expression = True
+ Etype = N_Defining_Identifier "character" (Entity_Id=100s)
+ Char_Literal_Value = 65 (Uint = 600032833)
+
+Error from cbmc char_subtype:
+--- begin invariant violation report ---
+Invariant check failed
+File: flattening/boolbv_width.cpp:199 function: get_entry
+Condition: false
+Reason: Unimplemented
+Backtrace:
+0   cbmc                                0x0000000107c73b4a _Z15print_backtraceRNSt3__113basic_ostreamIcNS_11char_traitsIcEEEE + 74
+1   cbmc                                0x0000000107c740ec _Z13get_backtracev + 252
+2   cbmc                                0x0000000107a2d3dc _Z29invariant_violated_structuredI17invariant_failedtJRKNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEEEENS1_9enable_ifIXsr3std10is_base_ofIS0_T_EE5valueEvE4typeES9_S9_iS9_DpOT0_ + 44
+3   cbmc                                0x0000000107a231b9 _Z25invariant_violated_stringRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEES7_iS7_S7_ + 9
+4   cbmc                                0x0000000107b14c1b _ZNK13boolbv_widtht9get_entryERK5typet + 4139
+5   cbmc                                0x0000000107b0d963 _ZN7boolbvt15type_conversionERK5typetRKNSt3__16vectorI8literaltNS3_9allocatorIS5_EEEES2_RS8_ + 307
+6   cbmc                                0x0000000107b0d752 _ZN7boolbvt19convert_bv_typecastERK14typecast_exprt + 146
+7   cbmc                                0x0000000107ae4eee _ZN7boolbvt17convert_bitvectorERK5exprt + 174
+8   cbmc                                0x0000000107b1e64f _ZN12bv_pointerst17convert_bitvectorERK5exprt + 1967
+9   cbmc                                0x0000000107ae4795 _ZN7boolbvt10convert_bvERK5exprtN6nonstd13optional_lite8optionalImEE + 293
+10  cbmc                                0x0000000107ae91bc _ZN7boolbvt27boolbv_set_equality_to_trueERK11equal_exprt + 204
+11  cbmc                                0x0000000107ae9295 _ZN7boolbvt6set_toERK5exprtb + 101
+12  cbmc                                0x0000000107a188d4 _ZN22symex_target_equationt19convert_assignmentsER19decision_proceduret + 196
+13  cbmc                                0x0000000107a185d4 _ZN22symex_target_equationt7convertER19decision_proceduret + 36
+14  cbmc                                0x00000001078d310b _Z29convert_symex_target_equationR22symex_target_equationtR19decision_proceduretR16message_handlert + 123
+15  cbmc                                0x00000001078d4fd0 _Z24prepare_property_deciderRNSt3__113unordered_mapI8dstringt14property_infotNS_4hashIS1_EENS_8equal_toIS1_EENS_9allocatorINS_4pairIKS1_S2_EEEEEER22symex_target_equationtR28goto_symex_property_decidertR19ui_message_handlert + 224
+16  cbmc                                0x00000001078dc448 _ZN25multi_path_symex_checkertclERNSt3__113unordered_mapI8dstringt14property_infotNS0_4hashIS2_EENS0_8equal_toIS2_EENS0_9allocatorINS0_4pairIKS2_S3_EEEEEE + 264
+17  cbmc                                0x0000000107d08ac2 _ZN43all_properties_verifier_with_trace_storagetI25multi_path_symex_checkertEclEv + 50
+18  cbmc                                0x0000000107d016b2 _ZN19cbmc_parse_optionst4doitEv + 3986
+19  cbmc                                0x0000000107c8aac9 _ZN19parse_options_baset4mainEv + 249
+20  cbmc                                0x0000000107cfcb7d main + 45
+21  libdyld.dylib                       0x00007fffa9862235 start + 1
+22  ???                                 0x0000000000000002 0x0 + 2
+
+
+--- end invariant violation report ---
+
+ERROR code  -6 returned by cbmc when processing char_subtype
+
