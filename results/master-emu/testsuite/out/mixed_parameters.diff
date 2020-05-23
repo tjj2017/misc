@@ -1,0 +1,9 @@
+--- expected
++++ output
+@@ -1 +1,2 @@
++[subtract.assertion.1] line 5 Ada Check assertion: SUCCESS
+ [mixed_parameters.assertion.1] line 10 assertion C = 1: SUCCESS
+@@ -5,3 +6,2 @@
+ [mixed_parameters.assertion.5] line 18 assertion C /= 0: FAILURE
+-[subtract.assertion.1] line 5 Ada Check assertion: SUCCESS
+ VERIFICATION FAILED

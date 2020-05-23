@@ -1,0 +1,32 @@
+--- expected
++++ output
+@@ -0,0 +1,29 @@
++Error from cbmc string_equality:
++--- begin invariant violation report ---
++Invariant check failed
++File: std_types.h:1013 function: to_array_type
++Condition: can_cast_type<array_typet>(type)
++Reason: Precondition
++Backtrace:
++cbmc(+0x23adfd) [0x55c795520dfd]
++cbmc(+0x23b35f) [0x55c79552135f]
++cbmc(+0x16a47c) [0x55c79545047c]
++cbmc(+0x2a58b0) [0x55c79558b8b0]
++cbmc(+0x6849ca) [0x55c79596a9ca]
++cbmc(+0x6be51c) [0x55c7959a451c]
++cbmc(+0x68754d) [0x55c79596d54d]
++cbmc(+0x683a31) [0x55c795969a31]
++cbmc(+0x683aee) [0x55c795969aee]
++cbmc(+0x62c15d) [0x55c79591215d]
++cbmc(+0x633aec) [0x55c795919aec]
++cbmc(+0x48cbb8) [0x55c795772bb8]
++cbmc(+0x48cfec) [0x55c795772fec]
++cbmc(+0x49b744) [0x55c795781744]
++cbmc(+0x2c9ad2) [0x55c7955afad2]
++cbmc(+0x2c5398) [0x55c7955ab398]
++cbmc(+0x15e6b9) [0x55c7954446b9]
++cbmc(+0x14deb1) [0x55c795433eb1]
++/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xeb) [0x7f7a84feb09b]
++cbmc(+0x15f18a) [0x55c79544518a]
++--- end invariant violation report ---
++ERROR code  -6 returned by cbmc when processing string_equality

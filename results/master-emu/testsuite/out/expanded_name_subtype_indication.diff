@@ -1,0 +1,8 @@
+--- expected
++++ output
+@@ -2,4 +2,4 @@
+ [test.assertion.3] line 10 assertion Val > 0.0: SUCCESS
++[test.assertion.4] line 11 assertion Val * 20.0 < 10.0: FAILURE
+ [test.assertion.1] line 11 Ada Check assertion: SUCCESS
+-[test.assertion.4] line 11 assertion Val * 20.0 < 10.0: FAILURE
+ VERIFICATION FAILED

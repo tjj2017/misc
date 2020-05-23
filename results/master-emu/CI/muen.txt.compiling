@@ -1,0 +1,3 @@
+sax-pointers.ads:27:06: error: violation of restriction "No_Finalization" at system.ads:40
+mutools-image.ads:20:06: error: violation of restriction "No_Finalization" at system.ads:40
+muxml.ads:20:06: error: violation of restriction "No_Finalization" at system.ads:40

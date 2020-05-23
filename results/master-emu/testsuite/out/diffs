@@ -1,0 +1,538 @@
+================ Bug absolute 
+---------------- expected output
+[absolute.assertion.1] line 7 assertion Symmetric_Difference (X, Y) = Symmetric_Difference (Y, X): SUCCESS
+[absolute.assertion.2] line 8 assertion Symmetric_Difference (X, Y) = 5: SUCCESS
+[absolute.assertion.3] line 10 assertion Symmetric_Difference (Y, X) /= 5: FAILURE
+[symmetric_difference.assertion.1] line 3 Ada Check assertion: SUCCESS
+VERIFICATION FAILED
+---------------- actual output
+[symmetric_difference.assertion.1] line 3 Ada Check assertion: SUCCESS
+[absolute.assertion.1] line 7 assertion Symmetric_Difference (X, Y) = Symmetric_Difference (Y, X): SUCCESS
+[absolute.assertion.2] line 8 assertion Symmetric_Difference (X, Y) = 5: SUCCESS
+[absolute.assertion.3] line 10 assertion Symmetric_Difference (Y, X) /= 5: FAILURE
+VERIFICATION FAILED
+================ Bug absolute_float 
+---------------- expected output
+[absolute_float.assertion.1] line 7 assertion Symmetric_Difference (X, Y) = Symmetric_Difference (Y, X): SUCCESS
+[absolute_float.assertion.2] line 8 assertion Symmetric_Difference (X, Y) = 5.0: SUCCESS
+[absolute_float.assertion.3] line 10 assertion Symmetric_Difference (Y, X) /= 5.0: FAILURE
+[symmetric_difference.assertion.1] line 3 Ada Check assertion: SUCCESS
+VERIFICATION FAILED
+---------------- actual output
+[symmetric_difference.assertion.1] line 3 Ada Check assertion: SUCCESS
+[absolute_float.assertion.1] line 7 assertion Symmetric_Difference (X, Y) = Symmetric_Difference (Y, X): SUCCESS
+[absolute_float.assertion.2] line 8 assertion Symmetric_Difference (X, Y) = 5.0: SUCCESS
+[absolute_float.assertion.3] line 10 assertion Symmetric_Difference (Y, X) /= 5.0: FAILURE
+VERIFICATION FAILED
+================ Bug address_clause 
+---------------- expected output
+Standard_Output from gnat2goto address_clause:
+----------At: Process_Declaration----------
+----------Address representation clauses are not currently supported----------
+N_Attribute_Definition_Clause "address" (Node_Id=2277) (source,analyzed)
+ Sloc = 8303  address_clause.adb:5:4
+ Chars = "address" (Name_Id=300000791)
+ Name = N_Identifier "var_addr_1" (Node_Id=2274)
+ Expression = N_Function_Call (Node_Id=2280)
+ Entity = N_Defining_Identifier "var_addr_1" (Entity_Id=2264)
+ Check_Address_Alignment = True
+----------At: Process_Declaration----------
+----------Address representation clauses are not currently supported----------
+N_Attribute_Definition_Clause "address" (Node_Id=2295) (source,analyzed)
+ Sloc = 8387  address_clause.adb:8:4
+ Chars = "address" (Name_Id=300000791)
+ Name = N_Identifier "var_addr_2" (Node_Id=2292)
+ Expression = N_Function_Call (Node_Id=2302)
+ Entity = N_Defining_Identifier "var_addr_2" (Entity_Id=2282)
+ Check_Address_Alignment = True
+
+[address_clause.assertion.1] line 12 Ada Check assertion: SUCCESS
+[address_clause.assertion.2] line 12 assertion Var_Addr_1 + Var_Addr_2 = 3: SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+Standard_Output from gnat2goto address_clause:
+----------At: Process_Declaration----------
+----------Address representation clauses are not currently supported----------
+N_Attribute_Definition_Clause "address" (Node_Id=2277) (source,analyzed)
+ Sloc = 8303  address_clause.adb:5:4
+ Chars = "address" (Name_Id=300000791)
+ Name = N_Identifier "var_addr_1" (Node_Id=2274)
+ Expression = N_Function_Call (Node_Id=2280)
+ Entity = N_Defining_Identifier "var_addr_1" (Entity_Id=2264)
+ Check_Address_Alignment = True
+----------At: Process_Declaration----------
+----------Address representation clauses are not currently supported----------
+N_Attribute_Definition_Clause "address" (Node_Id=2295) (source,analyzed)
+ Sloc = 8387  address_clause.adb:8:4
+ Chars = "address" (Name_Id=300000791)
+ Name = N_Identifier "var_addr_2" (Node_Id=2292)
+ Expression = N_Function_Call (Node_Id=2302)
+ Entity = N_Defining_Identifier "var_addr_2" (Entity_Id=2282)
+ Check_Address_Alignment = True
+
+[address_clause.assertion.2] line 12 assertion Var_Addr_1 + Var_Addr_2 = 3: SUCCESS
+[address_clause.assertion.1] line 12 Ada Check assertion: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug arrays_assign_nonoverlap 
+---------------- expected output
+[precondition_instance.1] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.2] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.3] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.4] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.5] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.6] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.7] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.8] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.9] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.10] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.11] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.12] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.13] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.14] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.15] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.16] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.17] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.18] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.19] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.20] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.21] file <internal> memcpy destination region writeable: SUCCESS
+[arrays_assign_nonoverlap.assertion.1] line 8 Ada Check assertion: SUCCESS
+[arrays_assign_nonoverlap.assertion.2] line 8 assertion Full_Arr(1)=3: SUCCESS
+[arrays_assign_nonoverlap.assertion.3] line 9 assertion Full_Arr(2)=4: SUCCESS
+[arrays_assign_nonoverlap.assertion.4] line 10 assertion Full_Arr(3)=1: SUCCESS
+[arrays_assign_nonoverlap.assertion.5] line 11 assertion Full_Arr(4)=2: SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+[precondition_instance.1] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.10] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.11] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.12] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.13] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.14] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.15] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.16] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.17] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.18] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.19] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.2] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.20] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.21] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.3] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.4] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.5] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.6] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.7] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.8] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.9] file <internal> memcpy destination region writeable: SUCCESS
+[arrays_assign_nonoverlap.assertion.1] line 8 Ada Check assertion: SUCCESS
+[arrays_assign_nonoverlap.assertion.2] line 8 assertion Full_Arr(1)=3: SUCCESS
+[arrays_assign_nonoverlap.assertion.3] line 9 assertion Full_Arr(2)=4: SUCCESS
+[arrays_assign_nonoverlap.assertion.4] line 10 assertion Full_Arr(3)=1: SUCCESS
+[arrays_assign_nonoverlap.assertion.5] line 11 assertion Full_Arr(4)=2: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug arrays_attributes_static 
+---------------- expected output
+[precondition_instance.1] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.2] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.3] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.4] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.5] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.6] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.7] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.8] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.9] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.10] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.11] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.12] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.13] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.14] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.15] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.16] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.17] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.18] file <internal> memcpy destination region writeable: SUCCESS
+[arrays_attributes_static.assertion.1] line 12 Ada Check assertion: SUCCESS
+[arrays_attributes_static.assertion.2] line 16 assertion Array_Attribs = 41: SUCCESS
+[arrays_attributes_static.assertion.3] line 17 assertion An_Index = 12: SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+[precondition_instance.1] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.10] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.11] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.12] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.13] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.14] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.15] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.16] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.17] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.18] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.2] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.3] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.4] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.5] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.6] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.7] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.8] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.9] file <internal> memcpy destination region writeable: SUCCESS
+[arrays_attributes_static.assertion.1] line 12 Ada Check assertion: SUCCESS
+[arrays_attributes_static.assertion.2] line 16 assertion Array_Attribs = 41: SUCCESS
+[arrays_attributes_static.assertion.3] line 17 assertion An_Index = 12: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug arrays_concat 
+---------------- expected output
+[precondition_instance.1] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.2] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.3] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.4] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.5] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.6] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.7] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.8] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.9] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.10] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.11] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.12] file <internal> memcpy destination region writeable: SUCCESS
+[arrays_concat.assertion.1] line 7 Ada Check assertion: SUCCESS
+[arrays_concat.assertion.2] line 7 assertion Actual(2)=4: SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+[precondition_instance.1] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.10] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.11] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.12] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.2] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.3] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.4] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.5] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.6] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.7] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.8] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.9] file <internal> memcpy destination region writeable: SUCCESS
+[arrays_concat.assertion.2] line 7 assertion Actual(2)=4: SUCCESS
+[arrays_concat.assertion.1] line 7 Ada Check assertion: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug arrays_constraints 
+---------------- expected output
+[array_constraints.assertion.1] line 109 Ada Check assertion: SUCCESS
+[array_constraints.assertion.2] line 117 assertion VUA1 (1) + VUA2 (2) + VUA3 (3) + VUA4 (4) + VUA5 (5) + VUA6 (6) + VUA7 (7) + VUA8 (8) = 36: SUCCESS
+[array_constraints.assertion.8] line 117 Ada Check assertion: SUCCESS
+[array_constraints.assertion.3] line 131 assertion VCA1 (VCA1'Last) + VCA2 (VCA2'Last - 1) + VCA3 (VCA3'Last - 2) + VCA4 (Constrained_Array_4'Last - 3) = 10: SUCCESS
+[array_constraints.assertion.4] line 143 assertion VEA1 (One) + VEA2 (Two) + VEA3 (Three) + VEA4 (Four) + VEA5 (Five) + VEA6 (Six) = 21: SUCCESS
+[array_constraints.assertion.5] line 154 assertion VBA1 (False) + VBA2 (True) + VBA3 (False) + VBA4 (True) + VBA5 (False) + VBA6 (True) = 7: SUCCESS
+[array_constraints.assertion.6] line 166 assertion VAC1 ('A') + VAC3 ('b') + VAC4 ('c') + VAC5 ('0') + VAC6 ('x') + VAC8 ('e') + VAC9 ('f') = 36: SUCCESS
+[array_constraints.assertion.7] line 180 assertion VAM1 (1) + VAM2 (2) + VAM3 (3) + VAM4 (4) + VAM5 (5) + VAM6 (6) + VAM7 (7) + VAM8 (8) + VAM9 (9) = 45: SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+[array_constraints.assertion.1] line 109 Ada Check assertion: SUCCESS
+[array_constraints.assertion.8] line 117 Ada Check assertion: SUCCESS
+[array_constraints.assertion.2] line 117 assertion VUA1 (1) + VUA2 (2) + VUA3 (3) + VUA4 (4) + VUA5 (5) + VUA6 (6) + VUA7 (7) + VUA8 (8) = 36: SUCCESS
+[array_constraints.assertion.3] line 131 assertion VCA1 (VCA1'Last) + VCA2 (VCA2'Last - 1) + VCA3 (VCA3'Last - 2) + VCA4 (Constrained_Array_4'Last - 3) = 10: SUCCESS
+[array_constraints.assertion.4] line 143 assertion VEA1 (One) + VEA2 (Two) + VEA3 (Three) + VEA4 (Four) + VEA5 (Five) + VEA6 (Six) = 21: SUCCESS
+[array_constraints.assertion.5] line 154 assertion VBA1 (False) + VBA2 (True) + VBA3 (False) + VBA4 (True) + VBA5 (False) + VBA6 (True) = 7: SUCCESS
+[array_constraints.assertion.6] line 166 assertion VAC1 ('A') + VAC3 ('b') + VAC4 ('c') + VAC5 ('0') + VAC6 ('x') + VAC8 ('e') + VAC9 ('f') = 36: SUCCESS
+[array_constraints.assertion.7] line 180 assertion VAM1 (1) + VAM2 (2) + VAM3 (3) + VAM4 (4) + VAM5 (5) + VAM6 (6) + VAM7 (7) + VAM8 (8) + VAM9 (9) = 45: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug arrays_range 
+---------------- expected output
+[precondition_instance.1] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.2] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.3] file <internal> memcpy destination region writeable: SUCCESS
+[array_consumer.assertion.1] line 8 Ada Check assertion: SUCCESS
+[array_consumer.assertion.2] line 8 Ada Check assertion: FAILURE
+[array_consumer.assertion.3] line 9 assertion An_Index = 2: SUCCESS
+[array_consumer.assertion.4] line 11 assertion An_Index = 4: SUCCESS
+[array_consumer.assertion.5] line 13 assertion An_Index = -1: SUCCESS
+VERIFICATION FAILED
+---------------- actual output
+[precondition_instance.1] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.2] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.3] file <internal> memcpy destination region writeable: SUCCESS
+[array_consumer.assertion.2] line 8 Ada Check assertion: FAILURE
+[array_consumer.assertion.1] line 8 Ada Check assertion: SUCCESS
+[array_consumer.assertion.3] line 9 assertion An_Index = 2: SUCCESS
+[array_consumer.assertion.4] line 11 assertion An_Index = 4: SUCCESS
+[array_consumer.assertion.5] line 13 assertion An_Index = -1: SUCCESS
+VERIFICATION FAILED
+================ Bug assertion_pretty_printing 
+---------------- expected output
+[check.assertion.1] line 15 assertion X = 5: FAILURE
+[check2.assertion.1] line 20 assertion False or (X < 10 and X > 0): SUCCESS
+[check3.assertion.1] line 32 assertion Plus (X, Plus (X, 1)) <= 15 and Plus (X => X, Y => -5) >= -5: FAILURE
+[check4.assertion.1] line 43 assertion X < 10: FAILURE
+[plus.assertion.1] line 28 Ada Check assertion: SUCCESS
+VERIFICATION FAILED
+---------------- actual output
+[check.assertion.1] line 15 assertion X = 5: FAILURE
+[check2.assertion.1] line 20 assertion False or (X < 10 and X > 0): SUCCESS
+[plus.assertion.1] line 28 Ada Check assertion: SUCCESS
+[check3.assertion.1] line 32 assertion Plus (X, Plus (X, 1)) <= 15 and Plus (X => X, Y => -5) >= -5: FAILURE
+[check4.assertion.1] line 43 assertion X < 10: FAILURE
+VERIFICATION FAILED
+================ Bug divide_by_zero 
+---------------- expected output
+[assertion.1] file divide_by_zero.adb line 6 Ada Check assertion: FAILURE
+[divide_by_zero.assertion.1] line 6 Ada Check assertion: FAILURE
+VERIFICATION FAILED
+---------------- actual output
+[divide_by_zero.assertion.1] line 6 Ada Check assertion: FAILURE
+[assertion.1] line 6 Ada Check assertion: FAILURE
+VERIFICATION FAILED
+================ Bug enum_in_param 
+---------------- expected output
+[precondition_instance.1] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.2] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.3] file <internal> memcpy destination region writeable: SUCCESS
+[enum_in.assertion.1] line 23 Ada Check assertion: SUCCESS
+[p_enum_in.assertion.1] line 19 assertion E in More_Than_Two: SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+[precondition_instance.1] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.2] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.3] file <internal> memcpy destination region writeable: SUCCESS
+[p_enum_in.assertion.1] line 19 assertion E in More_Than_Two: SUCCESS
+[enum_in.assertion.1] line 23 Ada Check assertion: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug expanded_name_subtype_indication 
+---------------- expected output
+[test.assertion.2] line 8 assertion Val < 2.0: SUCCESS
+[test.assertion.3] line 10 assertion Val > 0.0: SUCCESS
+[test.assertion.1] line 11 Ada Check assertion: SUCCESS
+[test.assertion.4] line 11 assertion Val * 20.0 < 10.0: FAILURE
+VERIFICATION FAILED
+---------------- actual output
+[test.assertion.2] line 8 assertion Val < 2.0: SUCCESS
+[test.assertion.3] line 10 assertion Val > 0.0: SUCCESS
+[test.assertion.4] line 11 assertion Val * 20.0 < 10.0: FAILURE
+[test.assertion.1] line 11 Ada Check assertion: SUCCESS
+VERIFICATION FAILED
+================ Bug floating_point_literals 
+---------------- expected output
+[floating_point_literals.assertion.2] line 8 assertion X > Z: FAILURE
+[floating_point_literals.assertion.3] line 10 assertion X < Z: SUCCESS
+[floating_point_literals.assertion.1] line 12 Ada Check assertion: SUCCESS
+[floating_point_literals.assertion.4] line 12 assertion X + Y = Z: FAILURE
+[floating_point_literals.assertion.5] line 14 assertion X + Y < Z: SUCCESS
+[floating_point_literals.assertion.6] line 16 assertion W < 1.2: SUCCESS
+VERIFICATION FAILED
+---------------- actual output
+[floating_point_literals.assertion.2] line 8 assertion X > Z: FAILURE
+[floating_point_literals.assertion.3] line 10 assertion X < Z: SUCCESS
+[floating_point_literals.assertion.4] line 12 assertion X + Y = Z: FAILURE
+[floating_point_literals.assertion.1] line 12 Ada Check assertion: SUCCESS
+[floating_point_literals.assertion.5] line 14 assertion X + Y < Z: SUCCESS
+[floating_point_literals.assertion.6] line 16 assertion W < 1.2: SUCCESS
+VERIFICATION FAILED
+================ Bug generics 
+---------------- expected output
+[check_assoc_intR.assertion.1] line 10 Ada Check assertion: FAILURE
+[check_assoc_intR.assertion.2] line 10 assertion (A + (B + C)) = ((A + B) + C): SUCCESS
+[check_assoc_int_minusR.assertion.1] line 10 assertion (A + (B + C)) = ((A + B) + C): FAILURE
+VERIFICATION FAILED
+---------------- actual output
+[check_assoc_int_minusR.assertion.1] line 10 assertion (A + (B + C)) = ((A + B) + C): FAILURE
+[check_assoc_intR.assertion.1] line 10 Ada Check assertion: FAILURE
+[check_assoc_intR.assertion.2] line 10 assertion (A + (B + C)) = ((A + B) + C): SUCCESS
+VERIFICATION FAILED
+================ Bug if_integer 
+---------------- expected output
+[assertion.1] file divide.adb line 4 Ada Check assertion: SUCCESS
+[divide.assertion.2] line 4 assertion B / 1 = B: SUCCESS
+[divide.assertion.1] line 6 Ada Check assertion: SUCCESS
+[divide.assertion.3] line 6 assertion B / B = 1: SUCCESS
+[divide.assertion.4] line 8 assertion B < 0: FAILURE
+VERIFICATION FAILED
+---------------- actual output
+[divide.assertion.2] line 4 assertion B / 1 = B: SUCCESS
+[assertion.1] line 4 Ada Check assertion: SUCCESS
+[divide.assertion.3] line 6 assertion B / B = 1: SUCCESS
+[divide.assertion.1] line 6 Ada Check assertion: SUCCESS
+[divide.assertion.4] line 8 assertion B < 0: FAILURE
+VERIFICATION FAILED
+================ Bug mixed_parameters 
+---------------- expected output
+[mixed_parameters.assertion.1] line 10 assertion C = 1: SUCCESS
+[mixed_parameters.assertion.2] line 12 assertion C = 0: SUCCESS
+[mixed_parameters.assertion.3] line 14 assertion C = 5: SUCCESS
+[mixed_parameters.assertion.4] line 16 assertion C = 2: SUCCESS
+[mixed_parameters.assertion.5] line 18 assertion C /= 0: FAILURE
+[subtract.assertion.1] line 5 Ada Check assertion: SUCCESS
+VERIFICATION FAILED
+---------------- actual output
+[subtract.assertion.1] line 5 Ada Check assertion: SUCCESS
+[mixed_parameters.assertion.1] line 10 assertion C = 1: SUCCESS
+[mixed_parameters.assertion.2] line 12 assertion C = 0: SUCCESS
+[mixed_parameters.assertion.3] line 14 assertion C = 5: SUCCESS
+[mixed_parameters.assertion.4] line 16 assertion C = 2: SUCCESS
+[mixed_parameters.assertion.5] line 18 assertion C /= 0: FAILURE
+VERIFICATION FAILED
+================ Bug op_or_else 
+---------------- expected output
+[assertion.1] file op_or_else.adb line 16 Ada Check assertion: FAILURE
+[div_by_zero.assertion.1] line 16 Ada Check assertion: FAILURE
+[op_or_else.assertion.1] line 34 assertion A or else B: SUCCESS
+[op_or_else.assertion.2] line 35 assertion B or else A: SUCCESS
+[op_or_else.assertion.3] line 36 assertion A or else A: SUCCESS
+[op_or_else.assertion.4] line 37 assertion C or else A or else B: SUCCESS
+[op_or_else.assertion.5] line 42 assertion A or else div_by_zero_not_called (0): SUCCESS
+[op_or_else.assertion.6] line 46 assertion A or div_by_zero (0): SUCCESS
+VERIFICATION FAILED
+---------------- actual output
+[div_by_zero.assertion.1] line 16 Ada Check assertion: FAILURE
+[assertion.1] line 16 Ada Check assertion: FAILURE
+[op_or_else.assertion.1] line 34 assertion A or else B: SUCCESS
+[op_or_else.assertion.2] line 35 assertion B or else A: SUCCESS
+[op_or_else.assertion.3] line 36 assertion A or else A: SUCCESS
+[op_or_else.assertion.4] line 37 assertion C or else A or else B: SUCCESS
+[op_or_else.assertion.5] line 42 assertion A or else div_by_zero_not_called (0): SUCCESS
+[op_or_else.assertion.6] line 46 assertion A or div_by_zero (0): SUCCESS
+VERIFICATION FAILED
+================ Bug package_type 
+---------------- expected output
+[package_type.assertion.1] line 8 Ada Check assertion: SUCCESS
+[package_type.assertion.2] line 8 assertion Small_Number * 2 = 8: SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+[package_type.assertion.2] line 8 assertion Small_Number * 2 = 8: SUCCESS
+[package_type.assertion.1] line 8 Ada Check assertion: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug pragma_machine_attribute 
+---------------- expected output
+[pragma_machine_attribute.assertion.1] line 21 assertion Timeout and Interval = Seconds_Count: SUCCESS
+[timer_interrupt.assertion.1] line 12 Ada Check assertion: SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+[timer_interrupt.assertion.1] line 12 Ada Check assertion: SUCCESS
+[pragma_machine_attribute.assertion.1] line 21 assertion Timeout and Interval = Seconds_Count: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug procedure_pointer 
+---------------- expected output
+Standard_Output from gnat2goto test:
+----------At: Do_Itype_Definition----------
+----------Unknown Ekind E_ACCESS_SUBTYPE----------
+N_Defining_Identifier "T4b" (Entity_Id=2491)
+ Parent = <empty>
+ Sloc = 8525  test.adb:14:4
+ Chars = "T4b" (Name_Id=300001462)
+ Next_Entity = N_Defining_Identifier "assert_modify" (Entity_Id=2476)
+ Scope = N_Defining_Identifier "test" (Entity_Id=2245)
+ Ekind = E_Access_Subtype
+ Etype = N_Defining_Identifier "modifier" (Entity_Id=2315)
+ Associated_Node_For_Itype = N_Procedure_Specification (Node_Id=2473)
+ Esize = 64 (Uint = 600032832)
+ RM_Size = 64 (Uint = 600032832)
+ Alignment = 4 (Uint = 600032772)
+ Directly_Designated_Type = N_Defining_Identifier "T1b" (Entity_Id=2451)
+ Can_Never_Be_Null = True
+ Has_Qualified_Name = True
+ Is_Frozen = True
+ Is_Internal = True
+ Is_Itype = True
+ Size_Known_At_Compile_Time = True
+
+[assert_modify.assertion.1] line 17 assertion Global_Number = 5: FAILURE
+[increment_by.assertion.1] line 5 Ada Check assertion: SUCCESS
+VERIFICATION FAILED
+---------------- actual output
+Standard_Output from gnat2goto test:
+----------At: Do_Itype_Definition----------
+----------Unknown Ekind E_ACCESS_SUBTYPE----------
+N_Defining_Identifier "T4b" (Entity_Id=2491)
+ Parent = <empty>
+ Sloc = 8525  test.adb:14:4
+ Chars = "T4b" (Name_Id=300001462)
+ Next_Entity = N_Defining_Identifier "assert_modify" (Entity_Id=2476)
+ Scope = N_Defining_Identifier "test" (Entity_Id=2245)
+ Ekind = E_Access_Subtype
+ Etype = N_Defining_Identifier "modifier" (Entity_Id=2315)
+ Associated_Node_For_Itype = N_Procedure_Specification (Node_Id=2473)
+ Esize = 64 (Uint = 600032832)
+ RM_Size = 64 (Uint = 600032832)
+ Alignment = 4 (Uint = 600032772)
+ Directly_Designated_Type = N_Defining_Identifier "T1b" (Entity_Id=2451)
+ Can_Never_Be_Null = True
+ Has_Qualified_Name = True
+ Is_Frozen = True
+ Is_Internal = True
+ Is_Itype = True
+ Size_Known_At_Compile_Time = True
+
+[increment_by.assertion.1] line 5 Ada Check assertion: SUCCESS
+[assert_modify.assertion.1] line 17 assertion Global_Number = 5: FAILURE
+VERIFICATION FAILED
+================ Bug statement_new_block_N_Block_Statement 
+---------------- expected output
+[statement_block.assertion.1] line 30 assertion Var2=2: SUCCESS
+[statement_block.assertion.2] line 35 assertion Var2=4: SUCCESS
+[statement_block.assertion.3] line 45 assertion Var2=10: SUCCESS
+[sum_plus_three.assertion.1] line 11 Ada Check assertion: SUCCESS
+[sum_plus_three.assertion.2] line 12 assertion Local1=3: SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+[sum_plus_three.assertion.1] line 11 Ada Check assertion: SUCCESS
+[sum_plus_three.assertion.2] line 12 assertion Local1=3: SUCCESS
+[statement_block.assertion.1] line 30 assertion Var2=2: SUCCESS
+[statement_block.assertion.2] line 35 assertion Var2=4: SUCCESS
+[statement_block.assertion.3] line 45 assertion Var2=10: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug type_modular_arithmetic 
+---------------- expected output
+[assertion.1] file modular_type.adb line 28 Ada Check assertion: SUCCESS
+[assert_val.assertion.1] line 6 assertion X = 5: SUCCESS
+[assert_val.assertion.2] line 8 assertion X + 3 = 8: SUCCESS
+[assert_val.assertion.3] line 9 assertion X + 6 = 1: SUCCESS
+[assert_val.assertion.4] line 11 assertion (X + 7) * X = 0: SUCCESS
+[assert_val.assertion.5] line 12 assertion X * 2 = 0: SUCCESS
+[assert_val.assertion.6] line 13 assertion X * 3 = 5: SUCCESS
+[assert_val.assertion.7] line 14 assertion X * X = 5: SUCCESS
+[assert_val.assertion.8] line 15 assertion X * 4 = 0: SUCCESS
+[assert_val.assertion.9] line 16 assertion Y * 1 = 4: SUCCESS
+[assert_val.assertion.10] line 17 assertion Y * 2 = 8: SUCCESS
+[assert_val.assertion.11] line 18 assertion Y * 3 = 2: SUCCESS
+[assert_val.assertion.12] line 19 assertion Y * 4 = 6: SUCCESS
+[assert_val.assertion.13] line 20 assertion Y * 5 = 0: SUCCESS
+[assert_val.assertion.14] line 21 assertion Y * 6 = 4: SUCCESS
+[assert_val.assertion.15] line 22 assertion Y * 7 = 8: SUCCESS
+[assert_val.assertion.16] line 23 assertion Y * 8 = 2: SUCCESS
+[assert_val.assertion.17] line 24 assertion Y * 9 = 6: SUCCESS
+[assert_val.assertion.18] line 26 assertion X - 6 = 9: SUCCESS
+[assert_val.assertion.19] line 28 assertion X / 2 = 2: SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+[assert_val.assertion.1] line 6 assertion X = 5: SUCCESS
+[assert_val.assertion.2] line 8 assertion X + 3 = 8: SUCCESS
+[assert_val.assertion.3] line 9 assertion X + 6 = 1: SUCCESS
+[assert_val.assertion.4] line 11 assertion (X + 7) * X = 0: SUCCESS
+[assert_val.assertion.5] line 12 assertion X * 2 = 0: SUCCESS
+[assert_val.assertion.6] line 13 assertion X * 3 = 5: SUCCESS
+[assert_val.assertion.7] line 14 assertion X * X = 5: SUCCESS
+[assert_val.assertion.8] line 15 assertion X * 4 = 0: SUCCESS
+[assert_val.assertion.9] line 16 assertion Y * 1 = 4: SUCCESS
+[assert_val.assertion.10] line 17 assertion Y * 2 = 8: SUCCESS
+[assert_val.assertion.11] line 18 assertion Y * 3 = 2: SUCCESS
+[assert_val.assertion.12] line 19 assertion Y * 4 = 6: SUCCESS
+[assert_val.assertion.13] line 20 assertion Y * 5 = 0: SUCCESS
+[assert_val.assertion.14] line 21 assertion Y * 6 = 4: SUCCESS
+[assert_val.assertion.15] line 22 assertion Y * 7 = 8: SUCCESS
+[assert_val.assertion.16] line 23 assertion Y * 8 = 2: SUCCESS
+[assert_val.assertion.17] line 24 assertion Y * 9 = 6: SUCCESS
+[assert_val.assertion.18] line 26 assertion X - 6 = 9: SUCCESS
+[assertion.1] line 28 Ada Check assertion: SUCCESS
+[assert_val.assertion.19] line 28 assertion X / 2 = 2: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug unary_minus_overflow 
+---------------- expected output
+[minus.assertion.1] line 15 assertion Large_Negative = 2: FAILURE
+[negate.assertion.1] line 9 Ada Check assertion: SUCCESS
+VERIFICATION FAILED
+---------------- actual output
+[negate.assertion.1] line 9 Ada Check assertion: SUCCESS
+[minus.assertion.1] line 15 assertion Large_Negative = 2: FAILURE
+VERIFICATION FAILED
+================ Bug use_package_declaration 
+---------------- expected output
+[use_package.assertion.1] line 8 Ada Check assertion: SUCCESS
+[use_package.assertion.2] line 8 assertion Small_Number * 2 = 8: SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+[use_package.assertion.2] line 8 assertion Small_Number * 2 = 8: SUCCESS
+[use_package.assertion.1] line 8 Ada Check assertion: SUCCESS
+VERIFICATION SUCCESSFUL

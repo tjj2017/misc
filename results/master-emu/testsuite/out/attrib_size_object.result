@@ -1,0 +1,1 @@
+XFAIL:gnat2goto does not handle size attribute clauses applied to an object

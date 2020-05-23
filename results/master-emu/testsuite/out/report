@@ -1,0 +1,1644 @@
+Out of 165 tests:
+  165 executed test(s) (non dead)
+    0 crash(es) detected
+   24 other potential regression(s)
+   28 expected regression(s)
+    0 unexpected passed test(s)
+    0 invalid test(s)
+    0 new dead test(s)
+    0 test(s) removed
+
+---------------- 24 new regression(s)
+arrays_constraints:DIFF:output
+arrays_range:DIFF:output
+use_package_declaration:DIFF:output
+op_or_else:DIFF:output
+type_modular_arithmetic:DIFF:output
+absolute:DIFF:output
+assertion_pretty_printing:DIFF:output
+expanded_name_subtype_indication:DIFF:output
+divide_by_zero:DIFF:output
+if_integer:DIFF:output
+unary_minus_overflow:DIFF:output
+absolute_float:DIFF:output
+generics:DIFF:output
+mixed_parameters:DIFF:output
+procedure_pointer:DIFF:output
+arrays_assign_nonoverlap:DIFF:output
+statement_new_block_N_Block_Statement:DIFF:output
+pragma_machine_attribute:DIFF:output
+arrays_concat:DIFF:output
+package_type:DIFF:output
+address_clause:DIFF:output
+arrays_attributes_static:DIFF:output
+enum_in_param:DIFF:output
+floating_point_literals:DIFF:output
+
+---------------- 0 already detected regression(s)
+
+---------------- 28 expected regression(s)
+arrays:XFAIL:CBMC fails with __new_array not found
+arrays_multidimensional_declaration_failure1:XFAIL:GNU Ada (ada2goto) Assert_Failure failed postcondition from arrays.ads
+arrays_multidimensional_declaration_failure2:XFAIL:gnat2goto fails with "GNU Ada (ada2goto) Assert_Failure sinfo.adb:2232"
+arrays_multidimensional_type_instantiation_failure:XFAIL:CBMC fails with invariant failure "Condition: op.operands()[number].type() == expr.type()"
+attrib_size_object:XFAIL:gnat2goto does not handle size attribute clauses applied to an object
+attrib_size_simple:XFAIL:cbmc fails with "reason unimplemented"
+attributes_continuous:XFAIL:gnat2goto fails precondition failure
+character_subtype:XFAIL:gnat2goto reports invalid range types and cbmc fails with an invariant violation
+deferred_constant_import:XFAIL:gnat2goto fails with unsupported feature (import pragma)
+dynamic_range_variable:XFAIL:gnat2goto fails with unsupported upper range kind: N_Identifier "dynamic_range_type_LAST"
+limited_private_record_type:XFAIL:Limited private record types don't work right now
+loop_array_range:XFAIL:gnat2goto fails with contraint_error (loop_array_range__TTmy_arrSP1 is not is symbol table)
+object_declaration_statement_bounds_crashing:XFAIL:gnat2goto fails because bounds are non constant expressions (#326)
+op_concat:XFAIL:CBMC fails with __new_array not found
+private_type_dec_abstract:XFAIL:gnat2goto fails with abstract type declaration unsupported
+private_type_dec_extension:XFAIL:gnat2goto fails private extension declaration
+range_second:XFAIL:Doesn't crash anymore but cbmc does not perform range assertion checks
+record_extension:XFAIL:gnat2goto fails with unsupported record extension
+record_init:XFAIL:CBMC fails with invariant violation Condition: op.operands()[number].type() == expr.type()
+representation_clause_component_size_change:XFAIL:gnat2goto fails with changing component size unsupported
+reverse:XFAIL:reverse currently not supported because we handle negative integers incorrectly
+separate_subprog_assert_check:XFAIL:Assert statement in p.adb should succeed.
+size_attribute_clause:XFAIL:gnat2goto does not handle anonymous type declarations in variable decs
+size_integer_and_objects:XFAIL:gnat2goto fails when Size representation clause applied to standard types and their derivations or to objects.
+string_assert:XFAIL:CBMC fails types of expressions on each side of equality should match
+string_equality:XFAIL:CBMC fails a precondition in can_cast_type<array_typet> in to_array_type in util/std_types.h
+subpackage_local_initialisers:XFAIL:Initialisers for local packages haven't been implemented yet
+variant_record:XFAIL:cbmc fails with type mismatch
+
+---------------- differences in output
+================ Bug absolute 
+---------------- expected output
+[absolute.assertion.1] line 7 assertion Symmetric_Difference (X, Y) = Symmetric_Difference (Y, X): SUCCESS
+[absolute.assertion.2] line 8 assertion Symmetric_Difference (X, Y) = 5: SUCCESS
+[absolute.assertion.3] line 10 assertion Symmetric_Difference (Y, X) /= 5: FAILURE
+[symmetric_difference.assertion.1] line 3 Ada Check assertion: SUCCESS
+VERIFICATION FAILED
+---------------- actual output
+[symmetric_difference.assertion.1] line 3 Ada Check assertion: SUCCESS
+[absolute.assertion.1] line 7 assertion Symmetric_Difference (X, Y) = Symmetric_Difference (Y, X): SUCCESS
+[absolute.assertion.2] line 8 assertion Symmetric_Difference (X, Y) = 5: SUCCESS
+[absolute.assertion.3] line 10 assertion Symmetric_Difference (Y, X) /= 5: FAILURE
+VERIFICATION FAILED
+================ Bug absolute_float 
+---------------- expected output
+[absolute_float.assertion.1] line 7 assertion Symmetric_Difference (X, Y) = Symmetric_Difference (Y, X): SUCCESS
+[absolute_float.assertion.2] line 8 assertion Symmetric_Difference (X, Y) = 5.0: SUCCESS
+[absolute_float.assertion.3] line 10 assertion Symmetric_Difference (Y, X) /= 5.0: FAILURE
+[symmetric_difference.assertion.1] line 3 Ada Check assertion: SUCCESS
+VERIFICATION FAILED
+---------------- actual output
+[symmetric_difference.assertion.1] line 3 Ada Check assertion: SUCCESS
+[absolute_float.assertion.1] line 7 assertion Symmetric_Difference (X, Y) = Symmetric_Difference (Y, X): SUCCESS
+[absolute_float.assertion.2] line 8 assertion Symmetric_Difference (X, Y) = 5.0: SUCCESS
+[absolute_float.assertion.3] line 10 assertion Symmetric_Difference (Y, X) /= 5.0: FAILURE
+VERIFICATION FAILED
+================ Bug address_clause 
+---------------- expected output
+Standard_Output from gnat2goto address_clause:
+----------At: Process_Declaration----------
+----------Address representation clauses are not currently supported----------
+N_Attribute_Definition_Clause "address" (Node_Id=2277) (source,analyzed)
+ Sloc = 8303  address_clause.adb:5:4
+ Chars = "address" (Name_Id=300000791)
+ Name = N_Identifier "var_addr_1" (Node_Id=2274)
+ Expression = N_Function_Call (Node_Id=2280)
+ Entity = N_Defining_Identifier "var_addr_1" (Entity_Id=2264)
+ Check_Address_Alignment = True
+----------At: Process_Declaration----------
+----------Address representation clauses are not currently supported----------
+N_Attribute_Definition_Clause "address" (Node_Id=2295) (source,analyzed)
+ Sloc = 8387  address_clause.adb:8:4
+ Chars = "address" (Name_Id=300000791)
+ Name = N_Identifier "var_addr_2" (Node_Id=2292)
+ Expression = N_Function_Call (Node_Id=2302)
+ Entity = N_Defining_Identifier "var_addr_2" (Entity_Id=2282)
+ Check_Address_Alignment = True
+
+[address_clause.assertion.1] line 12 Ada Check assertion: SUCCESS
+[address_clause.assertion.2] line 12 assertion Var_Addr_1 + Var_Addr_2 = 3: SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+Standard_Output from gnat2goto address_clause:
+----------At: Process_Declaration----------
+----------Address representation clauses are not currently supported----------
+N_Attribute_Definition_Clause "address" (Node_Id=2277) (source,analyzed)
+ Sloc = 8303  address_clause.adb:5:4
+ Chars = "address" (Name_Id=300000791)
+ Name = N_Identifier "var_addr_1" (Node_Id=2274)
+ Expression = N_Function_Call (Node_Id=2280)
+ Entity = N_Defining_Identifier "var_addr_1" (Entity_Id=2264)
+ Check_Address_Alignment = True
+----------At: Process_Declaration----------
+----------Address representation clauses are not currently supported----------
+N_Attribute_Definition_Clause "address" (Node_Id=2295) (source,analyzed)
+ Sloc = 8387  address_clause.adb:8:4
+ Chars = "address" (Name_Id=300000791)
+ Name = N_Identifier "var_addr_2" (Node_Id=2292)
+ Expression = N_Function_Call (Node_Id=2302)
+ Entity = N_Defining_Identifier "var_addr_2" (Entity_Id=2282)
+ Check_Address_Alignment = True
+
+[address_clause.assertion.2] line 12 assertion Var_Addr_1 + Var_Addr_2 = 3: SUCCESS
+[address_clause.assertion.1] line 12 Ada Check assertion: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug arrays_assign_nonoverlap 
+---------------- expected output
+[precondition_instance.1] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.2] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.3] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.4] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.5] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.6] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.7] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.8] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.9] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.10] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.11] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.12] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.13] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.14] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.15] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.16] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.17] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.18] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.19] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.20] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.21] file <internal> memcpy destination region writeable: SUCCESS
+[arrays_assign_nonoverlap.assertion.1] line 8 Ada Check assertion: SUCCESS
+[arrays_assign_nonoverlap.assertion.2] line 8 assertion Full_Arr(1)=3: SUCCESS
+[arrays_assign_nonoverlap.assertion.3] line 9 assertion Full_Arr(2)=4: SUCCESS
+[arrays_assign_nonoverlap.assertion.4] line 10 assertion Full_Arr(3)=1: SUCCESS
+[arrays_assign_nonoverlap.assertion.5] line 11 assertion Full_Arr(4)=2: SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+[precondition_instance.1] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.10] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.11] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.12] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.13] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.14] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.15] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.16] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.17] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.18] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.19] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.2] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.20] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.21] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.3] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.4] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.5] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.6] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.7] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.8] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.9] file <internal> memcpy destination region writeable: SUCCESS
+[arrays_assign_nonoverlap.assertion.1] line 8 Ada Check assertion: SUCCESS
+[arrays_assign_nonoverlap.assertion.2] line 8 assertion Full_Arr(1)=3: SUCCESS
+[arrays_assign_nonoverlap.assertion.3] line 9 assertion Full_Arr(2)=4: SUCCESS
+[arrays_assign_nonoverlap.assertion.4] line 10 assertion Full_Arr(3)=1: SUCCESS
+[arrays_assign_nonoverlap.assertion.5] line 11 assertion Full_Arr(4)=2: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug arrays_attributes_static 
+---------------- expected output
+[precondition_instance.1] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.2] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.3] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.4] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.5] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.6] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.7] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.8] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.9] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.10] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.11] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.12] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.13] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.14] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.15] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.16] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.17] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.18] file <internal> memcpy destination region writeable: SUCCESS
+[arrays_attributes_static.assertion.1] line 12 Ada Check assertion: SUCCESS
+[arrays_attributes_static.assertion.2] line 16 assertion Array_Attribs = 41: SUCCESS
+[arrays_attributes_static.assertion.3] line 17 assertion An_Index = 12: SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+[precondition_instance.1] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.10] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.11] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.12] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.13] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.14] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.15] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.16] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.17] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.18] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.2] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.3] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.4] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.5] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.6] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.7] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.8] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.9] file <internal> memcpy destination region writeable: SUCCESS
+[arrays_attributes_static.assertion.1] line 12 Ada Check assertion: SUCCESS
+[arrays_attributes_static.assertion.2] line 16 assertion Array_Attribs = 41: SUCCESS
+[arrays_attributes_static.assertion.3] line 17 assertion An_Index = 12: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug arrays_concat 
+---------------- expected output
+[precondition_instance.1] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.2] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.3] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.4] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.5] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.6] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.7] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.8] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.9] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.10] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.11] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.12] file <internal> memcpy destination region writeable: SUCCESS
+[arrays_concat.assertion.1] line 7 Ada Check assertion: SUCCESS
+[arrays_concat.assertion.2] line 7 assertion Actual(2)=4: SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+[precondition_instance.1] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.10] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.11] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.12] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.2] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.3] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.4] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.5] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.6] file <internal> memcpy destination region writeable: SUCCESS
+[precondition_instance.7] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.8] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.9] file <internal> memcpy destination region writeable: SUCCESS
+[arrays_concat.assertion.2] line 7 assertion Actual(2)=4: SUCCESS
+[arrays_concat.assertion.1] line 7 Ada Check assertion: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug arrays_constraints 
+---------------- expected output
+[array_constraints.assertion.1] line 109 Ada Check assertion: SUCCESS
+[array_constraints.assertion.2] line 117 assertion VUA1 (1) + VUA2 (2) + VUA3 (3) + VUA4 (4) + VUA5 (5) + VUA6 (6) + VUA7 (7) + VUA8 (8) = 36: SUCCESS
+[array_constraints.assertion.8] line 117 Ada Check assertion: SUCCESS
+[array_constraints.assertion.3] line 131 assertion VCA1 (VCA1'Last) + VCA2 (VCA2'Last - 1) + VCA3 (VCA3'Last - 2) + VCA4 (Constrained_Array_4'Last - 3) = 10: SUCCESS
+[array_constraints.assertion.4] line 143 assertion VEA1 (One) + VEA2 (Two) + VEA3 (Three) + VEA4 (Four) + VEA5 (Five) + VEA6 (Six) = 21: SUCCESS
+[array_constraints.assertion.5] line 154 assertion VBA1 (False) + VBA2 (True) + VBA3 (False) + VBA4 (True) + VBA5 (False) + VBA6 (True) = 7: SUCCESS
+[array_constraints.assertion.6] line 166 assertion VAC1 ('A') + VAC3 ('b') + VAC4 ('c') + VAC5 ('0') + VAC6 ('x') + VAC8 ('e') + VAC9 ('f') = 36: SUCCESS
+[array_constraints.assertion.7] line 180 assertion VAM1 (1) + VAM2 (2) + VAM3 (3) + VAM4 (4) + VAM5 (5) + VAM6 (6) + VAM7 (7) + VAM8 (8) + VAM9 (9) = 45: SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+[array_constraints.assertion.1] line 109 Ada Check assertion: SUCCESS
+[array_constraints.assertion.8] line 117 Ada Check assertion: SUCCESS
+[array_constraints.assertion.2] line 117 assertion VUA1 (1) + VUA2 (2) + VUA3 (3) + VUA4 (4) + VUA5 (5) + VUA6 (6) + VUA7 (7) + VUA8 (8) = 36: SUCCESS
+[array_constraints.assertion.3] line 131 assertion VCA1 (VCA1'Last) + VCA2 (VCA2'Last - 1) + VCA3 (VCA3'Last - 2) + VCA4 (Constrained_Array_4'Last - 3) = 10: SUCCESS
+[array_constraints.assertion.4] line 143 assertion VEA1 (One) + VEA2 (Two) + VEA3 (Three) + VEA4 (Four) + VEA5 (Five) + VEA6 (Six) = 21: SUCCESS
+[array_constraints.assertion.5] line 154 assertion VBA1 (False) + VBA2 (True) + VBA3 (False) + VBA4 (True) + VBA5 (False) + VBA6 (True) = 7: SUCCESS
+[array_constraints.assertion.6] line 166 assertion VAC1 ('A') + VAC3 ('b') + VAC4 ('c') + VAC5 ('0') + VAC6 ('x') + VAC8 ('e') + VAC9 ('f') = 36: SUCCESS
+[array_constraints.assertion.7] line 180 assertion VAM1 (1) + VAM2 (2) + VAM3 (3) + VAM4 (4) + VAM5 (5) + VAM6 (6) + VAM7 (7) + VAM8 (8) + VAM9 (9) = 45: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug arrays_range 
+---------------- expected output
+[precondition_instance.1] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.2] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.3] file <internal> memcpy destination region writeable: SUCCESS
+[array_consumer.assertion.1] line 8 Ada Check assertion: SUCCESS
+[array_consumer.assertion.2] line 8 Ada Check assertion: FAILURE
+[array_consumer.assertion.3] line 9 assertion An_Index = 2: SUCCESS
+[array_consumer.assertion.4] line 11 assertion An_Index = 4: SUCCESS
+[array_consumer.assertion.5] line 13 assertion An_Index = -1: SUCCESS
+VERIFICATION FAILED
+---------------- actual output
+[precondition_instance.1] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.2] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.3] file <internal> memcpy destination region writeable: SUCCESS
+[array_consumer.assertion.2] line 8 Ada Check assertion: FAILURE
+[array_consumer.assertion.1] line 8 Ada Check assertion: SUCCESS
+[array_consumer.assertion.3] line 9 assertion An_Index = 2: SUCCESS
+[array_consumer.assertion.4] line 11 assertion An_Index = 4: SUCCESS
+[array_consumer.assertion.5] line 13 assertion An_Index = -1: SUCCESS
+VERIFICATION FAILED
+================ Bug assertion_pretty_printing 
+---------------- expected output
+[check.assertion.1] line 15 assertion X = 5: FAILURE
+[check2.assertion.1] line 20 assertion False or (X < 10 and X > 0): SUCCESS
+[check3.assertion.1] line 32 assertion Plus (X, Plus (X, 1)) <= 15 and Plus (X => X, Y => -5) >= -5: FAILURE
+[check4.assertion.1] line 43 assertion X < 10: FAILURE
+[plus.assertion.1] line 28 Ada Check assertion: SUCCESS
+VERIFICATION FAILED
+---------------- actual output
+[check.assertion.1] line 15 assertion X = 5: FAILURE
+[check2.assertion.1] line 20 assertion False or (X < 10 and X > 0): SUCCESS
+[plus.assertion.1] line 28 Ada Check assertion: SUCCESS
+[check3.assertion.1] line 32 assertion Plus (X, Plus (X, 1)) <= 15 and Plus (X => X, Y => -5) >= -5: FAILURE
+[check4.assertion.1] line 43 assertion X < 10: FAILURE
+VERIFICATION FAILED
+================ Bug divide_by_zero 
+---------------- expected output
+[assertion.1] file divide_by_zero.adb line 6 Ada Check assertion: FAILURE
+[divide_by_zero.assertion.1] line 6 Ada Check assertion: FAILURE
+VERIFICATION FAILED
+---------------- actual output
+[divide_by_zero.assertion.1] line 6 Ada Check assertion: FAILURE
+[assertion.1] line 6 Ada Check assertion: FAILURE
+VERIFICATION FAILED
+================ Bug enum_in_param 
+---------------- expected output
+[precondition_instance.1] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.2] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.3] file <internal> memcpy destination region writeable: SUCCESS
+[enum_in.assertion.1] line 23 Ada Check assertion: SUCCESS
+[p_enum_in.assertion.1] line 19 assertion E in More_Than_Two: SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+[precondition_instance.1] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.2] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.3] file <internal> memcpy destination region writeable: SUCCESS
+[p_enum_in.assertion.1] line 19 assertion E in More_Than_Two: SUCCESS
+[enum_in.assertion.1] line 23 Ada Check assertion: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug expanded_name_subtype_indication 
+---------------- expected output
+[test.assertion.2] line 8 assertion Val < 2.0: SUCCESS
+[test.assertion.3] line 10 assertion Val > 0.0: SUCCESS
+[test.assertion.1] line 11 Ada Check assertion: SUCCESS
+[test.assertion.4] line 11 assertion Val * 20.0 < 10.0: FAILURE
+VERIFICATION FAILED
+---------------- actual output
+[test.assertion.2] line 8 assertion Val < 2.0: SUCCESS
+[test.assertion.3] line 10 assertion Val > 0.0: SUCCESS
+[test.assertion.4] line 11 assertion Val * 20.0 < 10.0: FAILURE
+[test.assertion.1] line 11 Ada Check assertion: SUCCESS
+VERIFICATION FAILED
+================ Bug floating_point_literals 
+---------------- expected output
+[floating_point_literals.assertion.2] line 8 assertion X > Z: FAILURE
+[floating_point_literals.assertion.3] line 10 assertion X < Z: SUCCESS
+[floating_point_literals.assertion.1] line 12 Ada Check assertion: SUCCESS
+[floating_point_literals.assertion.4] line 12 assertion X + Y = Z: FAILURE
+[floating_point_literals.assertion.5] line 14 assertion X + Y < Z: SUCCESS
+[floating_point_literals.assertion.6] line 16 assertion W < 1.2: SUCCESS
+VERIFICATION FAILED
+---------------- actual output
+[floating_point_literals.assertion.2] line 8 assertion X > Z: FAILURE
+[floating_point_literals.assertion.3] line 10 assertion X < Z: SUCCESS
+[floating_point_literals.assertion.4] line 12 assertion X + Y = Z: FAILURE
+[floating_point_literals.assertion.1] line 12 Ada Check assertion: SUCCESS
+[floating_point_literals.assertion.5] line 14 assertion X + Y < Z: SUCCESS
+[floating_point_literals.assertion.6] line 16 assertion W < 1.2: SUCCESS
+VERIFICATION FAILED
+================ Bug generics 
+---------------- expected output
+[check_assoc_intR.assertion.1] line 10 Ada Check assertion: FAILURE
+[check_assoc_intR.assertion.2] line 10 assertion (A + (B + C)) = ((A + B) + C): SUCCESS
+[check_assoc_int_minusR.assertion.1] line 10 assertion (A + (B + C)) = ((A + B) + C): FAILURE
+VERIFICATION FAILED
+---------------- actual output
+[check_assoc_int_minusR.assertion.1] line 10 assertion (A + (B + C)) = ((A + B) + C): FAILURE
+[check_assoc_intR.assertion.1] line 10 Ada Check assertion: FAILURE
+[check_assoc_intR.assertion.2] line 10 assertion (A + (B + C)) = ((A + B) + C): SUCCESS
+VERIFICATION FAILED
+================ Bug if_integer 
+---------------- expected output
+[assertion.1] file divide.adb line 4 Ada Check assertion: SUCCESS
+[divide.assertion.2] line 4 assertion B / 1 = B: SUCCESS
+[divide.assertion.1] line 6 Ada Check assertion: SUCCESS
+[divide.assertion.3] line 6 assertion B / B = 1: SUCCESS
+[divide.assertion.4] line 8 assertion B < 0: FAILURE
+VERIFICATION FAILED
+---------------- actual output
+[divide.assertion.2] line 4 assertion B / 1 = B: SUCCESS
+[assertion.1] line 4 Ada Check assertion: SUCCESS
+[divide.assertion.3] line 6 assertion B / B = 1: SUCCESS
+[divide.assertion.1] line 6 Ada Check assertion: SUCCESS
+[divide.assertion.4] line 8 assertion B < 0: FAILURE
+VERIFICATION FAILED
+================ Bug mixed_parameters 
+---------------- expected output
+[mixed_parameters.assertion.1] line 10 assertion C = 1: SUCCESS
+[mixed_parameters.assertion.2] line 12 assertion C = 0: SUCCESS
+[mixed_parameters.assertion.3] line 14 assertion C = 5: SUCCESS
+[mixed_parameters.assertion.4] line 16 assertion C = 2: SUCCESS
+[mixed_parameters.assertion.5] line 18 assertion C /= 0: FAILURE
+[subtract.assertion.1] line 5 Ada Check assertion: SUCCESS
+VERIFICATION FAILED
+---------------- actual output
+[subtract.assertion.1] line 5 Ada Check assertion: SUCCESS
+[mixed_parameters.assertion.1] line 10 assertion C = 1: SUCCESS
+[mixed_parameters.assertion.2] line 12 assertion C = 0: SUCCESS
+[mixed_parameters.assertion.3] line 14 assertion C = 5: SUCCESS
+[mixed_parameters.assertion.4] line 16 assertion C = 2: SUCCESS
+[mixed_parameters.assertion.5] line 18 assertion C /= 0: FAILURE
+VERIFICATION FAILED
+================ Bug op_or_else 
+---------------- expected output
+[assertion.1] file op_or_else.adb line 16 Ada Check assertion: FAILURE
+[div_by_zero.assertion.1] line 16 Ada Check assertion: FAILURE
+[op_or_else.assertion.1] line 34 assertion A or else B: SUCCESS
+[op_or_else.assertion.2] line 35 assertion B or else A: SUCCESS
+[op_or_else.assertion.3] line 36 assertion A or else A: SUCCESS
+[op_or_else.assertion.4] line 37 assertion C or else A or else B: SUCCESS
+[op_or_else.assertion.5] line 42 assertion A or else div_by_zero_not_called (0): SUCCESS
+[op_or_else.assertion.6] line 46 assertion A or div_by_zero (0): SUCCESS
+VERIFICATION FAILED
+---------------- actual output
+[div_by_zero.assertion.1] line 16 Ada Check assertion: FAILURE
+[assertion.1] line 16 Ada Check assertion: FAILURE
+[op_or_else.assertion.1] line 34 assertion A or else B: SUCCESS
+[op_or_else.assertion.2] line 35 assertion B or else A: SUCCESS
+[op_or_else.assertion.3] line 36 assertion A or else A: SUCCESS
+[op_or_else.assertion.4] line 37 assertion C or else A or else B: SUCCESS
+[op_or_else.assertion.5] line 42 assertion A or else div_by_zero_not_called (0): SUCCESS
+[op_or_else.assertion.6] line 46 assertion A or div_by_zero (0): SUCCESS
+VERIFICATION FAILED
+================ Bug package_type 
+---------------- expected output
+[package_type.assertion.1] line 8 Ada Check assertion: SUCCESS
+[package_type.assertion.2] line 8 assertion Small_Number * 2 = 8: SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+[package_type.assertion.2] line 8 assertion Small_Number * 2 = 8: SUCCESS
+[package_type.assertion.1] line 8 Ada Check assertion: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug pragma_machine_attribute 
+---------------- expected output
+[pragma_machine_attribute.assertion.1] line 21 assertion Timeout and Interval = Seconds_Count: SUCCESS
+[timer_interrupt.assertion.1] line 12 Ada Check assertion: SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+[timer_interrupt.assertion.1] line 12 Ada Check assertion: SUCCESS
+[pragma_machine_attribute.assertion.1] line 21 assertion Timeout and Interval = Seconds_Count: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug procedure_pointer 
+---------------- expected output
+Standard_Output from gnat2goto test:
+----------At: Do_Itype_Definition----------
+----------Unknown Ekind E_ACCESS_SUBTYPE----------
+N_Defining_Identifier "T4b" (Entity_Id=2491)
+ Parent = <empty>
+ Sloc = 8525  test.adb:14:4
+ Chars = "T4b" (Name_Id=300001462)
+ Next_Entity = N_Defining_Identifier "assert_modify" (Entity_Id=2476)
+ Scope = N_Defining_Identifier "test" (Entity_Id=2245)
+ Ekind = E_Access_Subtype
+ Etype = N_Defining_Identifier "modifier" (Entity_Id=2315)
+ Associated_Node_For_Itype = N_Procedure_Specification (Node_Id=2473)
+ Esize = 64 (Uint = 600032832)
+ RM_Size = 64 (Uint = 600032832)
+ Alignment = 4 (Uint = 600032772)
+ Directly_Designated_Type = N_Defining_Identifier "T1b" (Entity_Id=2451)
+ Can_Never_Be_Null = True
+ Has_Qualified_Name = True
+ Is_Frozen = True
+ Is_Internal = True
+ Is_Itype = True
+ Size_Known_At_Compile_Time = True
+
+[assert_modify.assertion.1] line 17 assertion Global_Number = 5: FAILURE
+[increment_by.assertion.1] line 5 Ada Check assertion: SUCCESS
+VERIFICATION FAILED
+---------------- actual output
+Standard_Output from gnat2goto test:
+----------At: Do_Itype_Definition----------
+----------Unknown Ekind E_ACCESS_SUBTYPE----------
+N_Defining_Identifier "T4b" (Entity_Id=2491)
+ Parent = <empty>
+ Sloc = 8525  test.adb:14:4
+ Chars = "T4b" (Name_Id=300001462)
+ Next_Entity = N_Defining_Identifier "assert_modify" (Entity_Id=2476)
+ Scope = N_Defining_Identifier "test" (Entity_Id=2245)
+ Ekind = E_Access_Subtype
+ Etype = N_Defining_Identifier "modifier" (Entity_Id=2315)
+ Associated_Node_For_Itype = N_Procedure_Specification (Node_Id=2473)
+ Esize = 64 (Uint = 600032832)
+ RM_Size = 64 (Uint = 600032832)
+ Alignment = 4 (Uint = 600032772)
+ Directly_Designated_Type = N_Defining_Identifier "T1b" (Entity_Id=2451)
+ Can_Never_Be_Null = True
+ Has_Qualified_Name = True
+ Is_Frozen = True
+ Is_Internal = True
+ Is_Itype = True
+ Size_Known_At_Compile_Time = True
+
+[increment_by.assertion.1] line 5 Ada Check assertion: SUCCESS
+[assert_modify.assertion.1] line 17 assertion Global_Number = 5: FAILURE
+VERIFICATION FAILED
+================ Bug statement_new_block_N_Block_Statement 
+---------------- expected output
+[statement_block.assertion.1] line 30 assertion Var2=2: SUCCESS
+[statement_block.assertion.2] line 35 assertion Var2=4: SUCCESS
+[statement_block.assertion.3] line 45 assertion Var2=10: SUCCESS
+[sum_plus_three.assertion.1] line 11 Ada Check assertion: SUCCESS
+[sum_plus_three.assertion.2] line 12 assertion Local1=3: SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+[sum_plus_three.assertion.1] line 11 Ada Check assertion: SUCCESS
+[sum_plus_three.assertion.2] line 12 assertion Local1=3: SUCCESS
+[statement_block.assertion.1] line 30 assertion Var2=2: SUCCESS
+[statement_block.assertion.2] line 35 assertion Var2=4: SUCCESS
+[statement_block.assertion.3] line 45 assertion Var2=10: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug type_modular_arithmetic 
+---------------- expected output
+[assertion.1] file modular_type.adb line 28 Ada Check assertion: SUCCESS
+[assert_val.assertion.1] line 6 assertion X = 5: SUCCESS
+[assert_val.assertion.2] line 8 assertion X + 3 = 8: SUCCESS
+[assert_val.assertion.3] line 9 assertion X + 6 = 1: SUCCESS
+[assert_val.assertion.4] line 11 assertion (X + 7) * X = 0: SUCCESS
+[assert_val.assertion.5] line 12 assertion X * 2 = 0: SUCCESS
+[assert_val.assertion.6] line 13 assertion X * 3 = 5: SUCCESS
+[assert_val.assertion.7] line 14 assertion X * X = 5: SUCCESS
+[assert_val.assertion.8] line 15 assertion X * 4 = 0: SUCCESS
+[assert_val.assertion.9] line 16 assertion Y * 1 = 4: SUCCESS
+[assert_val.assertion.10] line 17 assertion Y * 2 = 8: SUCCESS
+[assert_val.assertion.11] line 18 assertion Y * 3 = 2: SUCCESS
+[assert_val.assertion.12] line 19 assertion Y * 4 = 6: SUCCESS
+[assert_val.assertion.13] line 20 assertion Y * 5 = 0: SUCCESS
+[assert_val.assertion.14] line 21 assertion Y * 6 = 4: SUCCESS
+[assert_val.assertion.15] line 22 assertion Y * 7 = 8: SUCCESS
+[assert_val.assertion.16] line 23 assertion Y * 8 = 2: SUCCESS
+[assert_val.assertion.17] line 24 assertion Y * 9 = 6: SUCCESS
+[assert_val.assertion.18] line 26 assertion X - 6 = 9: SUCCESS
+[assert_val.assertion.19] line 28 assertion X / 2 = 2: SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+[assert_val.assertion.1] line 6 assertion X = 5: SUCCESS
+[assert_val.assertion.2] line 8 assertion X + 3 = 8: SUCCESS
+[assert_val.assertion.3] line 9 assertion X + 6 = 1: SUCCESS
+[assert_val.assertion.4] line 11 assertion (X + 7) * X = 0: SUCCESS
+[assert_val.assertion.5] line 12 assertion X * 2 = 0: SUCCESS
+[assert_val.assertion.6] line 13 assertion X * 3 = 5: SUCCESS
+[assert_val.assertion.7] line 14 assertion X * X = 5: SUCCESS
+[assert_val.assertion.8] line 15 assertion X * 4 = 0: SUCCESS
+[assert_val.assertion.9] line 16 assertion Y * 1 = 4: SUCCESS
+[assert_val.assertion.10] line 17 assertion Y * 2 = 8: SUCCESS
+[assert_val.assertion.11] line 18 assertion Y * 3 = 2: SUCCESS
+[assert_val.assertion.12] line 19 assertion Y * 4 = 6: SUCCESS
+[assert_val.assertion.13] line 20 assertion Y * 5 = 0: SUCCESS
+[assert_val.assertion.14] line 21 assertion Y * 6 = 4: SUCCESS
+[assert_val.assertion.15] line 22 assertion Y * 7 = 8: SUCCESS
+[assert_val.assertion.16] line 23 assertion Y * 8 = 2: SUCCESS
+[assert_val.assertion.17] line 24 assertion Y * 9 = 6: SUCCESS
+[assert_val.assertion.18] line 26 assertion X - 6 = 9: SUCCESS
+[assertion.1] line 28 Ada Check assertion: SUCCESS
+[assert_val.assertion.19] line 28 assertion X / 2 = 2: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug unary_minus_overflow 
+---------------- expected output
+[minus.assertion.1] line 15 assertion Large_Negative = 2: FAILURE
+[negate.assertion.1] line 9 Ada Check assertion: SUCCESS
+VERIFICATION FAILED
+---------------- actual output
+[negate.assertion.1] line 9 Ada Check assertion: SUCCESS
+[minus.assertion.1] line 15 assertion Large_Negative = 2: FAILURE
+VERIFICATION FAILED
+================ Bug use_package_declaration 
+---------------- expected output
+[use_package.assertion.1] line 8 Ada Check assertion: SUCCESS
+[use_package.assertion.2] line 8 assertion Small_Number * 2 = 8: SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+[use_package.assertion.2] line 8 assertion Small_Number * 2 = 8: SUCCESS
+[use_package.assertion.1] line 8 Ada Check assertion: SUCCESS
+VERIFICATION SUCCESSFUL
+
+---------------- XFAIL differences in output
+================ Bug arrays 
+---------------- unexpected output
+Standard_Error from gnat2goto arrays:
++===========================GNAT BUG DETECTED==============================+
+| GNU Ada (ada2goto) Assert_Failure failed postcondition from arrays.ads:52|
+| Error detected at arrays.adb:2:11                                        |
+| Please submit a bug report; see https://gcc.gnu.org/bugs/ .              |
+| Use a subject line meaningful to you and us to track the bug.            |
+| Include the entire contents of this bug box in the report.               |
+| Include the exact command that you entered.                              |
+| Also include sources listed below.                                       |
++==========================================================================+
+
+Please include these source files with error report
+Note that list may not be accurate in some cases,
+so please double check that the problem can still
+be reproduced with the set of files listed.
+Consider also -gnatd.n switch (see debug.adb).
+
+arrays.adb
+
+compilation abandoned
+
+ERROR code  5  returned by gnat2goto when translating arrays
+CBMC not run
+================ Bug arrays_multidimensional_declaration_failure1 
+---------------- unexpected output
+Standard_Error from gnat2goto arrays_multidimensional_declaration_failure1:
++===========================GNAT BUG DETECTED==============================+
+| GNU Ada (ada2goto) Assert_Failure failed postcondition from arrays.ads:52|
+| Error detected at arrays_multidimensional_declaration_failure1.adb:2:11  |
+| Please submit a bug report; see https://gcc.gnu.org/bugs/ .              |
+| Use a subject line meaningful to you and us to track the bug.            |
+| Include the entire contents of this bug box in the report.               |
+| Include the exact command that you entered.                              |
+| Also include sources listed below.                                       |
++==========================================================================+
+
+Please include these source files with error report
+Note that list may not be accurate in some cases,
+so please double check that the problem can still
+be reproduced with the set of files listed.
+Consider also -gnatd.n switch (see debug.adb).
+
+arrays_multidimensional_declaration_failure1.adb
+
+      £á    ß      £á    ð      £á    ÷:4:04: warning: variable "AA1" is never read and never assigned
+compilation abandoned
+
+ERROR code  5  returned by gnat2goto when translating arrays_multidimensional_declaration_failure1
+CBMC not run
+================ Bug arrays_multidimensional_declaration_failure2 
+---------------- unexpected output
+Standard_Error from gnat2goto arrays_multidimensional_declaration_failure2:
+arrays_multidimensional_declaration_failure2.adb:4:04: warning: variable "AA" is never read and never assigned
+
+Error from cbmc arrays_multidimensional_declaration_failure2:
+--- begin invariant violation report ---
+Invariant check failed
+File: symex_assign.cpp:134 function: assign_from_struct
+Condition: rhs.operands().size() == components.size()
+Reason: Precondition
+Backtrace:
+cbmc(+0x23adfd) [0x558383854dfd]
+cbmc(+0x23b35f) [0x55838385535f]
+cbmc(+0x16a47c) [0x55838378447c]
+cbmc(+0x5f8fd6) [0x558383c12fd6]
+cbmc(+0x5f6984) [0x558383c10984]
+cbmc(+0x5bcb85) [0x558383bd6b85]
+cbmc(+0x61f740) [0x558383c39740]
+cbmc(+0x61fbf3) [0x558383c39bf3]
+cbmc(+0x4bd5dd) [0x558383ad75dd]
+cbmc(+0x61fc2e) [0x558383c39c2e]
+cbmc(+0x61fe48) [0x558383c39e48]
+cbmc(+0x620b8a) [0x558383c3ab8a]
+cbmc(+0x49ba06) [0x558383ab5a06]
+cbmc(+0x49b68b) [0x558383ab568b]
+cbmc(+0x2c9ad2) [0x5583838e3ad2]
+cbmc(+0x2c5398) [0x5583838df398]
+cbmc(+0x15e6b9) [0x5583837786b9]
+cbmc(+0x14deb1) [0x558383767eb1]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xeb) [0x7f3d72a5009b]
+cbmc(+0x15f18a) [0x55838377918a]
+
+
+--- end invariant violation report ---
+
+ERROR code  -6 returned by cbmc when processing arrays_multidimensional_declaration_failure2
+
+================ Bug arrays_multidimensional_type_instantiation_failure 
+---------------- unexpected output
+Standard_Error from gnat2goto arrays_multidimensional_type_instantiation_failure:
+arrays_multidimensional_type_instantiation_failure.adb:3:04: warning: variable "AA1_One" is never read and never assigned
+
+Error from cbmc arrays_multidimensional_type_instantiation_failure:
+--- begin invariant violation report ---
+Invariant check failed
+File: symex_assign.cpp:134 function: assign_from_struct
+Condition: rhs.operands().size() == components.size()
+Reason: Precondition
+Backtrace:
+cbmc(+0x23adfd) [0x55ef9c992dfd]
+cbmc(+0x23b35f) [0x55ef9c99335f]
+cbmc(+0x16a47c) [0x55ef9c8c247c]
+cbmc(+0x5f8fd6) [0x55ef9cd50fd6]
+cbmc(+0x5f6984) [0x55ef9cd4e984]
+cbmc(+0x5bcb85) [0x55ef9cd14b85]
+cbmc(+0x61f740) [0x55ef9cd77740]
+cbmc(+0x61fbf3) [0x55ef9cd77bf3]
+cbmc(+0x4bd5dd) [0x55ef9cc155dd]
+cbmc(+0x61fc2e) [0x55ef9cd77c2e]
+cbmc(+0x61fe48) [0x55ef9cd77e48]
+cbmc(+0x620b8a) [0x55ef9cd78b8a]
+cbmc(+0x49ba06) [0x55ef9cbf3a06]
+cbmc(+0x49b68b) [0x55ef9cbf368b]
+cbmc(+0x2c9ad2) [0x55ef9ca21ad2]
+cbmc(+0x2c5398) [0x55ef9ca1d398]
+cbmc(+0x15e6b9) [0x55ef9c8b66b9]
+cbmc(+0x14deb1) [0x55ef9c8a5eb1]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xeb) [0x7fc15363509b]
+cbmc(+0x15f18a) [0x55ef9c8b718a]
+
+
+--- end invariant violation report ---
+
+ERROR code  -6 returned by cbmc when processing arrays_multidimensional_type_instantiation_failure
+
+================ Bug attrib_size_object 
+---------------- unexpected output
+Standard_Output from gnat2goto object_size:
+----------At: Process_Declaration----------
+----------size clause not applied by the front-end----------
+N_Attribute_Definition_Clause "size" (Node_Id=2286) (source,analyzed)
+ Sloc = 8382  object_size.adb:8:4
+ Chars = "size" (Name_Id=300000899)
+ Name = N_Identifier "small_pos" (Node_Id=2283)
+ Expression = N_Integer_Literal (Node_Id=2287)
+ Entity = N_Defining_Identifier "small_pos" (Entity_Id=2273)
+
+[object_size.assertion.1] line 15 assertion Small_Pos = 7: SUCCESS
+[object_size.assertion.2] line 22 assertion Small_Pos = 8: SUCCESS
+[object_size.assertion.4] line 29 Ada Check assertion: SUCCESS
+[object_size.assertion.3] line 30 assertion Uncons_SP = 32: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug attrib_size_simple 
+---------------- unexpected output
+Error from cbmc good_size:
+--- begin invariant violation report ---
+Invariant check failed
+File: flattening/boolbv_width.cpp:199 function: get_entry
+Condition: false
+Reason: Unimplemented
+Backtrace:
+cbmc(+0x23adfd) [0x55d5f2de1dfd]
+cbmc(+0x23b35f) [0x55d5f2de235f]
+cbmc(+0x16a47c) [0x55d5f2d1147c]
+cbmc(+0x6b9258) [0x55d5f3260258]
+cbmc(+0x68507b) [0x55d5f322c07b]
+cbmc(+0x6842ec) [0x55d5f322b2ec]
+cbmc(+0x6be51c) [0x55d5f326551c]
+cbmc(+0x68754d) [0x55d5f322e54d]
+cbmc(+0x69785f) [0x55d5f323e85f]
+cbmc(+0x686615) [0x55d5f322d615]
+cbmc(+0x6bfb53) [0x55d5f3266b53]
+cbmc(+0x6faf3e) [0x55d5f32a1f3e]
+cbmc(+0x6f88ff) [0x55d5f329f8ff]
+cbmc(+0x6f8a03) [0x55d5f329fa03]
+cbmc(+0x62c5a9) [0x55d5f31d35a9]
+cbmc(+0x633af7) [0x55d5f31daaf7]
+cbmc(+0x48cbb8) [0x55d5f3033bb8]
+cbmc(+0x48cfec) [0x55d5f3033fec]
+cbmc(+0x49b744) [0x55d5f3042744]
+cbmc(+0x2c9ad2) [0x55d5f2e70ad2]
+cbmc(+0x2c5398) [0x55d5f2e6c398]
+cbmc(+0x15e6b9) [0x55d5f2d056b9]
+cbmc(+0x14deb1) [0x55d5f2cf4eb1]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xeb) [0x7fd63d01e09b]
+cbmc(+0x15f18a) [0x55d5f2d0618a]
+
+
+--- end invariant violation report ---
+
+ERROR code  -6 returned by cbmc when processing good_size
+
+================ Bug attributes_continuous 
+---------------- unexpected output
+Standard_Error from gnat2goto attributes_continuous:
++===========================GNAT BUG DETECTED==============================+
+| GNU Ada (ada2goto) Assert_Failure failed precondition from tree_walk.adb:391|
+| Error detected at attributes_continuous.adb:1:11                         |
+| Please submit a bug report; see https://gcc.gnu.org/bugs/ .              |
+| Use a subject line meaningful to you and us to track the bug.            |
+| Include the entire contents of this bug box in the report.               |
+| Include the exact command that you entered.                              |
+| Also include sources listed below.                                       |
++==========================================================================+
+
+Please include these source files with error report
+Note that list may not be accurate in some cases,
+so please double check that the problem can still
+be reproduced with the set of files listed.
+Consider also -gnatd.n switch (see debug.adb).
+
+attributes_continuous.adb
+
+compilation abandoned
+
+ERROR code  5  returned by gnat2goto when translating attributes_continuous
+CBMC not run
+================ Bug character_subtype 
+---------------- expected output
+Standard_Output from gnat2goto char_subtype:
+N_Character_Literal "QU41" (Node_Id=2264) (source,analyzed)
+ Parent = N_Range (Node_Id=2265)
+ Sloc = 12353  char_subtype.adb:2:40
+ Chars = "QU41" (Name_Id=300001450)
+ Is_Static_Expression = True
+ Etype = N_Defining_Identifier "character" (Entity_Id=100s)
+ Char_Literal_Value = 65 (Uint = 600032833)
+N_Character_Literal "QU5a" (Node_Id=2266) (source,analyzed)
+ Parent = N_Range (Node_Id=2265)
+ Sloc = 12360  char_subtype.adb:2:47
+ Chars = "QU5a" (Name_Id=300001451)
+ Is_Static_Expression = True
+ Etype = N_Defining_Identifier "character" (Entity_Id=100s)
+ Char_Literal_Value = 90 (Uint = 600032858)
+N_In (Node_Id=2286) (source,analyzed)
+ Parent = N_Pragma_Argument_Association <No_Name> (Node_Id=2290)
+ Sloc = 12434  char_subtype.adb:7:25
+ Left_Opnd = N_Identifier "var_c" (Node_Id=2283)
+ Right_Opnd = N_Identifier "capitals" (Node_Id=2285)
+ Etype = N_Defining_Identifier "boolean" (Entity_Id=16s)
+
+Standard_Error from gnat2goto char_subtype:
+----------At: Do_Base_Range_Constraint----------
+----------unsupported lower range kind----------
+----------At: Do_Base_Range_Constraint----------
+----------unsupported upper range kind----------
+----------At: Do_Expression----------
+----------In----------
+
+Error from cbmc char_subtype:
+--- begin invariant violation report ---
+Invariant check failed
+File: symex_assign.cpp:35 function: symex_assign
+Condition: lhs.type() == rhs.type()
+Reason: assignments must be type consistent
+Backtrace:
+0   cbmc                                0x0000000108a5edba _Z15print_backtraceRNSt3__113basic_ostreamIcNS_11char_traitsIcEEEE + 74
+1   cbmc                                0x0000000108a5f38c _Z13get_backtracev + 252
+2   cbmc                                0x000000010880b6ac _Z29invariant_violated_structuredI17invariant_failedtJRKNSt3__112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEEEENS1_9enable_ifIXsr3std10is_base_ofIS0_T_EE5valueEvE4typeES9_S9_iS9_DpOT0_ + 44
+3   cbmc                                0x00000001087cf784 _ZN11goto_symext12symex_assignER17goto_symex_statetRK12code_assignt + 1236
+4   cbmc                                0x00000001087f0e6e _ZN11goto_symext24execute_next_instructionERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER17goto_symex_statet + 718
+5   cbmc                                0x00000001087f0b2a _ZN11goto_symext10symex_stepERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER17goto_symex_statet + 42
+6   cbmc                                0x00000001086db94c _ZN10symex_bmct10symex_stepERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER17goto_symex_statet + 588
+7   cbmc                                0x00000001087ee80d _ZN11goto_symext19symex_threaded_stepER17goto_symex_statetRKNSt3__18functionIFRK14goto_functiontRK8dstringtEEE + 29
+8   cbmc                                0x00000001087eeb3f _ZN11goto_symext16symex_with_stateER17goto_symex_statetRKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER13symbol_tablet + 191
+9   cbmc                                0x00000001087efadd _ZN11goto_symext25symex_from_entry_point_ofERKNSt3__18functionIFRK14goto_functiontRK8dstringtEEER13symbol_tablet + 61
+10  cbmc                                0x00000001086c69ea _ZN30multi_path_symex_only_checkert17generate_equationEv + 74
+11  cbmc                                0x00000001086c5303 _ZN25multi_path_symex_checkertclERNSt3__113unordered_mapI8dstringt14property_infotNS0_4hashIS2_EENS0_8equal_toIS2_EENS0_9allocatorINS0_4pairIKS2_S3_EEEEEE + 83
+12  cbmc                                0x0000000108ae8e64 _ZN43all_properties_verifier_with_trace_storagetI25multi_path_symex_checkertEclEv + 52
+13  cbmc                                0x0000000108ae176d _ZN19cbmc_parse_optionst4doitEv + 4125
+14  cbmc                                0x0000000108a77619 _ZN19parse_options_baset4mainEv + 249
+15  cbmc                                0x0000000108add09d main + 45
+16  libdyld.dylib                       0x00007fff7c363015 start + 1
+
+
+--- end invariant violation report ---
+
+ERROR code  -6 returned by cbmc when processing char_subtype
+
+---------------- actual output
+Standard_Output from gnat2goto char_subtype:
+----------At: Do_Base_Range_Constraint----------
+----------unsupported lower range kind----------
+N_Character_Literal "QU41" (Node_Id=2264) (source,analyzed)
+ Parent = N_Range (Node_Id=2265)
+ Sloc = 8257  char_subtype.adb:2:40
+ Chars = "QU41" (Name_Id=300001450)
+ Is_Static_Expression = True
+ Etype = N_Defining_Identifier "character" (Entity_Id=100s)
+ Char_Literal_Value = 65 (Uint = 600032833)
+
+Error from cbmc char_subtype:
+--- begin invariant violation report ---
+Invariant check failed
+File: flattening/boolbv_width.cpp:199 function: get_entry
+Condition: false
+Reason: Unimplemented
+Backtrace:
+cbmc(+0x23adfd) [0x55c94585fdfd]
+cbmc(+0x23b35f) [0x55c94586035f]
+cbmc(+0x16a47c) [0x55c94578f47c]
+cbmc(+0x6b9258) [0x55c945cde258]
+cbmc(+0x6b2b02) [0x55c945cd7b02]
+cbmc(+0x6b5de4) [0x55c945cdade4]
+cbmc(+0x68417f) [0x55c945ca917f]
+cbmc(+0x6be51c) [0x55c945ce351c]
+cbmc(+0x68754d) [0x55c945cac54d]
+cbmc(+0x683a31) [0x55c945ca8a31]
+cbmc(+0x683aee) [0x55c945ca8aee]
+cbmc(+0x62c15d) [0x55c945c5115d]
+cbmc(+0x633aec) [0x55c945c58aec]
+cbmc(+0x48cbb8) [0x55c945ab1bb8]
+cbmc(+0x48cfec) [0x55c945ab1fec]
+cbmc(+0x49b744) [0x55c945ac0744]
+cbmc(+0x2c9ad2) [0x55c9458eead2]
+cbmc(+0x2c5398) [0x55c9458ea398]
+cbmc(+0x15e6b9) [0x55c9457836b9]
+cbmc(+0x14deb1) [0x55c945772eb1]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xeb) [0x7ff58841c09b]
+cbmc(+0x15f18a) [0x55c94578418a]
+
+
+--- end invariant violation report ---
+
+ERROR code  -6 returned by cbmc when processing char_subtype
+
+================ Bug deferred_constant_import 
+---------------- expected output
+Standard_Error from gnat2goto deferred_const_import:
+Warning: Pragmas in declarations unhandled
+
+[assertion.1] Range Check: SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+Standard_Error from gnat2goto deferred_const_import:
+Warning: Multi-language analysis unsupported.
+
+Error from cbmc deferred_const_import:
+SUPPORT FUNCTION GENERATION ERROR
+
+ERROR code  6 returned by cbmc when processing deferred_const_import
+
+================ Bug dynamic_range_variable 
+---------------- unexpected output
+Standard_Output from gnat2goto dynamic_range_variable:
+----------At: Do_Range_Constraint----------
+----------only static ranges are supported----------
+N_Integer_Literal (Node_Id=2285) (source,analyzed)
+ Parent = N_Range (Node_Id=2286)
+ Sloc = 8370  dynamic_range_variable.adb:4:58
+ Is_Static_Expression = True
+ Etype = N_Defining_Identifier "Tstatic_range_typeB" (Entity_Id=2312)
+ Intval = 1 (Uint = 600032769)
+----------At: Do_Constant----------
+----------Unsupported constant type----------
+N_Integer_Literal (Node_Id=2298) (source,analyzed)
+ Parent = N_Object_Declaration (Node_Id=2297)
+ Sloc = 8417  dynamic_range_variable.adb:5:32
+ Do_Range_Check = True
+ Is_Static_Expression = True
+ Etype = N_Defining_Identifier "dynamic_range_type" (Entity_Id=2276)
+ Intval = 20 (Uint = 600032788)
+
+Standard_Error from gnat2goto dynamic_range_variable:
++===========================GNAT BUG DETECTED==============================+
+| GNU Ada (ada2goto) Assert_Failure failed precondition from range_check.ads:54|
+| Error detected at dynamic_range_variable.adb:1:11                        |
+| Please submit a bug report; see https://gcc.gnu.org/bugs/ .              |
+| Use a subject line meaningful to you and us to track the bug.            |
+| Include the entire contents of this bug box in the report.               |
+| Include the exact command that you entered.                              |
+| Also include sources listed below.                                       |
++==========================================================================+
+
+Please include these source files with error report
+Note that list may not be accurate in some cases,
+so please double check that the problem can still
+be reproduced with the set of files listed.
+Consider also -gnatd.n switch (see debug.adb).
+
+dynamic_range_variable.adb
+
+compilation abandoned
+
+ERROR code  5  returned by gnat2goto when translating dynamic_range_variable
+CBMC not run
+================ Bug limited_private_record_type 
+---------------- expected output
+[test.assertion.1] line 5 assertion Counter.Value_Equals (C, 0): SUCCESS
+[test.assertion.2] line 7 assertion Counter.Value_Equals (C, 1): SUCCESS
+[test.assertion.3] line 8 assertion False: FAILURE
+VERIFICATION FAILED
+---------------- actual output
+Standard_Output from gnat2goto counter:
+----------At: Do_Aggregate_Literal----------
+----------Unhandled aggregate kind: E_LIMITED_PRIVATE_TYPE----------
+N_Aggregate (Node_Id=2274) (source,analyzed)
+ Rewritten: original node = N_Aggregate (Node_Id=2518)
+ Parent = N_Simple_Return_Statement (Node_Id=2500)
+ Sloc = 8272  counter.adb:3:6
+ Paren_Count = 1
+ Etype = N_Defining_Identifier "t" (Entity_Id=2360)
+ Component_Associations = List (List_Id=-99999943)
+
+Error from cbmc test:
+--- begin invariant violation report ---
+Invariant check failed
+File: goto_convert.cpp:1266 function: convert_return
+Condition: function must return value
+Reason: new_code.has_return_value()
+Backtrace:
+cbmc(+0x23adfd) [0x555d9ec5ddfd]
+cbmc(+0x23b35f) [0x555d9ec5e35f]
+cbmc(+0x2172b1) [0x555d9ec3a2b1]
+cbmc(+0x4d12d2) [0x555d9eef42d2]
+cbmc(+0x58e9d3) [0x555d9efb19d3]
+cbmc(+0x59125d) [0x555d9efb425d]
+cbmc(+0x5929c9) [0x555d9efb59c9]
+cbmc(+0x590fe9) [0x555d9efb3fe9]
+cbmc(+0x5929c9) [0x555d9efb59c9]
+cbmc(+0x590fe9) [0x555d9efb3fe9]
+cbmc(+0x59721f) [0x555d9efba21f]
+cbmc(+0x56901a) [0x555d9ef8c01a]
+cbmc(+0x56b7b3) [0x555d9ef8e7b3]
+cbmc(+0x56c6dc) [0x555d9ef8f6dc]
+cbmc(+0x4e2536) [0x555d9ef05536]
+cbmc(+0x2c14eb) [0x555d9ece44eb]
+cbmc(+0x2c51b2) [0x555d9ece81b2]
+cbmc(+0x15e6b9) [0x555d9eb816b9]
+cbmc(+0x14deb1) [0x555d9eb70eb1]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xeb) [0x7f493c0c909b]
+cbmc(+0x15f18a) [0x555d9eb8218a]
+
+Diagnostics: 
+<< EXTRA DIAGNOSTICS >>
+source location: file counter.adb line 3 column 6
+<< END EXTRA DIAGNOSTICS >>
+
+--- end invariant violation report ---
+
+ERROR code  -6 returned by cbmc when processing test
+
+================ Bug loop_array_range 
+---------------- unexpected output
+[precondition_instance.1] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.2] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.3] file <internal> memcpy destination region writeable: SUCCESS
+[loop_array_range.assertion.3] line 8 Ada Check assertion: SUCCESS
+[loop_array_range.assertion.1] line 8 Ada Check assertion: SUCCESS
+[loop_array_range.assertion.2] line 11 assertion Sum=6: FAILURE
+VERIFICATION FAILED
+================ Bug object_declaration_statement_bounds_crashing 
+---------------- unexpected output
+Standard_Output from gnat2goto object_declaration_statement_bounds_crashing:
+----------At: Do_Itype_Integer_Subtype----------
+----------Non-literal bound unsupported----------
+N_Defining_Identifier "T2b" (Entity_Id=2457)
+ Parent = <empty>
+ Sloc = 8413  object_declaration_statement_bounds_crashing.adb:8:11
+ Chars = "T2b" (Name_Id=300001458)
+ Scope = N_Defining_Identifier "L_1" (Entity_Id=2345)
+ Ekind = E_Signed_Integer_Subtype
+ Etype = N_Defining_Identifier "Trange_typeB" (Entity_Id=2388)
+ Associated_Node_For_Itype = N_Loop_Parameter_Specification (Node_Id=2307)
+ Esize = 8 (Uint = 600032776)
+ RM_Size = 8 (Uint = 600032776)
+ Alignment = 1 (Uint = 600032769)
+ Scalar_Range = N_Range (Node_Id=2316)
+ Is_Frozen = True
+ Is_Internal = True
+ Is_Itype = True
+ Needs_Debug_Info = True
+ Size_Known_At_Compile_Time = True
+----------At: Do_Type_Reference----------
+----------Type of type not a type----------
+N_Defining_Identifier "T2b" (Entity_Id=2457)
+ Parent = <empty>
+ Sloc = 8413  object_declaration_statement_bounds_crashing.adb:8:11
+ Chars = "T2b" (Name_Id=300001458)
+ Scope = N_Defining_Identifier "L_1" (Entity_Id=2345)
+ Ekind = E_Signed_Integer_Subtype
+ Etype = N_Defining_Identifier "Trange_typeB" (Entity_Id=2388)
+ Associated_Node_For_Itype = N_Loop_Parameter_Specification (Node_Id=2307)
+ Esize = 8 (Uint = 600032776)
+ RM_Size = 8 (Uint = 600032776)
+ Alignment = 1 (Uint = 600032769)
+ Scalar_Range = N_Range (Node_Id=2316)
+ Is_Frozen = True
+ Is_Internal = True
+ Is_Itype = True
+ Needs_Debug_Info = True
+ Size_Known_At_Compile_Time = True
+
+Error from cbmc object_declaration_statement_bounds_crashing:
+--- begin invariant violation report ---
+Invariant check failed
+File: flattening/boolbv_width.cpp:199 function: get_entry
+Condition: false
+Reason: Unimplemented
+Backtrace:
+cbmc(+0x23adfd) [0x558420561dfd]
+cbmc(+0x23b35f) [0x55842056235f]
+cbmc(+0x16a47c) [0x55842049147c]
+cbmc(+0x6b9258) [0x5584209e0258]
+cbmc(+0x6b2b02) [0x5584209d9b02]
+cbmc(+0x6b5de4) [0x5584209dcde4]
+cbmc(+0x68417f) [0x5584209ab17f]
+cbmc(+0x6be51c) [0x5584209e551c]
+cbmc(+0x68754d) [0x5584209ae54d]
+cbmc(+0x68dbde) [0x5584209b4bde]
+cbmc(+0x686615) [0x5584209ad615]
+cbmc(+0x6bfb53) [0x5584209e6b53]
+cbmc(+0x6faf3e) [0x558420a21f3e]
+cbmc(+0x6f88ff) [0x558420a1f8ff]
+cbmc(+0x6fb3be) [0x558420a223be]
+cbmc(+0x6f88ff) [0x558420a1f8ff]
+cbmc(+0x6fb1c1) [0x558420a221c1]
+cbmc(+0x6f88ff) [0x558420a1f8ff]
+cbmc(+0x6f8a03) [0x558420a1fa03]
+cbmc(+0x633705) [0x55842095a705]
+cbmc(+0x633b0d) [0x55842095ab0d]
+cbmc(+0x48cbb8) [0x5584207b3bb8]
+cbmc(+0x48cfec) [0x5584207b3fec]
+cbmc(+0x49b744) [0x5584207c2744]
+cbmc(+0x2c9ad2) [0x5584205f0ad2]
+cbmc(+0x2c5398) [0x5584205ec398]
+cbmc(+0x15e6b9) [0x5584204856b9]
+cbmc(+0x14deb1) [0x558420474eb1]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xeb) [0x7f7ec94a009b]
+cbmc(+0x15f18a) [0x55842048618a]
+
+
+--- end invariant violation report ---
+
+ERROR code  -6 returned by cbmc when processing object_declaration_statement_bounds_crashing
+
+================ Bug op_concat 
+---------------- unexpected output
+Standard_Output from gnat2goto op_concat:
+----------At: Do_Operator_General----------
+----------Concat unsupported----------
+N_Op_Concat "Oconcat" (Node_Id=2314) (source,analyzed)
+ Sloc = 8439  op_concat.adb:12:40
+ Chars = "Oconcat" (Name_Id=300000412)
+ Left_Opnd = N_Slice (Node_Id=2313)
+ Right_Opnd = N_Slice (Node_Id=2319)
+ Entity = N_Defining_Operator_Symbol "Oconcat" (Entity_Id=2344)
+ Etype = N_Defining_Identifier "TarrB" (Entity_Id=2337)
+
+Error from cbmc op_concat:
+warning: ignoring nil
+  * type: nil
+  * #source_location: 
+    * file: <internal>
+    * line: 
+    * column: 
+    * comment: 
+    * property_class: 
+    * property_id: 
+    * function: 
+    * working_directory: 
+    * java_bytecode_index: 
+  * range_check: 0
+--- begin invariant violation report ---
+Invariant check failed
+File: flattening/boolbv_width.cpp:199 function: get_entry
+Condition: false
+Reason: Unimplemented
+Backtrace:
+cbmc(+0x23adfd) [0x558861a59dfd]
+cbmc(+0x23b35f) [0x558861a5a35f]
+cbmc(+0x16a47c) [0x55886198947c]
+cbmc(+0x6b9258) [0x558861ed8258]
+cbmc(+0x68361a) [0x558861ea261a]
+cbmc(+0x684155) [0x558861ea3155]
+cbmc(+0x6be51c) [0x558861edd51c]
+cbmc(+0x68754d) [0x558861ea654d]
+cbmc(+0x6b5d8d) [0x558861ed4d8d]
+cbmc(+0x68417f) [0x558861ea317f]
+cbmc(+0x6be51c) [0x558861edd51c]
+cbmc(+0x68754d) [0x558861ea654d]
+cbmc(+0x683a31) [0x558861ea2a31]
+cbmc(+0x683aee) [0x558861ea2aee]
+cbmc(+0x62c15d) [0x558861e4b15d]
+cbmc(+0x633aec) [0x558861e52aec]
+cbmc(+0x48cbb8) [0x558861cabbb8]
+cbmc(+0x48cfec) [0x558861cabfec]
+cbmc(+0x49b744) [0x558861cba744]
+cbmc(+0x2c9ad2) [0x558861ae8ad2]
+cbmc(+0x2c5398) [0x558861ae4398]
+cbmc(+0x15e6b9) [0x55886197d6b9]
+cbmc(+0x14deb1) [0x55886196ceb1]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xeb) [0x7efd4b7af09b]
+cbmc(+0x15f18a) [0x55886197e18a]
+
+
+--- end invariant violation report ---
+
+ERROR code  -6 returned by cbmc when processing op_concat
+
+================ Bug private_type_dec_abstract 
+---------------- unexpected output
+Standard_Output from gnat2goto private_dec_abstract:
+----------At: Do_Full_Type_Declaration----------
+----------type not in symbol table after declaration----------
+N_Full_Type_Declaration (Node_Id=2347) (source,analyzed)
+ Sloc = 12406  private_dec_abstract.ads:7:4
+ Defining_Identifier = N_Defining_Identifier "dec" (Entity_Id=2326)
+ Type_Definition = N_Record_Definition (Node_Id=2333)
+
+Standard_Error from gnat2goto private_dec_abstract:
++===========================GNAT BUG DETECTED==============================+
+| GNU Ada (ada2goto) Constraint_Error Symbol_Table_Info.Symbol_Maps.Constant_Reference: key not in map|
+| Error detected at system.ads:156:5                                       |
+| Please submit a bug report; see https://gcc.gnu.org/bugs/ .              |
+| Use a subject line meaningful to you and us to track the bug.            |
+| Include the entire contents of this bug box in the report.               |
+| Include the exact command that you entered.                              |
+| Also include sources listed below.                                       |
++==========================================================================+
+
+Please include these source files with error report
+Note that list may not be accurate in some cases,
+so please double check that the problem can still
+be reproduced with the set of files listed.
+Consider also -gnatd.n switch (see debug.adb).
+
+private_dec_abstract.adb
+private_dec_abstract.ads
+
+compilation abandoned
+
+ERROR code  5  returned by gnat2goto when translating private_dec_abstract
+CBMC not run
+================ Bug private_type_dec_extension 
+---------------- unexpected output
+Standard_Output from gnat2goto private_dec_extension:
+----------At: Process_Declaration----------
+----------Unknown declaration kind----------
+N_Private_Extension_Declaration (Node_Id=2313) (source,analyzed)
+ Sloc = 12381  private_dec_extension.ads:3:4
+ Defining_Identifier = N_Defining_Identifier "string_input" (Entity_Id=2304)
+ Subtype_Indication = N_Identifier "input_source" (Node_Id=2312)
+----------At: Do_Full_Type_Declaration----------
+----------type not in symbol table after declaration----------
+N_Full_Type_Declaration (Node_Id=2354) (source,analyzed)
+ Sloc = 12487  private_dec_extension.ads:7:4
+ Defining_Identifier = N_Defining_Identifier "input_source" (Entity_Id=2332)
+ Type_Definition = N_Record_Definition (Node_Id=2339)
+----------At: Do_Derived_Type_Definition----------
+----------record extension unsupported----------
+N_Derived_Type_Definition (Node_Id=2362) (source)
+ Parent = N_Full_Type_Declaration (Node_Id=2378)
+ Sloc = 12613  private_dec_extension.ads:11:25
+ Subtype_Indication = N_Identifier "input_source" (Node_Id=2363)
+ Record_Extension_Part = N_Record_Definition (Node_Id=2364)
+
+Error from cbmc private_dec_extension:
+SUPPORT FUNCTION GENERATION ERROR
+
+ERROR code  6 returned by cbmc when processing private_dec_extension
+
+================ Bug range_second 
+---------------- unexpected output
+Standard_Error from gnat2goto range_second:
+range_second.adb:19:13: warning: value not in range of type "Result_Indicator_Type" defined at line 10
+range_second.adb:19:13: warning: "Constraint_Error" will be raised at run time
+
+Standard_Error from gnat2goto range_third:
+range_third.adb:1:11: warning: file name does not match unit name, should be "range_second.adb"
+
+Error from cbmc range_third:
+function 'range_second' in module '' is shadowed by a definition in module ''
+
+reason for conflict at #this: conflict on POD
+
+int
+short int
+error: conflicting function declarations 'range_second__testable'
+old definition in module '' 
+void (int range_second__testable__result$$range_second__testable__result)
+new definition in module '' 
+void (short int range_second__testable__result$link1$$range_second__testable__result$link1)
+function '__CPROVER__start' in module '' is shadowed by a definition in module ''
+CONVERSION ERROR
+
+ERROR code  6 returned by cbmc when processing range_third
+
+================ Bug record_extension 
+---------------- unexpected output
+Standard_Output from gnat2goto record_init:
+----------At: Do_Derived_Type_Definition----------
+----------record extension unsupported----------
+N_Derived_Type_Definition (Node_Id=2295) (source)
+ Parent = N_Full_Type_Declaration (Node_Id=2299)
+ Sloc = 8332  record_init.adb:7:15
+ Subtype_Indication = N_Identifier "r1" (Node_Id=2296)
+ Record_Extension_Part = N_Record_Definition (Node_Id=2297)
+
+Standard_Error from gnat2goto record_init:
+record_init.adb:1:11: warning: file name does not match unit name, should be "record_extension.adb"
+
+[record_extension.assertion.1] line 10 assertion Var.B: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug record_init 
+---------------- unexpected output
+Standard_Error from gnat2goto record_init:
+record_init.adb:4:09: warning: creation of "R1" object may raise Storage_Error
+record_init.adb:12:09: warning: creation of "R3" object may raise Storage_Error
+record_init.adb:23:04: warning: variable "Inst3" is never read and never assigned
+record_init.adb:24:04: warning: variable "Inst4" is never read and never assigned
+record_init.adb:26:04: warning: variable "Inst6" is never read and never assigned
+
+Error from cbmc record_init:
+--- begin invariant violation report ---
+Invariant check failed
+File: ../util/std_types.h:305 function: to_struct_type
+Condition: can_cast_type<struct_typet>(type)
+Reason: Precondition
+Backtrace:
+cbmc(+0x23adfd) [0x557e2191fdfd]
+cbmc(+0x23b35f) [0x557e2192035f]
+cbmc(+0x16a47c) [0x557e2184f47c]
+cbmc(+0x5f9052) [0x557e21cde052]
+cbmc(+0x5f85fe) [0x557e21cdd5fe]
+cbmc(+0x5f6984) [0x557e21cdb984]
+cbmc(+0x5bcb85) [0x557e21ca1b85]
+cbmc(+0x61f740) [0x557e21d04740]
+cbmc(+0x61fbf3) [0x557e21d04bf3]
+cbmc(+0x4bd5dd) [0x557e21ba25dd]
+cbmc(+0x61fc2e) [0x557e21d04c2e]
+cbmc(+0x61fe48) [0x557e21d04e48]
+cbmc(+0x620b8a) [0x557e21d05b8a]
+cbmc(+0x49ba06) [0x557e21b80a06]
+cbmc(+0x49b68b) [0x557e21b8068b]
+cbmc(+0x2c9ad2) [0x557e219aead2]
+cbmc(+0x2c5398) [0x557e219aa398]
+cbmc(+0x15e6b9) [0x557e218436b9]
+cbmc(+0x14deb1) [0x557e21832eb1]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xeb) [0x7f7e0193c09b]
+cbmc(+0x15f18a) [0x557e2184418a]
+
+
+--- end invariant violation report ---
+
+ERROR code  -6 returned by cbmc when processing record_init
+
+================ Bug representation_clause_component_size_change 
+---------------- unexpected output
+Standard_Output from gnat2goto test:
+----------At: Process_Declaration----------
+----------Having component sizes be different from the size of their underlying type is currently not supported----------
+N_Attribute_Definition_Clause "component_size" (Node_Id=2335) (source,analyzed)
+ Sloc = 8590  test.adb:13:4
+ Chars = "component_size" (Name_Id=300000806)
+ Name = N_Identifier "storage_array" (Node_Id=2332)
+ Expression = N_Integer_Literal (Node_Id=2336)
+ Entity = N_Defining_Identifier "storage_array" (Entity_Id=2319)
+
+[precondition_instance.1] file <internal> memcpy src/dst overlap: SUCCESS
+[precondition_instance.2] file <internal> memcpy source region readable: SUCCESS
+[precondition_instance.3] file <internal> memcpy destination region writeable: SUCCESS
+[test.assertion.1] line 17 assertion My_Storage_Array(2)=2: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug reverse 
+---------------- expected output
+VERIFICATION SUCCESSFUL
+---------------- actual output
+[reversep.assertion.1] line 7 assertion A = 1: FAILURE
+VERIFICATION FAILED
+================ Bug separate_subprog_assert_check 
+---------------- expected output
+[2] file p-inc.asu line 6 assertion: SUCCESS
+[1] file p.adb line 16 assertion: SUCCESS
+VERIFICATION SUCCEEDED
+---------------- actual output
+[inc.assertion.1] line 5 Ada Check assertion: FAILURE
+[inc.assertion.2] line 6 assertion N = Old_N + 1: SUCCESS
+[p.assertion.1] line 16 assertion X = Old_X + 1: FAILURE
+VERIFICATION FAILED
+================ Bug size_attribute_clause 
+---------------- unexpected output
+Standard_Output from gnat2goto check_size:
+----------At: Process_Declaration----------
+----------size clause not applied by the front-end----------
+N_Attribute_Definition_Clause "size" (Node_Id=2310) (source,analyzed)
+ Sloc = 8372  check_size.adb:7:4
+ Chars = "size" (Name_Id=300000899)
+ Name = N_Identifier "t_1" (Node_Id=2307)
+ Expression = N_Integer_Literal (Node_Id=2311)
+ Entity = N_Defining_Identifier "t_1" (Entity_Id=2291)
+----------At: Make_Default_Initialiser----------
+----------Unknown Ekind----------
+N_Defining_Identifier "Tvar_size_1S" (Entity_Id=2520)
+ Parent = N_Subtype_Declaration (Node_Id=2528)
+ Sloc = 8572  check_size.adb:18:4
+ Chars = "Tvar_size_1S" (Name_Id=300001465)
+ Next_Entity = N_Defining_Identifier "var_size_2" (Entity_Id=2389)
+ Scope = N_Defining_Identifier "check_size" (Entity_Id=2245)
+ Ekind = E_Signed_Integer_Subtype
+ Etype = N_Defining_Identifier "integer" (Entity_Id=1009s)
+ Esize = 32 (Uint = 600032800)
+ RM_Size = 6 (Uint = 600032774)
+ Alignment = 4 (Uint = 600032772)
+ Scalar_Range = N_Range (Node_Id=2380)
+ Has_Qualified_Name = True
+ Is_Constrained = True
+ Is_Frozen = True
+ Is_Unsigned_Type = True
+ Needs_Debug_Info = True
+ Size_Known_At_Compile_Time = True
+----------At: Process_Declaration----------
+----------size clause not applied by the front-end----------
+N_Attribute_Definition_Clause "size" (Node_Id=2387) (source,analyzed)
+ Sloc = 8611  check_size.adb:19:4
+ Chars = "size" (Name_Id=300000899)
+ Name = N_Identifier "var_size_1" (Node_Id=2384)
+ Expression = N_Integer_Literal (Node_Id=2388)
+ Entity = N_Defining_Identifier "var_size_1" (Entity_Id=2369)
+----------At: Make_Default_Initialiser----------
+----------Unknown Ekind----------
+N_Defining_Identifier "Tvar_size_2S" (Entity_Id=2531)
+ Parent = N_Subtype_Declaration (Node_Id=2539)
+ Sloc = 8647  check_size.adb:21:4
+ Chars = "Tvar_size_2S" (Name_Id=300001466)
+ Next_Entity = N_Defining_Identifier "var_u8" (Entity_Id=2413)
+ Scope = N_Defining_Identifier "check_size" (Entity_Id=2245)
+ Ekind = E_Signed_Integer_Subtype
+ Etype = N_Defining_Identifier "integer" (Entity_Id=1009s)
+ Esize = 32 (Uint = 600032800)
+ RM_Size = 17 (Uint = 600032785)
+ Alignment = 4 (Uint = 600032772)
+ Scalar_Range = N_Range (Node_Id=2400)
+ Has_Qualified_Name = True
+ Is_Constrained = True
+ Is_Frozen = True
+ Is_Unsigned_Type = True
+ Needs_Debug_Info = True
+ Size_Known_At_Compile_Time = True
+----------At: Process_Declaration----------
+----------size clause not applied by the front-end----------
+N_Attribute_Definition_Clause "size" (Node_Id=2426) (source,analyzed)
+ Sloc = 8753  check_size.adb:25:4
+ Chars = "size" (Name_Id=300000899)
+ Name = N_Identifier "var_u8" (Node_Id=2423)
+ Expression = N_Integer_Literal (Node_Id=2427)
+ Entity = N_Defining_Identifier "var_u8" (Entity_Id=2413)
+
+[check_size.assertion.1] line 30 assertion Integer (Var_T_1) + Integer (Var_T_2) = 70: SUCCESS
+[check_size.assertion.2] line 34 assertion Var_Size_1 + Var_Size_2 = 30: SUCCESS
+[check_size.assertion.3] line 37 assertion Var_U8 + 1 = 0: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug size_integer_and_objects 
+---------------- unexpected output
+Standard_Output from gnat2goto check_size:
+----------At: Process_Declaration----------
+----------size clause not applied by the front-end----------
+N_Attribute_Definition_Clause "size" (Node_Id=2310) (source,analyzed)
+ Sloc = 8372  check_size.adb:7:4
+ Chars = "size" (Name_Id=300000899)
+ Name = N_Identifier "t_1" (Node_Id=2307)
+ Expression = N_Integer_Literal (Node_Id=2311)
+ Entity = N_Defining_Identifier "t_1" (Entity_Id=2291)
+----------At: Make_Default_Initialiser----------
+----------Unknown Ekind----------
+N_Defining_Identifier "Tvar_size_1S" (Entity_Id=2520)
+ Parent = N_Subtype_Declaration (Node_Id=2528)
+ Sloc = 8572  check_size.adb:18:4
+ Chars = "Tvar_size_1S" (Name_Id=300001465)
+ Next_Entity = N_Defining_Identifier "var_size_2" (Entity_Id=2389)
+ Scope = N_Defining_Identifier "check_size" (Entity_Id=2245)
+ Ekind = E_Signed_Integer_Subtype
+ Etype = N_Defining_Identifier "integer" (Entity_Id=1009s)
+ Esize = 32 (Uint = 600032800)
+ RM_Size = 6 (Uint = 600032774)
+ Alignment = 4 (Uint = 600032772)
+ Scalar_Range = N_Range (Node_Id=2380)
+ Has_Qualified_Name = True
+ Is_Constrained = True
+ Is_Frozen = True
+ Is_Unsigned_Type = True
+ Needs_Debug_Info = True
+ Size_Known_At_Compile_Time = True
+----------At: Process_Declaration----------
+----------size clause not applied by the front-end----------
+N_Attribute_Definition_Clause "size" (Node_Id=2387) (source,analyzed)
+ Sloc = 8611  check_size.adb:19:4
+ Chars = "size" (Name_Id=300000899)
+ Name = N_Identifier "var_size_1" (Node_Id=2384)
+ Expression = N_Integer_Literal (Node_Id=2388)
+ Entity = N_Defining_Identifier "var_size_1" (Entity_Id=2369)
+----------At: Make_Default_Initialiser----------
+----------Unknown Ekind----------
+N_Defining_Identifier "Tvar_size_2S" (Entity_Id=2531)
+ Parent = N_Subtype_Declaration (Node_Id=2539)
+ Sloc = 8647  check_size.adb:21:4
+ Chars = "Tvar_size_2S" (Name_Id=300001466)
+ Next_Entity = N_Defining_Identifier "var_u8" (Entity_Id=2413)
+ Scope = N_Defining_Identifier "check_size" (Entity_Id=2245)
+ Ekind = E_Signed_Integer_Subtype
+ Etype = N_Defining_Identifier "integer" (Entity_Id=1009s)
+ Esize = 32 (Uint = 600032800)
+ RM_Size = 17 (Uint = 600032785)
+ Alignment = 4 (Uint = 600032772)
+ Scalar_Range = N_Range (Node_Id=2400)
+ Has_Qualified_Name = True
+ Is_Constrained = True
+ Is_Frozen = True
+ Is_Unsigned_Type = True
+ Needs_Debug_Info = True
+ Size_Known_At_Compile_Time = True
+----------At: Process_Declaration----------
+----------size clause not applied by the front-end----------
+N_Attribute_Definition_Clause "size" (Node_Id=2426) (source,analyzed)
+ Sloc = 8753  check_size.adb:25:4
+ Chars = "size" (Name_Id=300000899)
+ Name = N_Identifier "var_u8" (Node_Id=2423)
+ Expression = N_Integer_Literal (Node_Id=2427)
+ Entity = N_Defining_Identifier "var_u8" (Entity_Id=2413)
+
+[check_size.assertion.1] line 30 assertion Integer (Var_T_1) + Integer (Var_T_2) = 70: SUCCESS
+[check_size.assertion.2] line 34 assertion Var_Size_1 + Var_Size_2 = 30: SUCCESS
+[check_size.assertion.3] line 37 assertion Var_U8 + 1 = 0: SUCCESS
+VERIFICATION SUCCESSFUL
+================ Bug string_assert 
+---------------- unexpected output
+Error from cbmc string_assert:
+--- begin invariant violation report ---
+Invariant check failed
+File: std_types.h:1013 function: to_array_type
+Condition: can_cast_type<array_typet>(type)
+Reason: Precondition
+Backtrace:
+cbmc(+0x23adfd) [0x55bd6e7b7dfd]
+cbmc(+0x23b35f) [0x55bd6e7b835f]
+cbmc(+0x16a47c) [0x55bd6e6e747c]
+cbmc(+0x2a58b0) [0x55bd6e8228b0]
+cbmc(+0x6849ca) [0x55bd6ec019ca]
+cbmc(+0x6be51c) [0x55bd6ec3b51c]
+cbmc(+0x68754d) [0x55bd6ec0454d]
+cbmc(+0x683a31) [0x55bd6ec00a31]
+cbmc(+0x683aee) [0x55bd6ec00aee]
+cbmc(+0x62c15d) [0x55bd6eba915d]
+cbmc(+0x633aec) [0x55bd6ebb0aec]
+cbmc(+0x48cbb8) [0x55bd6ea09bb8]
+cbmc(+0x48cfec) [0x55bd6ea09fec]
+cbmc(+0x49b744) [0x55bd6ea18744]
+cbmc(+0x2c9ad2) [0x55bd6e846ad2]
+cbmc(+0x2c5398) [0x55bd6e842398]
+cbmc(+0x15e6b9) [0x55bd6e6db6b9]
+cbmc(+0x14deb1) [0x55bd6e6caeb1]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xeb) [0x7fdee3ce709b]
+cbmc(+0x15f18a) [0x55bd6e6dc18a]
+
+
+--- end invariant violation report ---
+
+ERROR code  -6 returned by cbmc when processing string_assert
+
+================ Bug string_equality 
+---------------- unexpected output
+Error from cbmc string_equality:
+--- begin invariant violation report ---
+Invariant check failed
+File: std_types.h:1013 function: to_array_type
+Condition: can_cast_type<array_typet>(type)
+Reason: Precondition
+Backtrace:
+cbmc(+0x23adfd) [0x55c795520dfd]
+cbmc(+0x23b35f) [0x55c79552135f]
+cbmc(+0x16a47c) [0x55c79545047c]
+cbmc(+0x2a58b0) [0x55c79558b8b0]
+cbmc(+0x6849ca) [0x55c79596a9ca]
+cbmc(+0x6be51c) [0x55c7959a451c]
+cbmc(+0x68754d) [0x55c79596d54d]
+cbmc(+0x683a31) [0x55c795969a31]
+cbmc(+0x683aee) [0x55c795969aee]
+cbmc(+0x62c15d) [0x55c79591215d]
+cbmc(+0x633aec) [0x55c795919aec]
+cbmc(+0x48cbb8) [0x55c795772bb8]
+cbmc(+0x48cfec) [0x55c795772fec]
+cbmc(+0x49b744) [0x55c795781744]
+cbmc(+0x2c9ad2) [0x55c7955afad2]
+cbmc(+0x2c5398) [0x55c7955ab398]
+cbmc(+0x15e6b9) [0x55c7954446b9]
+cbmc(+0x14deb1) [0x55c795433eb1]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xeb) [0x7f7a84feb09b]
+cbmc(+0x15f18a) [0x55c79544518a]
+
+
+--- end invariant violation report ---
+
+ERROR code  -6 returned by cbmc when processing string_equality
+
+================ Bug subpackage_local_initialisers 
+---------------- expected output
+[assertion.1] file subpackage_local_initialisers.adb line 12 Ada Check assertion: SUCCESS
+subpackage_local_initialisers.adb function subpackage_local_initialisers
+[subpackage_local_initialisers.assertion.1] line 15 assertion Subpackage.Get_Value = Double (21): SUCCESS
+VERIFICATION SUCCESSFUL
+---------------- actual output
+[double.assertion.1] line 12 Ada Check assertion: SUCCESS
+[subpackage_local_initialisers.assertion.1] line 15 assertion Subpackage.Get_Value = Double (21): FAILURE
+VERIFICATION FAILED
+================ Bug variant_record 
+---------------- unexpected output
+Standard_Error from gnat2goto variant_record:
+variant_record.adb:21:04: warning: variable "Immutable_Traffic_Light" is never read and never assigned
+
+Error from cbmc variant_record:
+--- begin invariant violation report ---
+Invariant check failed
+File: ../util/std_types.h:305 function: to_struct_type
+Condition: can_cast_type<struct_typet>(type)
+Reason: Precondition
+Backtrace:
+cbmc(+0x23adfd) [0x55f49add2dfd]
+cbmc(+0x23b35f) [0x55f49add335f]
+cbmc(+0x16a47c) [0x55f49ad0247c]
+cbmc(+0x5f9052) [0x55f49b191052]
+cbmc(+0x5f85fe) [0x55f49b1905fe]
+cbmc(+0x5f6984) [0x55f49b18e984]
+cbmc(+0x5bcb85) [0x55f49b154b85]
+cbmc(+0x61f740) [0x55f49b1b7740]
+cbmc(+0x61fbf3) [0x55f49b1b7bf3]
+cbmc(+0x4bd5dd) [0x55f49b0555dd]
+cbmc(+0x61fc2e) [0x55f49b1b7c2e]
+cbmc(+0x61fe48) [0x55f49b1b7e48]
+cbmc(+0x620b8a) [0x55f49b1b8b8a]
+cbmc(+0x49ba06) [0x55f49b033a06]
+cbmc(+0x49b68b) [0x55f49b03368b]
+cbmc(+0x2c9ad2) [0x55f49ae61ad2]
+cbmc(+0x2c5398) [0x55f49ae5d398]
+cbmc(+0x15e6b9) [0x55f49acf66b9]
+cbmc(+0x14deb1) [0x55f49ace5eb1]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xeb) [0x7ff1b60fd09b]
+cbmc(+0x15f18a) [0x55f49acf718a]
+
+
+--- end invariant violation report ---
+
+ERROR code  -6 returned by cbmc when processing variant_record
+

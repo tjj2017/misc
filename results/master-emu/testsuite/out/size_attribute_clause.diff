@@ -1,0 +1,72 @@
+--- expected
++++ output
+@@ -0,0 +1,69 @@
++Standard_Output from gnat2goto check_size:
++----------At: Process_Declaration----------
++----------size clause not applied by the front-end----------
++N_Attribute_Definition_Clause "size" (Node_Id=2310) (source,analyzed)
++Sloc = 8372  check_size.adb:7:4
++Chars = "size" (Name_Id=300000899)
++Name = N_Identifier "t_1" (Node_Id=2307)
++Expression = N_Integer_Literal (Node_Id=2311)
++Entity = N_Defining_Identifier "t_1" (Entity_Id=2291)
++----------At: Make_Default_Initialiser----------
++----------Unknown Ekind----------
++N_Defining_Identifier "Tvar_size_1S" (Entity_Id=2520)
++Parent = N_Subtype_Declaration (Node_Id=2528)
++Sloc = 8572  check_size.adb:18:4
++Chars = "Tvar_size_1S" (Name_Id=300001465)
++Next_Entity = N_Defining_Identifier "var_size_2" (Entity_Id=2389)
++Scope = N_Defining_Identifier "check_size" (Entity_Id=2245)
++Ekind = E_Signed_Integer_Subtype
++Etype = N_Defining_Identifier "integer" (Entity_Id=1009s)
++Esize = 32 (Uint = 600032800)
++RM_Size = 6 (Uint = 600032774)
++Alignment = 4 (Uint = 600032772)
++Scalar_Range = N_Range (Node_Id=2380)
++Has_Qualified_Name = True
++Is_Constrained = True
++Is_Frozen = True
++Is_Unsigned_Type = True
++Needs_Debug_Info = True
++Size_Known_At_Compile_Time = True
++----------At: Process_Declaration----------
++----------size clause not applied by the front-end----------
++N_Attribute_Definition_Clause "size" (Node_Id=2387) (source,analyzed)
++Sloc = 8611  check_size.adb:19:4
++Chars = "size" (Name_Id=300000899)
++Name = N_Identifier "var_size_1" (Node_Id=2384)
++Expression = N_Integer_Literal (Node_Id=2388)
++Entity = N_Defining_Identifier "var_size_1" (Entity_Id=2369)
++----------At: Make_Default_Initialiser----------
++----------Unknown Ekind----------
++N_Defining_Identifier "Tvar_size_2S" (Entity_Id=2531)
++Parent = N_Subtype_Declaration (Node_Id=2539)
++Sloc = 8647  check_size.adb:21:4
++Chars = "Tvar_size_2S" (Name_Id=300001466)
++Next_Entity = N_Defining_Identifier "var_u8" (Entity_Id=2413)
++Scope = N_Defining_Identifier "check_size" (Entity_Id=2245)
++Ekind = E_Signed_Integer_Subtype
++Etype = N_Defining_Identifier "integer" (Entity_Id=1009s)
++Esize = 32 (Uint = 600032800)
++RM_Size = 17 (Uint = 600032785)
++Alignment = 4 (Uint = 600032772)
++Scalar_Range = N_Range (Node_Id=2400)
++Has_Qualified_Name = True
++Is_Constrained = True
++Is_Frozen = True
++Is_Unsigned_Type = True
++Needs_Debug_Info = True
++Size_Known_At_Compile_Time = True
++----------At: Process_Declaration----------
++----------size clause not applied by the front-end----------
++N_Attribute_Definition_Clause "size" (Node_Id=2426) (source,analyzed)
++Sloc = 8753  check_size.adb:25:4
++Chars = "size" (Name_Id=300000899)
++Name = N_Identifier "var_u8" (Node_Id=2423)
++Expression = N_Integer_Literal (Node_Id=2427)
++Entity = N_Defining_Identifier "var_u8" (Entity_Id=2413)
++[check_size.assertion.1] line 30 assertion Integer (Var_T_1) + Integer (Var_T_2) = 70: SUCCESS
++[check_size.assertion.2] line 34 assertion Var_Size_1 + Var_Size_2 = 30: SUCCESS
++[check_size.assertion.3] line 37 assertion Var_U8 + 1 = 0: SUCCESS
++VERIFICATION SUCCESSFUL

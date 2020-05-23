@@ -1,0 +1,17 @@
+--- expected
++++ output
+@@ -1,2 +1,5 @@
+ [precondition_instance.1] file <internal> memcpy src/dst overlap: SUCCESS
++[precondition_instance.10] file <internal> memcpy src/dst overlap: SUCCESS
++[precondition_instance.11] file <internal> memcpy source region readable: SUCCESS
++[precondition_instance.12] file <internal> memcpy destination region writeable: SUCCESS
+ [precondition_instance.2] file <internal> memcpy source region readable: SUCCESS
+@@ -9,7 +12,4 @@
+ [precondition_instance.9] file <internal> memcpy destination region writeable: SUCCESS
+-[precondition_instance.10] file <internal> memcpy src/dst overlap: SUCCESS
+-[precondition_instance.11] file <internal> memcpy source region readable: SUCCESS
+-[precondition_instance.12] file <internal> memcpy destination region writeable: SUCCESS
++[arrays_concat.assertion.2] line 7 assertion Actual(2)=4: SUCCESS
+ [arrays_concat.assertion.1] line 7 Ada Check assertion: SUCCESS
+-[arrays_concat.assertion.2] line 7 assertion Actual(2)=4: SUCCESS
+ VERIFICATION SUCCESSFUL

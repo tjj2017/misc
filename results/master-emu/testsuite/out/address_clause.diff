@@ -1,0 +1,8 @@
+--- expected
++++ output
+@@ -19,4 +19,4 @@
+ Check_Address_Alignment = True
++[address_clause.assertion.2] line 12 assertion Var_Addr_1 + Var_Addr_2 = 3: SUCCESS
+ [address_clause.assertion.1] line 12 Ada Check assertion: SUCCESS
+-[address_clause.assertion.2] line 12 assertion Var_Addr_1 + Var_Addr_2 = 3: SUCCESS
+ VERIFICATION SUCCESSFUL

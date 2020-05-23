@@ -1,0 +1,8 @@
+--- expected
++++ output
+@@ -3,4 +3,4 @@
+ [precondition_instance.3] file <internal> memcpy destination region writeable: SUCCESS
++[p_enum_in.assertion.1] line 19 assertion E in More_Than_Two: SUCCESS
+ [enum_in.assertion.1] line 23 Ada Check assertion: SUCCESS
+-[p_enum_in.assertion.1] line 19 assertion E in More_Than_Two: SUCCESS
+ VERIFICATION SUCCESSFUL

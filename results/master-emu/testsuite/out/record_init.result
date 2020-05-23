@@ -1,0 +1,1 @@
+XFAIL:CBMC fails with invariant violation Condition: op.operands()[number].type() == expr.type()

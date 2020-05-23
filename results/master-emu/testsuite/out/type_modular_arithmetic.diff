@@ -1,0 +1,9 @@
+--- expected
++++ output
+@@ -1,2 +1 @@
+-[assertion.1] file modular_type.adb line 28 Ada Check assertion: SUCCESS
+ [assert_val.assertion.1] line 6 assertion X = 5: SUCCESS
+@@ -19,2 +18,3 @@
+ [assert_val.assertion.18] line 26 assertion X - 6 = 9: SUCCESS
++[assertion.1] line 28 Ada Check assertion: SUCCESS
+ [assert_val.assertion.19] line 28 assertion X / 2 = 2: SUCCESS

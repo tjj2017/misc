@@ -1,0 +1,8 @@
+--- expected
++++ output
+@@ -22,4 +22,4 @@
+ Size_Known_At_Compile_Time = True
++[increment_by.assertion.1] line 5 Ada Check assertion: SUCCESS
+ [assert_modify.assertion.1] line 17 assertion Global_Number = 5: FAILURE
+-[increment_by.assertion.1] line 5 Ada Check assertion: SUCCESS
+ VERIFICATION FAILED

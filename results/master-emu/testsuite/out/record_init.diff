@@ -1,0 +1,39 @@
+--- expected
++++ output
+@@ -0,0 +1,36 @@
++Standard_Error from gnat2goto record_init:
++record_init.adb:4:09: warning: creation of "R1" object may raise Storage_Error
++record_init.adb:12:09: warning: creation of "R3" object may raise Storage_Error
++record_init.adb:23:04: warning: variable "Inst3" is never read and never assigned
++record_init.adb:24:04: warning: variable "Inst4" is never read and never assigned
++record_init.adb:26:04: warning: variable "Inst6" is never read and never assigned
++Error from cbmc record_init:
++--- begin invariant violation report ---
++Invariant check failed
++File: ../util/std_types.h:305 function: to_struct_type
++Condition: can_cast_type<struct_typet>(type)
++Reason: Precondition
++Backtrace:
++cbmc(+0x23adfd) [0x557e2191fdfd]
++cbmc(+0x23b35f) [0x557e2192035f]
++cbmc(+0x16a47c) [0x557e2184f47c]
++cbmc(+0x5f9052) [0x557e21cde052]
++cbmc(+0x5f85fe) [0x557e21cdd5fe]
++cbmc(+0x5f6984) [0x557e21cdb984]
++cbmc(+0x5bcb85) [0x557e21ca1b85]
++cbmc(+0x61f740) [0x557e21d04740]
++cbmc(+0x61fbf3) [0x557e21d04bf3]
++cbmc(+0x4bd5dd) [0x557e21ba25dd]
++cbmc(+0x61fc2e) [0x557e21d04c2e]
++cbmc(+0x61fe48) [0x557e21d04e48]
++cbmc(+0x620b8a) [0x557e21d05b8a]
++cbmc(+0x49ba06) [0x557e21b80a06]
++cbmc(+0x49b68b) [0x557e21b8068b]
++cbmc(+0x2c9ad2) [0x557e219aead2]
++cbmc(+0x2c5398) [0x557e219aa398]
++cbmc(+0x15e6b9) [0x557e218436b9]
++cbmc(+0x14deb1) [0x557e21832eb1]
++/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xeb) [0x7f7e0193c09b]
++cbmc(+0x15f18a) [0x557e2184418a]
++--- end invariant violation report ---
++ERROR code  -6 returned by cbmc when processing record_init

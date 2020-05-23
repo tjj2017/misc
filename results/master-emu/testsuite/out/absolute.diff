@@ -1,0 +1,9 @@
+--- expected
++++ output
+@@ -1 +1,2 @@
++[symmetric_difference.assertion.1] line 3 Ada Check assertion: SUCCESS
+ [absolute.assertion.1] line 7 assertion Symmetric_Difference (X, Y) = Symmetric_Difference (Y, X): SUCCESS
+@@ -3,3 +4,2 @@
+ [absolute.assertion.3] line 10 assertion Symmetric_Difference (Y, X) /= 5: FAILURE
+-[symmetric_difference.assertion.1] line 3 Ada Check assertion: SUCCESS
+ VERIFICATION FAILED
