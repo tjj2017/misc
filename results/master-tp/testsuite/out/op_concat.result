@@ -1,0 +1,1 @@
+XFAIL:CBMC fails with __new_array not found

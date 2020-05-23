@@ -1,0 +1,40 @@
+--- expected
++++ output
+@@ -0,0 +1,37 @@
++Standard_Output from gnat2goto dynamic_range_variable:
++----------At: Do_Range_Constraint----------
++----------only static ranges are supported----------
++N_Integer_Literal (Node_Id=2285) (source,analyzed)
++Parent = N_Range (Node_Id=2286)
++Sloc = 8370  dynamic_range_variable.adb:4:58
++Is_Static_Expression = True
++Etype = N_Defining_Identifier "Tstatic_range_typeB" (Entity_Id=2312)
++Intval = 1 (Uint = 600032769)
++----------At: Do_Constant----------
++----------Unsupported constant type----------
++N_Integer_Literal (Node_Id=2298) (source,analyzed)
++Parent = N_Object_Declaration (Node_Id=2297)
++Sloc = 8417  dynamic_range_variable.adb:5:32
++Do_Range_Check = True
++Is_Static_Expression = True
++Etype = N_Defining_Identifier "dynamic_range_type" (Entity_Id=2276)
++Intval = 20 (Uint = 600032788)
++Standard_Error from gnat2goto dynamic_range_variable:
+++===========================GNAT BUG DETECTED==============================+
++| GNU Ada (ada2goto) Assert_Failure failed precondition from range_check.ads:54|
++| Error detected at dynamic_range_variable.adb:1:11                        |
++| Please submit a bug report; see https://gcc.gnu.org/bugs/ .              |
++| Use a subject line meaningful to you and us to track the bug.            |
++| Include the entire contents of this bug box in the report.               |
++| Include the exact command that you entered.                              |
++| Also include sources listed below.                                       |
+++==========================================================================+
++Please include these source files with error report
++Note that list may not be accurate in some cases,
++so please double check that the problem can still
++be reproduced with the set of files listed.
++Consider also -gnatd.n switch (see debug.adb).
++dynamic_range_variable.adb
++compilation abandoned
++ERROR code  5  returned by gnat2goto when translating dynamic_range_variable
++CBMC not run

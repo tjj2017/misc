@@ -1,0 +1,165 @@
+absolute:OK: 
+absolute_float:OK: 
+access-to-object:OK: 
+address_clause:OK: 
+arrays:XFAIL:CBMC fails with __new_array not found 
+arrays_attributes_dynamic:OK: 
+arrays_access:OK: 
+arrays_assign_nonoverlap:OK: 
+arrays_attributes_static:OK: 
+arrays_concat:OK: 
+arrays_declaration_failure2:OK: 
+arrays_declaration_failure1:OK: 
+arrays_multidimensional_declaration_failure1:XFAIL:GNU Ada (ada2goto) Assert_Failure failed postcondition from arrays.ads 
+arrays_index:OK: 
+arrays_index_enum:OK: 
+arrays_multidimensional_type_declaration_only:OK: 
+arrays_multidimensional_declaration_failure2:XFAIL:gnat2goto fails with "GNU Ada (ada2goto) Assert_Failure sinfo.adb:2232" 
+arrays_multidimensional_type_instantiation_failure:XFAIL:CBMC fails with invariant failure "Condition: op.operands()[number].type() == expr.type()" 
+arrays_write_element:OK: 
+assertion_pretty_printing:OK: 
+arrays_range:OK: 
+assign:OK: 
+attrib_size_indefinite:OK: 
+attrib_size_object:XFAIL:gnat2goto does not handle size attribute clauses applied to an object 
+attrib_address:OK: 
+attributes_continuous:XFAIL:gnat2goto fails precondition failure 
+attrib_size_simple:XFAIL:cbmc fails with "reason unimplemented" 
+attributes_discrete:OK: 
+boolean_type:OK: 
+basic_exception:OK: 
+case_expression_others:OK: 
+case_expression:OK: 
+case_expression_range:OK: 
+case_statement:OK: 
+case_expression_vals:OK: 
+case_statement_others_only:OK: 
+case_statement_vals:OK: 
+character_literal:OK: 
+case_statement_range:OK: 
+character_literal_wide:OK: 
+character_literal_wide_wide:OK: 
+character_subtype:XFAIL:gnat2goto reports invalid range types and cbmc fails with an invariant violation 
+constant_declarations_use:OK: 
+constant_declarations:OK: 
+declaration_rename_N_Renaming_Declaration:OK: 
+declaration_use_package:OK: 
+deferred_constant:OK: 
+deferred_constant_import:XFAIL:gnat2goto fails with unsupported feature (import pragma) 
+deferred_constant_use:OK: 
+derived_private_type:OK: 
+derived_types:OK: 
+divide:OK: 
+divide_by_zero:OK: 
+dynamic_range_variable:XFAIL:gnat2goto fails with unsupported upper range kind: N_Identifier "dynamic_range_type_LAST" 
+enum:OK: 
+enum_character_literals:OK: 
+enum_out_param:OK: 
+enum_in_param:OK: 
+discriminated_record:OK: 
+enum_symbols_range_constraint:OK: 
+enum_range_checks:OK: 
+enum_symbols_range_constraint_assignment:OK: 
+expanded_name:OK: 
+expanded_name_subtype_indication:OK: 
+floating_definition:OK: 
+floating_point_constant:OK: 
+floating_point_literals:OK: 
+forloop:OK: 
+func:OK: 
+func_args:OK: 
+arrays_constraints:OK: 
+function_pointer:OK: 
+generic-packages:OK: 
+ifthenelse:OK: 
+if_integer:OK: 
+generics:OK: 
+incomplete_dec:OK: 
+in_expression:OK: 
+incomplete_dec_priv:OK: 
+int_overflow:OK: 
+intrinsic:OK: 
+limited_private_record_type:XFAIL:Limited private record types don't work right now 
+index_check:OK: 
+long_integer:OK: 
+loop_in_custom_type:OK: 
+loop_range_mod_type:OK: 
+loop_range_variable:OK: 
+loop_array_range:XFAIL:gnat2goto fails with contraint_error (loop_array_range__TTmy_arrSP1 is not is symbol table) 
+loops:OK: 
+main_params_and_return:OK: 
+mixed_parameters:OK: 
+no_return_returns:OK: 
+no_return:OK: 
+no_corresponding_spec:OK: 
+not_op:OK: 
+null:OK: 
+null_pointer:OK: 
+null_statement_declaration:OK: 
+number_declarations:OK: 
+object_declaration_statement:OK: 
+object_declaration_statement_bounds_crashing:XFAIL:gnat2goto fails because bounds are non constant expressions (#326) 
+op_and:OK: 
+op_and_example:OK: 
+op_and_then:OK: 
+op_or:OK: 
+op_or_else:OK: 
+op_or_example:OK: 
+op_concat:XFAIL:CBMC fails with __new_array not found 
+op_expon_mod:OK: 
+package_type:OK: 
+package_use_type_N_Use_Type_Clause:OK: 
+out_inout_params:OK: 
+packages:OK: 
+pragmas:OK: 
+pragma_machine_attribute:OK: 
+primitive_pointer:OK: 
+private_type_dec_abstract:XFAIL:gnat2goto fails with abstract type declaration unsupported 
+private_type_dec_extension:XFAIL:gnat2goto fails private extension declaration 
+private_type_dec:OK: 
+private_type_decl:OK: 
+private_type_dec_array:OK: 
+proc:OK: 
+proc_args:OK: 
+procedure_pointer:OK: 
+qualified_expression:OK: 
+range_check_exception:OK: 
+range_check_non_bounded:OK: 
+range_over_subtype:OK: 
+real_literal:OK: 
+range_second:XFAIL:Doesn't crash anymore but cbmc does not perform range assertion checks 
+ranges:OK: 
+record_extension:XFAIL:gnat2goto fails with unsupported record extension 
+recursion:OK: 
+records:OK: 
+representation_clause_component_size:OK: 
+representation_clause_size:OK: 
+representation_clause_component_size_change:XFAIL:gnat2goto fails with changing component size unsupported 
+reverse:XFAIL:reverse currently not supported because we handle negative integers incorrectly 
+separate_subprog:OK: 
+separate_subprog_assert_check:XFAIL:Assert statement in p.adb should succeed. 
+record_init:XFAIL:CBMC fails with invariant violation Condition: op.operands()[number].type() == expr.type() 
+size_attribute_clause:XFAIL:gnat2goto does not handle anonymous type declarations in variable decs 
+size_attribute_mod:OK: 
+rhs_array_assign:OK: 
+size_integer_and_objects:XFAIL:gnat2goto fails when Size representation clause applied to standard types and their derivations or to objects. 
+size_mod_type:OK: 
+string_assert:XFAIL:CBMC fails types of expressions on each side of equality should match 
+string_equality:XFAIL:CBMC fails a precondition in can_cast_type<array_typet> in to_array_type in util/std_types.h 
+string_literal:OK: 
+statement_new_block_N_Block_Statement:OK: 
+subpackage:OK: 
+subpackage_local_initialisers:XFAIL:Initialisers for local packages haven't been implemented yet 
+subtyp:OK: 
+two_subprog_bodies:OK: 
+type_modular:OK: 
+type_modular_bitwise:OK: 
+type_modular_arithmetic:OK: 
+type_modular_non_power_of_two_decl:OK: 
+unary_minus:OK: 
+unary_minus_overflow:OK: 
+use_package_declaration:OK: 
+volatile:OK: 
+whileloop:OK: 
+variant_record:XFAIL:cbmc fails with type mismatch 
+ukni_loop_parameter_specification:OK: 

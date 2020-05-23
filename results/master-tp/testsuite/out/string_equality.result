@@ -1,0 +1,1 @@
+XFAIL:CBMC fails a precondition in can_cast_type<array_typet> in to_array_type in util/std_types.h

@@ -1,0 +1,35 @@
+--- expected
++++ output
+@@ -0,0 +1,32 @@
++Standard_Error from gnat2goto variant_record:
++variant_record.adb:21:04: warning: variable "Immutable_Traffic_Light" is never read and never assigned
++Error from cbmc variant_record:
++--- begin invariant violation report ---
++Invariant check failed
++File: ../util/std_types.h:305 function: to_struct_type
++Condition: can_cast_type<struct_typet>(type)
++Reason: Precondition
++Backtrace:
++cbmc(+0x24192d) [0x56185b5eb92d]
++cbmc(+0x241e8f) [0x56185b5ebe8f]
++cbmc(+0x16b8cc) [0x56185b5158cc]
++cbmc(+0x5ff442) [0x56185b9a9442]
++cbmc(+0x5fe9ee) [0x56185b9a89ee]
++cbmc(+0x5fcd74) [0x56185b9a6d74]
++cbmc(+0x5c3065) [0x56185b96d065]
++cbmc(+0x6259f0) [0x56185b9cf9f0]
++cbmc(+0x625ea3) [0x56185b9cfea3]
++cbmc(+0x4c47bd) [0x56185b86e7bd]
++cbmc(+0x625ede) [0x56185b9cfede]
++cbmc(+0x6260f8) [0x56185b9d00f8]
++cbmc(+0x626e3a) [0x56185b9d0e3a]
++cbmc(+0x4a2666) [0x56185b84c666]
++cbmc(+0x4a22eb) [0x56185b84c2eb]
++cbmc(+0x2d0402) [0x56185b67a402]
++cbmc(+0x2cb938) [0x56185b675938]
++cbmc(+0x15fb09) [0x56185b509b09]
++cbmc(+0x14f301) [0x56185b4f9301]
++/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xeb) [0x7feb1abe309b]
++cbmc(+0x1605da) [0x56185b50a5da]
++--- end invariant violation report ---
++ERROR code  -6 returned by cbmc when processing variant_record

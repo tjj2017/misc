@@ -1,0 +1,37 @@
+--- expected
++++ output
+@@ -0,0 +1,34 @@
++Error from cbmc good_size:
++--- begin invariant violation report ---
++Invariant check failed
++File: flattening/boolbv_width.cpp:199 function: get_entry
++Condition: false
++Reason: Unimplemented
++Backtrace:
++cbmc(+0x24192d) [0x557d718de92d]
++cbmc(+0x241e8f) [0x557d718dee8f]
++cbmc(+0x16b8cc) [0x557d718088cc]
++cbmc(+0x6bf508) [0x557d71d5c508]
++cbmc(+0x68b32b) [0x557d71d2832b]
++cbmc(+0x68a59c) [0x557d71d2759c]
++cbmc(+0x6c47cc) [0x557d71d617cc]
++cbmc(+0x68d7fd) [0x557d71d2a7fd]
++cbmc(+0x69db0f) [0x557d71d3ab0f]
++cbmc(+0x68c8c5) [0x557d71d298c5]
++cbmc(+0x6c5e03) [0x557d71d62e03]
++cbmc(+0x7011ee) [0x557d71d9e1ee]
++cbmc(+0x6febaf) [0x557d71d9bbaf]
++cbmc(+0x6fecb3) [0x557d71d9bcb3]
++cbmc(+0x632859) [0x557d71ccf859]
++cbmc(+0x639da7) [0x557d71cd6da7]
++cbmc(+0x493838) [0x557d71b30838]
++cbmc(+0x493c6c) [0x557d71b30c6c]
++cbmc(+0x4a23a4) [0x557d71b3f3a4]
++cbmc(+0x2d0402) [0x557d7196d402]
++cbmc(+0x2cb938) [0x557d71968938]
++cbmc(+0x15fb09) [0x557d717fcb09]
++cbmc(+0x14f301) [0x557d717ec301]
++/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xeb) [0x7fd7d4f1909b]
++cbmc(+0x1605da) [0x557d717fd5da]
++--- end invariant violation report ---
++ERROR code  -6 returned by cbmc when processing good_size

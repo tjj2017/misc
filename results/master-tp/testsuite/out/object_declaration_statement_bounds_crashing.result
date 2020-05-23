@@ -1,0 +1,1 @@
+XFAIL:gnat2goto fails because bounds are non constant expressions (#326)

@@ -1,0 +1,51 @@
+--- expected
++++ output
+@@ -1,4 +1,44 @@
+-[test.assertion.1] line 5 assertion Counter.Value_Equals (C, 0): SUCCESS
+-[test.assertion.2] line 7 assertion Counter.Value_Equals (C, 1): SUCCESS
+-[test.assertion.3] line 8 assertion False: FAILURE
+-VERIFICATION FAILED
++Standard_Output from gnat2goto counter:
++----------At: Do_Aggregate_Literal----------
++----------Unhandled aggregate kind: E_LIMITED_PRIVATE_TYPE----------
++N_Aggregate (Node_Id=2274) (source,analyzed)
++Rewritten: original node = N_Aggregate (Node_Id=2518)
++Parent = N_Simple_Return_Statement (Node_Id=2500)
++Sloc = 8272  counter.adb:3:6
++Paren_Count = 1
++Etype = N_Defining_Identifier "t" (Entity_Id=2360)
++Component_Associations = List (List_Id=-99999943)
++Error from cbmc test:
++--- begin invariant violation report ---
++Invariant check failed
++File: goto_convert.cpp:1266 function: convert_return
++Condition: function must return value
++Reason: new_code.has_return_value()
++Backtrace:
++cbmc(+0x24192d) [0x55b86a9ea92d]
++cbmc(+0x241e8f) [0x55b86a9eae8f]
++cbmc(+0x21dde1) [0x55b86a9c6de1]
++cbmc(+0x4d84b2) [0x55b86ac814b2]
++cbmc(+0x594eb3) [0x55b86ad3deb3]
++cbmc(+0x59773d) [0x55b86ad4073d]
++cbmc(+0x598ea9) [0x55b86ad41ea9]
++cbmc(+0x5974c9) [0x55b86ad404c9]
++cbmc(+0x598ea9) [0x55b86ad41ea9]
++cbmc(+0x5974c9) [0x55b86ad404c9]
++cbmc(+0x59d6ff) [0x55b86ad466ff]
++cbmc(+0x56f4fa) [0x55b86ad184fa]
++cbmc(+0x571c93) [0x55b86ad1ac93]
++cbmc(+0x572bbc) [0x55b86ad1bbbc]
++cbmc(+0x4e9716) [0x55b86ac92716]
++cbmc(+0x2c802b) [0x55b86aa7102b]
++cbmc(+0x2cb752) [0x55b86aa74752]
++cbmc(+0x15fb09) [0x55b86a908b09]
++cbmc(+0x14f301) [0x55b86a8f8301]
++/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xeb) [0x7f242661709b]
++cbmc(+0x1605da) [0x55b86a9095da]
++Diagnostics:
++<< EXTRA DIAGNOSTICS >>
++source location: file counter.adb line 3 column 6
++<< END EXTRA DIAGNOSTICS >>
++--- end invariant violation report ---
++ERROR code  -6 returned by cbmc when processing test

@@ -1,0 +1,81 @@
+--- expected
++++ output
+@@ -0,0 +1,78 @@
++Standard_Output from gnat2goto object_declaration_statement_bounds_crashing:
++----------At: Do_Itype_Integer_Subtype----------
++----------Non-literal bound unsupported----------
++N_Defining_Identifier "T2b" (Entity_Id=2457)
++Parent = <empty>
++Sloc = 8413  object_declaration_statement_bounds_crashing.adb:8:11
++Chars = "T2b" (Name_Id=300001458)
++Scope = N_Defining_Identifier "L_1" (Entity_Id=2345)
++Ekind = E_Signed_Integer_Subtype
++Etype = N_Defining_Identifier "Trange_typeB" (Entity_Id=2388)
++Associated_Node_For_Itype = N_Loop_Parameter_Specification (Node_Id=2307)
++Esize = 8 (Uint = 600032776)
++RM_Size = 8 (Uint = 600032776)
++Alignment = 1 (Uint = 600032769)
++Scalar_Range = N_Range (Node_Id=2316)
++Is_Frozen = True
++Is_Internal = True
++Is_Itype = True
++Needs_Debug_Info = True
++Size_Known_At_Compile_Time = True
++----------At: Do_Type_Reference----------
++----------Type of type not a type----------
++N_Defining_Identifier "T2b" (Entity_Id=2457)
++Parent = <empty>
++Sloc = 8413  object_declaration_statement_bounds_crashing.adb:8:11
++Chars = "T2b" (Name_Id=300001458)
++Scope = N_Defining_Identifier "L_1" (Entity_Id=2345)
++Ekind = E_Signed_Integer_Subtype
++Etype = N_Defining_Identifier "Trange_typeB" (Entity_Id=2388)
++Associated_Node_For_Itype = N_Loop_Parameter_Specification (Node_Id=2307)
++Esize = 8 (Uint = 600032776)
++RM_Size = 8 (Uint = 600032776)
++Alignment = 1 (Uint = 600032769)
++Scalar_Range = N_Range (Node_Id=2316)
++Is_Frozen = True
++Is_Internal = True
++Is_Itype = True
++Needs_Debug_Info = True
++Size_Known_At_Compile_Time = True
++Error from cbmc object_declaration_statement_bounds_crashing:
++--- begin invariant violation report ---
++Invariant check failed
++File: flattening/boolbv_width.cpp:199 function: get_entry
++Condition: false
++Reason: Unimplemented
++Backtrace:
++cbmc(+0x24192d) [0x5608238d192d]
++cbmc(+0x241e8f) [0x5608238d1e8f]
++cbmc(+0x16b8cc) [0x5608237fb8cc]
++cbmc(+0x6bf508) [0x560823d4f508]
++cbmc(+0x6b8db2) [0x560823d48db2]
++cbmc(+0x6bc094) [0x560823d4c094]
++cbmc(+0x68a42f) [0x560823d1a42f]
++cbmc(+0x6c47cc) [0x560823d547cc]
++cbmc(+0x68d7fd) [0x560823d1d7fd]
++cbmc(+0x693e8e) [0x560823d23e8e]
++cbmc(+0x68c8c5) [0x560823d1c8c5]
++cbmc(+0x6c5e03) [0x560823d55e03]
++cbmc(+0x7011ee) [0x560823d911ee]
++cbmc(+0x6febaf) [0x560823d8ebaf]
++cbmc(+0x70166e) [0x560823d9166e]
++cbmc(+0x6febaf) [0x560823d8ebaf]
++cbmc(+0x701471) [0x560823d91471]
++cbmc(+0x6febaf) [0x560823d8ebaf]
++cbmc(+0x6fecb3) [0x560823d8ecb3]
++cbmc(+0x6399b5) [0x560823cc99b5]
++cbmc(+0x639dbd) [0x560823cc9dbd]
++cbmc(+0x493838) [0x560823b23838]
++cbmc(+0x493c6c) [0x560823b23c6c]
++cbmc(+0x4a23a4) [0x560823b323a4]
++cbmc(+0x2d0402) [0x560823960402]
++cbmc(+0x2cb938) [0x56082395b938]
++cbmc(+0x15fb09) [0x5608237efb09]
++cbmc(+0x14f301) [0x5608237df301]
++/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xeb) [0x7fce67bec09b]
++cbmc(+0x1605da) [0x5608237f05da]
++--- end invariant violation report ---
++ERROR code  -6 returned by cbmc when processing object_declaration_statement_bounds_crashing

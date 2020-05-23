@@ -1,0 +1,6 @@
+--- expected
++++ output
+@@ -1 +1,2 @@
+-VERIFICATION SUCCESSFUL
++[reversep.assertion.1] line 7 assertion A = 1: FAILURE
++VERIFICATION FAILED

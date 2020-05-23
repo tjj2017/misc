@@ -1,0 +1,60 @@
+--- expected
++++ output
+@@ -0,0 +1,57 @@
++Standard_Output from gnat2goto op_concat:
++----------At: Do_Operator_General----------
++----------Concat unsupported----------
++N_Op_Concat "Oconcat" (Node_Id=2314) (source,analyzed)
++Sloc = 8439  op_concat.adb:12:40
++Chars = "Oconcat" (Name_Id=300000412)
++Left_Opnd = N_Slice (Node_Id=2313)
++Right_Opnd = N_Slice (Node_Id=2319)
++Entity = N_Defining_Operator_Symbol "Oconcat" (Entity_Id=2344)
++Etype = N_Defining_Identifier "TarrB" (Entity_Id=2337)
++Error from cbmc op_concat:
++warning: ignoring nil
++* type: nil
++* #source_location:
++* file: <internal>
++* line:
++* column:
++* comment:
++* property_class:
++* property_id:
++* function:
++* working_directory:
++* java_bytecode_index:
++* range_check: 0
++--- begin invariant violation report ---
++Invariant check failed
++File: flattening/boolbv_width.cpp:199 function: get_entry
++Condition: false
++Reason: Unimplemented
++Backtrace:
++cbmc(+0x24192d) [0x556664a7b92d]
++cbmc(+0x241e8f) [0x556664a7be8f]
++cbmc(+0x16b8cc) [0x5566649a58cc]
++cbmc(+0x6bf508) [0x556664ef9508]
++cbmc(+0x6898ca) [0x556664ec38ca]
++cbmc(+0x68a405) [0x556664ec4405]
++cbmc(+0x6c47cc) [0x556664efe7cc]
++cbmc(+0x68d7fd) [0x556664ec77fd]
++cbmc(+0x6bc03d) [0x556664ef603d]
++cbmc(+0x68a42f) [0x556664ec442f]
++cbmc(+0x6c47cc) [0x556664efe7cc]
++cbmc(+0x68d7fd) [0x556664ec77fd]
++cbmc(+0x689ce1) [0x556664ec3ce1]
++cbmc(+0x689d9e) [0x556664ec3d9e]
++cbmc(+0x63240d) [0x556664e6c40d]
++cbmc(+0x639d9c) [0x556664e73d9c]
++cbmc(+0x493838) [0x556664ccd838]
++cbmc(+0x493c6c) [0x556664ccdc6c]
++cbmc(+0x4a23a4) [0x556664cdc3a4]
++cbmc(+0x2d0402) [0x556664b0a402]
++cbmc(+0x2cb938) [0x556664b05938]
++cbmc(+0x15fb09) [0x556664999b09]
++cbmc(+0x14f301) [0x556664989301]
++/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xeb) [0x7f4d44d0e09b]
++cbmc(+0x1605da) [0x55666499a5da]
++--- end invariant violation report ---
++ERROR code  -6 returned by cbmc when processing op_concat

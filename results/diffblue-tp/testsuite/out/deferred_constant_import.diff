@@ -1,0 +1,11 @@
+--- expected
++++ output
+@@ -1,4 +1,5 @@
+ Standard_Error from gnat2goto deferred_const_import:
+-Warning: Pragmas in declarations unhandled
+-[assertion.1] Range Check: SUCCESS
+-VERIFICATION SUCCESSFUL
++Warning: Multi-language analysis unsupported.
++Error from cbmc deferred_const_import:
++SUPPORT FUNCTION GENERATION ERROR
++ERROR code  6 returned by cbmc when processing deferred_const_import

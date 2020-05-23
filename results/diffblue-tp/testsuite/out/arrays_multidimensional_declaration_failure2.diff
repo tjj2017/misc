@@ -1,0 +1,34 @@
+--- expected
++++ output
+@@ -0,0 +1,31 @@
++Standard_Error from gnat2goto arrays_multidimensional_declaration_failure2:
++arrays_multidimensional_declaration_failure2.adb:4:04: warning: variable "AA" is never read and never assigned
++Error from cbmc arrays_multidimensional_declaration_failure2:
++--- begin invariant violation report ---
++Invariant check failed
++File: symex_assign.cpp:134 function: assign_from_struct
++Condition: rhs.operands().size() == components.size()
++Reason: Precondition
++Backtrace:
++cbmc(+0x24192d) [0x56159f79692d]
++cbmc(+0x241e8f) [0x56159f796e8f]
++cbmc(+0x16b8cc) [0x56159f6c08cc]
++cbmc(+0x5ff3c6) [0x56159fb543c6]
++cbmc(+0x5fcd74) [0x56159fb51d74]
++cbmc(+0x5c3065) [0x56159fb18065]
++cbmc(+0x6259f0) [0x56159fb7a9f0]
++cbmc(+0x625ea3) [0x56159fb7aea3]
++cbmc(+0x4c47bd) [0x56159fa197bd]
++cbmc(+0x625ede) [0x56159fb7aede]
++cbmc(+0x6260f8) [0x56159fb7b0f8]
++cbmc(+0x626e3a) [0x56159fb7be3a]
++cbmc(+0x4a2666) [0x56159f9f7666]
++cbmc(+0x4a22eb) [0x56159f9f72eb]
++cbmc(+0x2d0402) [0x56159f825402]
++cbmc(+0x2cb938) [0x56159f820938]
++cbmc(+0x15fb09) [0x56159f6b4b09]
++cbmc(+0x14f301) [0x56159f6a4301]
++/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xeb) [0x7f8820d6609b]
++cbmc(+0x1605da) [0x56159f6b55da]
++--- end invariant violation report ---
++ERROR code  -6 returned by cbmc when processing arrays_multidimensional_declaration_failure2
