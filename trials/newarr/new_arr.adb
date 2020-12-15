@@ -46,7 +46,7 @@ begin
 
    CA (T) := 23;
 --   T := CA (1);
-   pragma Assert (CA (T) = X);
+   pragma Assert (CA (T) = 23);
 --     A := 1;
 --     B := 10;
 --     declare
