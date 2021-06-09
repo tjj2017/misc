@@ -1,0 +1,382 @@
+Make_Unconstrained_Array_Subtype
+N_Full_Type_Declaration (Node_Id=2265) (source,analyzed)
+I_Signedbv_Type (Irep=15) (Id=signedbv)
+   Width = 32
+Computed_Size set
+The entity is constrained TRUE
+N_Defining_Identifier "u_c_array" (Entity_Id=2267) (source)
+N_Subtype_Declaration (Node_Id=2266) (source,analyzed)
+From constrained_Array_Subtype
+N_Defining_Identifier "u_c_array" (Entity_Id=2267) (source)
+N_Has_Etype TRUE
+Is_Array_Type TRUE
+N_Defining_Identifier "u_array" (Entity_Id=2254) (source,analyzed)
+Is constrained TRUE
+N_Defining_Identifier "u_c_array" (Entity_Id=2267) (source)
+N_Range (Node_Id=2277) (source,analyzed)
+Ok static range
+The first dimension size is  4
+Now for multi-dimensional
+After loop
+Static array size  4
+After
+Make_Array_Subtype
+N_Subtype_Declaration (Node_Id=2266) (source,analyzed)
+N_Defining_Identifier "u_c_array" (Entity_Id=2267) (source)
+N_Defining_Identifier "integer" (Entity_Id=37s)
+Has_Static_Bounds TRUE
+Done Make_Array_Subtype
+Subtype_Declaration
+I_Array_Type (Irep=87) (Id=array)
+   Size = I_Constant_Expr (Irep=84) (Id=constant)
+   Subtype = I_Signedbv_Type (Irep=15) (Id=signedbv)
+N_Defining_Identifier "u_c_array" (Entity_Id=2267) (source)
+Done subtype_declaration
+Do_Object_Declaration_Full
+N_Object_Declaration (Node_Id=2288) (source,analyzed)
+N_Defining_Identifier "e" (Entity_Id=2280) (source)
+N_Defining_Identifier "u_c_array" (Entity_Id=2267) (source)
+Is constrained TRUE
+N_Defining_Identifier "u_c_array" (Entity_Id=2267) (source)
+N_Range (Node_Id=2277) (source,analyzed)
+Ok static range
+The first dimension size is  4
+Now for multi-dimensional
+After loop
+Static array size  4
+Array obj dec
+Array obj dec: Is_Constrained TRUE
+From Do_Array_Object_Dec
+Into Array_Assignment_Op
+N_Aggregate (Node_Id=2290) (source,analyzed)
+N_Defining_Identifier "e" (Entity_Id=2280) (source)
+N_Aggregate (Node_Id=2290) (source,analyzed)
+Array_Assignment_Op: about to call Multi
+Is constrained TRUE
+N_Defining_Identifier "T4b" (Entity_Id=2384)
+N_Range (Node_Id=2375) (analyzed)
+Ok static range
+The first dimension size is  4
+Now for multi-dimensional
+After loop
+Static array size  4
+Do_Assignment_Op after initial declarations
+Positional static
+I_Symbol_Expr (Irep=99) (Id=symbol)
+   Identifier = "unconstrained_decs__e" (String_Id=400000101)
+   Range_Check = False
+   Source_Location = I_Source_Location (Irep=89)
+   Type = I_Array_Type (Irep=95) (Id=array)
+I_Symbol_Expr (Irep=99) (Id=symbol)
+   Identifier = "unconstrained_decs__e" (String_Id=400000101)
+   Range_Check = False
+   Source_Location = I_Source_Location (Irep=89)
+   Type = I_Array_Type (Irep=95) (Id=array)
+I_Symbol_Expr (Irep=99) (Id=symbol)
+   Identifier = "unconstrained_decs__e" (String_Id=400000101)
+   Range_Check = False
+   Source_Location = I_Source_Location (Irep=89)
+   Type = I_Array_Type (Irep=95) (Id=array)
+I_Symbol_Expr (Irep=99) (Id=symbol)
+   Identifier = "unconstrained_decs__e" (String_Id=400000101)
+   Range_Check = False
+   Source_Location = I_Source_Location (Irep=89)
+   Type = I_Array_Type (Irep=95) (Id=array)
+End Do_Array_Object_Declaration
+End Object_Declaration_Full
+Do_Object_Declaration_Full
+N_Object_Declaration (Node_Id=2302) (source,analyzed)
+N_Defining_Identifier "ee" (Entity_Id=2294) (source)
+N_Defining_Identifier "u_array" (Entity_Id=2254) (source,analyzed)
+Array obj dec
+Make_Constrained_Array_From_Initialization
+unconstrained_decs__ee
+N_DEFINING_IDENTIFIER
+E_ARRAY_SUBTYPE
+N_SLICE
+Is constrained
+N_Slice (Node_Id=2307) (source,analyzed)
+Is constrained FALSE
+N_Defining_Identifier "u_array" (Entity_Id=2254) (source,analyzed)
+N_Range (Node_Id=982s)
+Is unconstrained array type and not an object
+About to return
+Array_Object_And_Friends
+N_Defining_Identifier "T6b" (Entity_Id=2401)
+Is_Itype TRUE
+Do_Itype_Definition
+N_Defining_Identifier "T6b" (Entity_Id=2401)
+Ekind: E_ARRAY_SUBTYPE
+Do_Itype_Array_Subtype
+The entity is constrained TRUE
+N_Defining_Identifier "T6b" (Entity_Id=2401)
+N_Defining_Identifier "T6b" (Entity_Id=2401)
+From constrained_Array_Subtype
+N_Defining_Identifier "T6b" (Entity_Id=2401)
+N_Has_Etype TRUE
+Is_Array_Type TRUE
+N_Defining_Identifier "u_array" (Entity_Id=2254) (source,analyzed)
+Is constrained FALSE
+N_Defining_Identifier "u_array" (Entity_Id=2254) (source,analyzed)
+N_Range (Node_Id=982s)
+Is unconstrained array type and not an object
+About to return
+After
+Make_Array_Subtype
+N_Defining_Identifier "T6b" (Entity_Id=2401)
+N_Defining_Identifier "T6b" (Entity_Id=2401)
+N_Defining_Identifier "integer" (Entity_Id=37s)
+Has_Static_Bounds FALSE
+******** dynamic range
+unconstrained_decs__T6b_$array_size
+New var added to symbol table
+Done Make_Array_Subtype
+End declare itype
+I_Array_Type (Irep=145) (Id=array)
+   Size = I_Symbol_Expr (Irep=144) (Id=symbol)
+   Subtype = I_Signedbv_Type (Irep=15) (Id=signedbv)
+I_Symbol_Expr (Irep=144) (Id=symbol)
+   Identifier = "unconstrained_decs__ee_$array_size" (String_Id=400000206)
+   Range_Check = False
+   Source_Location = I_Source_Location (Irep=129)
+   Type = I_Signedbv_Type (Irep=3) (Id=signedbv)
+I_Signedbv_Type (Irep=15) (Id=signedbv)
+   Width = 32
+Declaring array friends for unconstrained_decs__ee
+N_Defining_Identifier "T6b" (Entity_Id=2401)
+Is_Constrained: TRUE
+Is_Constrained Etype: FALSE
+Is constrained TRUE
+N_Defining_Identifier "T6b" (Entity_Id=2401)
+N_Range (Node_Id=2398) (source,analyzed)
+Ok static range
+The first dimension size is  3
+Now for multi-dimensional
+After loop
+Static array size  3
+From Do_Array_Object_Dec
+Into Array_Assignment_Op
+N_Slice (Node_Id=2307) (source,analyzed)
+N_Defining_Identifier "ee" (Entity_Id=2294) (source)
+N_Slice (Node_Id=2307) (source,analyzed)
+Array_Assignment_Op: about to call Multi
+Is constrained TRUE
+N_Defining_Identifier "T6b" (Entity_Id=2401)
+N_Range (Node_Id=2398) (source,analyzed)
+Ok static range
+The first dimension size is  3
+Now for multi-dimensional
+After loop
+Static array size  3
+Do_Assignment_Op after initial declarations
+RHS is a slice
+N_Slice (Node_Id=2307) (source,analyzed)
+Update_Array_From slice - Slice prefix
+N_Identifier "e" (Node_Id=2303) (source,analyzed)
+After Prefix
+Update_Array_From slice - ExpressionSlice
+End declare itype
+Do_Slice Start
+N_Slice (Node_Id=2307) (source,analyzed)
+N_Defining_Identifier "T6b" (Entity_Id=2401)
+N_Identifier "T5b" (Node_Id=2408)
+N_Defining_Identifier "T5b" (Entity_Id=2391)
+N_Integer_Literal (Node_Id=2399) (source,analyzed)
+N_Integer_Literal (Node_Id=2400) (source,analyzed)
+I_Symbol_Expr (Irep=175) (Id=symbol)
+   Identifier = "unconstrained_decs__e" (String_Id=400000264)
+   Range_Check = False
+   Source_Location = I_Source_Location (Irep=174)
+   Type = I_Array_Type (Irep=95) (Id=array)
+Do_Slice Body Start
+I_Symbol_Expr (Irep=175) (Id=symbol)
+   Identifier = "unconstrained_decs__e" (String_Id=400000264)
+   Range_Check = False
+   Source_Location = I_Source_Location (Irep=174)
+   Type = I_Array_Type (Irep=95) (Id=array)
+I_Array_Type (Irep=95) (Id=array)
+   Size = I_Constant_Expr (Irep=94) (Id=constant)
+   Subtype = I_Signedbv_Type (Irep=15) (Id=signedbv)
+I_Constant_Expr (Irep=94) (Id=constant)
+   Range_Check = False
+   Source_Location = I_Source_Location (Irep=89)
+   Type = I_Signedbv_Type (Irep=3) (Id=signedbv)
+   Value = "4" (String_Id=400000100)
+I_Signedbv_Type (Irep=15) (Id=signedbv)
+   Width = 32
+After Expression
+Update_Array_From slice - Slice bounds
+Zero based bounds FALSE
+Its a slice
+N_Slice (Node_Id=2307) (source,analyzed)
+N_Defining_Identifier "T6b" (Entity_Id=2401)
+Calling Zero_Based_Slice_Bounds
+Zero_Based_Slice_Bounds TRUE
+Update_Array_From slice - After bounds
+Static length check
+Copying from slice
+About to copy static
+Dest_Low  0
+Dest_High  2
+Source_Low  0
+Source_High  2
+Into Copy_Static
+Copied from slice
+End Do_Array_Object_Declaration
+End Object_Declaration_Full
+Do_Itype_Definition
+N_Defining_Identifier "T7b" (Entity_Id=2428)
+Ekind: E_SIGNED_INTEGER_SUBTYPE
+ATTRIBUTE_FIRST
+Do_First_Last_Length - It's an array
+N_Attribute_Reference (Node_Id=2425) (analyzed)
+N_Identifier "ee" (Node_Id=2319) (source,analyzed)
+**** Do_Array_First_Last_Length
+ATTRIBUTE_FIRST
+N_Attribute_Reference (Node_Id=2425) (analyzed)
+N_Identifier "ee" (Node_Id=2319) (source,analyzed)
+<empty>
+N_Attribute_Reference (Node_Id=2425) (analyzed)
+N_Identifier "ee" (Node_Id=2319) (source,analyzed)
+N_Defining_Identifier "ee" (Entity_Id=2294) (source)
+N_Defining_Identifier "integer" (Entity_Id=1009s)
+N_Defining_Identifier "u_array" (Entity_Id=2254) (source,analyzed)
+Is an array (The_Entity) TRUE
+Is constrained (The_Entity) FALSE
+Is constrained (Etype (The_Entity)) FALSE
+Is a parameter (The_Entity) FALSE
+The name is unconstrained_decs__ee___first_1
+An unconstrained array parameter
+The dimension string is:1
+The array name:unconstrained_decs__ee
+I_Symbol_Expr (Irep=201) (Id=symbol)
+   Identifier = "unconstrained_decs__ee___first_1" (String_Id=400000319)
+   Range_Check = False
+   Source_Location = I_Source_Location (Irep=200)
+   Type = I_Signedbv_Type (Irep=15) (Id=signedbv)
+I_Symbol_Expr (Irep=202) (Id=symbol)
+   Identifier = "unconstrained_decs__ee___last_1" (String_Id=400000320)
+   Range_Check = False
+   Source_Location = I_Source_Location (Irep=200)
+   Type = I_Signedbv_Type (Irep=15) (Id=signedbv)
+N_Defining_Identifier "ee" (Entity_Id=2294) (source)
+No Dimension
+N_Defining_Identifier "ee" (Entity_Id=2294) (source)
+N_Defining_Identifier "u_array" (Entity_Id=2254) (source,analyzed)
+N_Defining_Identifier "u_array" (Entity_Id=2254) (source,analyzed)
+ATTRIBUTE_LAST
+Do_First_Last_Length - It's an array
+N_Attribute_Reference (Node_Id=2424) (analyzed)
+N_Identifier "ee" (Node_Id=2423) (source,analyzed)
+**** Do_Array_First_Last_Length
+ATTRIBUTE_LAST
+N_Attribute_Reference (Node_Id=2424) (analyzed)
+N_Identifier "ee" (Node_Id=2423) (source,analyzed)
+<empty>
+N_Attribute_Reference (Node_Id=2424) (analyzed)
+N_Identifier "ee" (Node_Id=2423) (source,analyzed)
+N_Defining_Identifier "ee" (Entity_Id=2294) (source)
+N_Defining_Identifier "integer" (Entity_Id=1009s)
+N_Defining_Identifier "u_array" (Entity_Id=2254) (source,analyzed)
+Is an array (The_Entity) TRUE
+Is constrained (The_Entity) FALSE
+Is constrained (Etype (The_Entity)) FALSE
+Is a parameter (The_Entity) FALSE
+The name is unconstrained_decs__ee___first_1
+An unconstrained array parameter
+The dimension string is:1
+The array name:unconstrained_decs__ee
+I_Symbol_Expr (Irep=204) (Id=symbol)
+   Identifier = "unconstrained_decs__ee___first_1" (String_Id=400000330)
+   Range_Check = False
+   Source_Location = I_Source_Location (Irep=203)
+   Type = I_Signedbv_Type (Irep=15) (Id=signedbv)
+I_Symbol_Expr (Irep=205) (Id=symbol)
+   Identifier = "unconstrained_decs__ee___last_1" (String_Id=400000331)
+   Range_Check = False
+   Source_Location = I_Source_Location (Irep=203)
+   Type = I_Signedbv_Type (Irep=15) (Id=signedbv)
+N_Defining_Identifier "ee" (Entity_Id=2294) (source)
+No Dimension
+N_Defining_Identifier "ee" (Entity_Id=2294) (source)
+N_Defining_Identifier "u_array" (Entity_Id=2254) (source,analyzed)
+N_Defining_Identifier "u_array" (Entity_Id=2254) (source,analyzed)
+End declare itype
+Do_Indexed_Component
+N_Identifier "ee" (Node_Id=2325) (source,analyzed)
+N_Defining_Identifier "u_array" (Entity_Id=2254) (source,analyzed)
+End declare itype
+ATTRIBUTE_FIRST
+Do_First_Last_Length - It's an array
+N_Attribute_Reference (Node_Id=2425) (analyzed)
+N_Identifier "ee" (Node_Id=2319) (source,analyzed)
+**** Do_Array_First_Last_Length
+ATTRIBUTE_FIRST
+N_Attribute_Reference (Node_Id=2425) (analyzed)
+N_Identifier "ee" (Node_Id=2319) (source,analyzed)
+<empty>
+N_Attribute_Reference (Node_Id=2425) (analyzed)
+N_Identifier "ee" (Node_Id=2319) (source,analyzed)
+N_Defining_Identifier "ee" (Entity_Id=2294) (source)
+N_Defining_Identifier "integer" (Entity_Id=1009s)
+N_Defining_Identifier "u_array" (Entity_Id=2254) (source,analyzed)
+Is an array (The_Entity) TRUE
+Is constrained (The_Entity) FALSE
+Is constrained (Etype (The_Entity)) FALSE
+Is a parameter (The_Entity) FALSE
+The name is unconstrained_decs__ee___first_1
+An unconstrained array parameter
+The dimension string is:1
+The array name:unconstrained_decs__ee
+I_Symbol_Expr (Irep=214) (Id=symbol)
+   Identifier = "unconstrained_decs__ee___first_1" (String_Id=400000370)
+   Range_Check = False
+   Source_Location = I_Source_Location (Irep=213)
+   Type = I_Signedbv_Type (Irep=15) (Id=signedbv)
+I_Symbol_Expr (Irep=215) (Id=symbol)
+   Identifier = "unconstrained_decs__ee___last_1" (String_Id=400000371)
+   Range_Check = False
+   Source_Location = I_Source_Location (Irep=213)
+   Type = I_Signedbv_Type (Irep=15) (Id=signedbv)
+N_Defining_Identifier "ee" (Entity_Id=2294) (source)
+No Dimension
+N_Defining_Identifier "ee" (Entity_Id=2294) (source)
+N_Defining_Identifier "u_array" (Entity_Id=2254) (source,analyzed)
+N_Defining_Identifier "u_array" (Entity_Id=2254) (source,analyzed)
+ATTRIBUTE_LAST
+Do_First_Last_Length - It's an array
+N_Attribute_Reference (Node_Id=2424) (analyzed)
+N_Identifier "ee" (Node_Id=2423) (source,analyzed)
+**** Do_Array_First_Last_Length
+ATTRIBUTE_LAST
+N_Attribute_Reference (Node_Id=2424) (analyzed)
+N_Identifier "ee" (Node_Id=2423) (source,analyzed)
+<empty>
+N_Attribute_Reference (Node_Id=2424) (analyzed)
+N_Identifier "ee" (Node_Id=2423) (source,analyzed)
+N_Defining_Identifier "ee" (Entity_Id=2294) (source)
+N_Defining_Identifier "integer" (Entity_Id=1009s)
+N_Defining_Identifier "u_array" (Entity_Id=2254) (source,analyzed)
+Is an array (The_Entity) TRUE
+Is constrained (The_Entity) FALSE
+Is constrained (Etype (The_Entity)) FALSE
+Is a parameter (The_Entity) FALSE
+The name is unconstrained_decs__ee___first_1
+An unconstrained array parameter
+The dimension string is:1
+The array name:unconstrained_decs__ee
+I_Symbol_Expr (Irep=217) (Id=symbol)
+   Identifier = "unconstrained_decs__ee___first_1" (String_Id=400000381)
+   Range_Check = False
+   Source_Location = I_Source_Location (Irep=216)
+   Type = I_Signedbv_Type (Irep=15) (Id=signedbv)
+I_Symbol_Expr (Irep=218) (Id=symbol)
+   Identifier = "unconstrained_decs__ee___last_1" (String_Id=400000382)
+   Range_Check = False
+   Source_Location = I_Source_Location (Irep=216)
+   Type = I_Signedbv_Type (Irep=15) (Id=signedbv)
+N_Defining_Identifier "ee" (Entity_Id=2294) (source)
+No Dimension
+N_Defining_Identifier "ee" (Entity_Id=2294) (source)
+N_Defining_Identifier "u_array" (Entity_Id=2254) (source,analyzed)
+N_Defining_Identifier "u_array" (Entity_Id=2254) (source,analyzed)

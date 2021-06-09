@@ -1,0 +1,97 @@
+CBMC version 5.12 (cbmc-5.12-36-g5568f6482) 64-bit x86_64 linux
+Parsing new_arr.json_symtab
+Converting
+Generating GOTO Program
+Adding CPROVER library (x86_64)
+Removal of function pointers and virtual functions
+Generic Property Instrumentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+__CPROVER_Ada_Index_Check /* __CPROVER_Ada_Index_Check */
+        // 0 file new_arr.adb line 25 column 4 function new_arr
+        ASSERT __CPROVER_Ada_Index_Check$$__CPROVER_Ada_Index_Check::__expr9 != 0 // Ada Check assertion
+        // 1 file new_arr.adb line 25 column 4 function new_arr
+        ASSUME __CPROVER_Ada_Index_Check$$__CPROVER_Ada_Index_Check::__expr9 != 0
+        // 2 no location
+        END_FUNCTION
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+__CPROVER__start /* __CPROVER__start */
+        // 23 file <internal>
+        __CPROVER_rounding_mode = 0;
+        // 24 file <internal>
+        __CPROVER_dead_object = NULL;
+        // 25 file <internal>
+        __CPROVER_deallocated = NULL;
+        // 26 file <internal>
+        __CPROVER_malloc_object = NULL;
+        // 27 file <internal>
+        return'=new_arr();
+        // 28 no location
+        END_FUNCTION
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+__range_check_new_arr.13 /* __range_check_new_arr.13 */
+        // 29 file <internal>
+        __CPROVER_Ada_Index_Check((int)(__range_check_new_arr.13$$__range_check_new_arr.13::__value14 >= __range_check_new_arr.13$$__range_check_new_arr.13::__low15 && __range_check_new_arr.13$$__range_check_new_arr.13::__value14 <= __range_check_new_arr.13$$__range_check_new_arr.13::__high16));
+        // 30 file new_arr.adb line 27 column 19 function new_arr
+        __range_check_new_arr_13#return_value = (int)__range_check_new_arr.13$$__range_check_new_arr.13::__value14;
+        // 31 no location
+        END_FUNCTION
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+__range_check_new_arr.5 /* __range_check_new_arr.5 */
+        // 32 file <internal>
+        __CPROVER_Ada_Index_Check((int)(__range_check_new_arr.5$$__range_check_new_arr.5::__value6 >= __range_check_new_arr.5$$__range_check_new_arr.5::__low7 && __range_check_new_arr.5$$__range_check_new_arr.5::__value6 <= __range_check_new_arr.5$$__range_check_new_arr.5::__high8));
+        // 33 file new_arr.adb line 25 column 4 function new_arr
+        __range_check_new_arr_5#return_value = (int)__range_check_new_arr.5$$__range_check_new_arr.5::__value6;
+        // 34 no location
+        END_FUNCTION
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+new_arr /* new_arr */
+        // 3 file new_arr.adb line 15 column 4
+        int new_arr__ca[(10 - 1) + 1];
+        // 4 file new_arr.adb line 21 column 4
+        int new_arr__t;
+        // 5 file new_arr.adb line 22 column 4
+        int new_arr__x;
+        // 6 file new_arr.adb line 24 column 5
+        new_arr__t = 1;
+        // 7 file new_arr.adb line 25 column 4
+        int return_value___range_check_new_arr.5;
+        // 8 file <internal>
+        __range_check_new_arr_5((int)(int)new_arr__t, 1, 10);
+        // 9 file <internal>
+        return_value___range_check_new_arr.5 = __range_check_new_arr_5#return_value;
+        // 10 file <internal>
+        dead __range_check_new_arr_5#return_value;
+        // 11 file new_arr.adb line 25 column 11
+        new_arr__ca[return_value___range_check_new_arr.5 - 1] = 23;
+        // 12 file new_arr.adb line 27 column 19
+        int return_value___range_check_new_arr.13;
+        // 13 file <internal>
+        __range_check_new_arr_13((int)(int)new_arr__t, 1, 10);
+        // 14 file <internal>
+        return_value___range_check_new_arr.13 = __range_check_new_arr_13#return_value;
+        // 15 file <internal>
+        dead __range_check_new_arr_13#return_value;
+        // 16 file new_arr.adb line 27 column 4 function new_arr
+        ASSERT new_arr__ca[return_value___range_check_new_arr.13 - 1] == new_arr__x // assertion CA (T) = X
+        // 17 no location
+        dead return_value___range_check_new_arr.13;
+        // 18 no location
+        dead return_value___range_check_new_arr.5;
+        // 19 no location
+        dead new_arr__x;
+        // 20 no location
+        dead new_arr__t;
+        // 21 no location
+        dead new_arr__ca;
+        // 22 no location
+        END_FUNCTION
+

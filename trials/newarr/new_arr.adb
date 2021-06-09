@@ -15,13 +15,13 @@ procedure New_Arr is
 
    type Arr_Of_Arr is array (Integer range <>) of Arr;
 
---     procedure P (A : Arr_U) is
---        F, L, Len : Integer;
---     begin
---        F := A'First;
---        L := A'Last;
---        Len := A'Length;
---     end P;
+   procedure P (A : Arr_U) is
+      F, L, Len : Integer;
+   begin
+      F := A'First;
+      L := A'Last;
+      Len := A'Length;
+   end P;
 
    procedure Q (AA : Arr_of_Arr) is
       AAF : Integer;
@@ -45,14 +45,7 @@ begin
    T := 1;
 
    CA (T) := 23;
---   T := CA (1);
-   pragma Assert (CA (T) = 23);
---     A := 1;
---     B := 10;
---     declare
---        type Dyn_Arr is array (A .. B) of Integer;
---     begin
---        null;
---     end;
+   T := CA (1);
+   pragma Assert (T = 23);
    null;
 end New_Arr;

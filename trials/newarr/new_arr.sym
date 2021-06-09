@@ -1,0 +1,633 @@
+CBMC version 5.12 (cbmc-5.12-36-g5568f6482) 64-bit x86_64 linux
+Parsing new_arr.json_symtab
+Converting
+Generating GOTO Program
+
+Symbols:
+
+Symbol......: __CPROVER_Ada_Index_Check
+Pretty name.: __CPROVER_Ada_Index_Check
+Module......: 
+Base name...: __CPROVER_Ada_Index_Check
+Mode........: C
+Type........: void (int __CPROVER_Ada_Index_Check$$__CPROVER_Ada_Index_Check::__expr9)
+Value.......: {
+  __CPROVER_assert(__CPROVER_Ada_Index_Check$$__CPROVER_Ada_Index_Check::__expr9 != 0, "Ada Check assertion");
+  __CPROVER_assume(__CPROVER_Ada_Index_Check$$__CPROVER_Ada_Index_Check::__expr9 != 0);
+}
+Flags.......:
+Location....: 
+
+Symbol......: __CPROVER_Ada_Index_Check::__expr9
+Pretty name.: __CPROVER_Ada_Index_Check::__expr9
+Module......: 
+Base name...: __CPROVER_Ada_Index_Check::__expr9
+Mode........: C
+Type........: int
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: __CPROVER__start
+Pretty name.: __CPROVER__start
+Module......: 
+Base name...: __CPROVER__start
+Mode........: C
+Type........: void (void)
+Value.......: {
+  __CPROVER_rounding_mode = 0;
+  __CPROVER_dead_object = NULL;
+  __CPROVER_deallocated = NULL;
+  __CPROVER_malloc_object = NULL;
+  void return';
+  return'=new_arr();
+}
+Flags.......:
+Location....: 
+
+Symbol......: __CPROVER_assert
+Pretty name.: __CPROVER_assert
+Module......: 
+Base name...: __CPROVER_assert
+Mode........: C
+Type........: void (int __CPROVER_assert$$__CPROVER_assert::__condition10, signed char *__CPROVER_assert$$__CPROVER_assert::__comment11)
+Value.......: 
+Flags.......: lvalue thread_local state_var
+Location....: 
+
+Symbol......: __CPROVER_assert::__comment11
+Pretty name.: __CPROVER_assert::__comment11
+Module......: 
+Base name...: __CPROVER_assert::__comment11
+Mode........: C
+Type........: signed char *
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: __CPROVER_assert::__condition10
+Pretty name.: __CPROVER_assert::__condition10
+Module......: 
+Base name...: __CPROVER_assert::__condition10
+Mode........: C
+Type........: int
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: __CPROVER_assume
+Pretty name.: __CPROVER_assume
+Module......: 
+Base name...: __CPROVER_assume
+Mode........: C
+Type........: void (int __CPROVER_assume$$__CPROVER_assume::__condition12)
+Value.......: 
+Flags.......: lvalue thread_local state_var
+Location....: 
+
+Symbol......: __CPROVER_assume::__condition12
+Pretty name.: __CPROVER_assume::__condition12
+Module......: 
+Base name...: __CPROVER_assume::__condition12
+Mode........: C
+Type........: int
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: __CPROVER_dead_object
+Pretty name.: __CPROVER_dead_object
+Module......: 
+Base name...: __CPROVER_dead_object
+Mode........: C
+Type........: void *
+Value.......: 
+Flags.......: lvalue static_lifetime
+Location....: 
+
+Symbol......: __CPROVER_deallocated
+Pretty name.: __CPROVER_deallocated
+Module......: 
+Base name...: __CPROVER_deallocated
+Mode........: C
+Type........: void *
+Value.......: 
+Flags.......: lvalue static_lifetime
+Location....: 
+
+Symbol......: __CPROVER_malloc_object
+Pretty name.: __CPROVER_malloc_object
+Module......: 
+Base name...: __CPROVER_malloc_object
+Mode........: C
+Type........: void *
+Value.......: 
+Flags.......: lvalue static_lifetime
+Location....: 
+
+Symbol......: __CPROVER_rounding_mode
+Pretty name.: __CPROVER_rounding_mode
+Module......: 
+Base name...: __CPROVER_rounding_mode
+Mode........: C
+Type........: int
+Value.......: 
+Flags.......: lvalue static_lifetime
+Location....: 
+
+Symbol......: __CPROVER_size_t
+Pretty name.: __CPROVER_size_t
+Module......: 
+Base name...: __CPROVER_size_t
+Mode........: C
+Type........: unsigned long int
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: __range_check_new_arr.13
+Pretty name.: __range_check_new_arr.13
+Module......: 
+Base name...: __range_check_new_arr.13
+Mode........: C
+Type........: int (int __range_check_new_arr.13$$__range_check_new_arr.13::__value14, int __range_check_new_arr.13$$__range_check_new_arr.13::__low15, int __range_check_new_arr.13$$__range_check_new_arr.13::__high16)
+Value.......: {
+  __CPROVER_Ada_Index_Check((int)(__range_check_new_arr.13$$__range_check_new_arr.13::__value14 >= __range_check_new_arr.13$$__range_check_new_arr.13::__low15 && __range_check_new_arr.13$$__range_check_new_arr.13::__value14 <= __range_check_new_arr.13$$__range_check_new_arr.13::__high16));
+  return (int)__range_check_new_arr.13$$__range_check_new_arr.13::__value14;
+}
+Flags.......:
+Location....: 
+
+Symbol......: __range_check_new_arr.13::__high16
+Pretty name.: __range_check_new_arr.13::__high16
+Module......: 
+Base name...: __range_check_new_arr.13::__high16
+Mode........: C
+Type........: int
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: __range_check_new_arr.13::__low15
+Pretty name.: __range_check_new_arr.13::__low15
+Module......: 
+Base name...: __range_check_new_arr.13::__low15
+Mode........: C
+Type........: int
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: __range_check_new_arr.13::__value14
+Pretty name.: __range_check_new_arr.13::__value14
+Module......: 
+Base name...: __range_check_new_arr.13::__value14
+Mode........: C
+Type........: int
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: __range_check_new_arr.5
+Pretty name.: __range_check_new_arr.5
+Module......: 
+Base name...: __range_check_new_arr.5
+Mode........: C
+Type........: int (int __range_check_new_arr.5$$__range_check_new_arr.5::__value6, int __range_check_new_arr.5$$__range_check_new_arr.5::__low7, int __range_check_new_arr.5$$__range_check_new_arr.5::__high8)
+Value.......: {
+  __CPROVER_Ada_Index_Check((int)(__range_check_new_arr.5$$__range_check_new_arr.5::__value6 >= __range_check_new_arr.5$$__range_check_new_arr.5::__low7 && __range_check_new_arr.5$$__range_check_new_arr.5::__value6 <= __range_check_new_arr.5$$__range_check_new_arr.5::__high8));
+  return (int)__range_check_new_arr.5$$__range_check_new_arr.5::__value6;
+}
+Flags.......:
+Location....: 
+
+Symbol......: __range_check_new_arr.5::__high8
+Pretty name.: __range_check_new_arr.5::__high8
+Module......: 
+Base name...: __range_check_new_arr.5::__high8
+Mode........: C
+Type........: int
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: __range_check_new_arr.5::__low7
+Pretty name.: __range_check_new_arr.5::__low7
+Module......: 
+Base name...: __range_check_new_arr.5::__low7
+Mode........: C
+Type........: int
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: __range_check_new_arr.5::__value6
+Pretty name.: __range_check_new_arr.5::__value6
+Module......: 
+Base name...: __range_check_new_arr.5::__value6
+Mode........: C
+Type........: int
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: malloc
+Pretty name.: malloc
+Module......: 
+Base name...: malloc
+Mode........: C
+Type........: void * (unsigned long int malloc$$malloc::__size1)
+Value.......: 
+Flags.......:
+Location....: 
+
+Symbol......: malloc::__size1
+Pretty name.: malloc::__size1
+Module......: 
+Base name...: malloc::__size1
+Mode........: C
+Type........: unsigned long int
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: memcpy
+Pretty name.: memcpy
+Module......: 
+Base name...: memcpy
+Mode........: C
+Type........: void * (void *memcpy$$memcpy::__destination2, void *memcpy$$memcpy::__source3, unsigned long int memcpy$$memcpy::__num4)
+Value.......: 
+Flags.......:
+Location....: 
+
+Symbol......: memcpy::__destination2
+Pretty name.: memcpy::__destination2
+Module......: 
+Base name...: memcpy::__destination2
+Mode........: C
+Type........: void *
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: memcpy::__num4
+Pretty name.: memcpy::__num4
+Module......: 
+Base name...: memcpy::__num4
+Mode........: C
+Type........: unsigned long int
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: memcpy::__source3
+Pretty name.: memcpy::__source3
+Module......: 
+Base name...: memcpy::__source3
+Mode........: C
+Type........: void *
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: new_arr
+Pretty name.: new_arr
+Module......: 
+Base name...: new_arr
+Mode........: C
+Type........: void (void)
+Value.......: {
+  int new_arr__ca[(10 - 1) + 1];
+  int new_arr__t;
+  int new_arr__x;
+  {
+    new_arr__t = 1;
+    new_arr__ca[__range_check_new_arr_5((int)(int)new_arr__t, 1, 10) - 1] = 23;
+    /* assertion CA (T) = X */
+    assert(new_arr__ca[__range_check_new_arr_13((int)(int)new_arr__t, 1, 10) - 1] == new_arr__x);
+  }
+}
+Flags.......:
+Location....: 
+
+Symbol......: new_arr::$tmp::return_value___range_check_new_arr.13
+Pretty name.: 
+Module......: 
+Base name...: return_value___range_check_new_arr.13
+Mode........: C
+Type........: int
+Value.......: 
+Flags.......: lvalue thread_local file_local auxiliary state_var
+Location....: file new_arr.adb line 27 column 19
+
+Symbol......: new_arr::$tmp::return_value___range_check_new_arr.5
+Pretty name.: 
+Module......: 
+Base name...: return_value___range_check_new_arr.5
+Mode........: C
+Type........: int
+Value.......: 
+Flags.......: lvalue thread_local file_local auxiliary state_var
+Location....: file new_arr.adb line 25 column 4
+
+Symbol......: new_arr__TarrB
+Pretty name.: new_arr__TarrB
+Module......: 
+Base name...: new_arr__TarrB
+Mode........: C
+Type........: int [(10 - 1) + 1]
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: new_arr__arr
+Pretty name.: new_arr__arr
+Module......: 
+Base name...: new_arr__arr
+Mode........: C
+Type........: int [(10 - 1) + 1]
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: new_arr__arr___first_1
+Pretty name.: new_arr__arr___first_1
+Module......: 
+Base name...: new_arr__arr___first_1
+Mode........: C
+Type........: int
+Value.......: 1
+Flags.......: lvalue
+Location....: 
+
+Symbol......: new_arr__arr___last_1
+Pretty name.: new_arr__arr___last_1
+Module......: 
+Base name...: new_arr__arr___last_1
+Mode........: C
+Type........: int
+Value.......: 10
+Flags.......: lvalue
+Location....: 
+
+Symbol......: new_arr__arr___length_1
+Pretty name.: new_arr__arr___length_1
+Module......: 
+Base name...: new_arr__arr___length_1
+Mode........: C
+Type........: int
+Value.......: (10 - 1) + 1
+Flags.......: lvalue
+Location....: 
+
+Symbol......: new_arr__ca
+Pretty name.: new_arr__ca
+Module......: 
+Base name...: new_arr__ca
+Mode........: C
+Type........: int [(10 - 1) + 1]
+Value.......: 
+Flags.......: lvalue
+Location....: 
+
+Symbol......: new_arr__ca___first_1
+Pretty name.: new_arr__ca___first_1
+Module......: 
+Base name...: new_arr__ca___first_1
+Mode........: C
+Type........: int
+Value.......: 1
+Flags.......: lvalue
+Location....: 
+
+Symbol......: new_arr__ca___last_1
+Pretty name.: new_arr__ca___last_1
+Module......: 
+Base name...: new_arr__ca___last_1
+Mode........: C
+Type........: int
+Value.......: 10
+Flags.......: lvalue
+Location....: 
+
+Symbol......: new_arr__ca___length_1
+Pretty name.: new_arr__ca___length_1
+Module......: 
+Base name...: new_arr__ca___length_1
+Mode........: C
+Type........: int
+Value.......: (10 - 1) + 1
+Flags.......: lvalue
+Location....: 
+
+Symbol......: new_arr__index
+Pretty name.: new_arr__index
+Module......: 
+Base name...: new_arr__index
+Mode........: C
+Type........: int
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: new_arr__t
+Pretty name.: new_arr__t
+Module......: 
+Base name...: new_arr__t
+Mode........: C
+Type........: int
+Value.......: 
+Flags.......: lvalue
+Location....: 
+
+Symbol......: new_arr__x
+Pretty name.: new_arr__x
+Module......: 
+Base name...: new_arr__x
+Mode........: C
+Type........: int
+Value.......: 
+Flags.......: lvalue
+Location....: 
+
+Symbol......: return'
+Pretty name.: return'
+Module......: 
+Base name...: return'
+Mode........: C
+Type........: void
+Value.......: 
+Flags.......: lvalue static_lifetime
+Location....: 
+
+Symbol......: standard__boolean
+Pretty name.: standard__boolean
+Module......: 
+Base name...: standard__boolean
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__character
+Pretty name.: standard__character
+Module......: 
+Base name...: standard__character
+Mode........: C
+Type........: unsigned char
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__float
+Pretty name.: standard__float
+Module......: 
+Base name...: standard__float
+Mode........: C
+Type........: float
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__integer
+Pretty name.: standard__integer
+Module......: 
+Base name...: standard__integer
+Mode........: C
+Type........: int
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__long_float
+Pretty name.: standard__long_float
+Module......: 
+Base name...: standard__long_float
+Mode........: C
+Type........: double
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__long_integer
+Pretty name.: standard__long_integer
+Module......: 
+Base name...: standard__long_integer
+Mode........: C
+Type........: long int
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__long_long_float
+Pretty name.: standard__long_long_float
+Module......: 
+Base name...: standard__long_long_float
+Mode........: C
+Type........: double
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__long_long_integer
+Pretty name.: standard__long_long_integer
+Module......: 
+Base name...: standard__long_long_integer
+Mode........: C
+Type........: long int
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__natural
+Pretty name.: standard__natural
+Module......: 
+Base name...: standard__natural
+Mode........: C
+Type........: int
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__positive
+Pretty name.: standard__positive
+Module......: 
+Base name...: standard__positive
+Mode........: C
+Type........: int
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__short_float
+Pretty name.: standard__short_float
+Module......: 
+Base name...: standard__short_float
+Mode........: C
+Type........: float
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__short_integer
+Pretty name.: standard__short_integer
+Module......: 
+Base name...: standard__short_integer
+Mode........: C
+Type........: short int
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__short_short_integer
+Pretty name.: standard__short_short_integer
+Module......: 
+Base name...: standard__short_short_integer
+Mode........: C
+Type........: signed char
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__string
+Pretty name.: standard__string
+Module......: 
+Base name...: standard__string
+Mode........: C
+Type........: __CPROVER_string
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__universal_integer
+Pretty name.: standard__universal_integer
+Module......: 
+Base name...: standard__universal_integer
+Mode........: C
+Type........: integer
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__wide_character
+Pretty name.: standard__wide_character
+Module......: 
+Base name...: standard__wide_character
+Mode........: C
+Type........: unsigned short int
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__wide_wide_character
+Pretty name.: standard__wide_wide_character
+Module......: 
+Base name...: standard__wide_wide_character
+Mode........: C
+Type........: unsigned int
+Value.......: 
+Flags.......: type
+Location....: 
+

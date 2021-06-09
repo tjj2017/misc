@@ -1,0 +1,4070 @@
+warning: ignoring index
+  * type: signedbv
+      * width: 32
+  * #source_location: 
+    * file: unconstrained.adb
+    * line: 13
+    * column: 4
+    * comment: 
+    * property_class: 
+    * property_id: 
+    * function: 
+    * working_directory: 
+    * java_bytecode_index: 
+  * range_check: 0
+  0: struct
+      * type: struct
+          * tag: unconstrained__u_arr
+          * components: 
+            0: 
+              * type: array
+                  * size: constant
+                      * type: signedbv
+                          * width: 32
+                      * #source_location: 
+                        * file: unconstrained.adb
+                        * line: 4
+                        * column: 4
+                        * comment: 
+                        * property_class: 
+                        * property_id: 
+                        * function: 
+                        * working_directory: 
+                        * java_bytecode_index: 
+                      * value: 2
+                      * range_check: 0
+                  0: signedbv
+                      * width: 32
+              * #source_location: 
+                * file: 
+                * line: >=
+                * column: =
+                * comment: 
+                * property_class: >
+                * property_id: False
+                * function: <=
+                * working_directory: True
+                * java_bytecode_index: <
+              * #is_padding: 0
+              * name: bounds
+              * access: public
+              * anonymous: 0
+              * range_check: 0
+              * baseName: bounds
+              * prettyName: bounds
+            1: 
+              * type: pointer
+                  * width: 64
+                  0: signedbv
+                      * width: 32
+              * #source_location: 
+                * file: 
+                * line: >=
+                * column: =
+                * comment: 
+                * property_class: >
+                * property_id: False
+                * function: <=
+                * working_directory: True
+                * java_bytecode_index: <
+              * #is_padding: 0
+              * name: data
+              * access: public
+              * anonymous: 0
+              * range_check: 0
+              * baseName: data
+              * prettyName: data
+      0: array
+          * type: array
+              * size: constant
+                  * type: signedbv
+                      * width: 32
+                  * #source_location: 
+                    * file: unconstrained.adb
+                    * line: 4
+                    * column: 4
+                    * comment: 
+                    * property_class: 
+                    * property_id: 
+                    * function: 
+                    * working_directory: 
+                    * java_bytecode_index: 
+                  * value: 2
+                  * range_check: 0
+              0: signedbv
+                  * width: 32
+          0: symbol
+              * type: signedbv
+                  * width: 32
+              * identifier: unconstrained__b@1#1..bounds[[0]]
+              * expression: index
+                  * type: signedbv
+                      * width: 32
+                  0: member
+                      * type: array
+                          * size: constant
+                              * type: signedbv
+                                  * width: 32
+                              * #source_location: 
+                                * file: unconstrained.adb
+                                * line: 4
+                                * column: 4
+                                * comment: 
+                                * property_class: 
+                                * property_id: 
+                                * function: 
+                                * working_directory: 
+                                * java_bytecode_index: 
+                              * value: 2
+                              * range_check: 0
+                          0: signedbv
+                              * width: 32
+                      * component_name: bounds
+                      0: symbol
+                          * type: struct
+                              * tag: unconstrained__u_arr
+                              * components: 
+                                0: 
+                                  * type: array
+                                      * size: constant
+                                          * type: signedbv
+                                              * width: 32
+                                          * #source_location: 
+                                            * file: unconstrained.adb
+                                            * line: 4
+                                            * column: 4
+                                            * comment: 
+                                            * property_class: 
+                                            * property_id: 
+                                            * function: 
+                                            * working_directory: 
+                                            * java_bytecode_index: 
+                                          * value: 2
+                                          * range_check: 0
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: bounds
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: bounds
+                                  * prettyName: bounds
+                                1: 
+                                  * type: pointer
+                                      * width: 64
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: data
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: data
+                                  * prettyName: data
+                          * #source_location: 
+                            * file: unconstrained.adb
+                            * line: 13
+                            * column: 17
+                            * comment: 
+                            * property_class: 
+                            * property_id: 
+                            * function: 
+                            * working_directory: 
+                            * java_bytecode_index: 
+                          * identifier: unconstrained__b
+                          * range_check: 0
+                  1: constant
+                      * type: signedbv
+                          * width: 64
+                      * value: 0
+              * #SSA_symbol: 1
+              * L1: 1
+              * L2: 1
+              * L1_object_identifier: unconstrained__b@1..bounds[[0]]
+          1: symbol
+              * type: signedbv
+                  * width: 32
+              * identifier: unconstrained__b@1#1..bounds[[1]]
+              * expression: index
+                  * type: signedbv
+                      * width: 32
+                  0: member
+                      * type: array
+                          * size: constant
+                              * type: signedbv
+                                  * width: 32
+                              * #source_location: 
+                                * file: unconstrained.adb
+                                * line: 4
+                                * column: 4
+                                * comment: 
+                                * property_class: 
+                                * property_id: 
+                                * function: 
+                                * working_directory: 
+                                * java_bytecode_index: 
+                              * value: 2
+                              * range_check: 0
+                          0: signedbv
+                              * width: 32
+                      * component_name: bounds
+                      0: symbol
+                          * type: struct
+                              * tag: unconstrained__u_arr
+                              * components: 
+                                0: 
+                                  * type: array
+                                      * size: constant
+                                          * type: signedbv
+                                              * width: 32
+                                          * #source_location: 
+                                            * file: unconstrained.adb
+                                            * line: 4
+                                            * column: 4
+                                            * comment: 
+                                            * property_class: 
+                                            * property_id: 
+                                            * function: 
+                                            * working_directory: 
+                                            * java_bytecode_index: 
+                                          * value: 2
+                                          * range_check: 0
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: bounds
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: bounds
+                                  * prettyName: bounds
+                                1: 
+                                  * type: pointer
+                                      * width: 64
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: data
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: data
+                                  * prettyName: data
+                          * #source_location: 
+                            * file: unconstrained.adb
+                            * line: 13
+                            * column: 17
+                            * comment: 
+                            * property_class: 
+                            * property_id: 
+                            * function: 
+                            * working_directory: 
+                            * java_bytecode_index: 
+                          * identifier: unconstrained__b
+                          * range_check: 0
+                  1: constant
+                      * type: signedbv
+                          * width: 64
+                      * value: 1
+              * #SSA_symbol: 1
+              * L1: 1
+              * L2: 1
+              * L1_object_identifier: unconstrained__b@1..bounds[[1]]
+      1: symbol
+          * type: pointer
+              * width: 64
+              0: signedbv
+                  * width: 32
+          * identifier: unconstrained__b@1#1..data
+          * expression: member
+              * type: pointer
+                  * width: 64
+                  0: signedbv
+                      * width: 32
+              * component_name: data
+              0: symbol
+                  * type: struct
+                      * tag: unconstrained__u_arr
+                      * components: 
+                        0: 
+                          * type: array
+                              * size: constant
+                                  * type: signedbv
+                                      * width: 32
+                                  * #source_location: 
+                                    * file: unconstrained.adb
+                                    * line: 4
+                                    * column: 4
+                                    * comment: 
+                                    * property_class: 
+                                    * property_id: 
+                                    * function: 
+                                    * working_directory: 
+                                    * java_bytecode_index: 
+                                  * value: 2
+                                  * range_check: 0
+                              0: signedbv
+                                  * width: 32
+                          * #source_location: 
+                            * file: 
+                            * line: >=
+                            * column: =
+                            * comment: 
+                            * property_class: >
+                            * property_id: False
+                            * function: <=
+                            * working_directory: True
+                            * java_bytecode_index: <
+                          * #is_padding: 0
+                          * name: bounds
+                          * access: public
+                          * anonymous: 0
+                          * range_check: 0
+                          * baseName: bounds
+                          * prettyName: bounds
+                        1: 
+                          * type: pointer
+                              * width: 64
+                              0: signedbv
+                                  * width: 32
+                          * #source_location: 
+                            * file: 
+                            * line: >=
+                            * column: =
+                            * comment: 
+                            * property_class: >
+                            * property_id: False
+                            * function: <=
+                            * working_directory: True
+                            * java_bytecode_index: <
+                          * #is_padding: 0
+                          * name: data
+                          * access: public
+                          * anonymous: 0
+                          * range_check: 0
+                          * baseName: data
+                          * prettyName: data
+                  * #source_location: 
+                    * file: unconstrained.adb
+                    * line: 13
+                    * column: 17
+                    * comment: 
+                    * property_class: 
+                    * property_id: 
+                    * function: 
+                    * working_directory: 
+                    * java_bytecode_index: 
+                  * identifier: unconstrained__b
+                  * range_check: 0
+          * #SSA_symbol: 1
+          * L1: 1
+          * L2: 1
+          * L1_object_identifier: unconstrained__b@1..data
+  1: constant
+      * type: signedbv
+          * width: 64
+      * value: 80000001
+warning: ignoring index
+  * type: signedbv
+      * width: 32
+  * #source_location: 
+    * file: unconstrained.adb
+    * line: 13
+    * column: 4
+    * comment: 
+    * property_class: 
+    * property_id: 
+    * function: 
+    * working_directory: 
+    * java_bytecode_index: 
+  * range_check: 0
+  0: struct
+      * type: struct
+          * tag: unconstrained__u_arr
+          * components: 
+            0: 
+              * type: array
+                  * size: constant
+                      * type: signedbv
+                          * width: 32
+                      * #source_location: 
+                        * file: unconstrained.adb
+                        * line: 4
+                        * column: 4
+                        * comment: 
+                        * property_class: 
+                        * property_id: 
+                        * function: 
+                        * working_directory: 
+                        * java_bytecode_index: 
+                      * value: 2
+                      * range_check: 0
+                  0: signedbv
+                      * width: 32
+              * #source_location: 
+                * file: 
+                * line: >=
+                * column: =
+                * comment: 
+                * property_class: >
+                * property_id: False
+                * function: <=
+                * working_directory: True
+                * java_bytecode_index: <
+              * #is_padding: 0
+              * name: bounds
+              * access: public
+              * anonymous: 0
+              * range_check: 0
+              * baseName: bounds
+              * prettyName: bounds
+            1: 
+              * type: pointer
+                  * width: 64
+                  0: signedbv
+                      * width: 32
+              * #source_location: 
+                * file: 
+                * line: >=
+                * column: =
+                * comment: 
+                * property_class: >
+                * property_id: False
+                * function: <=
+                * working_directory: True
+                * java_bytecode_index: <
+              * #is_padding: 0
+              * name: data
+              * access: public
+              * anonymous: 0
+              * range_check: 0
+              * baseName: data
+              * prettyName: data
+      0: array
+          * type: array
+              * size: constant
+                  * type: signedbv
+                      * width: 32
+                  * #source_location: 
+                    * file: unconstrained.adb
+                    * line: 4
+                    * column: 4
+                    * comment: 
+                    * property_class: 
+                    * property_id: 
+                    * function: 
+                    * working_directory: 
+                    * java_bytecode_index: 
+                  * value: 2
+                  * range_check: 0
+              0: signedbv
+                  * width: 32
+          0: symbol
+              * type: signedbv
+                  * width: 32
+              * identifier: unconstrained__b@1#1..bounds[[0]]
+              * expression: index
+                  * type: signedbv
+                      * width: 32
+                  0: member
+                      * type: array
+                          * size: constant
+                              * type: signedbv
+                                  * width: 32
+                              * #source_location: 
+                                * file: unconstrained.adb
+                                * line: 4
+                                * column: 4
+                                * comment: 
+                                * property_class: 
+                                * property_id: 
+                                * function: 
+                                * working_directory: 
+                                * java_bytecode_index: 
+                              * value: 2
+                              * range_check: 0
+                          0: signedbv
+                              * width: 32
+                      * component_name: bounds
+                      0: symbol
+                          * type: struct
+                              * tag: unconstrained__u_arr
+                              * components: 
+                                0: 
+                                  * type: array
+                                      * size: constant
+                                          * type: signedbv
+                                              * width: 32
+                                          * #source_location: 
+                                            * file: unconstrained.adb
+                                            * line: 4
+                                            * column: 4
+                                            * comment: 
+                                            * property_class: 
+                                            * property_id: 
+                                            * function: 
+                                            * working_directory: 
+                                            * java_bytecode_index: 
+                                          * value: 2
+                                          * range_check: 0
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: bounds
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: bounds
+                                  * prettyName: bounds
+                                1: 
+                                  * type: pointer
+                                      * width: 64
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: data
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: data
+                                  * prettyName: data
+                          * #source_location: 
+                            * file: unconstrained.adb
+                            * line: 13
+                            * column: 17
+                            * comment: 
+                            * property_class: 
+                            * property_id: 
+                            * function: 
+                            * working_directory: 
+                            * java_bytecode_index: 
+                          * identifier: unconstrained__b
+                          * range_check: 0
+                  1: constant
+                      * type: signedbv
+                          * width: 64
+                      * value: 0
+              * #SSA_symbol: 1
+              * L1: 1
+              * L2: 1
+              * L1_object_identifier: unconstrained__b@1..bounds[[0]]
+          1: symbol
+              * type: signedbv
+                  * width: 32
+              * identifier: unconstrained__b@1#1..bounds[[1]]
+              * expression: index
+                  * type: signedbv
+                      * width: 32
+                  0: member
+                      * type: array
+                          * size: constant
+                              * type: signedbv
+                                  * width: 32
+                              * #source_location: 
+                                * file: unconstrained.adb
+                                * line: 4
+                                * column: 4
+                                * comment: 
+                                * property_class: 
+                                * property_id: 
+                                * function: 
+                                * working_directory: 
+                                * java_bytecode_index: 
+                              * value: 2
+                              * range_check: 0
+                          0: signedbv
+                              * width: 32
+                      * component_name: bounds
+                      0: symbol
+                          * type: struct
+                              * tag: unconstrained__u_arr
+                              * components: 
+                                0: 
+                                  * type: array
+                                      * size: constant
+                                          * type: signedbv
+                                              * width: 32
+                                          * #source_location: 
+                                            * file: unconstrained.adb
+                                            * line: 4
+                                            * column: 4
+                                            * comment: 
+                                            * property_class: 
+                                            * property_id: 
+                                            * function: 
+                                            * working_directory: 
+                                            * java_bytecode_index: 
+                                          * value: 2
+                                          * range_check: 0
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: bounds
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: bounds
+                                  * prettyName: bounds
+                                1: 
+                                  * type: pointer
+                                      * width: 64
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: data
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: data
+                                  * prettyName: data
+                          * #source_location: 
+                            * file: unconstrained.adb
+                            * line: 13
+                            * column: 17
+                            * comment: 
+                            * property_class: 
+                            * property_id: 
+                            * function: 
+                            * working_directory: 
+                            * java_bytecode_index: 
+                          * identifier: unconstrained__b
+                          * range_check: 0
+                  1: constant
+                      * type: signedbv
+                          * width: 64
+                      * value: 1
+              * #SSA_symbol: 1
+              * L1: 1
+              * L2: 1
+              * L1_object_identifier: unconstrained__b@1..bounds[[1]]
+      1: symbol
+          * type: pointer
+              * width: 64
+              0: signedbv
+                  * width: 32
+          * identifier: unconstrained__b@1#1..data
+          * expression: member
+              * type: pointer
+                  * width: 64
+                  0: signedbv
+                      * width: 32
+              * component_name: data
+              0: symbol
+                  * type: struct
+                      * tag: unconstrained__u_arr
+                      * components: 
+                        0: 
+                          * type: array
+                              * size: constant
+                                  * type: signedbv
+                                      * width: 32
+                                  * #source_location: 
+                                    * file: unconstrained.adb
+                                    * line: 4
+                                    * column: 4
+                                    * comment: 
+                                    * property_class: 
+                                    * property_id: 
+                                    * function: 
+                                    * working_directory: 
+                                    * java_bytecode_index: 
+                                  * value: 2
+                                  * range_check: 0
+                              0: signedbv
+                                  * width: 32
+                          * #source_location: 
+                            * file: 
+                            * line: >=
+                            * column: =
+                            * comment: 
+                            * property_class: >
+                            * property_id: False
+                            * function: <=
+                            * working_directory: True
+                            * java_bytecode_index: <
+                          * #is_padding: 0
+                          * name: bounds
+                          * access: public
+                          * anonymous: 0
+                          * range_check: 0
+                          * baseName: bounds
+                          * prettyName: bounds
+                        1: 
+                          * type: pointer
+                              * width: 64
+                              0: signedbv
+                                  * width: 32
+                          * #source_location: 
+                            * file: 
+                            * line: >=
+                            * column: =
+                            * comment: 
+                            * property_class: >
+                            * property_id: False
+                            * function: <=
+                            * working_directory: True
+                            * java_bytecode_index: <
+                          * #is_padding: 0
+                          * name: data
+                          * access: public
+                          * anonymous: 0
+                          * range_check: 0
+                          * baseName: data
+                          * prettyName: data
+                  * #source_location: 
+                    * file: unconstrained.adb
+                    * line: 13
+                    * column: 17
+                    * comment: 
+                    * property_class: 
+                    * property_id: 
+                    * function: 
+                    * working_directory: 
+                    * java_bytecode_index: 
+                  * identifier: unconstrained__b
+                  * range_check: 0
+          * #SSA_symbol: 1
+          * L1: 1
+          * L2: 1
+          * L1_object_identifier: unconstrained__b@1..data
+  1: constant
+      * type: signedbv
+          * width: 64
+      * value: 80000002
+warning: ignoring index
+  * type: signedbv
+      * width: 32
+  * #source_location: 
+    * file: unconstrained.adb
+    * line: 13
+    * column: 4
+    * comment: 
+    * property_class: 
+    * property_id: 
+    * function: 
+    * working_directory: 
+    * java_bytecode_index: 
+  * range_check: 0
+  0: struct
+      * type: struct
+          * tag: unconstrained__u_arr
+          * components: 
+            0: 
+              * type: array
+                  * size: constant
+                      * type: signedbv
+                          * width: 32
+                      * #source_location: 
+                        * file: unconstrained.adb
+                        * line: 4
+                        * column: 4
+                        * comment: 
+                        * property_class: 
+                        * property_id: 
+                        * function: 
+                        * working_directory: 
+                        * java_bytecode_index: 
+                      * value: 2
+                      * range_check: 0
+                  0: signedbv
+                      * width: 32
+              * #source_location: 
+                * file: 
+                * line: >=
+                * column: =
+                * comment: 
+                * property_class: >
+                * property_id: False
+                * function: <=
+                * working_directory: True
+                * java_bytecode_index: <
+              * #is_padding: 0
+              * name: bounds
+              * access: public
+              * anonymous: 0
+              * range_check: 0
+              * baseName: bounds
+              * prettyName: bounds
+            1: 
+              * type: pointer
+                  * width: 64
+                  0: signedbv
+                      * width: 32
+              * #source_location: 
+                * file: 
+                * line: >=
+                * column: =
+                * comment: 
+                * property_class: >
+                * property_id: False
+                * function: <=
+                * working_directory: True
+                * java_bytecode_index: <
+              * #is_padding: 0
+              * name: data
+              * access: public
+              * anonymous: 0
+              * range_check: 0
+              * baseName: data
+              * prettyName: data
+      0: array
+          * type: array
+              * size: constant
+                  * type: signedbv
+                      * width: 32
+                  * #source_location: 
+                    * file: unconstrained.adb
+                    * line: 4
+                    * column: 4
+                    * comment: 
+                    * property_class: 
+                    * property_id: 
+                    * function: 
+                    * working_directory: 
+                    * java_bytecode_index: 
+                  * value: 2
+                  * range_check: 0
+              0: signedbv
+                  * width: 32
+          0: symbol
+              * type: signedbv
+                  * width: 32
+              * identifier: unconstrained__b@1#1..bounds[[0]]
+              * expression: index
+                  * type: signedbv
+                      * width: 32
+                  0: member
+                      * type: array
+                          * size: constant
+                              * type: signedbv
+                                  * width: 32
+                              * #source_location: 
+                                * file: unconstrained.adb
+                                * line: 4
+                                * column: 4
+                                * comment: 
+                                * property_class: 
+                                * property_id: 
+                                * function: 
+                                * working_directory: 
+                                * java_bytecode_index: 
+                              * value: 2
+                              * range_check: 0
+                          0: signedbv
+                              * width: 32
+                      * component_name: bounds
+                      0: symbol
+                          * type: struct
+                              * tag: unconstrained__u_arr
+                              * components: 
+                                0: 
+                                  * type: array
+                                      * size: constant
+                                          * type: signedbv
+                                              * width: 32
+                                          * #source_location: 
+                                            * file: unconstrained.adb
+                                            * line: 4
+                                            * column: 4
+                                            * comment: 
+                                            * property_class: 
+                                            * property_id: 
+                                            * function: 
+                                            * working_directory: 
+                                            * java_bytecode_index: 
+                                          * value: 2
+                                          * range_check: 0
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: bounds
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: bounds
+                                  * prettyName: bounds
+                                1: 
+                                  * type: pointer
+                                      * width: 64
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: data
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: data
+                                  * prettyName: data
+                          * #source_location: 
+                            * file: unconstrained.adb
+                            * line: 13
+                            * column: 17
+                            * comment: 
+                            * property_class: 
+                            * property_id: 
+                            * function: 
+                            * working_directory: 
+                            * java_bytecode_index: 
+                          * identifier: unconstrained__b
+                          * range_check: 0
+                  1: constant
+                      * type: signedbv
+                          * width: 64
+                      * value: 0
+              * #SSA_symbol: 1
+              * L1: 1
+              * L2: 1
+              * L1_object_identifier: unconstrained__b@1..bounds[[0]]
+          1: symbol
+              * type: signedbv
+                  * width: 32
+              * identifier: unconstrained__b@1#1..bounds[[1]]
+              * expression: index
+                  * type: signedbv
+                      * width: 32
+                  0: member
+                      * type: array
+                          * size: constant
+                              * type: signedbv
+                                  * width: 32
+                              * #source_location: 
+                                * file: unconstrained.adb
+                                * line: 4
+                                * column: 4
+                                * comment: 
+                                * property_class: 
+                                * property_id: 
+                                * function: 
+                                * working_directory: 
+                                * java_bytecode_index: 
+                              * value: 2
+                              * range_check: 0
+                          0: signedbv
+                              * width: 32
+                      * component_name: bounds
+                      0: symbol
+                          * type: struct
+                              * tag: unconstrained__u_arr
+                              * components: 
+                                0: 
+                                  * type: array
+                                      * size: constant
+                                          * type: signedbv
+                                              * width: 32
+                                          * #source_location: 
+                                            * file: unconstrained.adb
+                                            * line: 4
+                                            * column: 4
+                                            * comment: 
+                                            * property_class: 
+                                            * property_id: 
+                                            * function: 
+                                            * working_directory: 
+                                            * java_bytecode_index: 
+                                          * value: 2
+                                          * range_check: 0
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: bounds
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: bounds
+                                  * prettyName: bounds
+                                1: 
+                                  * type: pointer
+                                      * width: 64
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: data
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: data
+                                  * prettyName: data
+                          * #source_location: 
+                            * file: unconstrained.adb
+                            * line: 13
+                            * column: 17
+                            * comment: 
+                            * property_class: 
+                            * property_id: 
+                            * function: 
+                            * working_directory: 
+                            * java_bytecode_index: 
+                          * identifier: unconstrained__b
+                          * range_check: 0
+                  1: constant
+                      * type: signedbv
+                          * width: 64
+                      * value: 1
+              * #SSA_symbol: 1
+              * L1: 1
+              * L2: 1
+              * L1_object_identifier: unconstrained__b@1..bounds[[1]]
+      1: symbol
+          * type: pointer
+              * width: 64
+              0: signedbv
+                  * width: 32
+          * identifier: unconstrained__b@1#1..data
+          * expression: member
+              * type: pointer
+                  * width: 64
+                  0: signedbv
+                      * width: 32
+              * component_name: data
+              0: symbol
+                  * type: struct
+                      * tag: unconstrained__u_arr
+                      * components: 
+                        0: 
+                          * type: array
+                              * size: constant
+                                  * type: signedbv
+                                      * width: 32
+                                  * #source_location: 
+                                    * file: unconstrained.adb
+                                    * line: 4
+                                    * column: 4
+                                    * comment: 
+                                    * property_class: 
+                                    * property_id: 
+                                    * function: 
+                                    * working_directory: 
+                                    * java_bytecode_index: 
+                                  * value: 2
+                                  * range_check: 0
+                              0: signedbv
+                                  * width: 32
+                          * #source_location: 
+                            * file: 
+                            * line: >=
+                            * column: =
+                            * comment: 
+                            * property_class: >
+                            * property_id: False
+                            * function: <=
+                            * working_directory: True
+                            * java_bytecode_index: <
+                          * #is_padding: 0
+                          * name: bounds
+                          * access: public
+                          * anonymous: 0
+                          * range_check: 0
+                          * baseName: bounds
+                          * prettyName: bounds
+                        1: 
+                          * type: pointer
+                              * width: 64
+                              0: signedbv
+                                  * width: 32
+                          * #source_location: 
+                            * file: 
+                            * line: >=
+                            * column: =
+                            * comment: 
+                            * property_class: >
+                            * property_id: False
+                            * function: <=
+                            * working_directory: True
+                            * java_bytecode_index: <
+                          * #is_padding: 0
+                          * name: data
+                          * access: public
+                          * anonymous: 0
+                          * range_check: 0
+                          * baseName: data
+                          * prettyName: data
+                  * #source_location: 
+                    * file: unconstrained.adb
+                    * line: 13
+                    * column: 17
+                    * comment: 
+                    * property_class: 
+                    * property_id: 
+                    * function: 
+                    * working_directory: 
+                    * java_bytecode_index: 
+                  * identifier: unconstrained__b
+                  * range_check: 0
+          * #SSA_symbol: 1
+          * L1: 1
+          * L2: 1
+          * L1_object_identifier: unconstrained__b@1..data
+  1: constant
+      * type: signedbv
+          * width: 64
+      * value: 80000003
+warning: ignoring index
+  * type: signedbv
+      * width: 32
+  * #source_location: 
+    * file: unconstrained.adb
+    * line: 13
+    * column: 4
+    * comment: 
+    * property_class: 
+    * property_id: 
+    * function: 
+    * working_directory: 
+    * java_bytecode_index: 
+  * range_check: 0
+  0: struct
+      * type: struct
+          * tag: unconstrained__u_arr
+          * components: 
+            0: 
+              * type: array
+                  * size: constant
+                      * type: signedbv
+                          * width: 32
+                      * #source_location: 
+                        * file: unconstrained.adb
+                        * line: 4
+                        * column: 4
+                        * comment: 
+                        * property_class: 
+                        * property_id: 
+                        * function: 
+                        * working_directory: 
+                        * java_bytecode_index: 
+                      * value: 2
+                      * range_check: 0
+                  0: signedbv
+                      * width: 32
+              * #source_location: 
+                * file: 
+                * line: >=
+                * column: =
+                * comment: 
+                * property_class: >
+                * property_id: False
+                * function: <=
+                * working_directory: True
+                * java_bytecode_index: <
+              * #is_padding: 0
+              * name: bounds
+              * access: public
+              * anonymous: 0
+              * range_check: 0
+              * baseName: bounds
+              * prettyName: bounds
+            1: 
+              * type: pointer
+                  * width: 64
+                  0: signedbv
+                      * width: 32
+              * #source_location: 
+                * file: 
+                * line: >=
+                * column: =
+                * comment: 
+                * property_class: >
+                * property_id: False
+                * function: <=
+                * working_directory: True
+                * java_bytecode_index: <
+              * #is_padding: 0
+              * name: data
+              * access: public
+              * anonymous: 0
+              * range_check: 0
+              * baseName: data
+              * prettyName: data
+      0: array
+          * type: array
+              * size: constant
+                  * type: signedbv
+                      * width: 32
+                  * #source_location: 
+                    * file: unconstrained.adb
+                    * line: 4
+                    * column: 4
+                    * comment: 
+                    * property_class: 
+                    * property_id: 
+                    * function: 
+                    * working_directory: 
+                    * java_bytecode_index: 
+                  * value: 2
+                  * range_check: 0
+              0: signedbv
+                  * width: 32
+          0: symbol
+              * type: signedbv
+                  * width: 32
+              * identifier: unconstrained__b@1#1..bounds[[0]]
+              * expression: index
+                  * type: signedbv
+                      * width: 32
+                  0: member
+                      * type: array
+                          * size: constant
+                              * type: signedbv
+                                  * width: 32
+                              * #source_location: 
+                                * file: unconstrained.adb
+                                * line: 4
+                                * column: 4
+                                * comment: 
+                                * property_class: 
+                                * property_id: 
+                                * function: 
+                                * working_directory: 
+                                * java_bytecode_index: 
+                              * value: 2
+                              * range_check: 0
+                          0: signedbv
+                              * width: 32
+                      * component_name: bounds
+                      0: symbol
+                          * type: struct
+                              * tag: unconstrained__u_arr
+                              * components: 
+                                0: 
+                                  * type: array
+                                      * size: constant
+                                          * type: signedbv
+                                              * width: 32
+                                          * #source_location: 
+                                            * file: unconstrained.adb
+                                            * line: 4
+                                            * column: 4
+                                            * comment: 
+                                            * property_class: 
+                                            * property_id: 
+                                            * function: 
+                                            * working_directory: 
+                                            * java_bytecode_index: 
+                                          * value: 2
+                                          * range_check: 0
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: bounds
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: bounds
+                                  * prettyName: bounds
+                                1: 
+                                  * type: pointer
+                                      * width: 64
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: data
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: data
+                                  * prettyName: data
+                          * #source_location: 
+                            * file: unconstrained.adb
+                            * line: 13
+                            * column: 17
+                            * comment: 
+                            * property_class: 
+                            * property_id: 
+                            * function: 
+                            * working_directory: 
+                            * java_bytecode_index: 
+                          * identifier: unconstrained__b
+                          * range_check: 0
+                  1: constant
+                      * type: signedbv
+                          * width: 64
+                      * value: 0
+              * #SSA_symbol: 1
+              * L1: 1
+              * L2: 1
+              * L1_object_identifier: unconstrained__b@1..bounds[[0]]
+          1: symbol
+              * type: signedbv
+                  * width: 32
+              * identifier: unconstrained__b@1#1..bounds[[1]]
+              * expression: index
+                  * type: signedbv
+                      * width: 32
+                  0: member
+                      * type: array
+                          * size: constant
+                              * type: signedbv
+                                  * width: 32
+                              * #source_location: 
+                                * file: unconstrained.adb
+                                * line: 4
+                                * column: 4
+                                * comment: 
+                                * property_class: 
+                                * property_id: 
+                                * function: 
+                                * working_directory: 
+                                * java_bytecode_index: 
+                              * value: 2
+                              * range_check: 0
+                          0: signedbv
+                              * width: 32
+                      * component_name: bounds
+                      0: symbol
+                          * type: struct
+                              * tag: unconstrained__u_arr
+                              * components: 
+                                0: 
+                                  * type: array
+                                      * size: constant
+                                          * type: signedbv
+                                              * width: 32
+                                          * #source_location: 
+                                            * file: unconstrained.adb
+                                            * line: 4
+                                            * column: 4
+                                            * comment: 
+                                            * property_class: 
+                                            * property_id: 
+                                            * function: 
+                                            * working_directory: 
+                                            * java_bytecode_index: 
+                                          * value: 2
+                                          * range_check: 0
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: bounds
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: bounds
+                                  * prettyName: bounds
+                                1: 
+                                  * type: pointer
+                                      * width: 64
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: data
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: data
+                                  * prettyName: data
+                          * #source_location: 
+                            * file: unconstrained.adb
+                            * line: 13
+                            * column: 17
+                            * comment: 
+                            * property_class: 
+                            * property_id: 
+                            * function: 
+                            * working_directory: 
+                            * java_bytecode_index: 
+                          * identifier: unconstrained__b
+                          * range_check: 0
+                  1: constant
+                      * type: signedbv
+                          * width: 64
+                      * value: 1
+              * #SSA_symbol: 1
+              * L1: 1
+              * L2: 1
+              * L1_object_identifier: unconstrained__b@1..bounds[[1]]
+      1: symbol
+          * type: pointer
+              * width: 64
+              0: signedbv
+                  * width: 32
+          * identifier: unconstrained__b@1#1..data
+          * expression: member
+              * type: pointer
+                  * width: 64
+                  0: signedbv
+                      * width: 32
+              * component_name: data
+              0: symbol
+                  * type: struct
+                      * tag: unconstrained__u_arr
+                      * components: 
+                        0: 
+                          * type: array
+                              * size: constant
+                                  * type: signedbv
+                                      * width: 32
+                                  * #source_location: 
+                                    * file: unconstrained.adb
+                                    * line: 4
+                                    * column: 4
+                                    * comment: 
+                                    * property_class: 
+                                    * property_id: 
+                                    * function: 
+                                    * working_directory: 
+                                    * java_bytecode_index: 
+                                  * value: 2
+                                  * range_check: 0
+                              0: signedbv
+                                  * width: 32
+                          * #source_location: 
+                            * file: 
+                            * line: >=
+                            * column: =
+                            * comment: 
+                            * property_class: >
+                            * property_id: False
+                            * function: <=
+                            * working_directory: True
+                            * java_bytecode_index: <
+                          * #is_padding: 0
+                          * name: bounds
+                          * access: public
+                          * anonymous: 0
+                          * range_check: 0
+                          * baseName: bounds
+                          * prettyName: bounds
+                        1: 
+                          * type: pointer
+                              * width: 64
+                              0: signedbv
+                                  * width: 32
+                          * #source_location: 
+                            * file: 
+                            * line: >=
+                            * column: =
+                            * comment: 
+                            * property_class: >
+                            * property_id: False
+                            * function: <=
+                            * working_directory: True
+                            * java_bytecode_index: <
+                          * #is_padding: 0
+                          * name: data
+                          * access: public
+                          * anonymous: 0
+                          * range_check: 0
+                          * baseName: data
+                          * prettyName: data
+                  * #source_location: 
+                    * file: unconstrained.adb
+                    * line: 13
+                    * column: 17
+                    * comment: 
+                    * property_class: 
+                    * property_id: 
+                    * function: 
+                    * working_directory: 
+                    * java_bytecode_index: 
+                  * identifier: unconstrained__b
+                  * range_check: 0
+          * #SSA_symbol: 1
+          * L1: 1
+          * L2: 1
+          * L1_object_identifier: unconstrained__b@1..data
+  1: constant
+      * type: signedbv
+          * width: 64
+      * value: 80000004
+warning: ignoring index
+  * type: signedbv
+      * width: 32
+  * #source_location: 
+    * file: unconstrained.adb
+    * line: 13
+    * column: 4
+    * comment: 
+    * property_class: 
+    * property_id: 
+    * function: 
+    * working_directory: 
+    * java_bytecode_index: 
+  * range_check: 0
+  0: struct
+      * type: struct
+          * tag: unconstrained__u_arr
+          * components: 
+            0: 
+              * type: array
+                  * size: constant
+                      * type: signedbv
+                          * width: 32
+                      * #source_location: 
+                        * file: unconstrained.adb
+                        * line: 4
+                        * column: 4
+                        * comment: 
+                        * property_class: 
+                        * property_id: 
+                        * function: 
+                        * working_directory: 
+                        * java_bytecode_index: 
+                      * value: 2
+                      * range_check: 0
+                  0: signedbv
+                      * width: 32
+              * #source_location: 
+                * file: 
+                * line: >=
+                * column: =
+                * comment: 
+                * property_class: >
+                * property_id: False
+                * function: <=
+                * working_directory: True
+                * java_bytecode_index: <
+              * #is_padding: 0
+              * name: bounds
+              * access: public
+              * anonymous: 0
+              * range_check: 0
+              * baseName: bounds
+              * prettyName: bounds
+            1: 
+              * type: pointer
+                  * width: 64
+                  0: signedbv
+                      * width: 32
+              * #source_location: 
+                * file: 
+                * line: >=
+                * column: =
+                * comment: 
+                * property_class: >
+                * property_id: False
+                * function: <=
+                * working_directory: True
+                * java_bytecode_index: <
+              * #is_padding: 0
+              * name: data
+              * access: public
+              * anonymous: 0
+              * range_check: 0
+              * baseName: data
+              * prettyName: data
+      0: array
+          * type: array
+              * size: constant
+                  * type: signedbv
+                      * width: 32
+                  * #source_location: 
+                    * file: unconstrained.adb
+                    * line: 4
+                    * column: 4
+                    * comment: 
+                    * property_class: 
+                    * property_id: 
+                    * function: 
+                    * working_directory: 
+                    * java_bytecode_index: 
+                  * value: 2
+                  * range_check: 0
+              0: signedbv
+                  * width: 32
+          0: symbol
+              * type: signedbv
+                  * width: 32
+              * identifier: unconstrained__b@1#1..bounds[[0]]
+              * expression: index
+                  * type: signedbv
+                      * width: 32
+                  0: member
+                      * type: array
+                          * size: constant
+                              * type: signedbv
+                                  * width: 32
+                              * #source_location: 
+                                * file: unconstrained.adb
+                                * line: 4
+                                * column: 4
+                                * comment: 
+                                * property_class: 
+                                * property_id: 
+                                * function: 
+                                * working_directory: 
+                                * java_bytecode_index: 
+                              * value: 2
+                              * range_check: 0
+                          0: signedbv
+                              * width: 32
+                      * component_name: bounds
+                      0: symbol
+                          * type: struct
+                              * tag: unconstrained__u_arr
+                              * components: 
+                                0: 
+                                  * type: array
+                                      * size: constant
+                                          * type: signedbv
+                                              * width: 32
+                                          * #source_location: 
+                                            * file: unconstrained.adb
+                                            * line: 4
+                                            * column: 4
+                                            * comment: 
+                                            * property_class: 
+                                            * property_id: 
+                                            * function: 
+                                            * working_directory: 
+                                            * java_bytecode_index: 
+                                          * value: 2
+                                          * range_check: 0
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: bounds
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: bounds
+                                  * prettyName: bounds
+                                1: 
+                                  * type: pointer
+                                      * width: 64
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: data
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: data
+                                  * prettyName: data
+                          * #source_location: 
+                            * file: unconstrained.adb
+                            * line: 13
+                            * column: 17
+                            * comment: 
+                            * property_class: 
+                            * property_id: 
+                            * function: 
+                            * working_directory: 
+                            * java_bytecode_index: 
+                          * identifier: unconstrained__b
+                          * range_check: 0
+                  1: constant
+                      * type: signedbv
+                          * width: 64
+                      * value: 0
+              * #SSA_symbol: 1
+              * L1: 1
+              * L2: 1
+              * L1_object_identifier: unconstrained__b@1..bounds[[0]]
+          1: symbol
+              * type: signedbv
+                  * width: 32
+              * identifier: unconstrained__b@1#1..bounds[[1]]
+              * expression: index
+                  * type: signedbv
+                      * width: 32
+                  0: member
+                      * type: array
+                          * size: constant
+                              * type: signedbv
+                                  * width: 32
+                              * #source_location: 
+                                * file: unconstrained.adb
+                                * line: 4
+                                * column: 4
+                                * comment: 
+                                * property_class: 
+                                * property_id: 
+                                * function: 
+                                * working_directory: 
+                                * java_bytecode_index: 
+                              * value: 2
+                              * range_check: 0
+                          0: signedbv
+                              * width: 32
+                      * component_name: bounds
+                      0: symbol
+                          * type: struct
+                              * tag: unconstrained__u_arr
+                              * components: 
+                                0: 
+                                  * type: array
+                                      * size: constant
+                                          * type: signedbv
+                                              * width: 32
+                                          * #source_location: 
+                                            * file: unconstrained.adb
+                                            * line: 4
+                                            * column: 4
+                                            * comment: 
+                                            * property_class: 
+                                            * property_id: 
+                                            * function: 
+                                            * working_directory: 
+                                            * java_bytecode_index: 
+                                          * value: 2
+                                          * range_check: 0
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: bounds
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: bounds
+                                  * prettyName: bounds
+                                1: 
+                                  * type: pointer
+                                      * width: 64
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: data
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: data
+                                  * prettyName: data
+                          * #source_location: 
+                            * file: unconstrained.adb
+                            * line: 13
+                            * column: 17
+                            * comment: 
+                            * property_class: 
+                            * property_id: 
+                            * function: 
+                            * working_directory: 
+                            * java_bytecode_index: 
+                          * identifier: unconstrained__b
+                          * range_check: 0
+                  1: constant
+                      * type: signedbv
+                          * width: 64
+                      * value: 1
+              * #SSA_symbol: 1
+              * L1: 1
+              * L2: 1
+              * L1_object_identifier: unconstrained__b@1..bounds[[1]]
+      1: symbol
+          * type: pointer
+              * width: 64
+              0: signedbv
+                  * width: 32
+          * identifier: unconstrained__b@1#1..data
+          * expression: member
+              * type: pointer
+                  * width: 64
+                  0: signedbv
+                      * width: 32
+              * component_name: data
+              0: symbol
+                  * type: struct
+                      * tag: unconstrained__u_arr
+                      * components: 
+                        0: 
+                          * type: array
+                              * size: constant
+                                  * type: signedbv
+                                      * width: 32
+                                  * #source_location: 
+                                    * file: unconstrained.adb
+                                    * line: 4
+                                    * column: 4
+                                    * comment: 
+                                    * property_class: 
+                                    * property_id: 
+                                    * function: 
+                                    * working_directory: 
+                                    * java_bytecode_index: 
+                                  * value: 2
+                                  * range_check: 0
+                              0: signedbv
+                                  * width: 32
+                          * #source_location: 
+                            * file: 
+                            * line: >=
+                            * column: =
+                            * comment: 
+                            * property_class: >
+                            * property_id: False
+                            * function: <=
+                            * working_directory: True
+                            * java_bytecode_index: <
+                          * #is_padding: 0
+                          * name: bounds
+                          * access: public
+                          * anonymous: 0
+                          * range_check: 0
+                          * baseName: bounds
+                          * prettyName: bounds
+                        1: 
+                          * type: pointer
+                              * width: 64
+                              0: signedbv
+                                  * width: 32
+                          * #source_location: 
+                            * file: 
+                            * line: >=
+                            * column: =
+                            * comment: 
+                            * property_class: >
+                            * property_id: False
+                            * function: <=
+                            * working_directory: True
+                            * java_bytecode_index: <
+                          * #is_padding: 0
+                          * name: data
+                          * access: public
+                          * anonymous: 0
+                          * range_check: 0
+                          * baseName: data
+                          * prettyName: data
+                  * #source_location: 
+                    * file: unconstrained.adb
+                    * line: 13
+                    * column: 17
+                    * comment: 
+                    * property_class: 
+                    * property_id: 
+                    * function: 
+                    * working_directory: 
+                    * java_bytecode_index: 
+                  * identifier: unconstrained__b
+                  * range_check: 0
+          * #SSA_symbol: 1
+          * L1: 1
+          * L2: 1
+          * L1_object_identifier: unconstrained__b@1..data
+  1: constant
+      * type: signedbv
+          * width: 64
+      * value: 80000005
+warning: ignoring index
+  * type: signedbv
+      * width: 32
+  * #source_location: 
+    * file: unconstrained.adb
+    * line: 13
+    * column: 4
+    * comment: 
+    * property_class: 
+    * property_id: 
+    * function: 
+    * working_directory: 
+    * java_bytecode_index: 
+  * range_check: 0
+  0: struct
+      * type: struct
+          * tag: unconstrained__u_arr
+          * components: 
+            0: 
+              * type: array
+                  * size: constant
+                      * type: signedbv
+                          * width: 32
+                      * #source_location: 
+                        * file: unconstrained.adb
+                        * line: 4
+                        * column: 4
+                        * comment: 
+                        * property_class: 
+                        * property_id: 
+                        * function: 
+                        * working_directory: 
+                        * java_bytecode_index: 
+                      * value: 2
+                      * range_check: 0
+                  0: signedbv
+                      * width: 32
+              * #source_location: 
+                * file: 
+                * line: >=
+                * column: =
+                * comment: 
+                * property_class: >
+                * property_id: False
+                * function: <=
+                * working_directory: True
+                * java_bytecode_index: <
+              * #is_padding: 0
+              * name: bounds
+              * access: public
+              * anonymous: 0
+              * range_check: 0
+              * baseName: bounds
+              * prettyName: bounds
+            1: 
+              * type: pointer
+                  * width: 64
+                  0: signedbv
+                      * width: 32
+              * #source_location: 
+                * file: 
+                * line: >=
+                * column: =
+                * comment: 
+                * property_class: >
+                * property_id: False
+                * function: <=
+                * working_directory: True
+                * java_bytecode_index: <
+              * #is_padding: 0
+              * name: data
+              * access: public
+              * anonymous: 0
+              * range_check: 0
+              * baseName: data
+              * prettyName: data
+      0: array
+          * type: array
+              * size: constant
+                  * type: signedbv
+                      * width: 32
+                  * #source_location: 
+                    * file: unconstrained.adb
+                    * line: 4
+                    * column: 4
+                    * comment: 
+                    * property_class: 
+                    * property_id: 
+                    * function: 
+                    * working_directory: 
+                    * java_bytecode_index: 
+                  * value: 2
+                  * range_check: 0
+              0: signedbv
+                  * width: 32
+          0: symbol
+              * type: signedbv
+                  * width: 32
+              * identifier: unconstrained__b@1#1..bounds[[0]]
+              * expression: index
+                  * type: signedbv
+                      * width: 32
+                  0: member
+                      * type: array
+                          * size: constant
+                              * type: signedbv
+                                  * width: 32
+                              * #source_location: 
+                                * file: unconstrained.adb
+                                * line: 4
+                                * column: 4
+                                * comment: 
+                                * property_class: 
+                                * property_id: 
+                                * function: 
+                                * working_directory: 
+                                * java_bytecode_index: 
+                              * value: 2
+                              * range_check: 0
+                          0: signedbv
+                              * width: 32
+                      * component_name: bounds
+                      0: symbol
+                          * type: struct
+                              * tag: unconstrained__u_arr
+                              * components: 
+                                0: 
+                                  * type: array
+                                      * size: constant
+                                          * type: signedbv
+                                              * width: 32
+                                          * #source_location: 
+                                            * file: unconstrained.adb
+                                            * line: 4
+                                            * column: 4
+                                            * comment: 
+                                            * property_class: 
+                                            * property_id: 
+                                            * function: 
+                                            * working_directory: 
+                                            * java_bytecode_index: 
+                                          * value: 2
+                                          * range_check: 0
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: bounds
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: bounds
+                                  * prettyName: bounds
+                                1: 
+                                  * type: pointer
+                                      * width: 64
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: data
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: data
+                                  * prettyName: data
+                          * #source_location: 
+                            * file: unconstrained.adb
+                            * line: 13
+                            * column: 17
+                            * comment: 
+                            * property_class: 
+                            * property_id: 
+                            * function: 
+                            * working_directory: 
+                            * java_bytecode_index: 
+                          * identifier: unconstrained__b
+                          * range_check: 0
+                  1: constant
+                      * type: signedbv
+                          * width: 64
+                      * value: 0
+              * #SSA_symbol: 1
+              * L1: 1
+              * L2: 1
+              * L1_object_identifier: unconstrained__b@1..bounds[[0]]
+          1: symbol
+              * type: signedbv
+                  * width: 32
+              * identifier: unconstrained__b@1#1..bounds[[1]]
+              * expression: index
+                  * type: signedbv
+                      * width: 32
+                  0: member
+                      * type: array
+                          * size: constant
+                              * type: signedbv
+                                  * width: 32
+                              * #source_location: 
+                                * file: unconstrained.adb
+                                * line: 4
+                                * column: 4
+                                * comment: 
+                                * property_class: 
+                                * property_id: 
+                                * function: 
+                                * working_directory: 
+                                * java_bytecode_index: 
+                              * value: 2
+                              * range_check: 0
+                          0: signedbv
+                              * width: 32
+                      * component_name: bounds
+                      0: symbol
+                          * type: struct
+                              * tag: unconstrained__u_arr
+                              * components: 
+                                0: 
+                                  * type: array
+                                      * size: constant
+                                          * type: signedbv
+                                              * width: 32
+                                          * #source_location: 
+                                            * file: unconstrained.adb
+                                            * line: 4
+                                            * column: 4
+                                            * comment: 
+                                            * property_class: 
+                                            * property_id: 
+                                            * function: 
+                                            * working_directory: 
+                                            * java_bytecode_index: 
+                                          * value: 2
+                                          * range_check: 0
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: bounds
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: bounds
+                                  * prettyName: bounds
+                                1: 
+                                  * type: pointer
+                                      * width: 64
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: data
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: data
+                                  * prettyName: data
+                          * #source_location: 
+                            * file: unconstrained.adb
+                            * line: 13
+                            * column: 17
+                            * comment: 
+                            * property_class: 
+                            * property_id: 
+                            * function: 
+                            * working_directory: 
+                            * java_bytecode_index: 
+                          * identifier: unconstrained__b
+                          * range_check: 0
+                  1: constant
+                      * type: signedbv
+                          * width: 64
+                      * value: 1
+              * #SSA_symbol: 1
+              * L1: 1
+              * L2: 1
+              * L1_object_identifier: unconstrained__b@1..bounds[[1]]
+      1: symbol
+          * type: pointer
+              * width: 64
+              0: signedbv
+                  * width: 32
+          * identifier: unconstrained__b@1#1..data
+          * expression: member
+              * type: pointer
+                  * width: 64
+                  0: signedbv
+                      * width: 32
+              * component_name: data
+              0: symbol
+                  * type: struct
+                      * tag: unconstrained__u_arr
+                      * components: 
+                        0: 
+                          * type: array
+                              * size: constant
+                                  * type: signedbv
+                                      * width: 32
+                                  * #source_location: 
+                                    * file: unconstrained.adb
+                                    * line: 4
+                                    * column: 4
+                                    * comment: 
+                                    * property_class: 
+                                    * property_id: 
+                                    * function: 
+                                    * working_directory: 
+                                    * java_bytecode_index: 
+                                  * value: 2
+                                  * range_check: 0
+                              0: signedbv
+                                  * width: 32
+                          * #source_location: 
+                            * file: 
+                            * line: >=
+                            * column: =
+                            * comment: 
+                            * property_class: >
+                            * property_id: False
+                            * function: <=
+                            * working_directory: True
+                            * java_bytecode_index: <
+                          * #is_padding: 0
+                          * name: bounds
+                          * access: public
+                          * anonymous: 0
+                          * range_check: 0
+                          * baseName: bounds
+                          * prettyName: bounds
+                        1: 
+                          * type: pointer
+                              * width: 64
+                              0: signedbv
+                                  * width: 32
+                          * #source_location: 
+                            * file: 
+                            * line: >=
+                            * column: =
+                            * comment: 
+                            * property_class: >
+                            * property_id: False
+                            * function: <=
+                            * working_directory: True
+                            * java_bytecode_index: <
+                          * #is_padding: 0
+                          * name: data
+                          * access: public
+                          * anonymous: 0
+                          * range_check: 0
+                          * baseName: data
+                          * prettyName: data
+                  * #source_location: 
+                    * file: unconstrained.adb
+                    * line: 13
+                    * column: 17
+                    * comment: 
+                    * property_class: 
+                    * property_id: 
+                    * function: 
+                    * working_directory: 
+                    * java_bytecode_index: 
+                  * identifier: unconstrained__b
+                  * range_check: 0
+          * #SSA_symbol: 1
+          * L1: 1
+          * L2: 1
+          * L1_object_identifier: unconstrained__b@1..data
+  1: constant
+      * type: signedbv
+          * width: 64
+      * value: 80000006
+warning: ignoring index
+  * type: signedbv
+      * width: 32
+  * #source_location: 
+    * file: unconstrained.adb
+    * line: 13
+    * column: 4
+    * comment: 
+    * property_class: 
+    * property_id: 
+    * function: 
+    * working_directory: 
+    * java_bytecode_index: 
+  * range_check: 0
+  0: struct
+      * type: struct
+          * tag: unconstrained__u_arr
+          * components: 
+            0: 
+              * type: array
+                  * size: constant
+                      * type: signedbv
+                          * width: 32
+                      * #source_location: 
+                        * file: unconstrained.adb
+                        * line: 4
+                        * column: 4
+                        * comment: 
+                        * property_class: 
+                        * property_id: 
+                        * function: 
+                        * working_directory: 
+                        * java_bytecode_index: 
+                      * value: 2
+                      * range_check: 0
+                  0: signedbv
+                      * width: 32
+              * #source_location: 
+                * file: 
+                * line: >=
+                * column: =
+                * comment: 
+                * property_class: >
+                * property_id: False
+                * function: <=
+                * working_directory: True
+                * java_bytecode_index: <
+              * #is_padding: 0
+              * name: bounds
+              * access: public
+              * anonymous: 0
+              * range_check: 0
+              * baseName: bounds
+              * prettyName: bounds
+            1: 
+              * type: pointer
+                  * width: 64
+                  0: signedbv
+                      * width: 32
+              * #source_location: 
+                * file: 
+                * line: >=
+                * column: =
+                * comment: 
+                * property_class: >
+                * property_id: False
+                * function: <=
+                * working_directory: True
+                * java_bytecode_index: <
+              * #is_padding: 0
+              * name: data
+              * access: public
+              * anonymous: 0
+              * range_check: 0
+              * baseName: data
+              * prettyName: data
+      0: array
+          * type: array
+              * size: constant
+                  * type: signedbv
+                      * width: 32
+                  * #source_location: 
+                    * file: unconstrained.adb
+                    * line: 4
+                    * column: 4
+                    * comment: 
+                    * property_class: 
+                    * property_id: 
+                    * function: 
+                    * working_directory: 
+                    * java_bytecode_index: 
+                  * value: 2
+                  * range_check: 0
+              0: signedbv
+                  * width: 32
+          0: symbol
+              * type: signedbv
+                  * width: 32
+              * identifier: unconstrained__b@1#1..bounds[[0]]
+              * expression: index
+                  * type: signedbv
+                      * width: 32
+                  0: member
+                      * type: array
+                          * size: constant
+                              * type: signedbv
+                                  * width: 32
+                              * #source_location: 
+                                * file: unconstrained.adb
+                                * line: 4
+                                * column: 4
+                                * comment: 
+                                * property_class: 
+                                * property_id: 
+                                * function: 
+                                * working_directory: 
+                                * java_bytecode_index: 
+                              * value: 2
+                              * range_check: 0
+                          0: signedbv
+                              * width: 32
+                      * component_name: bounds
+                      0: symbol
+                          * type: struct
+                              * tag: unconstrained__u_arr
+                              * components: 
+                                0: 
+                                  * type: array
+                                      * size: constant
+                                          * type: signedbv
+                                              * width: 32
+                                          * #source_location: 
+                                            * file: unconstrained.adb
+                                            * line: 4
+                                            * column: 4
+                                            * comment: 
+                                            * property_class: 
+                                            * property_id: 
+                                            * function: 
+                                            * working_directory: 
+                                            * java_bytecode_index: 
+                                          * value: 2
+                                          * range_check: 0
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: bounds
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: bounds
+                                  * prettyName: bounds
+                                1: 
+                                  * type: pointer
+                                      * width: 64
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: data
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: data
+                                  * prettyName: data
+                          * #source_location: 
+                            * file: unconstrained.adb
+                            * line: 13
+                            * column: 17
+                            * comment: 
+                            * property_class: 
+                            * property_id: 
+                            * function: 
+                            * working_directory: 
+                            * java_bytecode_index: 
+                          * identifier: unconstrained__b
+                          * range_check: 0
+                  1: constant
+                      * type: signedbv
+                          * width: 64
+                      * value: 0
+              * #SSA_symbol: 1
+              * L1: 1
+              * L2: 1
+              * L1_object_identifier: unconstrained__b@1..bounds[[0]]
+          1: symbol
+              * type: signedbv
+                  * width: 32
+              * identifier: unconstrained__b@1#1..bounds[[1]]
+              * expression: index
+                  * type: signedbv
+                      * width: 32
+                  0: member
+                      * type: array
+                          * size: constant
+                              * type: signedbv
+                                  * width: 32
+                              * #source_location: 
+                                * file: unconstrained.adb
+                                * line: 4
+                                * column: 4
+                                * comment: 
+                                * property_class: 
+                                * property_id: 
+                                * function: 
+                                * working_directory: 
+                                * java_bytecode_index: 
+                              * value: 2
+                              * range_check: 0
+                          0: signedbv
+                              * width: 32
+                      * component_name: bounds
+                      0: symbol
+                          * type: struct
+                              * tag: unconstrained__u_arr
+                              * components: 
+                                0: 
+                                  * type: array
+                                      * size: constant
+                                          * type: signedbv
+                                              * width: 32
+                                          * #source_location: 
+                                            * file: unconstrained.adb
+                                            * line: 4
+                                            * column: 4
+                                            * comment: 
+                                            * property_class: 
+                                            * property_id: 
+                                            * function: 
+                                            * working_directory: 
+                                            * java_bytecode_index: 
+                                          * value: 2
+                                          * range_check: 0
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: bounds
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: bounds
+                                  * prettyName: bounds
+                                1: 
+                                  * type: pointer
+                                      * width: 64
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: data
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: data
+                                  * prettyName: data
+                          * #source_location: 
+                            * file: unconstrained.adb
+                            * line: 13
+                            * column: 17
+                            * comment: 
+                            * property_class: 
+                            * property_id: 
+                            * function: 
+                            * working_directory: 
+                            * java_bytecode_index: 
+                          * identifier: unconstrained__b
+                          * range_check: 0
+                  1: constant
+                      * type: signedbv
+                          * width: 64
+                      * value: 1
+              * #SSA_symbol: 1
+              * L1: 1
+              * L2: 1
+              * L1_object_identifier: unconstrained__b@1..bounds[[1]]
+      1: symbol
+          * type: pointer
+              * width: 64
+              0: signedbv
+                  * width: 32
+          * identifier: unconstrained__b@1#1..data
+          * expression: member
+              * type: pointer
+                  * width: 64
+                  0: signedbv
+                      * width: 32
+              * component_name: data
+              0: symbol
+                  * type: struct
+                      * tag: unconstrained__u_arr
+                      * components: 
+                        0: 
+                          * type: array
+                              * size: constant
+                                  * type: signedbv
+                                      * width: 32
+                                  * #source_location: 
+                                    * file: unconstrained.adb
+                                    * line: 4
+                                    * column: 4
+                                    * comment: 
+                                    * property_class: 
+                                    * property_id: 
+                                    * function: 
+                                    * working_directory: 
+                                    * java_bytecode_index: 
+                                  * value: 2
+                                  * range_check: 0
+                              0: signedbv
+                                  * width: 32
+                          * #source_location: 
+                            * file: 
+                            * line: >=
+                            * column: =
+                            * comment: 
+                            * property_class: >
+                            * property_id: False
+                            * function: <=
+                            * working_directory: True
+                            * java_bytecode_index: <
+                          * #is_padding: 0
+                          * name: bounds
+                          * access: public
+                          * anonymous: 0
+                          * range_check: 0
+                          * baseName: bounds
+                          * prettyName: bounds
+                        1: 
+                          * type: pointer
+                              * width: 64
+                              0: signedbv
+                                  * width: 32
+                          * #source_location: 
+                            * file: 
+                            * line: >=
+                            * column: =
+                            * comment: 
+                            * property_class: >
+                            * property_id: False
+                            * function: <=
+                            * working_directory: True
+                            * java_bytecode_index: <
+                          * #is_padding: 0
+                          * name: data
+                          * access: public
+                          * anonymous: 0
+                          * range_check: 0
+                          * baseName: data
+                          * prettyName: data
+                  * #source_location: 
+                    * file: unconstrained.adb
+                    * line: 13
+                    * column: 17
+                    * comment: 
+                    * property_class: 
+                    * property_id: 
+                    * function: 
+                    * working_directory: 
+                    * java_bytecode_index: 
+                  * identifier: unconstrained__b
+                  * range_check: 0
+          * #SSA_symbol: 1
+          * L1: 1
+          * L2: 1
+          * L1_object_identifier: unconstrained__b@1..data
+  1: constant
+      * type: signedbv
+          * width: 64
+      * value: 80000007
+warning: ignoring index
+  * type: signedbv
+      * width: 32
+  * #source_location: 
+    * file: unconstrained.adb
+    * line: 13
+    * column: 4
+    * comment: 
+    * property_class: 
+    * property_id: 
+    * function: 
+    * working_directory: 
+    * java_bytecode_index: 
+  * range_check: 0
+  0: struct
+      * type: struct
+          * tag: unconstrained__u_arr
+          * components: 
+            0: 
+              * type: array
+                  * size: constant
+                      * type: signedbv
+                          * width: 32
+                      * #source_location: 
+                        * file: unconstrained.adb
+                        * line: 4
+                        * column: 4
+                        * comment: 
+                        * property_class: 
+                        * property_id: 
+                        * function: 
+                        * working_directory: 
+                        * java_bytecode_index: 
+                      * value: 2
+                      * range_check: 0
+                  0: signedbv
+                      * width: 32
+              * #source_location: 
+                * file: 
+                * line: >=
+                * column: =
+                * comment: 
+                * property_class: >
+                * property_id: False
+                * function: <=
+                * working_directory: True
+                * java_bytecode_index: <
+              * #is_padding: 0
+              * name: bounds
+              * access: public
+              * anonymous: 0
+              * range_check: 0
+              * baseName: bounds
+              * prettyName: bounds
+            1: 
+              * type: pointer
+                  * width: 64
+                  0: signedbv
+                      * width: 32
+              * #source_location: 
+                * file: 
+                * line: >=
+                * column: =
+                * comment: 
+                * property_class: >
+                * property_id: False
+                * function: <=
+                * working_directory: True
+                * java_bytecode_index: <
+              * #is_padding: 0
+              * name: data
+              * access: public
+              * anonymous: 0
+              * range_check: 0
+              * baseName: data
+              * prettyName: data
+      0: array
+          * type: array
+              * size: constant
+                  * type: signedbv
+                      * width: 32
+                  * #source_location: 
+                    * file: unconstrained.adb
+                    * line: 4
+                    * column: 4
+                    * comment: 
+                    * property_class: 
+                    * property_id: 
+                    * function: 
+                    * working_directory: 
+                    * java_bytecode_index: 
+                  * value: 2
+                  * range_check: 0
+              0: signedbv
+                  * width: 32
+          0: symbol
+              * type: signedbv
+                  * width: 32
+              * identifier: unconstrained__b@1#1..bounds[[0]]
+              * expression: index
+                  * type: signedbv
+                      * width: 32
+                  0: member
+                      * type: array
+                          * size: constant
+                              * type: signedbv
+                                  * width: 32
+                              * #source_location: 
+                                * file: unconstrained.adb
+                                * line: 4
+                                * column: 4
+                                * comment: 
+                                * property_class: 
+                                * property_id: 
+                                * function: 
+                                * working_directory: 
+                                * java_bytecode_index: 
+                              * value: 2
+                              * range_check: 0
+                          0: signedbv
+                              * width: 32
+                      * component_name: bounds
+                      0: symbol
+                          * type: struct
+                              * tag: unconstrained__u_arr
+                              * components: 
+                                0: 
+                                  * type: array
+                                      * size: constant
+                                          * type: signedbv
+                                              * width: 32
+                                          * #source_location: 
+                                            * file: unconstrained.adb
+                                            * line: 4
+                                            * column: 4
+                                            * comment: 
+                                            * property_class: 
+                                            * property_id: 
+                                            * function: 
+                                            * working_directory: 
+                                            * java_bytecode_index: 
+                                          * value: 2
+                                          * range_check: 0
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: bounds
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: bounds
+                                  * prettyName: bounds
+                                1: 
+                                  * type: pointer
+                                      * width: 64
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: data
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: data
+                                  * prettyName: data
+                          * #source_location: 
+                            * file: unconstrained.adb
+                            * line: 13
+                            * column: 17
+                            * comment: 
+                            * property_class: 
+                            * property_id: 
+                            * function: 
+                            * working_directory: 
+                            * java_bytecode_index: 
+                          * identifier: unconstrained__b
+                          * range_check: 0
+                  1: constant
+                      * type: signedbv
+                          * width: 64
+                      * value: 0
+              * #SSA_symbol: 1
+              * L1: 1
+              * L2: 1
+              * L1_object_identifier: unconstrained__b@1..bounds[[0]]
+          1: symbol
+              * type: signedbv
+                  * width: 32
+              * identifier: unconstrained__b@1#1..bounds[[1]]
+              * expression: index
+                  * type: signedbv
+                      * width: 32
+                  0: member
+                      * type: array
+                          * size: constant
+                              * type: signedbv
+                                  * width: 32
+                              * #source_location: 
+                                * file: unconstrained.adb
+                                * line: 4
+                                * column: 4
+                                * comment: 
+                                * property_class: 
+                                * property_id: 
+                                * function: 
+                                * working_directory: 
+                                * java_bytecode_index: 
+                              * value: 2
+                              * range_check: 0
+                          0: signedbv
+                              * width: 32
+                      * component_name: bounds
+                      0: symbol
+                          * type: struct
+                              * tag: unconstrained__u_arr
+                              * components: 
+                                0: 
+                                  * type: array
+                                      * size: constant
+                                          * type: signedbv
+                                              * width: 32
+                                          * #source_location: 
+                                            * file: unconstrained.adb
+                                            * line: 4
+                                            * column: 4
+                                            * comment: 
+                                            * property_class: 
+                                            * property_id: 
+                                            * function: 
+                                            * working_directory: 
+                                            * java_bytecode_index: 
+                                          * value: 2
+                                          * range_check: 0
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: bounds
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: bounds
+                                  * prettyName: bounds
+                                1: 
+                                  * type: pointer
+                                      * width: 64
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: data
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: data
+                                  * prettyName: data
+                          * #source_location: 
+                            * file: unconstrained.adb
+                            * line: 13
+                            * column: 17
+                            * comment: 
+                            * property_class: 
+                            * property_id: 
+                            * function: 
+                            * working_directory: 
+                            * java_bytecode_index: 
+                          * identifier: unconstrained__b
+                          * range_check: 0
+                  1: constant
+                      * type: signedbv
+                          * width: 64
+                      * value: 1
+              * #SSA_symbol: 1
+              * L1: 1
+              * L2: 1
+              * L1_object_identifier: unconstrained__b@1..bounds[[1]]
+      1: symbol
+          * type: pointer
+              * width: 64
+              0: signedbv
+                  * width: 32
+          * identifier: unconstrained__b@1#1..data
+          * expression: member
+              * type: pointer
+                  * width: 64
+                  0: signedbv
+                      * width: 32
+              * component_name: data
+              0: symbol
+                  * type: struct
+                      * tag: unconstrained__u_arr
+                      * components: 
+                        0: 
+                          * type: array
+                              * size: constant
+                                  * type: signedbv
+                                      * width: 32
+                                  * #source_location: 
+                                    * file: unconstrained.adb
+                                    * line: 4
+                                    * column: 4
+                                    * comment: 
+                                    * property_class: 
+                                    * property_id: 
+                                    * function: 
+                                    * working_directory: 
+                                    * java_bytecode_index: 
+                                  * value: 2
+                                  * range_check: 0
+                              0: signedbv
+                                  * width: 32
+                          * #source_location: 
+                            * file: 
+                            * line: >=
+                            * column: =
+                            * comment: 
+                            * property_class: >
+                            * property_id: False
+                            * function: <=
+                            * working_directory: True
+                            * java_bytecode_index: <
+                          * #is_padding: 0
+                          * name: bounds
+                          * access: public
+                          * anonymous: 0
+                          * range_check: 0
+                          * baseName: bounds
+                          * prettyName: bounds
+                        1: 
+                          * type: pointer
+                              * width: 64
+                              0: signedbv
+                                  * width: 32
+                          * #source_location: 
+                            * file: 
+                            * line: >=
+                            * column: =
+                            * comment: 
+                            * property_class: >
+                            * property_id: False
+                            * function: <=
+                            * working_directory: True
+                            * java_bytecode_index: <
+                          * #is_padding: 0
+                          * name: data
+                          * access: public
+                          * anonymous: 0
+                          * range_check: 0
+                          * baseName: data
+                          * prettyName: data
+                  * #source_location: 
+                    * file: unconstrained.adb
+                    * line: 13
+                    * column: 17
+                    * comment: 
+                    * property_class: 
+                    * property_id: 
+                    * function: 
+                    * working_directory: 
+                    * java_bytecode_index: 
+                  * identifier: unconstrained__b
+                  * range_check: 0
+          * #SSA_symbol: 1
+          * L1: 1
+          * L2: 1
+          * L1_object_identifier: unconstrained__b@1..data
+  1: constant
+      * type: signedbv
+          * width: 64
+      * value: 80000008
+warning: ignoring index
+  * type: signedbv
+      * width: 32
+  * #source_location: 
+    * file: unconstrained.adb
+    * line: 13
+    * column: 4
+    * comment: 
+    * property_class: 
+    * property_id: 
+    * function: 
+    * working_directory: 
+    * java_bytecode_index: 
+  * range_check: 0
+  0: struct
+      * type: struct
+          * tag: unconstrained__u_arr
+          * components: 
+            0: 
+              * type: array
+                  * size: constant
+                      * type: signedbv
+                          * width: 32
+                      * #source_location: 
+                        * file: unconstrained.adb
+                        * line: 4
+                        * column: 4
+                        * comment: 
+                        * property_class: 
+                        * property_id: 
+                        * function: 
+                        * working_directory: 
+                        * java_bytecode_index: 
+                      * value: 2
+                      * range_check: 0
+                  0: signedbv
+                      * width: 32
+              * #source_location: 
+                * file: 
+                * line: >=
+                * column: =
+                * comment: 
+                * property_class: >
+                * property_id: False
+                * function: <=
+                * working_directory: True
+                * java_bytecode_index: <
+              * #is_padding: 0
+              * name: bounds
+              * access: public
+              * anonymous: 0
+              * range_check: 0
+              * baseName: bounds
+              * prettyName: bounds
+            1: 
+              * type: pointer
+                  * width: 64
+                  0: signedbv
+                      * width: 32
+              * #source_location: 
+                * file: 
+                * line: >=
+                * column: =
+                * comment: 
+                * property_class: >
+                * property_id: False
+                * function: <=
+                * working_directory: True
+                * java_bytecode_index: <
+              * #is_padding: 0
+              * name: data
+              * access: public
+              * anonymous: 0
+              * range_check: 0
+              * baseName: data
+              * prettyName: data
+      0: array
+          * type: array
+              * size: constant
+                  * type: signedbv
+                      * width: 32
+                  * #source_location: 
+                    * file: unconstrained.adb
+                    * line: 4
+                    * column: 4
+                    * comment: 
+                    * property_class: 
+                    * property_id: 
+                    * function: 
+                    * working_directory: 
+                    * java_bytecode_index: 
+                  * value: 2
+                  * range_check: 0
+              0: signedbv
+                  * width: 32
+          0: symbol
+              * type: signedbv
+                  * width: 32
+              * identifier: unconstrained__b@1#1..bounds[[0]]
+              * expression: index
+                  * type: signedbv
+                      * width: 32
+                  0: member
+                      * type: array
+                          * size: constant
+                              * type: signedbv
+                                  * width: 32
+                              * #source_location: 
+                                * file: unconstrained.adb
+                                * line: 4
+                                * column: 4
+                                * comment: 
+                                * property_class: 
+                                * property_id: 
+                                * function: 
+                                * working_directory: 
+                                * java_bytecode_index: 
+                              * value: 2
+                              * range_check: 0
+                          0: signedbv
+                              * width: 32
+                      * component_name: bounds
+                      0: symbol
+                          * type: struct
+                              * tag: unconstrained__u_arr
+                              * components: 
+                                0: 
+                                  * type: array
+                                      * size: constant
+                                          * type: signedbv
+                                              * width: 32
+                                          * #source_location: 
+                                            * file: unconstrained.adb
+                                            * line: 4
+                                            * column: 4
+                                            * comment: 
+                                            * property_class: 
+                                            * property_id: 
+                                            * function: 
+                                            * working_directory: 
+                                            * java_bytecode_index: 
+                                          * value: 2
+                                          * range_check: 0
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: bounds
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: bounds
+                                  * prettyName: bounds
+                                1: 
+                                  * type: pointer
+                                      * width: 64
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: data
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: data
+                                  * prettyName: data
+                          * #source_location: 
+                            * file: unconstrained.adb
+                            * line: 13
+                            * column: 17
+                            * comment: 
+                            * property_class: 
+                            * property_id: 
+                            * function: 
+                            * working_directory: 
+                            * java_bytecode_index: 
+                          * identifier: unconstrained__b
+                          * range_check: 0
+                  1: constant
+                      * type: signedbv
+                          * width: 64
+                      * value: 0
+              * #SSA_symbol: 1
+              * L1: 1
+              * L2: 1
+              * L1_object_identifier: unconstrained__b@1..bounds[[0]]
+          1: symbol
+              * type: signedbv
+                  * width: 32
+              * identifier: unconstrained__b@1#1..bounds[[1]]
+              * expression: index
+                  * type: signedbv
+                      * width: 32
+                  0: member
+                      * type: array
+                          * size: constant
+                              * type: signedbv
+                                  * width: 32
+                              * #source_location: 
+                                * file: unconstrained.adb
+                                * line: 4
+                                * column: 4
+                                * comment: 
+                                * property_class: 
+                                * property_id: 
+                                * function: 
+                                * working_directory: 
+                                * java_bytecode_index: 
+                              * value: 2
+                              * range_check: 0
+                          0: signedbv
+                              * width: 32
+                      * component_name: bounds
+                      0: symbol
+                          * type: struct
+                              * tag: unconstrained__u_arr
+                              * components: 
+                                0: 
+                                  * type: array
+                                      * size: constant
+                                          * type: signedbv
+                                              * width: 32
+                                          * #source_location: 
+                                            * file: unconstrained.adb
+                                            * line: 4
+                                            * column: 4
+                                            * comment: 
+                                            * property_class: 
+                                            * property_id: 
+                                            * function: 
+                                            * working_directory: 
+                                            * java_bytecode_index: 
+                                          * value: 2
+                                          * range_check: 0
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: bounds
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: bounds
+                                  * prettyName: bounds
+                                1: 
+                                  * type: pointer
+                                      * width: 64
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: data
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: data
+                                  * prettyName: data
+                          * #source_location: 
+                            * file: unconstrained.adb
+                            * line: 13
+                            * column: 17
+                            * comment: 
+                            * property_class: 
+                            * property_id: 
+                            * function: 
+                            * working_directory: 
+                            * java_bytecode_index: 
+                          * identifier: unconstrained__b
+                          * range_check: 0
+                  1: constant
+                      * type: signedbv
+                          * width: 64
+                      * value: 1
+              * #SSA_symbol: 1
+              * L1: 1
+              * L2: 1
+              * L1_object_identifier: unconstrained__b@1..bounds[[1]]
+      1: symbol
+          * type: pointer
+              * width: 64
+              0: signedbv
+                  * width: 32
+          * identifier: unconstrained__b@1#1..data
+          * expression: member
+              * type: pointer
+                  * width: 64
+                  0: signedbv
+                      * width: 32
+              * component_name: data
+              0: symbol
+                  * type: struct
+                      * tag: unconstrained__u_arr
+                      * components: 
+                        0: 
+                          * type: array
+                              * size: constant
+                                  * type: signedbv
+                                      * width: 32
+                                  * #source_location: 
+                                    * file: unconstrained.adb
+                                    * line: 4
+                                    * column: 4
+                                    * comment: 
+                                    * property_class: 
+                                    * property_id: 
+                                    * function: 
+                                    * working_directory: 
+                                    * java_bytecode_index: 
+                                  * value: 2
+                                  * range_check: 0
+                              0: signedbv
+                                  * width: 32
+                          * #source_location: 
+                            * file: 
+                            * line: >=
+                            * column: =
+                            * comment: 
+                            * property_class: >
+                            * property_id: False
+                            * function: <=
+                            * working_directory: True
+                            * java_bytecode_index: <
+                          * #is_padding: 0
+                          * name: bounds
+                          * access: public
+                          * anonymous: 0
+                          * range_check: 0
+                          * baseName: bounds
+                          * prettyName: bounds
+                        1: 
+                          * type: pointer
+                              * width: 64
+                              0: signedbv
+                                  * width: 32
+                          * #source_location: 
+                            * file: 
+                            * line: >=
+                            * column: =
+                            * comment: 
+                            * property_class: >
+                            * property_id: False
+                            * function: <=
+                            * working_directory: True
+                            * java_bytecode_index: <
+                          * #is_padding: 0
+                          * name: data
+                          * access: public
+                          * anonymous: 0
+                          * range_check: 0
+                          * baseName: data
+                          * prettyName: data
+                  * #source_location: 
+                    * file: unconstrained.adb
+                    * line: 13
+                    * column: 17
+                    * comment: 
+                    * property_class: 
+                    * property_id: 
+                    * function: 
+                    * working_directory: 
+                    * java_bytecode_index: 
+                  * identifier: unconstrained__b
+                  * range_check: 0
+          * #SSA_symbol: 1
+          * L1: 1
+          * L2: 1
+          * L1_object_identifier: unconstrained__b@1..data
+  1: constant
+      * type: signedbv
+          * width: 64
+      * value: 80000009
+warning: ignoring index
+  * type: signedbv
+      * width: 32
+  * #source_location: 
+    * file: unconstrained.adb
+    * line: 13
+    * column: 4
+    * comment: 
+    * property_class: 
+    * property_id: 
+    * function: 
+    * working_directory: 
+    * java_bytecode_index: 
+  * range_check: 0
+  0: struct
+      * type: struct
+          * tag: unconstrained__u_arr
+          * components: 
+            0: 
+              * type: array
+                  * size: constant
+                      * type: signedbv
+                          * width: 32
+                      * #source_location: 
+                        * file: unconstrained.adb
+                        * line: 4
+                        * column: 4
+                        * comment: 
+                        * property_class: 
+                        * property_id: 
+                        * function: 
+                        * working_directory: 
+                        * java_bytecode_index: 
+                      * value: 2
+                      * range_check: 0
+                  0: signedbv
+                      * width: 32
+              * #source_location: 
+                * file: 
+                * line: >=
+                * column: =
+                * comment: 
+                * property_class: >
+                * property_id: False
+                * function: <=
+                * working_directory: True
+                * java_bytecode_index: <
+              * #is_padding: 0
+              * name: bounds
+              * access: public
+              * anonymous: 0
+              * range_check: 0
+              * baseName: bounds
+              * prettyName: bounds
+            1: 
+              * type: pointer
+                  * width: 64
+                  0: signedbv
+                      * width: 32
+              * #source_location: 
+                * file: 
+                * line: >=
+                * column: =
+                * comment: 
+                * property_class: >
+                * property_id: False
+                * function: <=
+                * working_directory: True
+                * java_bytecode_index: <
+              * #is_padding: 0
+              * name: data
+              * access: public
+              * anonymous: 0
+              * range_check: 0
+              * baseName: data
+              * prettyName: data
+      0: array
+          * type: array
+              * size: constant
+                  * type: signedbv
+                      * width: 32
+                  * #source_location: 
+                    * file: unconstrained.adb
+                    * line: 4
+                    * column: 4
+                    * comment: 
+                    * property_class: 
+                    * property_id: 
+                    * function: 
+                    * working_directory: 
+                    * java_bytecode_index: 
+                  * value: 2
+                  * range_check: 0
+              0: signedbv
+                  * width: 32
+          0: symbol
+              * type: signedbv
+                  * width: 32
+              * identifier: unconstrained__b@1#1..bounds[[0]]
+              * expression: index
+                  * type: signedbv
+                      * width: 32
+                  0: member
+                      * type: array
+                          * size: constant
+                              * type: signedbv
+                                  * width: 32
+                              * #source_location: 
+                                * file: unconstrained.adb
+                                * line: 4
+                                * column: 4
+                                * comment: 
+                                * property_class: 
+                                * property_id: 
+                                * function: 
+                                * working_directory: 
+                                * java_bytecode_index: 
+                              * value: 2
+                              * range_check: 0
+                          0: signedbv
+                              * width: 32
+                      * component_name: bounds
+                      0: symbol
+                          * type: struct
+                              * tag: unconstrained__u_arr
+                              * components: 
+                                0: 
+                                  * type: array
+                                      * size: constant
+                                          * type: signedbv
+                                              * width: 32
+                                          * #source_location: 
+                                            * file: unconstrained.adb
+                                            * line: 4
+                                            * column: 4
+                                            * comment: 
+                                            * property_class: 
+                                            * property_id: 
+                                            * function: 
+                                            * working_directory: 
+                                            * java_bytecode_index: 
+                                          * value: 2
+                                          * range_check: 0
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: bounds
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: bounds
+                                  * prettyName: bounds
+                                1: 
+                                  * type: pointer
+                                      * width: 64
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: data
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: data
+                                  * prettyName: data
+                          * #source_location: 
+                            * file: unconstrained.adb
+                            * line: 13
+                            * column: 17
+                            * comment: 
+                            * property_class: 
+                            * property_id: 
+                            * function: 
+                            * working_directory: 
+                            * java_bytecode_index: 
+                          * identifier: unconstrained__b
+                          * range_check: 0
+                  1: constant
+                      * type: signedbv
+                          * width: 64
+                      * value: 0
+              * #SSA_symbol: 1
+              * L1: 1
+              * L2: 1
+              * L1_object_identifier: unconstrained__b@1..bounds[[0]]
+          1: symbol
+              * type: signedbv
+                  * width: 32
+              * identifier: unconstrained__b@1#1..bounds[[1]]
+              * expression: index
+                  * type: signedbv
+                      * width: 32
+                  0: member
+                      * type: array
+                          * size: constant
+                              * type: signedbv
+                                  * width: 32
+                              * #source_location: 
+                                * file: unconstrained.adb
+                                * line: 4
+                                * column: 4
+                                * comment: 
+                                * property_class: 
+                                * property_id: 
+                                * function: 
+                                * working_directory: 
+                                * java_bytecode_index: 
+                              * value: 2
+                              * range_check: 0
+                          0: signedbv
+                              * width: 32
+                      * component_name: bounds
+                      0: symbol
+                          * type: struct
+                              * tag: unconstrained__u_arr
+                              * components: 
+                                0: 
+                                  * type: array
+                                      * size: constant
+                                          * type: signedbv
+                                              * width: 32
+                                          * #source_location: 
+                                            * file: unconstrained.adb
+                                            * line: 4
+                                            * column: 4
+                                            * comment: 
+                                            * property_class: 
+                                            * property_id: 
+                                            * function: 
+                                            * working_directory: 
+                                            * java_bytecode_index: 
+                                          * value: 2
+                                          * range_check: 0
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: bounds
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: bounds
+                                  * prettyName: bounds
+                                1: 
+                                  * type: pointer
+                                      * width: 64
+                                      0: signedbv
+                                          * width: 32
+                                  * #source_location: 
+                                    * file: 
+                                    * line: >=
+                                    * column: =
+                                    * comment: 
+                                    * property_class: >
+                                    * property_id: False
+                                    * function: <=
+                                    * working_directory: True
+                                    * java_bytecode_index: <
+                                  * #is_padding: 0
+                                  * name: data
+                                  * access: public
+                                  * anonymous: 0
+                                  * range_check: 0
+                                  * baseName: data
+                                  * prettyName: data
+                          * #source_location: 
+                            * file: unconstrained.adb
+                            * line: 13
+                            * column: 17
+                            * comment: 
+                            * property_class: 
+                            * property_id: 
+                            * function: 
+                            * working_directory: 
+                            * java_bytecode_index: 
+                          * identifier: unconstrained__b
+                          * range_check: 0
+                  1: constant
+                      * type: signedbv
+                          * width: 64
+                      * value: 1
+              * #SSA_symbol: 1
+              * L1: 1
+              * L2: 1
+              * L1_object_identifier: unconstrained__b@1..bounds[[1]]
+      1: symbol
+          * type: pointer
+              * width: 64
+              0: signedbv
+                  * width: 32
+          * identifier: unconstrained__b@1#1..data
+          * expression: member
+              * type: pointer
+                  * width: 64
+                  0: signedbv
+                      * width: 32
+              * component_name: data
+              0: symbol
+                  * type: struct
+                      * tag: unconstrained__u_arr
+                      * components: 
+                        0: 
+                          * type: array
+                              * size: constant
+                                  * type: signedbv
+                                      * width: 32
+                                  * #source_location: 
+                                    * file: unconstrained.adb
+                                    * line: 4
+                                    * column: 4
+                                    * comment: 
+                                    * property_class: 
+                                    * property_id: 
+                                    * function: 
+                                    * working_directory: 
+                                    * java_bytecode_index: 
+                                  * value: 2
+                                  * range_check: 0
+                              0: signedbv
+                                  * width: 32
+                          * #source_location: 
+                            * file: 
+                            * line: >=
+                            * column: =
+                            * comment: 
+                            * property_class: >
+                            * property_id: False
+                            * function: <=
+                            * working_directory: True
+                            * java_bytecode_index: <
+                          * #is_padding: 0
+                          * name: bounds
+                          * access: public
+                          * anonymous: 0
+                          * range_check: 0
+                          * baseName: bounds
+                          * prettyName: bounds
+                        1: 
+                          * type: pointer
+                              * width: 64
+                              0: signedbv
+                                  * width: 32
+                          * #source_location: 
+                            * file: 
+                            * line: >=
+                            * column: =
+                            * comment: 
+                            * property_class: >
+                            * property_id: False
+                            * function: <=
+                            * working_directory: True
+                            * java_bytecode_index: <
+                          * #is_padding: 0
+                          * name: data
+                          * access: public
+                          * anonymous: 0
+                          * range_check: 0
+                          * baseName: data
+                          * prettyName: data
+                  * #source_location: 
+                    * file: unconstrained.adb
+                    * line: 13
+                    * column: 17
+                    * comment: 
+                    * property_class: 
+                    * property_id: 
+                    * function: 
+                    * working_directory: 
+                    * java_bytecode_index: 
+                  * identifier: unconstrained__b
+                  * range_check: 0
+          * #SSA_symbol: 1
+          * L1: 1
+          * L2: 1
+          * L1_object_identifier: unconstrained__b@1..data
+  1: constant
+      * type: signedbv
+          * width: 64
+      * value: 8000000A

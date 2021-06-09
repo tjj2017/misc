@@ -1,0 +1,19 @@
+[GENERATED OBJECT FILE]
+b__arr_agg.o
+[PROJECT FILES]
+/home/trevorj/asvat/misc/trials/newarr/default.gpr
+20160516094555
+[BOUND OBJECT FILES]
+/home/trevorj/asvat/misc/trials/newarr/arr_agg.o
+[GENERATED SOURCE FILES]
+b__arr_agg.ads
+b__arr_agg.adb
+b__arr_agg.ali
+[RESULTING OPTIONS]
+-L/home/trevorj/asvat/misc/trials/newarr/
+-L/home/trevorj/asvat/misc/trials/newarr/
+-L/opt/gnat/lib/gcc/x86_64-pc-linux-gnu/4.9.4/adalib/
+-static
+-static-libgcc
+/opt/gnat/lib/gcc/x86_64-pc-linux-gnu/4.9.4/adalib/libgnat.a
+-ldl
