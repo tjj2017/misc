@@ -1,0 +1,188 @@
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=2544) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=2666) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=2895) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=2911) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=2921) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=2973) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=2993) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=3003) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=3013) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=3023) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=3033) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=3043) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=3053) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=3063) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=3073) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=3083) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=3093) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=3103) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=3113) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=3123) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=3133) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=3143) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=3153) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=3163) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=3173) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=3183) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=3193) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=3203) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=3213) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=3223) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=3233) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=3243) (source,analyzed)
+Do_Object_Declaration
+N_Object_Declaration (Node_Id=3253) (source,analyzed)
+Do_Subprogram_Or_Block
+N_Subprogram_Body (Node_Id=2253) (source,analyzed)
+N_Procedure_Specification (Node_Id=2252) (source)
+----------At: Do_Subprogram_Specification----------
+----------Functions returning an unconstrained array are unsupported----------
+N_Function_Specification (Node_Id=2288) (source)
+ Parent = N_Subprogram_Declaration (Node_Id=2289)
+ Sloc = 8442  unconstrained.adb:7:4
+ Defining_Unit_Name = N_Defining_Identifier "fun1" (Entity_Id=2280)
+ Result_Definition = N_Identifier "u_arr" (Node_Id=2287)
+----------At: Do_Subprogram_Specification----------
+----------Functions returning an unconstrained array are unsupported----------
+N_Function_Specification (Node_Id=2330) (source)
+ Parent = N_Subprogram_Declaration (Node_Id=2331)
+ Sloc = 8492  unconstrained.adb:8:4
+ Defining_Unit_Name = N_Defining_Identifier "fun2" (Entity_Id=2296)
+ Parameter_Specifications = List (List_Id=-99999976)
+ Result_Definition = N_Identifier "u_arr" (Node_Id=2329)
+Do_Subprogram_Or_Block
+N_Subprogram_Body (Node_Id=2373) (analyzed)
+N_Function_Specification (Node_Id=2362) (source)
+It's a function
+N_Function_Specification (Node_Id=2362) (source)
+unconstrained__fun1
+N_Defining_Identifier "u_arr" (Entity_Id=2268) (source,analyzed)
+Appending
+Simple return statement
+Function unconstrained__fun1
+Result unconstrained__fun1___result
+Do_Array_Assignment_Op
+N_Defining_Identifier "u_arr" (Entity_Id=2268) (source,analyzed)
+
+Node #1 N_Defining_Identifier "u_arr" (Entity_Id=2268) (source,analyzed)
+ Parent = N_Full_Type_Declaration (Node_Id=2279)
+ Sloc = 8271  unconstrained.adb:4:9
+ Chars = "u_arr" (Name_Id=300001450)
+ Next_Entity = N_Defining_Operator_Symbol "Oconcat" (Entity_Id=2341)
+ Scope = N_Defining_Identifier "unconstrained" (Entity_Id=2245)
+ Ekind = E_Array_Type
+ Etype = Node #1 N_Defining_Identifier "u_arr" (Entity_Id=2268)
+ Freeze_Node = Node #2 N_Freeze_Entity (Node_Id=2451)
+ Esize = 0 (Uint = 600032768)
+ RM_Size = 0 (Uint = 600032768)
+ Alignment = 0 (Uint = 600032768)
+ First_Index = N_Identifier "integer" (Node_Id=2275)
+ Component_Type = N_Defining_Identifier "integer" (Entity_Id=37s)
+ Component_Size = 32 (Uint = 600032800)
+ Component_Alignment = Calign_Default
+ Has_Delayed_Freeze = True
+ Has_Qualified_Name = True
+ Has_Xref_Entry = True
+ Is_First_Subtype = True
+ Is_Frozen = True
+ Needs_Debug_Info = True
+ Referenced = True
+
+  Node #2 N_Freeze_Entity (Node_Id=2451) (analyzed)
+   Sloc = 8492  unconstrained.adb:8:4
+   Entity = Node #1 N_Defining_Identifier "u_arr" (Entity_Id=2268)
+   Access_Types_To_Process = <no elist>
+   TSS_Elist = <no elist>
+
+----------At: Do_Array_Assignment_Op----------
+----------Assignment expression cannot be unconstrained----------
+N_Aggregate (Node_Id=2291) (source,analyzed)
+ Parent = N_Simple_Return_Statement (Node_Id=2371)
+ Sloc = 8472  unconstrained.adb:7:34
+ Etype = N_Defining_Identifier "T9b" (Entity_Id=2472)
+ Expressions = List (List_Id=-99999979)
+ Aggregate_Bounds = N_Range (Node_Id=2463)
+Do_Subprogram_Or_Block
+N_Subprogram_Body (Node_Id=2431) (analyzed)
+N_Function_Specification (Node_Id=2394) (source)
+It's a function
+N_Function_Specification (Node_Id=2394) (source)
+unconstrained__fun2
+N_Defining_Identifier "u_arr" (Entity_Id=2268) (source,analyzed)
+Appending
+Simple return statement
+Function unconstrained__fun2
+Result unconstrained__fun2___result
+Do_Array_Assignment_Op
+N_Defining_Identifier "u_arr" (Entity_Id=2268) (source,analyzed)
+
+Node #1 N_Defining_Identifier "u_arr" (Entity_Id=2268) (source,analyzed)
+ Parent = N_Full_Type_Declaration (Node_Id=2279)
+ Sloc = 8271  unconstrained.adb:4:9
+ Chars = "u_arr" (Name_Id=300001450)
+ Next_Entity = N_Defining_Operator_Symbol "Oconcat" (Entity_Id=2341)
+ Scope = N_Defining_Identifier "unconstrained" (Entity_Id=2245)
+ Ekind = E_Array_Type
+ Etype = Node #1 N_Defining_Identifier "u_arr" (Entity_Id=2268)
+ Freeze_Node = Node #2 N_Freeze_Entity (Node_Id=2451)
+ Esize = 0 (Uint = 600032768)
+ RM_Size = 0 (Uint = 600032768)
+ Alignment = 0 (Uint = 600032768)
+ First_Index = N_Identifier "integer" (Node_Id=2275)
+ Component_Type = N_Defining_Identifier "integer" (Entity_Id=37s)
+ Component_Size = 32 (Uint = 600032800)
+ Component_Alignment = Calign_Default
+ Has_Delayed_Freeze = True
+ Has_Qualified_Name = True
+ Has_Xref_Entry = True
+ Is_First_Subtype = True
+ Is_Frozen = True
+ Needs_Debug_Info = True
+ Referenced = True
+
+  Node #2 N_Freeze_Entity (Node_Id=2451) (analyzed)
+   Sloc = 8492  unconstrained.adb:8:4
+   Entity = Node #1 N_Defining_Identifier "u_arr" (Entity_Id=2268)
+   Access_Types_To_Process = <no elist>
+   TSS_Elist = <no elist>
+
+----------At: Do_Array_Assignment_Op----------
+----------Assignment expression cannot be unconstrained----------
+N_Aggregate (Node_Id=2333) (source,analyzed)
+ Parent = N_Simple_Return_Statement (Node_Id=2429)
+ Sloc = 8550  unconstrained.adb:8:62
+ Etype = N_Defining_Identifier "T12b" (Entity_Id=2496)
+ Component_Associations = List (List_Id=-99999975)
+ Aggregate_Bounds = N_Range (Node_Id=2488)

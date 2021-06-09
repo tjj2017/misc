@@ -16,6 +16,10 @@ procedure Array_Param is
    procedure Constrained_Array_Param (A : Arr;
                                       F, L, Len : out Integer) is
    begin
+      for I in A'Range loop
+         pragma Assert (A (I) = I - A'First + 1);
+      end loop;
+
       F := A'First;
       L := A'Last;
       Len := A'Length;
@@ -24,6 +28,10 @@ procedure Array_Param is
    procedure Unconstrained_Array_Param (A : Arr_U;
                                         F, L, Len : out Integer) is
    begin
+      for I in A'Range loop
+         pragma Assert (A (I) = I - A'First + 1);
+      end loop;
+
       F := A'First;
       L := A'Last;
       Len := A'Length;
@@ -33,6 +41,10 @@ procedure Array_Param is
                                 Dim : Integer;
                                 F, L, Len : out Integer) is
    begin
+      pragma Assert (AA (Dim, Dim, 1) = 1);
+      for I in AA'Range (3) loop
+         pragma Assert (AA (Dim, Dim, I) = I - AA'First (3) + 1);
+      end loop;
       case Dim is
       when 1 =>
          F := AA'First (1);
@@ -109,8 +121,8 @@ procedure Array_Param is
       end case;
    end Unconstrained_Arr_Arr_Param;
 
-   AV : Arr;
-   SUV : SU;
+   AV  : Arr := (1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+   SUV : SU := (1, 2);
    MV  : Multi_Array;
    UMV : SMA_U;
    AAV : Arr_Of_Arr;
@@ -129,6 +141,10 @@ begin
    pragma Assert (XL = SU'Last);
    pragma Assert (XLen = SU'Length);
 
+   MV (1, 1, 1) := 1;
+   MV (1, 1, 2) := 2;
+   MV (1, 1, 3) := 3;
+   MV (1, 1, 4) := 4;
    Multi_Array_Param (MV, 1, XF, XL, XLen);
    pragma assert (XF = Multi_Array'First);
    pragma Assert (XL = Multi_Array'Last);

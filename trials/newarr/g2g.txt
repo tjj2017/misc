@@ -1,0 +1,1011 @@
+CBMC version 5.12 (cbmc-5.12-36-g5568f6482) 64-bit x86_64 linux
+Parsing object_of_unconstrained_type.json_symtab
+Converting
+Generating GOTO Program
+
+Symbols:
+
+Symbol......: __CPROVER__start
+Pretty name.: __CPROVER__start
+Module......: 
+Base name...: __CPROVER__start
+Mode........: C
+Type........: void (void)
+Value.......: {
+  __CPROVER_rounding_mode = 0;
+  __CPROVER_dead_object = NULL;
+  __CPROVER_deallocated = NULL;
+  __CPROVER_malloc_object = NULL;
+  high_order_first = (enum { =0, =1 })0;
+  low_order_first = (enum { =0, =1 })1;
+  system_name_gnat = (enum { =0 })0;
+  void return';
+  return'=object_of_unconstrained_type();
+}
+Flags.......:
+Location....: 
+
+Symbol......: __CPROVER_dead_object
+Pretty name.: __CPROVER_dead_object
+Module......: 
+Base name...: __CPROVER_dead_object
+Mode........: C
+Type........: void *
+Value.......: 
+Flags.......: lvalue static_lifetime
+Location....: 
+
+Symbol......: __CPROVER_deallocated
+Pretty name.: __CPROVER_deallocated
+Module......: 
+Base name...: __CPROVER_deallocated
+Mode........: C
+Type........: void *
+Value.......: 
+Flags.......: lvalue static_lifetime
+Location....: 
+
+Symbol......: __CPROVER_malloc_object
+Pretty name.: __CPROVER_malloc_object
+Module......: 
+Base name...: __CPROVER_malloc_object
+Mode........: C
+Type........: void *
+Value.......: 
+Flags.......: lvalue static_lifetime
+Location....: 
+
+Symbol......: __CPROVER_rounding_mode
+Pretty name.: __CPROVER_rounding_mode
+Module......: 
+Base name...: __CPROVER_rounding_mode
+Mode........: C
+Type........: int
+Value.......: 
+Flags.......: lvalue static_lifetime
+Location....: 
+
+Symbol......: __CPROVER_size_t
+Pretty name.: __CPROVER_size_t
+Module......: 
+Base name...: __CPROVER_size_t
+Mode........: C
+Type........: unsigned long int
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: malloc
+Pretty name.: malloc
+Module......: 
+Base name...: malloc
+Mode........: C
+Type........: void * (unsigned long int malloc$$malloc::__size1)
+Value.......: 
+Flags.......:
+Location....: 
+
+Symbol......: malloc::__size1
+Pretty name.: malloc::__size1
+Module......: 
+Base name...: malloc::__size1
+Mode........: C
+Type........: unsigned long int
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: memcpy
+Pretty name.: memcpy
+Module......: 
+Base name...: memcpy
+Mode........: C
+Type........: void * (void *memcpy$$memcpy::__destination2, void *memcpy$$memcpy::__source3, unsigned long int memcpy$$memcpy::__num4)
+Value.......: 
+Flags.......:
+Location....: 
+
+Symbol......: memcpy::__destination2
+Pretty name.: memcpy::__destination2
+Module......: 
+Base name...: memcpy::__destination2
+Mode........: C
+Type........: void *
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: memcpy::__num4
+Pretty name.: memcpy::__num4
+Module......: 
+Base name...: memcpy::__num4
+Mode........: C
+Type........: unsigned long int
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: memcpy::__source3
+Pretty name.: memcpy::__source3
+Module......: 
+Base name...: memcpy::__source3
+Mode........: C
+Type........: void *
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: object_of_unconstrained_type
+Pretty name.: object_of_unconstrained_type
+Module......: 
+Base name...: object_of_unconstrained_type
+Mode........: C
+Type........: void (void)
+Value.......: {
+  int object_of_unconstrained_type__constrained_obj[4];
+  object_of_unconstrained_type__constrained_obj[0] = 1;
+  object_of_unconstrained_type__constrained_obj[1] = 2;
+  object_of_unconstrained_type__constrained_obj[2] = 3;
+  object_of_unconstrained_type__constrained_obj[3] = 4;
+  int object_of_unconstrained_type__unconstrained_obj[3];
+  int object_of_unconstrained_type__unconstrained_obj___first_1;
+  int object_of_unconstrained_type__unconstrained_obj___last_1;
+  object_of_unconstrained_type__unconstrained_obj___first_1 = (int)(long int)1;
+  object_of_unconstrained_type__unconstrained_obj___last_1 = (int)(long int)3;
+  object_of_unconstrained_type__unconstrained_obj[0] = object_of_unconstrained_type__constrained_obj[0];
+  object_of_unconstrained_type__unconstrained_obj[1] = object_of_unconstrained_type__constrained_obj[1];
+  object_of_unconstrained_type__unconstrained_obj[2] = object_of_unconstrained_type__constrained_obj[2];
+  {
+    {
+      int object_of_unconstrained_type__L_1__i;
+      for(object_of_unconstrained_type__L_1__i = object_of_unconstrained_type__unconstrained_obj___first_1;; object_of_unconstrained_type__L_1__i <= object_of_unconstrained_type__unconstrained_obj___last_1; object_of_unconstrained_type__L_1__i = object_of_unconstrained_type__L_1__i + (int)1)
+      {
+        /* assertion Unconstrained_Obj (I) = I */
+        assert(object_of_unconstrained_type__unconstrained_obj[(long int)object_of_unconstrained_type__L_1__i - (long int)object_of_unconstrained_type__unconstrained_obj___first_1] == (int)object_of_unconstrained_type__L_1__i);
+      }
+    }
+  }
+}
+Flags.......:
+Location....: 
+
+Symbol......: object_of_unconstrained_type__L_1__T7b
+Pretty name.: object_of_unconstrained_type__L_1__T7b
+Module......: 
+Base name...: object_of_unconstrained_type__L_1__T7b
+Mode........: C
+Type........: int
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: object_of_unconstrained_type__L_1__i
+Pretty name.: object_of_unconstrained_type__L_1__i
+Module......: 
+Base name...: object_of_unconstrained_type__L_1__i
+Mode........: C
+Type........: int
+Value.......: 
+Flags.......: lvalue
+Location....: 
+
+Symbol......: object_of_unconstrained_type__T6b
+Pretty name.: object_of_unconstrained_type__T6b
+Module......: 
+Base name...: object_of_unconstrained_type__T6b
+Mode........: C
+Type........: int [3]
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: object_of_unconstrained_type__constrained_obj
+Pretty name.: object_of_unconstrained_type__constrained_obj
+Module......: 
+Base name...: object_of_unconstrained_type__constrained_obj
+Mode........: C
+Type........: int [4]
+Value.......: 
+Flags.......: lvalue
+Location....: 
+
+Symbol......: object_of_unconstrained_type__u_array
+Pretty name.: object_of_unconstrained_type__u_array
+Module......: 
+Base name...: object_of_unconstrained_type__u_array
+Mode........: C
+Type........: int [NONDET(long int)]
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: object_of_unconstrained_type__u_c_array
+Pretty name.: object_of_unconstrained_type__u_c_array
+Module......: 
+Base name...: object_of_unconstrained_type__u_c_array
+Mode........: C
+Type........: int [4]
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: object_of_unconstrained_type__unconstrained_obj
+Pretty name.: object_of_unconstrained_type__unconstrained_obj
+Module......: 
+Base name...: object_of_unconstrained_type__unconstrained_obj
+Mode........: C
+Type........: int [3]
+Value.......: 
+Flags.......: lvalue
+Location....: 
+
+Symbol......: object_of_unconstrained_type__unconstrained_obj___first_1
+Pretty name.: object_of_unconstrained_type__unconstrained_obj___first_1
+Module......: 
+Base name...: object_of_unconstrained_type__unconstrained_obj___first_1
+Mode........: C
+Type........: int
+Value.......: (long int)1
+Flags.......: lvalue
+Location....: 
+
+Symbol......: object_of_unconstrained_type__unconstrained_obj___last_1
+Pretty name.: object_of_unconstrained_type__unconstrained_obj___last_1
+Module......: 
+Base name...: object_of_unconstrained_type__unconstrained_obj___last_1
+Mode........: C
+Type........: int
+Value.......: (long int)3
+Flags.......: lvalue
+Location....: 
+
+Symbol......: return'
+Pretty name.: return'
+Module......: 
+Base name...: return'
+Mode........: C
+Type........: void
+Value.......: 
+Flags.......: lvalue static_lifetime
+Location....: 
+
+Symbol......: standard__boolean
+Pretty name.: standard__boolean
+Module......: 
+Base name...: standard__boolean
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__character
+Pretty name.: standard__character
+Module......: 
+Base name...: standard__character
+Mode........: C
+Type........: unsigned char
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__float
+Pretty name.: standard__float
+Module......: 
+Base name...: standard__float
+Mode........: C
+Type........: float
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__integer
+Pretty name.: standard__integer
+Module......: 
+Base name...: standard__integer
+Mode........: C
+Type........: int
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__long_float
+Pretty name.: standard__long_float
+Module......: 
+Base name...: standard__long_float
+Mode........: C
+Type........: double
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__long_integer
+Pretty name.: standard__long_integer
+Module......: 
+Base name...: standard__long_integer
+Mode........: C
+Type........: long int
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__long_long_float
+Pretty name.: standard__long_long_float
+Module......: 
+Base name...: standard__long_long_float
+Mode........: C
+Type........: double
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__long_long_integer
+Pretty name.: standard__long_long_integer
+Module......: 
+Base name...: standard__long_long_integer
+Mode........: C
+Type........: long int
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__natural
+Pretty name.: standard__natural
+Module......: 
+Base name...: standard__natural
+Mode........: C
+Type........: int
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__positive
+Pretty name.: standard__positive
+Module......: 
+Base name...: standard__positive
+Mode........: C
+Type........: int
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__short_float
+Pretty name.: standard__short_float
+Module......: 
+Base name...: standard__short_float
+Mode........: C
+Type........: float
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__short_integer
+Pretty name.: standard__short_integer
+Module......: 
+Base name...: standard__short_integer
+Mode........: C
+Type........: short int
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__short_short_integer
+Pretty name.: standard__short_short_integer
+Module......: 
+Base name...: standard__short_short_integer
+Mode........: C
+Type........: signed char
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__string
+Pretty name.: standard__string
+Module......: 
+Base name...: standard__string
+Mode........: C
+Type........: unsigned char [0]
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__universal_integer
+Pretty name.: standard__universal_integer
+Module......: 
+Base name...: standard__universal_integer
+Mode........: C
+Type........: integer
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__wide_character
+Pretty name.: standard__wide_character
+Module......: 
+Base name...: standard__wide_character
+Mode........: C
+Type........: unsigned short int
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: standard__wide_wide_character
+Pretty name.: standard__wide_wide_character
+Module......: 
+Base name...: standard__wide_wide_character
+Mode........: C
+Type........: unsigned int
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: system
+Pretty name.: system
+Module......: 
+Base name...: system
+Mode........: C
+Type........: void
+Value.......: 
+Flags.......:
+Location....: 
+
+Symbol......: system__Oeq
+Pretty name.: system__Oeq
+Module......: 
+Base name...: system__Oeq
+Mode........: C
+Type........: __CPROVER_bool (unsigned char *system__Oeq__left$$system__Oeq__left, unsigned char *system__Oeq__right$$system__Oeq__right)
+Value.......: 
+Flags.......:
+Location....: 
+
+Symbol......: system__Oeq__left
+Pretty name.: system__Oeq__left
+Module......: 
+Base name...: system__Oeq__left
+Mode........: C
+Type........: unsigned char *
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: system__Oeq__right
+Pretty name.: system__Oeq__right
+Module......: 
+Base name...: system__Oeq__right
+Mode........: C
+Type........: unsigned char *
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: system__Oge
+Pretty name.: system__Oge
+Module......: 
+Base name...: system__Oge
+Mode........: C
+Type........: __CPROVER_bool (unsigned char *system__Oge__left$$system__Oge__left, unsigned char *system__Oge__right$$system__Oge__right)
+Value.......: 
+Flags.......:
+Location....: 
+
+Symbol......: system__Oge__left
+Pretty name.: system__Oge__left
+Module......: 
+Base name...: system__Oge__left
+Mode........: C
+Type........: unsigned char *
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: system__Oge__right
+Pretty name.: system__Oge__right
+Module......: 
+Base name...: system__Oge__right
+Mode........: C
+Type........: unsigned char *
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: system__Ogt
+Pretty name.: system__Ogt
+Module......: 
+Base name...: system__Ogt
+Mode........: C
+Type........: __CPROVER_bool (unsigned char *system__Ogt__left$$system__Ogt__left, unsigned char *system__Ogt__right$$system__Ogt__right)
+Value.......: 
+Flags.......:
+Location....: 
+
+Symbol......: system__Ogt__left
+Pretty name.: system__Ogt__left
+Module......: 
+Base name...: system__Ogt__left
+Mode........: C
+Type........: unsigned char *
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: system__Ogt__right
+Pretty name.: system__Ogt__right
+Module......: 
+Base name...: system__Ogt__right
+Mode........: C
+Type........: unsigned char *
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: system__Ole
+Pretty name.: system__Ole
+Module......: 
+Base name...: system__Ole
+Mode........: C
+Type........: __CPROVER_bool (unsigned char *system__Ole__left$$system__Ole__left, unsigned char *system__Ole__right$$system__Ole__right)
+Value.......: 
+Flags.......:
+Location....: 
+
+Symbol......: system__Ole__left
+Pretty name.: system__Ole__left
+Module......: 
+Base name...: system__Ole__left
+Mode........: C
+Type........: unsigned char *
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: system__Ole__right
+Pretty name.: system__Ole__right
+Module......: 
+Base name...: system__Ole__right
+Mode........: C
+Type........: unsigned char *
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: system__Olt
+Pretty name.: system__Olt
+Module......: 
+Base name...: system__Olt
+Mode........: C
+Type........: __CPROVER_bool (unsigned char *system__Olt__left$$system__Olt__left, unsigned char *system__Olt__right$$system__Olt__right)
+Value.......: 
+Flags.......:
+Location....: 
+
+Symbol......: system__Olt__left
+Pretty name.: system__Olt__left
+Module......: 
+Base name...: system__Olt__left
+Mode........: C
+Type........: unsigned char *
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: system__Olt__right
+Pretty name.: system__Olt__right
+Module......: 
+Base name...: system__Olt__right
+Mode........: C
+Type........: unsigned char *
+Value.......: 
+Flags.......: lvalue thread_local file_local parameter
+Location....: 
+
+Symbol......: system__address
+Pretty name.: system__address
+Module......: 
+Base name...: system__address
+Mode........: C
+Type........: unsigned char *
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: system__always_compatible_rep
+Pretty name.: system__always_compatible_rep
+Module......: 
+Base name...: system__always_compatible_rep
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: standard__boolean__false
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__any_priority
+Pretty name.: system__any_priority
+Module......: 
+Base name...: system__any_priority
+Mode........: C
+Type........: int
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: system__backend_divide_checks
+Pretty name.: system__backend_divide_checks
+Module......: 
+Base name...: system__backend_divide_checks
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: standard__boolean__false
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__backend_overflow_checks
+Pretty name.: system__backend_overflow_checks
+Module......: 
+Base name...: system__backend_overflow_checks
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: standard__boolean__true
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__bit_order
+Pretty name.: system__bit_order
+Module......: 
+Base name...: system__bit_order
+Mode........: C
+Type........: enum { =0, =1 }
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: system__bit_order__high_order_first
+Pretty name.: high_order_first
+Module......: 
+Base name...: high_order_first
+Mode........: C
+Type........: enum { =0, =1 }
+Value.......: (enum { =0, =1 })0
+Flags.......: static_lifetime state_var
+Location....: 
+
+Symbol......: system__bit_order__low_order_first
+Pretty name.: low_order_first
+Module......: 
+Base name...: low_order_first
+Mode........: C
+Type........: enum { =0, =1 }
+Value.......: (enum { =0, =1 })1
+Flags.......: static_lifetime state_var
+Location....: 
+
+Symbol......: system__command_line_args
+Pretty name.: system__command_line_args
+Module......: 
+Base name...: system__command_line_args
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: standard__boolean__true
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__configurable_run_time
+Pretty name.: system__configurable_run_time
+Module......: 
+Base name...: system__configurable_run_time
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: standard__boolean__false
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__default_bit_order
+Pretty name.: system__default_bit_order
+Module......: 
+Base name...: system__default_bit_order
+Mode........: C
+Type........: enum { =0, =1 }
+Value.......: low_order_first
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__default_priority
+Pretty name.: system__default_priority
+Module......: 
+Base name...: system__default_priority
+Mode........: C
+Type........: int
+Value.......: 48
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__denorm
+Pretty name.: system__denorm
+Module......: 
+Base name...: system__denorm
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: standard__boolean__true
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__duration_32_bits
+Pretty name.: system__duration_32_bits
+Module......: 
+Base name...: system__duration_32_bits
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: standard__boolean__false
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__exit_status_supported
+Pretty name.: system__exit_status_supported
+Module......: 
+Base name...: system__exit_status_supported
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: standard__boolean__true
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__fractional_fixed_ops
+Pretty name.: system__fractional_fixed_ops
+Module......: 
+Base name...: system__fractional_fixed_ops
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: standard__boolean__false
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__frontend_exceptions
+Pretty name.: system__frontend_exceptions
+Module......: 
+Base name...: system__frontend_exceptions
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: standard__boolean__false
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__frontend_layout
+Pretty name.: system__frontend_layout
+Module......: 
+Base name...: system__frontend_layout
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: standard__boolean__false
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__interrupt_priority
+Pretty name.: system__interrupt_priority
+Module......: 
+Base name...: system__interrupt_priority
+Mode........: C
+Type........: int
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: system__machine_overflows
+Pretty name.: system__machine_overflows
+Module......: 
+Base name...: system__machine_overflows
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: standard__boolean__false
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__machine_rounds
+Pretty name.: system__machine_rounds
+Module......: 
+Base name...: system__machine_rounds
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: standard__boolean__true
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__max_interrupt_priority
+Pretty name.: system__max_interrupt_priority
+Module......: 
+Base name...: system__max_interrupt_priority
+Mode........: C
+Type........: int
+Value.......: 98
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__max_priority
+Pretty name.: system__max_priority
+Module......: 
+Base name...: system__max_priority
+Mode........: C
+Type........: int
+Value.......: 97
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__name
+Pretty name.: system__name
+Module......: 
+Base name...: system__name
+Mode........: C
+Type........: enum { =0 }
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: system__name__system_name_gnat
+Pretty name.: system_name_gnat
+Module......: 
+Base name...: system_name_gnat
+Mode........: C
+Type........: enum { =0 }
+Value.......: (enum { =0 })0
+Flags.......: static_lifetime state_var
+Location....: 
+
+Symbol......: system__null_address
+Pretty name.: system__null_address
+Module......: 
+Base name...: system__null_address
+Mode........: C
+Type........: irep("(\"\")")
+Value.......: (unsigned char *)((unsigned char *)NULL)
+Flags.......:
+Location....: 
+
+Symbol......: system__preallocated_stacks
+Pretty name.: system__preallocated_stacks
+Module......: 
+Base name...: system__preallocated_stacks
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: standard__boolean__false
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__priority
+Pretty name.: system__priority
+Module......: 
+Base name...: system__priority
+Mode........: C
+Type........: int
+Value.......: 
+Flags.......: type
+Location....: 
+
+Symbol......: system__signed_zeros
+Pretty name.: system__signed_zeros
+Module......: 
+Base name...: system__signed_zeros
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: standard__boolean__true
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__stack_check_default
+Pretty name.: system__stack_check_default
+Module......: 
+Base name...: system__stack_check_default
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: standard__boolean__false
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__stack_check_limits
+Pretty name.: system__stack_check_limits
+Module......: 
+Base name...: system__stack_check_limits
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: standard__boolean__false
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__stack_check_probes
+Pretty name.: system__stack_check_probes
+Module......: 
+Base name...: system__stack_check_probes
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: standard__boolean__true
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__support_aggregates
+Pretty name.: system__support_aggregates
+Module......: 
+Base name...: system__support_aggregates
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: standard__boolean__true
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__support_atomic_primitives
+Pretty name.: system__support_atomic_primitives
+Module......: 
+Base name...: system__support_atomic_primitives
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: standard__boolean__true
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__support_composite_assign
+Pretty name.: system__support_composite_assign
+Module......: 
+Base name...: system__support_composite_assign
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: standard__boolean__true
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__support_composite_compare
+Pretty name.: system__support_composite_compare
+Module......: 
+Base name...: system__support_composite_compare
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: standard__boolean__true
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__support_long_shifts
+Pretty name.: system__support_long_shifts
+Module......: 
+Base name...: system__support_long_shifts
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: standard__boolean__true
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__suppress_standard_library
+Pretty name.: system__suppress_standard_library
+Module......: 
+Base name...: system__suppress_standard_library
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: standard__boolean__false
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__system_name
+Pretty name.: system__system_name
+Module......: 
+Base name...: system__system_name
+Mode........: C
+Type........: enum { =0 }
+Value.......: system_name_gnat
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__use_ada_main_program_name
+Pretty name.: system__use_ada_main_program_name
+Module......: 
+Base name...: system__use_ada_main_program_name
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: standard__boolean__false
+Flags.......: lvalue
+Location....: 
+
+Symbol......: system__zcx_by_default
+Pretty name.: system__zcx_by_default
+Module......: 
+Base name...: system__zcx_by_default
+Mode........: C
+Type........: __CPROVER_bool
+Value.......: standard__boolean__true
+Flags.......: lvalue
+Location....: 
+

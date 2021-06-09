@@ -1,0 +1,369 @@
+<?xml version="1.0"?>
+<Locations >
+  <Project >
+    <file_marker column=" 1" line=" 50" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/new_arr.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 42" line=" 55" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/arr_index.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 27" line=" 10" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/arr_first_last_len.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 4" line=" 124" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/array_param.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 11" line=" 13" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/arr_assign.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 15" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/arrays_assign_nonoverlap.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 4" line=" 12" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/try_subtype_bounds.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 34" line=" 34" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/dynamic.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 36" line=" 11" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/simple_slice.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 8" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/simples.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/multi_dim.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 38" line=" 10" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/arr_agg.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 14" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/simple_arr_func.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 23" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/object_of_unconstrained_type.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 19" line=" 36" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 14" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/index.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 15" line=" 13" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/multi_applications.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 13" line=" 51" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/array_assignments.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 5" line=" 17" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 3" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 5" line=" 17" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained_decs.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/arr_agg.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/arr_assign.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/arr_first_last_len.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/array_assignments.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/array_param.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/arrays_assign_nonoverlap.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/concat.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/dynamic.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/index.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/multi_applications.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/multi_dim.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/object_of_unconstrained_type.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/simple_arr_func.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/simple_slice.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/simples.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/try_subtype_bounds.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/unconstrained.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/multi_dim.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/array_param.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 22" line=" 125" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/array_param.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 4" line=" 126" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/array_param.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 33" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/array_param.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 4" line=" 126" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/array_param.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 19" line=" 36" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/array_param.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 16" line=" 45" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/array_param.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 25" line=" 46" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/array_param.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 4" line=" 127" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/array_param.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 44" line=" 44" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/array_param.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 4" line=" 127" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/array_param.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/arr_agg.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 17" line=" 190" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/arr_agg.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 20" line=" 72" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/arr_agg.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 18" line=" 95" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/arr_agg.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/arr_first_last_len.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/array_assignments.adb</vfs_file>
+    </file_marker>
+    <file_marker current="true" column=" 1" line=" 1" >
+      <vfs_project>/home/trevorj/asvat/misc/trials/newarr/default.gpr</vfs_project>
+      <vfs_file>/home/trevorj/asvat/misc/trials/newarr/array_param.adb</vfs_file>
+    </file_marker>
+  </Project>
+</Locations>
