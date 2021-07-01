@@ -2,75 +2,15 @@
 <Locations >
   <Project>
     <vfs_file>/home/trevorj/asvat/misc/trials/u_address_model/default.gpr</vfs_file>
-    <file_marker column=" 1" line=" 1" >
-      <vfs_project>/home/trevorj/asvat/misc/trials/u_address_model/default.gpr</vfs_project>
-      <vfs_file>/home/trevorj/asvat/misc/trials/u_address_model/u_array_address_model.adb</vfs_file>
-    </file_marker>
-    <file_marker column=" 13" line=" 23" >
-      <vfs_project>/home/trevorj/asvat/misc/trials/u_address_model/default.gpr</vfs_project>
-      <vfs_file>/home/trevorj/asvat/misc/trials/u_address_model/u_array_address_model.adb</vfs_file>
-    </file_marker>
-    <file_marker column=" 4" line=" 10" >
-      <vfs_project>/home/trevorj/asvat/misc/trials/u_address_model/default.gpr</vfs_project>
-      <vfs_file>/home/trevorj/asvat/misc/trials/u_address_model/u_array_address_model.adb</vfs_file>
-    </file_marker>
-    <file_marker column=" 1" line=" 20" >
-      <vfs_project>/home/trevorj/asvat/misc/trials/u_address_model/default.gpr</vfs_project>
-      <vfs_file>/home/trevorj/asvat/misc/trials/u_address_model/u_array_address_model.adb</vfs_file>
-    </file_marker>
-    <file_marker column=" 4" line=" 10" >
-      <vfs_project>/home/trevorj/asvat/misc/trials/u_address_model/default.gpr</vfs_project>
-      <vfs_file>/home/trevorj/asvat/misc/trials/u_address_model/u_array_address_model.adb</vfs_file>
-    </file_marker>
-    <file_marker column=" 1" line=" 36" >
-      <vfs_project>/home/trevorj/asvat/misc/trials/u_address_model/default.gpr</vfs_project>
-      <vfs_file>/home/trevorj/asvat/misc/trials/u_address_model/u_array_address_model.adb</vfs_file>
-    </file_marker>
-    <file_marker column=" 4" line=" 10" >
-      <vfs_project>/home/trevorj/asvat/misc/trials/u_address_model/default.gpr</vfs_project>
-      <vfs_file>/home/trevorj/asvat/misc/trials/u_address_model/u_array_address_model.adb</vfs_file>
-    </file_marker>
-    <file_marker column=" 27" line=" 36" >
-      <vfs_project>/home/trevorj/asvat/misc/trials/u_address_model/default.gpr</vfs_project>
-      <vfs_file>/home/trevorj/asvat/misc/trials/u_address_model/u_array_address_model.adb</vfs_file>
-    </file_marker>
-    <file_marker column=" 9" line=" 38" >
-      <vfs_project>/home/trevorj/asvat/misc/trials/u_address_model/default.gpr</vfs_project>
-      <vfs_file>/home/trevorj/asvat/misc/trials/u_address_model/u_c_array_address_model.adb</vfs_file>
-    </file_marker>
     <file_marker column=" 4" line=" 12" >
       <vfs_project>/home/trevorj/asvat/misc/trials/u_address_model/default.gpr</vfs_project>
-      <vfs_file>/home/trevorj/asvat/misc/trials/u_address_model/u_c_array_address_model.adb</vfs_file>
-    </file_marker>
-    <file_marker column=" 10" line=" 23" >
-      <vfs_project>/home/trevorj/asvat/misc/trials/u_address_model/default.gpr</vfs_project>
-      <vfs_file>/home/trevorj/asvat/misc/trials/u_address_model/u_c_array_address_model.adb</vfs_file>
-    </file_marker>
-    <file_marker column=" 8" line=" 14" >
-      <vfs_project>/home/trevorj/asvat/misc/trials/u_address_model/default.gpr</vfs_project>
-      <vfs_file>/home/trevorj/asvat/misc/trials/u_address_model/u_c_array_address_model.adb</vfs_file>
-    </file_marker>
-    <file_marker column=" 12" line=" 12" >
-      <vfs_project>/home/trevorj/asvat/misc/trials/u_address_model/default.gpr</vfs_project>
-      <vfs_file>/home/trevorj/asvat/misc/trials/u_address_model/u_c_array_address_model.adb</vfs_file>
+      <vfs_file>/home/trevorj/asvat/misc/trials/u_address_model/u_array_address_model.adb</vfs_file>
     </file_marker>
     <file_marker column=" 1" line=" 1" >
       <vfs_project>/home/trevorj/asvat/misc/trials/u_address_model/default.gpr</vfs_project>
       <vfs_file>/home/trevorj/asvat/misc/trials/u_address_model/u_c_array_address_model.adb</vfs_file>
     </file_marker>
-    <file_marker column=" 1" line=" 11" >
-      <vfs_project>/home/trevorj/asvat/misc/trials/u_address_model/default.gpr</vfs_project>
-      <vfs_file>/home/trevorj/asvat/misc/trials/u_address_model/u_co_array_address_model.adb</vfs_file>
-    </file_marker>
-    <file_marker column=" 10" line=" 11" >
-      <vfs_project>/home/trevorj/asvat/misc/trials/u_address_model/default.gpr</vfs_project>
-      <vfs_file>/home/trevorj/asvat/misc/trials/u_address_model/u_co_array_address_model.adb</vfs_file>
-    </file_marker>
-    <file_marker column=" 1" line=" 8" >
-      <vfs_project>/home/trevorj/asvat/misc/trials/u_address_model/default.gpr</vfs_project>
-      <vfs_file>/home/trevorj/asvat/misc/trials/u_address_model/u_co_array_address_model.adb</vfs_file>
-    </file_marker>
-    <file_marker current="true" column=" 1" line=" 9" >
+    <file_marker current="true" column=" 19" line=" 18" >
       <vfs_project>/home/trevorj/asvat/misc/trials/u_address_model/default.gpr</vfs_project>
       <vfs_file>/home/trevorj/asvat/misc/trials/u_address_model/u_co_array_address_model.adb</vfs_file>
     </file_marker>

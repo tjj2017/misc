@@ -41,10 +41,12 @@ procedure Array_Param is
                                 Dim : Integer;
                                 F, L, Len : out Integer) is
    begin
-      pragma Assert (AA (Dim, Dim, 1) = 1);
-      for I in AA'Range (3) loop
-         pragma Assert (AA (Dim, Dim, I) = I - AA'First (3) + 1);
-      end loop;
+      if Dim = 1 then
+         pragma Assert (AA (Dim, Dim, 1) = 1);
+         for I in AA'Range (3) loop
+            pragma Assert (AA (Dim, Dim, I) = I - AA'First (3) + 1);
+         end loop;
+      end if;
       case Dim is
       when 1 =>
          F := AA'First (1);

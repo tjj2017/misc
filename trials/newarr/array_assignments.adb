@@ -209,5 +209,4 @@ begin
    end loop;
 
    pragma Assert (U12 (U12'First) = 1);
-
 end Array_Assignments;
