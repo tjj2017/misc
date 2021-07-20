@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <Locations >
-  <Project>
-    <vfs_file>/home/trevorj/asvat/misc/trials/u_address_model/default.gpr</vfs_file>
+  <Project >
     <file_marker column=" 4" line=" 12" >
       <vfs_project>/home/trevorj/asvat/misc/trials/u_address_model/default.gpr</vfs_project>
       <vfs_file>/home/trevorj/asvat/misc/trials/u_address_model/u_array_address_model.adb</vfs_file>
