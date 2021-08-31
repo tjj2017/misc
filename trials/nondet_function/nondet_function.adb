@@ -204,5 +204,5 @@ procedure Nondet_Function is
    for I in Index loop
       pragma Assert (Var_Rec.D (I) in My_Sub_Int);
    end loop;
-
+   null;
 end Nondet_Function;

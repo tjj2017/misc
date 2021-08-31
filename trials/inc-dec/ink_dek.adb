@@ -5,7 +5,7 @@ procedure Ink_Dek is
    Z : Integer := 0;
    Count : Integer := 0;
 begin
-   while Z /= How_Many loop
+   while Count /= How_Many loop
       Inker.Inc (Z);
       Count := Count + 1;
    end loop;
