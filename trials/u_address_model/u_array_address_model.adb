@@ -73,4 +73,5 @@ begin
      (V_C'Address =
        Constrained_Address_To_Access_Conversions.To_Address
          (Constrained_Address_To_Access_Conversions.Object_Pointer (PV_C)));
+   null;
 end U_Array_Address_Model;
