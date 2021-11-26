@@ -14,31 +14,31 @@ procedure Multi_Applications is
       return V;
    end Inc_RR;
 
-
    X : Integer := 1;
    Y : aliased R := (1, 1);
 begin
---     X := Inc (X);
---     pragma Assert (X = 2);
---     X := Inc (X);
---     pragma Assert (X = 3);
+   X := Inc (X);
+   pragma Assert (X = 2);
+   X := Inc (X);
+   pragma Assert (X = 3);
 
---     X := Inc (X) + Inc (X + 1);
---     pragma Assert (X = 9);
+   X := Inc (X) + Inc (X + 1);
+   pragma Assert (X = 9);
 
---     X := X + Inc (Inc (X));
---     pragma Assert (X = 4);
+   X := X + Inc (Inc (X));
+   pragma Assert (X = 20);
 
---     pragma Assert (X + Inc (X) + Inc (X) = 5);
---     X := Inc_R (Y).A;
---     pragma Assert (X = 2);
+   pragma Assert (X + Inc (X) + Inc (X) = 62);
+   X := Inc_R (Y).A;
+   pragma Assert (X = 2);
 
---     X := Inc (Inc_R (Y).B);
---     pragma Assert (X = 3);
+   X := Inc (Inc_R (Y).B);
+   pragma Assert (X = 3);
 
---     X := Inc_R ((2, 3)).B;
---     pragma Assert (X = 4);
+   X := Inc_R ((2, 3)).B;
+   pragma Assert (X = 4);
 
    X := Inc_RR (Y'Access).A;
    pragma Assert (X = 2);
+   null;
 end Multi_Applications;

@@ -1,4 +1,3 @@
-
 --  Example borrowed from https://en.wikibooks.org/wiki/Ada_Programming/Types/record
 procedure Variant_Record is
 
@@ -25,17 +24,16 @@ procedure Variant_Record is
 
    type Acc_VR is access all Constrained_VR;
 
---     Mutable_Traffic_Light   : Variant_Record;
---   Immutable_Traffic_Light : Variant_Record (Option => Yellow);
---     V_Con : aliased Constrained_VR;
---     Acc_TL : Acc_VR := V_Con'Access;
+   Mutable_Traffic_Light   : Constrained_VR;
+   Immutable_Traffic_Light : Variant_Record (Option => Yellow);
+   V_Con : aliased Constrained_VR;
+   Acc_TL : Acc_VR := V_Con'Access;
    St : A;
 begin
---     Mutable_Traffic_Light   := (Option => Yellow,
---  			       Location => 54,
---  			       Timeout => 5);
---     pragma Assert (Immutable_Traffic_Light.Timeout = 1);
---   Acc_TL.Whatever := 1;
---   pragma Assert (Acc_TL.Whatever = 1);
-   null;
+   Mutable_Traffic_Light   := (Option => Yellow,
+			       Location => 54,
+			       Timeout => 5);
+   pragma Assert (Immutable_Traffic_Light.Timeout = 1);
+ Acc_TL.Whatever := 1;
+ pragma Assert (Acc_TL.Whatever = 1);
 end Variant_Record;

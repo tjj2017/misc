@@ -1,0 +1,2 @@
+single_externel_own_pragma.ads:1:09: warning: file name does not match unit name, should be "single_external_own_pragma.ads"
+single_externel_own_pragma.ads:2:11: warning: unrecognized pragma "Classic_Own"
