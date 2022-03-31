@@ -1,8 +1,7 @@
 package Mixed_Aspect_Pragma
-with Classic_Initializes => ((V)),
-     Classic_Pre => True
+with Classic_Own => ((Plain => V))
 is
-   pragma Classic_Own ((Plain => V));
+   pragma Classic_Initializes ((V));
    V : Integer;
 private
    PV : Integer;
