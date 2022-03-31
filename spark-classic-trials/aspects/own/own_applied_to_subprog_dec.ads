@@ -1,2 +1,2 @@
 procedure Own_Applied_To_Subprog_Dec
-  with Pre => True;
+  with Classic_Own => ((Plain => V));

@@ -58,5 +58,4 @@ is
    V : Integer;
 private
    PV : Integer;
-end Own_Aspect_19
-;
+end Own_Aspect_19;

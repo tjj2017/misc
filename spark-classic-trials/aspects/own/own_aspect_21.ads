@@ -1,3 +1,4 @@
+with Ada.Interrupts;
 package Own_Aspect_21
 --  1 --# own V;
 --  with Classic_Own => (((Plain => V)))
@@ -65,7 +66,15 @@ with Classic_Own => (((Plain => Buttons) with Own_Type => PT,
                                    Reset_Clock => Reset_Button),
                      Priority => Tuning.User_Priority))
 is
+   type PT is (Junk);
    V : Integer;
+   package Tuning is
+      User_Priority : Integer;
+   end Tuning;
 private
+   Start_Button : Ada.Interrupts.Interrupt_ID;
    PV : Integer;
+   procedure Start_Clock;
+   procedure Stop_Clock;
+   procedure Reset_Clock;
 end Own_Aspect_21;
