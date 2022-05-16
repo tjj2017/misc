@@ -1,4 +1,4 @@
---  with A_Named_Number.Child;
+with A_Named_Number;
 package Own_Aspect_16
 --  1 --# own V;
 --  with Classic_Own => (((Plain => V)))
@@ -41,7 +41,7 @@ package Own_Aspect_16
 with Classic_Own =>
   (((External_In => EI, Plain => V, External_Out => OP,
      Plain => State, Plain => PV, Protected_In => PI) with
-   Own_Type => Abstract_Type, Integrity => N, Suspendable => True))
+   Own_Type => Abstract_Type, Integrity => A_Named_Number.N, Suspendable => True))
 --  17 --# own V, PV : Integer; State : Abstract_Type;
 --  with Classic_Own => (((Plain => V, Plain => PV) with Own_Type => Integer),
 --                       ((Plain => State) with Own_Type => Abstract_Type))
@@ -58,6 +58,7 @@ with Classic_Own =>
 is
   pragma Elaborate_Body;
    V : Integer;
+   N1 : constant := A_Named_Number.N;
    N : constant := 4;
 private
    PV : Integer;
