@@ -55,6 +55,7 @@ with Classic_Own =>
 --  with Classic_Own =>
 --    (((Plain => V, Plain => State), (Plain => PV, External_In => IP)))
 is
+   type Abstract_Type is new Integer;
    V : Integer;
 private
    PV : Integer;
