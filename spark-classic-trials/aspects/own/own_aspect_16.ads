@@ -41,7 +41,8 @@ package Own_Aspect_16
 with Classic_Own =>
   (((External_In => EI, Plain => V, External_Out => OP,
      Plain => State, Plain => PV, Protected_In => PI) with
-   Own_Type => My_Type, Integrity => A_Named_Number.Child.N1 + 6, Suspendable => True))
+   Own_Type => My_Type,
+   Integrity => A_Named_Number.N, Suspendable => True), (Plain => Junk))
 --  17 --# own V, PV : Integer; State : Abstract_Type;
 --  with Classic_Own => (((Plain => V, Plain => PV) with Own_Type => Integer),
 --                       ((Plain => State) with Own_Type => Abstract_Type))
