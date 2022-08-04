@@ -6,7 +6,7 @@ with Abstract_State => In_Progress,
      Initializes => In_Progress,
      Initial_Condition => not Building_List
 is
-   type Node_List is limited private;
+   type Node_List is private;
 
    function Building_List return Boolean
    --  --# global In_Progress;
@@ -45,6 +45,9 @@ is
    with Global => (Input => SPARK_Classic.Symbols.List_Store.Store);
 
 private
-   type Node_List is range Table_Index'First .. Table_Index'Last;
+   type Node_List is
+      record
+         Root : Table_Index;
+      end record;
 
 end SPARK_Classic.Symbols.Node_Lists;

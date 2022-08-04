@@ -10,23 +10,15 @@ private
    --  if implemented, node list opitimisations.
    --  For convenience, the range of Node_Id's is used.
 
-   type Table_Index is range Types.Node_Low_Bound .. Types.Node_High_Bound;
+   type Extended_Table_Index is range
+     Types.Node_Low_Bound .. Types.Node_High_Bound;
 
-   No_Index : constant Table_Index := Table_Index'First;
+   No_Index : constant Extended_Table_Index := Extended_Table_Index'First;
 
-  type Store_Node is
-      record
-         Level : Natural;
-         Left  : Table_Index;
-         Right : Table_Index;
-         Value : Types.Node_Id;
-      end record;
+   subtype Table_Index is Extended_Table_Index range
+     Extended_Table_Index'Succ (Extended_Table_Index'First) ..
+     Extended_Table_Index'Last;
 
-   Null_Node : constant Store_Node := Store_Node'
-     (Level => 0,
-      Left  => No_Index,
-      Right => No_Index,
-      Value => Types.Empty);
 
 --     --  Initial size of node lists table;
 --     List_Store_Initial_Size : constant := 1_200;
