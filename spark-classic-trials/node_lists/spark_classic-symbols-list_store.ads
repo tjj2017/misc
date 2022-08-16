@@ -23,7 +23,7 @@ is
    --  --# global in out Store;
      with Global => (In_Out => Store);
 
-   function Get_Item (Index : Table_Index) return Store_Node
+   function Item (Index : Table_Index) return Store_Node
    --  --# global in Store;
    with Global => (Input => Store);
 

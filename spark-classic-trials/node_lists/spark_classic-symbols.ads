@@ -19,10 +19,4 @@ private
      Extended_Table_Index'Succ (Extended_Table_Index'First) ..
      Extended_Table_Index'Last;
 
-
---     --  Initial size of node lists table;
---     List_Store_Initial_Size : constant := 1_200;
---     --  Growth rate.
---     List_Store_Increment    : constant := 100;
-
 end SPARK_Classic.Symbols;

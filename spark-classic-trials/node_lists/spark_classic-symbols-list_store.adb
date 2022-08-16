@@ -3,6 +3,9 @@ package body SPARK_Classic.Symbols.List_Store
 with Refined_State => (Store => (Store_Table,
                                  List_Table.Empty_Table_Array,
                                  List_Table.Empty_Table_Ptr))
+  --  --# own Store is Store_Table,
+  --  --#     List_Table.Empty_Table_Array,
+  --  --#     List_Table.Empty_Table_Ptr;
 is
    --  Initial size of node lists table;
    List_Store_Initial_Size : constant := 1_200;
@@ -31,6 +34,19 @@ is
    end Append;
    pragma Inline (Append);
 
+   --------------
+   -- Item --
+   --------------
+
+  function Item (Index : Table_Index) return Store_Node
+   --  --# global in Store_Table;
+   with Refined_Global => (Input => Store_Table)
+   is
+   begin
+        return  Store_Table.Table (Index);
+   end Item;
+   pragma Inline (Item);
+
    ----------
    -- Last --
    ----------
@@ -56,18 +72,5 @@ is
       List_Table.Set_Item (Store_Table, N_List, Item);
    end Set_Item;
    pragma Inline (Set_Item);
-
-   --------------
-   -- Get_Item --
-   --------------
-
-  function Get_Item (Index : Table_Index) return Store_Node
-   --  --# global in Store_Table;
-   with Refined_Global => (Input => Store_Table)
-   is
-   begin
-        return  Store_Table.Table (Index);
-   end Get_Item;
-   pragma Inline (Get_Item);
 
 end SPARK_Classic.Symbols.List_Store;
