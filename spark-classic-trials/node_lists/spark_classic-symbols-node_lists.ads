@@ -8,7 +8,7 @@ with Abstract_State => In_Progress,
 is
    type Node_List is private;
 
-   Null_Node_List : constant Node_list;
+   type Enumerator is limited private;
 
    function Building_List return Boolean
    --  --# global In_Progress;
@@ -44,7 +44,15 @@ is
 
    function Is_Present (N : Types.Node_Id; List : Node_List) return Boolean
    --  --# global in List_Store.Store;
-   with Global => (Input => List_Store.Store);
+     with Global => (Input => List_Store.Store);
+
+   function New_Enumerator (N_List : Node_List
+   --  --# global List_Store.Store;
+     with Global => List_Store.Store;
+
+   function Next (E : Enumerator) return Types.Node_Id
+   -- --#  global List_Store.Store;
+   with Global => List_Store.Store;
 
 private
    type Node_List is
@@ -52,6 +60,18 @@ private
          Root : Table_Index;
       end record;
 
-   Null_Node_List : constant Node_List := Node_List'(Root => No_Index);
+   type Stack is array (Positive range <>) of Table_Index;
 
+   type Index_Stack (Size : Positive) is
+      record
+         Contents : Stack (1 .. Size);
+         Top      : Natural;
+      end record;
+
+   type Enumerator is
+      record
+         Root    : Node_List;
+         Index   : Table_Index;
+         Visited :
+      end record;
 end SPARK_Classic.Symbols.Node_Lists;
