@@ -1,3 +1,4 @@
+pragma SPARK_Mode;
 with GNAT.Dynamic_Tables;
 private package SPARK_Classic.Stacks is
    --  A generic package providing a a stack type for

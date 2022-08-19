@@ -1,3 +1,4 @@
+pragma SPARK_Mode;
 package body SPARK_Classic.Stacks is
 
    -----------
@@ -49,9 +50,11 @@ package body SPARK_Classic.Stacks is
         (Value : Element_Type;
          S : in out Stack_Type)
       is
+         Contents : Dynamic_Stack.Table_Type renames S.Contents.Table
+           (Dynamic_Stack.First .. Dynamic_Stack.Last (S.Contents));
       begin
          S.Count := S.Count + 1;
-         S.Contents.Table (S.Count) := Value;
+         Contents (S.Count) := Value;
       end Push;
 
       ---------
@@ -62,8 +65,10 @@ package body SPARK_Classic.Stacks is
         (Value : out Element_Type;
          S : in out Stack_Type)
       is
+         Contents : Dynamic_Stack.Table_Type renames S.Contents.Table
+           (Dynamic_Stack.First .. Dynamic_Stack.Last (S.Contents));
       begin
-         Value := S.Contents.Table (S.Count);
+         Value := Contents (S.Count);
          S.Count := S.Count - 1;
       end Pop;
 
@@ -75,8 +80,10 @@ package body SPARK_Classic.Stacks is
         (S : Stack_Type)
          return Element_Type
       is
+         Contents : Dynamic_Stack.Table_Type renames S.Contents.Table
+           (Dynamic_Stack.First .. Dynamic_Stack.Last (S.Contents));
       begin
-         return S.Contents.Table (S.Count);
+         return Contents (S.Count);
       end Top;
 
       -----------------
@@ -88,8 +95,10 @@ package body SPARK_Classic.Stacks is
          S : Stack_Type)
          return Element_Type
       is
+         Contents : Dynamic_Stack.Table_Type renames S.Contents.Table
+           (Dynamic_Stack.First .. Dynamic_Stack.Last (S.Contents));
       begin
-         return S.Contents.Table (Pred_Num + 1);
+         return Contents (Pred_Num + 1);
       end Predecessor;
 
    end Stack;
