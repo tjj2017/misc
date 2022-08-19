@@ -41,8 +41,7 @@ private package SPARK_Classic.Stacks is
          Table_Index_Type     => Positive,
          Table_Low_Bound      => 1,
          Table_Initial        => 32,
-         Table_Increment      => 100,
-         Release_Threshold    =>  0);
+         Table_Increment      => 100);
 
       type Stack_Type is
          record
