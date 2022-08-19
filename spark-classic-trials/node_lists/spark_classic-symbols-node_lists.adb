@@ -3,6 +3,7 @@ use type Types.Node_Id;
 package body SPARK_Classic.Symbols.Node_Lists
   with Refined_State => (In_Progress => In_Progress_Flag)
 is
+
    --  In_Progress : Boolean := False;
    In_Progress_Flag : Boolean := False;
 
@@ -268,18 +269,69 @@ is
    function New_Enumerator (N_List : Node_List) return Types.Node_Id is
    begin
       return Enumerator'
-        (Root  => N_List,
-         Index => N_List.Root);
+        (Root    => N_List.Root,
+         Index   => N_List.Root,
+         Visited => Dynamic_Stack.New_Stack,
+         Dir     => Left);
    end New_Enumerator;
 
    function Next (E : Enumerator) return Types.Node_Id is
-      Next_Node : constant List_Store.Store_Node :=
-        List_Store.Item ( E.Index);
       Result : Types.Node_Id;
    begin
-      if  then
+      if E.Index = No_Index then
          Result := Types.Empty;
+      elsif E.Dir = Left then
+         Traverse_Left : declare
+            Current_Index : Table_Index := E.Index;
+            Current_Node  : List_Store.Store_Node;
+         begin
+            --  First travese the tree down the left children unti a leaf
+            --  is found.
+           while Current_Node.Left /= No_Index loop
+               Current_Node  :=
+                 List_Store.Current_Item (Current_Index);
+               Dynamic_Stack.Push (Current_Index, E.Visited);
+               Current_Index := Current_Node.Left;
+            end loop;
+            --  A leaf has been reached; The Current_Node contains
+            --  the required value.
+            Result := Current_Node.Value;
+            --  The Enumerator index for the next call of Next is now at the
+            --  top of the stack pop it off ready for the next call and
+            --  set the Enumerator direction to Right to process the
+            --  the right child (if it exists) of the current node.
+            Dynamic_Stack.Pop (E.Index, E.Visited);
+            E.Dir := Right;
+         end Traverse_Left;
       else
+         Right_Traversal : declare
+            Current_Index : Table_Index := E.Index;
+            Current_Node  : List_Store.Store_Node;
+         begin
+
+
+
+            Current_Index := Store_Node.Item (Current_Index).Right;
+
+            --  Next has to be primed for the next call.
+            while Current_Index = No_Index and then
+              not Dynamic_Stack.Is_Empty (E.Visited)
+            loop
+               Current_Node :=
+            --  Traverse back up the tree until a node with a right child
+            --  is found.
+            --  If the right child of the Current_Node is not No_Index then
+            --  the index for the next call of Next is the right child
+            --  of the Current_Node otherwise
+
+
+List_Store.Item (E.Index) = No_Index then
+         Result := List_Store.Item (E.Index);
+
+         if Dynamic_Stack.Is_Empty (E.Visited) then
+            Result := Types.Empty;
+         else
+            Dynamic_Stack.Pop (Pred, E.Visited)
 
    -- --#  global List_Store.Store;
    with Global => List_Store.Store;

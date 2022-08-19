@@ -1,4 +1,5 @@
-with SPARK_Classic.Symbols.List_Store;
+with SPARK_Classic.Symbols.List_Store,
+     SPARK_Classic.Stacks;
 private package SPARK_Classic.Symbols.Node_Lists
 --  --# own In_Progress;
 --  --# initializes In_Progress;
@@ -46,7 +47,7 @@ is
    --  --# global in List_Store.Store;
      with Global => (Input => List_Store.Store);
 
-   function New_Enumerator (N_List : Node_List
+   function New_Enumerator (N_List : Node_List) return Enumerator
    --  --# global List_Store.Store;
      with Global => List_Store.Store;
 
@@ -60,18 +61,16 @@ private
          Root : Table_Index;
       end record;
 
-   type Stack is array (Positive range <>) of Table_Index;
+   type Direction is (Left, Right);
 
-   type Index_Stack (Size : Positive) is
-      record
-         Contents : Stack (1 .. Size);
-         Top      : Natural;
-      end record;
+   package Dynamic_Stack is new SPARK_Classic.Stacks.Stack
+     (Element_Type => List_Store.Store_Node);
 
    type Enumerator is
       record
          Root    : Node_List;
          Index   : Table_Index;
-         Visited :
+         Visited : Dynamic_Stack.Stack_Type;
+         Dir     : Direction;
       end record;
 end SPARK_Classic.Symbols.Node_Lists;
