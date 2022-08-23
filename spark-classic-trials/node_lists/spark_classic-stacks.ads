@@ -25,11 +25,11 @@ private package SPARK_Classic.Stacks is
         with Pre  => not Is_Empty (S),
              Post => Count (S) = Count (S)'Old - 1;
       --  --# pre not Is_Empty (S);
-      --  --# post Count (S) = Count (S)'Old;
+      --  --# post Count (S) = Count (S)'Old - 1;
 
       function Top (S : Stack_Type) return Element_Type
         with Pre => not Is_Empty (S);
-      --  --# pre  no Is_Empty (S);
+      --  --# pre  not Is_Empty (S);
 
       function Predecessor (Pred_Num : Nearly_Natural; S : Stack_Type)
                             return Element_Type
