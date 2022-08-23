@@ -38,6 +38,7 @@ package body SPARK_Classic.Stacks is
          Result : Stack_Type;
       begin
          Dynamic_Stack.Init (Result.Contents);
+         pragma Assert (Dynamic_Stack.First = 1);
          Result.Count := 0;
          return Result;
       end New_Stack;
@@ -50,11 +51,13 @@ package body SPARK_Classic.Stacks is
         (Value : Element_Type;
          S : in out Stack_Type)
       is
-         Contents : Dynamic_Stack.Table_Type renames S.Contents.Table
-           (Dynamic_Stack.First .. Dynamic_Stack.Last (S.Contents));
       begin
          S.Count := S.Count + 1;
-         Contents (S.Count) := Value;
+         --  Use Set_Item as the stack may have to be extends
+         Dynamic_Stack.Set_Item
+           (T     => S.Contents,
+            Index => S.Count,
+            Item  => Value);
       end Push;
 
       ---------
@@ -65,10 +68,8 @@ package body SPARK_Classic.Stacks is
         (Value : out Element_Type;
          S : in out Stack_Type)
       is
-         Contents : Dynamic_Stack.Table_Type renames S.Contents.Table
-           (Dynamic_Stack.First .. Dynamic_Stack.Last (S.Contents));
       begin
-         Value := Contents (S.Count);
+         Value := S.Contents.Table (S.Count);
          S.Count := S.Count - 1;
       end Pop;
 
@@ -80,10 +81,8 @@ package body SPARK_Classic.Stacks is
         (S : Stack_Type)
          return Element_Type
       is
-         Contents : Dynamic_Stack.Table_Type renames S.Contents.Table
-           (Dynamic_Stack.First .. Dynamic_Stack.Last (S.Contents));
       begin
-         return Contents (S.Count);
+         return S.Contents.Table (S.Count);
       end Top;
 
       -----------------
@@ -95,10 +94,8 @@ package body SPARK_Classic.Stacks is
          S : Stack_Type)
          return Element_Type
       is
-         Contents : Dynamic_Stack.Table_Type renames S.Contents.Table
-           (Dynamic_Stack.First .. Dynamic_Stack.Last (S.Contents));
       begin
-         return Contents (Pred_Num + 1);
+         return S.Contents.Table (S.Count - Pred_Num);
       end Predecessor;
 
    end Stack;

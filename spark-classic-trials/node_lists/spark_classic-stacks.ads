@@ -36,7 +36,6 @@ private package SPARK_Classic.Stacks is
         with Pre => Pred_Num < Count (S);
       --  --# pre Pred_Num < Count (S);
    private
-      --  --# hide Stack;
       package Dynamic_Stack is new GNAT.Dynamic_Tables
         (Table_Component_Type => Element_Type,
          Table_Index_Type     => Positive,

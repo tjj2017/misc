@@ -280,11 +280,18 @@ is
    begin
       if E.Index = No_Index then
          Result := Types.Empty;
-      elsif E.Dir = Left then
-         Traverse_Left : declare
+      else
+         Traverse_Tree : declare
             Current_Index : Table_Index := E.Index;
-            Current_Node  : List_Store.Store_Node;
+            Current_Node  : List_Store.Store_Node :=
+              List_Store.Item (Current_Index);
          begin
+            if Dir = Right then
+               if Current_Node.Right = No Index then
+                  Result := Current_Node.Value;
+                  Dynamic_Stack.Pop (S.Index);
+               else
+                  Dir := Left;
             --  First travese the tree down the left children unti a leaf
             --  is found.
            while Current_Node.Left /= No_Index loop
