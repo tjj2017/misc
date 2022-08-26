@@ -7,15 +7,15 @@ package body SPARK_Classic.Trees is
 
    package body Tree is
 
-      --------------
-      -- Is_Valid --
-      --------------
+      -------------
+      -- In_Tree --
+      -------------
 
-      function Is_Valid (N : Tree_Node) return Boolean is
+      function In_Tree (T : Tree_Type; N : Tree_Node) return Boolean is
       begin
-        return  N /= Empty_Node;
-      end Is_Valid;
-      pragma Inline (Is_Valid);
+        return  N /= Empty_Node and then N <=  Dynamic_Tree.Last (T.The_Tree);
+      end In_Tree;
+      pragma Inline (In_Tree);
 
       --------------
       -- Present  --
@@ -36,7 +36,6 @@ package body SPARK_Classic.Trees is
          Result : Tree_Type;
       begin
          Dynamic_Tree.Init (Result.The_Tree);
-         Result.T_Node := Empty_Node;
          return Result;
       end New_Tree;
 
@@ -172,9 +171,11 @@ package body SPARK_Classic.Trees is
 
       procedure Clear (T : in out Tree_Type; N : Tree_Node) is
       begin
-         Dynamic_Tree.Set_Last
-           (T       => T.The_Tree,
-            New_Val => N);
+         if In_Tree (T, N) then
+            Dynamic_Tree.Set_Last
+              (T       => T.The_Tree,
+               New_Val => N - 1);
+         end if;
       end Clear;
 
    end Tree;

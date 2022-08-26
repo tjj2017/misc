@@ -1,91 +1,129 @@
 with Types;
 use type Types.Node_Id;
 package body SPARK_Classic.Symbols.Node_Lists
-  with Refined_State => (In_Progress => In_Progress_Flag)
+   with Refined_State => (Store => (Tree_Store, In_Progress))
+   --  --# own Store is Tree_Store, In_Progress;
 is
+   type Stack is array (Positive range <>) of A_Tree.Tree_Node;
 
-   --  In_Progress : Boolean := False;
-   In_Progress_Flag : Boolean := False;
+   Tree_Store  : A_Tree.Tree_Type;
+   In_Progress : Boolean;
 
-   Left  : constant Boolean := False;
-   Right : constant Boolean := True;
+   Take_Left  : constant Boolean := False;
+   Take_Right : constant Boolean := True;
+
+   procedure Initialize_Store is
+   begin
+      Tree_Store  := A_Tree.New_Tree;
+      In_Progress := False;
+   end Initialize_Store;
 
    function New_Node (N : Types.Node_Id; Level : Positive)
-                      return List_Store.Store_Node is
-     (List_Store.Store_Node'
-        (Level => Level,
-         Left  => No_Index,
-         Right => No_Index,
-         Value => N));
+                      return A_Tree.Tree_Node
+   is
+      New_Tree_Node : A_Tree.Tree_Node;
+   begin
+      A_Tree.Add_Node
+        (T => Tree_Store,
+         N => New_Tree_Node,
+         V => N);
+      return New_Tree_Node;
+   end New_Node;
 
-   function Get_Child (Is_Right : Boolean; Node : List_Store.Store_Node)
-                       return Table_Index is
-     (if Is_Right then Node.Right else Node.Left);
+   function Get_Child (Is_Right : Boolean; Node : A_Tree.Tree_Node)
+                       return A_Tree.Tree_Node
+   with Global => Tree_Store;
+
+   function Get_Child (Is_Right : Boolean; Node : A_Tree.Tree_Node)
+                       return A_Tree.Tree_Node
+   --  --# global Tree_Store;
+   is
+      Result : A_Tree.Tree_Node;
+   begin
+      if Is_Right then
+         Result := A_Tree.Right (Tree_Store, Node);
+      else
+         Result := A_Tree.Left (Tree_Store, Node);
+      end if;
+      return Result;
+   end Get_Child;
    pragma Inline (Get_Child);
 
    procedure Set_Branch (Is_Right : Boolean;
-                         Node     : in out List_Store.Store_Node;
-                         Index    : Table_Index);
+                         Node     : A_Tree.Tree_Node;
+                         New_Node : A_Tree.Tree_Node)
+   with Global => (In_Out => Tree_Store);
 
    procedure Set_Branch (Is_Right : Boolean;
-                         Node     : in out List_Store.Store_Node;
-                         Index    : Table_Index) is
+                         Node     : A_Tree.Tree_Node;
+                         New_Node : A_Tree.Tree_Node)
+   --  --# global Tree_Store;
+   is
    begin
       if Is_Right then
-         Node.Right := Index;
+         A_Tree.Set_Right
+           (T      => Tree_Store,
+            N      => Node,
+            Branch => New_Node);
       else
-         Node.Left := Index;
+         A_Tree.Set_Left
+           (T      => Tree_Store,
+            N      => Node,
+            Branch => New_Node);
       end if;
 
    end Set_Branch;
    pragma Inline (Set_Branch);
 
-   procedure Skew (Root : in out Table_Index)
-     --  --# global in out List_Store.Store;
-     with Global => (In_Out => List_Store.Store);
+   procedure Skew (Root : in out A_Tree.Tree_Node)
+     with Global => (In_Out => Tree_Store);
 
-   procedure Skew (Root : in out Table_Index) is
-      Root_Node : List_Store.Store_Node :=
-        List_Store.Item (Root);
-      Left_Child_Index : constant Table_Index := Root_Node.Left;
-      Left_Child_Node : List_Store.Store_Node :=
-        List_Store.Item (Left_Child_Index);
+   procedure Skew (Root : in out A_Tree.Tree_Node)
+   --  --# global in out Tree_Store;
+   is
+      Left_Child : constant A_Tree.Tree_Node :=
+        A_Tree.Left (Tree_Store, Root);
    begin
       --  No action is performed if the levels of the root and left nodes
       --  are not equal.
-      if Left_Child_Node.Level = Root_Node.Level then
+      if A_Tree.Level (Tree_Store, Left_Child) =
+        A_Tree.Level (Tree_Store, Root)
+      then
          --  The left child has the same level as its parent breaking
          --  rule 2 of an Anderson tree. To resolve rotate right at the parent.
          --  That is, the root node left child becomes the right child of
          --  root node left node.  The right child of the root node left child
          --  becomes the root index, and lastly, the index of the root
          --  left child becomes the new root {index}.
-         Root_Node.Left := Left_Child_Node.Right;
-         Left_Child_Node.Right := Root;
-         --  Update the root node and the left child node in the list store.
-         List_Store.Set_Item (Root, Root_Node);
-         List_Store.Set_Item (Left_Child_Index, Left_Child_Node);
+         A_Tree.Set_Left
+           (T      => Tree_Store,
+            N      => Root,
+            Branch => A_Tree.Right (Tree_Store, Left_Child));
+         A_Tree.Set_Right
+           (T      => Tree_Store,
+            N      => Left_Child,
+            Branch => Root);
          --  The root now becomes the left child.
-         Root := Left_Child_Index;
+         Root := Left_Child;
       end if;
    end Skew;
 
-   procedure Split (Root : in out Table_Index)
-     --  --# global in out List_Store.Store;
-     with Global => (In_Out => List_Store.Store);
+   procedure Split (Root : in out A_Tree.Tree_Node)
+     with Global => (In_Out => Tree_Store);
 
-   procedure Split (Root : in out Table_Index) is
-      Root_Node : List_Store.Store_Node :=
-        List_Store.Item (Root);
-      Right_Child_Index : constant Table_Index := Root_Node.Right;
-      Right_Child_Node : List_Store.Store_Node :=
-        List_Store.Item (Right_Child_Index);
-      Right_Right_Child_Node : List_Store.Store_Node :=
-        List_Store.Item (Right_Child_Node.Right);
+   procedure Split (Root : in out A_Tree.Tree_Node)
+    --  --# global in out Tree_Store;
+   is
+      Right_Child : constant A_Tree.Tree_Node :=
+        A_Tree.Right (Tree_Store, Root);
+      Right_Right_Child : A_Tree.Tree_Node :=
+        A_Tree.Right (Tree_Store, Right_Child);
    begin
       --  No action is taken if there are not two consecutive right children
       -- with the same level
-      if Right_Right_Child_Node.Level = Root_Node.Level then
+      if A_Tree.Level (Tree_Store, Right_Right_Child) =
+        A_Tree.Level (Tree_Store, Root)
+      then
          --  There are two consecutive right children with the same level
          --  Breaking rule 3 of an Anderson tree.
          --  To resolve rotate left and increment the level of the parent.
@@ -94,15 +132,19 @@ is
          --  right child of the root becomes the root
          --  the right child of the root becomes the new root and its level
          --  is incremented.
-
-         Root_Node.Right := Right_Child_Node.Left;
-         Right_Child_Node.Left := Root;
-         Right_Child_Node.Level := Right_Child_Node.Level + 1;
-         --  Update the root node and right child node in the list store.
-         List_Store.Set_Item (Root, Root_Node);
-         List_Store.Set_Item (Right_Child_Index, Right_Child_Node);
+         A_Tree.Set_Right
+           (T      => Tree_Store,
+            N      => Root,
+            Branch => A_Tree.Left (Tree_Store, Right_Child));
+         A_Tree.Set_Left
+           (T      => Tree_Store,
+            N      => Right_Child,
+            Branch => Root);
          --  The root noe becomes the right child.
-         Root := Right_Child_Index;
+         Root := Right_Child;
+         --  Increment the level of the new root.
+         A_Tree.Set_Level (Tree_Store, Root,
+                           A_Tree.Level (Tree_Store, Root) + 1);
       end if;
    end Split;
 
@@ -112,10 +154,10 @@ is
    -------------------
 
    function Building_List return Boolean
-     with Refined_Global => In_Progress_Flag
+     with Refined_Global => In_Progress
    is
    begin
-      return In_Progress_Flag;
+      return In_Progress;
    end Building_List;
    pragma Inline (Building_List);
 
@@ -126,8 +168,8 @@ is
    procedure New_List (List : out Node_List)
    is
    begin
-      In_Progress_Flag := True;
-      List := Null_Node_List;
+      In_Progress := True;
+      List.Root := A_Tree.Empty_Node;
    end New_List;
 
    ------------
@@ -136,35 +178,36 @@ is
 
    procedure Insert (N : Types.Node_Id; List : in out Node_List)
    is
+      New_Node : A_Tree.Tree_Node;
    begin
-      if List.Root = No_Index then
+      if List.Root = A_Tree.Empty_Node then
          --  First node of list - Enter a new node with level 1 into the store
-         List_Store.Append (New_Node (N     => N,
-                                   Level => 1));
+         A_Tree.Add_Node
+           (T => Tree_Store,
+            N => New_Node,
+            V => N);
          --  The new node is the root of the new list
-         List.Root := List_Store.Last;
+         List.Root := New_Node;
       else
          Do_Insert : declare
-            --  The Current_Index is initially set to the root of the tree.
-            Current_Root  : Table_Index := List.Root;
-            --  The Current_Node is a copy of the Store_Node at
-            --  the Current_Index
-            Current_Node  : List_Store.Store_Node :=
-              List_Store.Item (Current_Root);
+            Root_Level    : constant Natural :=
+              A_Tree.Level (Tree_Store, List.Root);
+            --  The Current_Root is initially set to the root of the tree.
+            Current_Root  : A_Tree.Tree_Node := List.Root;
             --  A stack to record visited nodes.
             --  A adding a new node does not count as visiting that node.
             --  A new node will always be leaf and does not need to be
             --  processed when working back up the tree.
             --  Hence, a stack depth equal to the Current_Root leve should
             --  always be sufficient.
-            Visited       : Stack (1 .. Current_Node.Level);
+            Visited       : Stack (1 .. Root_Level);
             Top           : Natural := 0;
-            Top_Index     : Table_Index;
+            Top_Node      : A_Tree.Tree_Node;
             --  Direction: Left = False, Right = True
             Dir           : Boolean;
 
             --  A Child index of the current node.
-            Child         : Table_Index;
+            Child         : A_Tree.Tree_Node;
          begin
             --  Search the binary tree to locate an appropriate leaf to
             --  place the value of N.
@@ -176,24 +219,25 @@ is
 
                --  Take the right branch if the vale of N is greater (or equal)
                --  to the Current_Node Value, otherwise take the left branch.
-               Dir := Current_Node.Value < N;
-               Child := Get_Child (Dir, Current_Node);
+               Dir := A_Tree.Value (Tree_Store, Current_Root) < N;
+               Child := Get_Child (Dir, Current_Root);
 
-               exit when Child = No_Index;
+               exit when Child = A_Tree.Empty_Node;
 
-               --  Traverse the tree: the Current_Index is set to one of its
+               --  Traverse the tree: the Current_Root is set to one of its
                --  children.
                Current_Root := Child;
-               Current_Node := List_Store.Item (Current_Root);
             end loop;
 
             --  A leaf node has been reached in the search.
             --  Add a new child node to extend the tree
-            List_Store.Append (New_Node (N     => N,
-                                         Level => 1));
+            A_Tree.Add_Node
+              (T => Tree_Store,
+               N => Child,
+               V => N);
             Set_Branch (Is_Right => Dir,
-                        Node     => Current_Node,
-                        Index    => List_Store.Last);
+                        Node     => Current_Root,
+                        New_Node => Child);
 
             --  Now rebalance the tree by working back up through the visited
             --  node indices on the stack, Up.
@@ -201,8 +245,8 @@ is
                --  Make the Current_Root equal to the the index at the top of
                --  the stack and the Current_Node equal to the node selected
                --  by the Current_Root.
-               Top_Index := Visited (Stack_Top);
-               Current_Root := Top_Index;
+               Top_Node := Visited (Stack_Top);
+               Current_Root := Top_Node;
 
                --  Perform the Anderson Tree Skew and Split operations on
                --  the Current_Root.  The node which is the Current_Root
@@ -212,7 +256,7 @@ is
                Split (Current_Root);
 
                --  Check if the value of the Current_Root has changed.
-               if Current_Root /= Top_Index and then Stack_Top /= 1 then
+               if Current_Root /= Top_Node and then Stack_Top /= 1 then
                   --  The value of the Current_Root
                   --  has changed and the stack will have a
                   --  direct ancestor of the Current_Root in Visited (Top - 1).
@@ -220,23 +264,22 @@ is
                   --  has to be patched up to contain the new value of
                   --  Current_Root as its child.
                   --  As the value of the Current_Root may have changed
-                  Patch_Ancestor_Node :
+                  Patch_Ancestor :
                   declare
-                     Ancestor_Index  : constant Table_Index :=
+                     Direct_Ancestor  : constant A_Tree.Tree_Node :=
                        Visited (Stack_Top - 1);
-                     Direct_Ancestor : List_Store.Store_Node :=
-                       List_Store.Item (Ancestor_Index);
                   begin
                      --  This boolean expression determines which branch of
                      --  the direct ancestor has the original root index
                      --  as its child.
                      --  False => Left, True => Right.
-                     Dir := Direct_Ancestor.Left = Top_Index;
+                     Dir :=
+                       A_Tree.Left (Tree_Store, Direct_Ancestor) = Top_Node;
                      Set_Branch
                        (Is_Right => Dir,
                         Node     => Direct_Ancestor,
-                        Index    => Ancestor_Index);
-                  end Patch_Ancestor_Node;
+                        New_Node => Current_Root);
+                  end Patch_Ancestor;
                end if;
              end loop;
 
@@ -253,7 +296,7 @@ is
    procedure Save_List (List : in out Node_List)
    is
    begin
-      In_Progress_Flag := False;
+      In_Progress := False;
    end Save_List;
 
    -----------------
@@ -266,11 +309,11 @@ is
       return False;
    end Is_Present;
 
-   function New_Enumerator (N_List : Node_List) return Types.Node_Id is
+   function New_Enumerator (N_List : Node_List) return Enumerator is
    begin
       return Enumerator'
-        (Root    => N_List.Root,
-         Index   => N_List.Root,
+        (Root    => N_List,
+         Place   => N_List.Root,
          Visited => Dynamic_Stack.New_Stack,
          Dir     => Left);
    end New_Enumerator;
@@ -278,68 +321,72 @@ is
    function Next (E : Enumerator) return Types.Node_Id is
       Result : Types.Node_Id;
    begin
-      if E.Index = No_Index then
-         Result := Types.Empty;
-      else
-         Traverse_Tree : declare
-            Current_Index : Table_Index := E.Index;
-            Current_Node  : List_Store.Store_Node :=
-              List_Store.Item (Current_Index);
-         begin
-            if Dir = Right then
-               if Current_Node.Right = No Index then
-                  Result := Current_Node.Value;
-                  Dynamic_Stack.Pop (S.Index);
-               else
-                  Dir := Left;
-            --  First travese the tree down the left children unti a leaf
-            --  is found.
-           while Current_Node.Left /= No_Index loop
-               Current_Node  :=
-                 List_Store.Current_Item (Current_Index);
-               Dynamic_Stack.Push (Current_Index, E.Visited);
-               Current_Index := Current_Node.Left;
-            end loop;
-            --  A leaf has been reached; The Current_Node contains
-            --  the required value.
-            Result := Current_Node.Value;
-            --  The Enumerator index for the next call of Next is now at the
-            --  top of the stack pop it off ready for the next call and
-            --  set the Enumerator direction to Right to process the
-            --  the right child (if it exists) of the current node.
-            Dynamic_Stack.Pop (E.Index, E.Visited);
-            E.Dir := Right;
-         end Traverse_Left;
-      else
-         Right_Traversal : declare
-            Current_Index : Table_Index := E.Index;
-            Current_Node  : List_Store.Store_Node;
-         begin
-
-
-
-            Current_Index := Store_Node.Item (Current_Index).Right;
-
-            --  Next has to be primed for the next call.
-            while Current_Index = No_Index and then
-              not Dynamic_Stack.Is_Empty (E.Visited)
-            loop
-               Current_Node :=
-            --  Traverse back up the tree until a node with a right child
-            --  is found.
-            --  If the right child of the Current_Node is not No_Index then
-            --  the index for the next call of Next is the right child
-            --  of the Current_Node otherwise
-
-
-List_Store.Item (E.Index) = No_Index then
-         Result := List_Store.Item (E.Index);
-
-         if Dynamic_Stack.Is_Empty (E.Visited) then
-            Result := Types.Empty;
-         else
-            Dynamic_Stack.Pop (Pred, E.Visited)
-
-   -- --#  global List_Store.Store;
-   with Global => List_Store.Store;
+      return Types.Empty;
+   end Next;
+--        if not Present (E.Place) then
+--           Result := Types.Empty;
+--        else
+--           Traverse_Tree : declare
+--              Current_Index : Table_Index;
+--              Current_Node  : List_Store.Store_Node :=
+--                List_Store.Item (Current_Index);
+--           begin
+--              if Dir = Right then
+--                 if not A_Tree.Present (Current_Node.Right) then
+--                    Result := Current_Node.Value;
+--                    Dynamic_Stack.Pop (S.Index);
+--                 else
+--                    Dir := Left;
+--                 end if;
+--              end if;
+--              --  First travese the tree down the left children unti a leaf
+--              --  is found.
+--             while Current_Node.Left /= No_Index loop
+--                 Current_Node  :=
+--                   List_Store.Current_Item (Current_Index);
+--                 Dynamic_Stack.Push (Current_Index, E.Visited);
+--                 Current_Index := Current_Node.Left;
+--              end loop;
+--              --  A leaf has been reached; The Current_Node contains
+--              --  the required value.
+--              Result := Current_Node.Value;
+--              --  The Enumerator index for the next call of Next is now at the
+--              --  top of the stack pop it off ready for the next call and
+--              --  set the Enumerator direction to Right to process the
+--              --  the right child (if it exists) of the current node.
+--              Dynamic_Stack.Pop (E.Index, E.Visited);
+--              E.Dir := Right;
+--           end Traverse_Tree;
+--        else
+--           Right_Traversal : declare
+--              Current_Index : Table_Index := E.Index;
+--              Current_Node  : List_Store.Store_Node;
+--           begin
+--
+--
+--
+--              Current_Index := Store_Node.Item (Current_Index).Right;
+--
+--              --  Next has to be primed for the next call.
+--              while Current_Index = No_Index and then
+--                not Dynamic_Stack.Is_Empty (E.Visited)
+--              loop
+--                 Current_Node :=
+--              --  Traverse back up the tree until a node with a right child
+--              --  is found.
+--              --  If the right child of the Current_Node is not No_Index then
+--              --  the index for the next call of Next is the right child
+--              --  of the Current_Node otherwise
+--
+--
+--  List_Store.Item (E.Index) = No_Index then
+--           Result := List_Store.Item (E.Index);
+--
+--           if Dynamic_Stack.Is_Empty (E.Visited) then
+--              Result := Types.Empty;
+--           else
+--              Dynamic_Stack.Pop (Pred, E.Visited)
+--
+--     -- --#  global List_Store.Store;
+--     with Global => List_Store.Store;
 end SPARK_Classic.Symbols.Node_Lists;
