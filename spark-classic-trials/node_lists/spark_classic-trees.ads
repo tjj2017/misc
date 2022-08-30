@@ -8,7 +8,7 @@ private package SPARK_Classic.Trees is
       Empty_Node : constant Tree_Node;
 
       function In_Tree  (T : Tree_Type; N : Tree_Node) return Boolean;
-      function Present  (N : Tree_Node) return Boolean;
+      function Present  (T : Tree_Type; N : Tree_Node) return Boolean;
 
       function New_Tree return Tree_Type;
 
