@@ -134,7 +134,7 @@ package body SPARK_Classic.Symbols.Node_Tree is
    is
       Node : constant Actual_Node := Actual_Node'
         (Value => V,
-         Level => 0,
+         Level => 1,
          Left  => Empty_Node,
          Right => Empty_Node);
    begin

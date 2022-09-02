@@ -1,12 +1,14 @@
 with SPARK_Classic.Symbols.Node_Tree,
      SPARK_Classic.Symbols.Node_Stacks;
-private package SPARK_Classic.Symbols.Nodes
+use type SPARK_Classic.Symbols.Node_Tree.Tree_Node;
+--  --# acquire Types;
+package SPARK_Classic.Symbols.Nodes
 --  --# own Store;
 with Abstract_State => Store
 is
    type Node_List is private;
 
-   type Enumerator is limited private;
+   type Enumerator is private;
 
    procedure Initialize_Store
      with Global => (Output => Store),
@@ -16,10 +18,12 @@ is
    --  --# global Store;
    with Global => Store;
 
+   function Empty_List (N_List : Node_List) return Boolean;
+
    procedure New_List (List : out Node_List)
    --  --# global in out Store;
    --  --# pre not Building_List;
-   --  --# post Building_List;
+   --  --# post Building_List and Empty_List (N_List);
    with Global => (In_Out => Store),
         Pre => not Building_List,
         Post => Building_List;
@@ -27,7 +31,7 @@ is
    procedure Insert (N : Types.Node_Id; List : in out Node_List)
    --  --# global in out Store;
    --  --# pre Building_List;
-   --  --# post Building_List;
+   --  --# post Building_List and not Empty_List (N_List);
    with Global => (In_Out => Store),
         Pre => Building_List,
         Post => Building_List;
@@ -44,18 +48,26 @@ is
    --  --# global in Store;
      with Global => (Input => Store);
 
-   function New_Enumerator (N_List : Node_List) return Enumerator
-   --  --# global in Store;
+   function Tree_Depth (N_List : Node_List) return Natural
+   --  -- global in Store;
      with Global => (Input => Store);
 
-   function Next (E : Enumerator) return Types.Node_Id
+   function New_Enumerator (N_List : Node_List) return Enumerator
+   --  --# global in Store;
+   --  --# pre not Empty_List (N_List);
+     with Global => (Input => Store),
+          Pre    => not Empty_List (N_List);
+
+   procedure Next (E : in out Enumerator; Next_Value: out Types.Node_Id)
    -- --#  global in Store;
    with Global => (Input => Store);
 
 private
    type Node_List is
       record
-         Root : Node_Tree.Tree_Node;
+         Root    : Node_Tree.Tree_Node;
+         --  A stack to record visited nodes when inserting a new node.
+         Visited : Node_Stacks.Stack_Type;
       end record;
 
    type Direction is (Left, Right);
@@ -63,8 +75,6 @@ private
    type Enumerator is
       record
          Root    : Node_List;
-         Place   : Node_Tree.Tree_Node;
          Visited : Node_Stacks.Stack_Type;
-         Dir     : Direction;
       end record;
 end SPARK_Classic.Symbols.Nodes;

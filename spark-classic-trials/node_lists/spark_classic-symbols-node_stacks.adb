@@ -16,7 +16,7 @@ package body SPARK_Classic.Symbols.Node_Stacks is
 
    function Is_Empty (S : Stack_Type) return Boolean is
    begin
-      return Count (S) = 0;
+      return S.Count = 0;
    end Is_Empty;
    pragma Inline (Is_Empty);
 
@@ -37,6 +37,7 @@ package body SPARK_Classic.Symbols.Node_Stacks is
 
    procedure Push (S : in out Stack_Type; Value : Element_Type) is
    begin
+      S.Count := S.Count + 1;
       --  Use Set_Item as the stack may have to be extends
       Dynamic_Stack.Set_Item
         (T     => S.Contents,

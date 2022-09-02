@@ -1,7 +1,7 @@
-with Types,
+with SPARK_Classic.Symbols.Node_Tree,
      GNAT.Dynamic_Tables;
-private package SPARK_Classic.Symbols.Node_Stacks is
-   subtype Element_Type is Types.Node_Id;
+package SPARK_Classic.Symbols.Node_Stacks is
+   subtype Element_Type is Node_Tree.Tree_Node;
 
    type Stack_Type is tagged private;
    subtype Nearly_Natural is Natural range 0 .. Natural'Last - 1;

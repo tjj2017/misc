@@ -1,6 +1,6 @@
 with Types,
      GNAT.Dynamic_Tables;
-private package SPARK_Classic.Symbols.Node_Tree is
+package SPARK_Classic.Symbols.Node_Tree is
    subtype Element_Type is Types.Node_Id;
 
    type Tree_Node is private;

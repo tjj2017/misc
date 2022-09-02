@@ -1,9 +1,9 @@
 with Types;
 package SPARK_Classic.Symbols
---  --# own Dictionary;
-with Abstract_State => Dictionary
+--  --  --# own Dictionary;
+--  with Abstract_State => Dictionary
 is
-   pragma Elaborate_Body;
+     pragma Elaborate_Body;
 private
    --  A type for accessing elements of a table.
    --  Used to reference node lists, dependency relations and,
