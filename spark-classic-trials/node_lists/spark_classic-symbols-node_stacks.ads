@@ -15,15 +15,19 @@ package SPARK_Classic.Symbols.Node_Stacks is
    procedure New_Stack (S : out Stack_Type)
      with Post => Is_Empty (S);
 
-   procedure Push ( S : in out Stack_Type; Value : Element_Type)
+   procedure Push (S : in out Stack_Type; Value : Element_Type)
      with Post => Count (S) = Count (S)'Old + 1;
    --  --# post Count (S) = Count (S)'Old + 1;
 
-   procedure Pop  ( S : in out Stack_Type; Value : out Element_Type)
+   procedure Pop  (S : in out Stack_Type; Value : out Element_Type)
      with Pre  => not Is_Empty (S),
      Post => Count (S) = Count (S)'Old - 1;
    --  --# pre not Is_Empty (S);
    --  --# post Count (S) = Count (S)'Old - 1;
+
+   procedure Clear (S : in out Stack_Type)
+     with Post => Is_Empty (S);
+   --  --# post Is_Empty (S);
 
    function Top (S : Stack_Type) return Element_Type
      with Pre => not Is_Empty (S);

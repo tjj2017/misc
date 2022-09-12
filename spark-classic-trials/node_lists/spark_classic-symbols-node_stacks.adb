@@ -57,6 +57,15 @@ package body SPARK_Classic.Symbols.Node_Stacks is
    end Pop;
    pragma Inline (Pop);
 
+   -----------
+   -- Clear --
+   -----------
+
+   procedure Clear (S : in out Stack_Type) is
+   begin
+      S.Count := 0;
+   end Clear;
+
    ---------
    -- Top --
    ---------
