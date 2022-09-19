@@ -78,64 +78,6 @@ is
    end Set_Branch;
    pragma Inline (Set_Branch);
 
-   procedure Find_Next_From_Stack_Top (N : Types.Node_Id;
-                                       List : in out Node_List;
-                                       Found : out Boolean)
-     with Global => (Input => Tree_Store)
-     --  -- # global in Tree_Store
-     --  Traverses the tree from the Tree_Node on the top of the stack.
-     --  If found is true, the top of the List.Visited stack is the Tree_Node
-     --  that references the The Actual_Node in the Tree_Store which
-     --  contains the value of N,
-   is
-      Current_Root  : Node_Tree.Tree_Node;
-      Current_Value : Types.Node_Id;
-
-      --  A Child of the current node.
-      Child         : Node_Tree.Tree_Node;
-      --  Direction: Left = False, Right = True
-      Is_Right      : Boolean;
-   begin
-      --  Assume that a match for node, N, has not been found.
-      Found := False;
-      if not List.Visited.Is_Empty then
-         --  The list is not empty the given node, N, may be present.
-
-         --  The Current_Root is initially set to the top of the stack.
-         Current_Root := List.Visited.Top;
-         --  Search the binary tree to find a matching value or, if none is
-         --  found, locate an appropriate leaf to place the value of N.
-         loop
-            Current_Value := Tree_Store.Value (Current_Root);
-            if Current_Value = N then
-               Found := True;
-            else
-               --  Take the right branch if the value of N is greater
-               --  to the Current_Node Value, otherwise take the left branch.
-               Is_Right := Tree_Store.Value (Current_Root) < N;
-               Child := Get_Child (Is_Right, Current_Root);
-            end if;
-
-            exit when Found or else Child = Node_Tree.Empty_Node;
-
-            --  Traverse the tree: the Current_Root is set to one of its
-            --  children.
-            Current_Root := Child;
-            --  A record of nodes visited is held in the Visited stack.
-            List.Visited.Push (Current_Root);
-         end loop;
-         --  The List.Visited stack will not be empty.
-         --  if Found is True, the Tre_Store contains an Actual_Node with the
-         --  value N.  The Tree_Node on the top of the List.Visted
-         --  stack references this Actual_Node.
-         --  If Found is False, the Tree_Store does not contain an Actual_Node
-         --  with the value N. The Tree_Node at the top of List.Visited stack
-         --  will contain the Tree_Node which will be the Parent of a
-         --  Tree_Node referencing an Actual_Node containing N if it were to
-         --  be added into the Tree_Store.
-      end if;
-   end Find_From_Stack_Top;
-
    procedure Find (N : Types.Node_Id; List : in out Node_List;
                    Found : out Boolean)
      with Global => (Input => Tree_Store)
@@ -496,7 +438,6 @@ is
        --  A Child of the Current Node.
       Child         : Node_Tree.Tree_Node;
    begin
-      Find (N, List, Node_Id_Found);
       if List.Visited.Is_Empty then
          --  The stack is empty and so the list is empty, there cannot be
          --  a duplicate.  Node_Id_Found is False.
@@ -509,6 +450,7 @@ is
          List.Root := New_Node;
          Inserted := True;
       else
+         Find (N, List, Node_Id_Found);
          if Node_Id_Found then
             --  The Node_Id, N, is already in the list, do not add it again.
             Inserted := False;
@@ -549,7 +491,6 @@ is
       Child         : Node_Tree.Tree_Node;
       Node_Id_Found : Boolean;
    begin
-      Find (N, List, Node_Id_Found);
       if List.Visited.Is_Empty then
          --  The stack is empty and so the list is empty.
           --  First node of list - Enter a new node with level 1 into the store
@@ -559,6 +500,7 @@ is
          --  The new node is the root of the new list
          List.Root := New_Node;
       else
+         Find (N, List, Node_Id_Found);
          --  There may be multiple occurences of the value of the Node_Id, N.
          --  The deepest one in the tree must be found as this will be a leaf
          while Node_Id_Found loop
@@ -678,5 +620,6 @@ is
          Next_Value := Types.Empty;
       end if;
    end Next;
-end SPARK_Classic.Symbols.Nodes;
+
+   end SPARK_Classic.Symbols.Nodes;
 
