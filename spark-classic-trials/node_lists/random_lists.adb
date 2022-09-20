@@ -30,7 +30,7 @@ procedure Random_Lists is
    The_Nodes    : Node_Array;
    Enum         : SPARK_Classic.Symbols.Nodes.Enumerator;
    Next         : Types.Node_Id;
---     Inserted     : Boolean;
+   Inserted     : Boolean;
 
    function Is_Duplicate (N : Types.Node_Id; A : Node_Array; Len : Natural)
                           return Boolean
@@ -59,12 +59,12 @@ begin
                 (Random_Gen) * Max_Node_1)) + 1;
       for J in Node_Index range 1 .. Random_Index loop
          The_Nodes (J) := Random_Node;
-         SPARK_Classic.Symbols.Nodes.Insert_Allow_Duplicates
-           (Random_Node, The_Lists (I).List);
---           if not Inserted then
---              Put_Line ("Duplicate - not inserted: " &
---                          Types.Node_Id'Image (Random_Node));
---           end if;
+         SPARK_Classic.Symbols.Nodes.Insert
+           (Random_Node, The_Lists (I).List, Inserted);
+         if not Inserted then
+            Put_Line ("Duplicate - not inserted: " &
+                        Types.Node_Id'Image (Random_Node));
+         end if;
          loop
             Random_Node := Types.Node_Id
               (Float'Rounding
@@ -87,8 +87,9 @@ begin
       New_Line;
 
       Put_Line ("The sorted list:");
-      for K in Node_Index range 1 .. Random_Index loop
+      loop
          SPARK_Classic.Symbols.Nodes.Next (Enum, Next);
+         exit when Next = Types.Empty;
          Put (Types.Node_Id'Image (Next) & " ");
       end loop;
       New_Line;

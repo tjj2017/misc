@@ -28,32 +28,15 @@ is
         Pre => not Building_List,
         Post => Building_List;
 
-   procedure Insert (N : Types.Node_Id; List : in out Node_List)
+   procedure Insert (N : Types.Node_Id;
+                     List : in out Node_List;
+                     Inserted : out Boolean)
    --  --# global in out Store;
    --  --# pre Building_List;
    --  --# post Building_List and not Empty_List (N_List);
    with Global => (In_Out => Store),
         Pre => Building_List,
         Post => Building_List;
-
-   procedure Insert_No_Duplicates (N : Types.Node_Id;
-                                   List : in out Node_List;
-                                   Inserted : out Boolean)
-   with Global => (In_Out => Store),
-        Pre => Building_List,
-        Post => Building_List;
-   --  --# global in out Store;
-   --  --# pre Building_List;
-   --  --# post Building_List and not Empty_List (N_List);
-
-   procedure Insert_Allow_Duplicates (N : Types.Node_Id;
-                                   List : in out Node_List)
-   with Global => (In_Out => Store),
-        Pre => Building_List,
-        Post => Building_List;
-   --  --# global in out Store;
-   --  --# pre Building_List;
-   --  --# post Building_List and not Empty_List (N_List);
 
    procedure Save_List (List : in out Node_List)
    --  --# global in out Store;

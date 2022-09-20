@@ -15,7 +15,8 @@ is
    begin
       Put_Line ("Stack contents - " & Integer'Image (S.count) & " elements");
       for I in Natural range 0 .. S.Count - 1 loop
-         Put (Types.Node_Id'Image (Tree_Store.Value (S.Predecessor (I))) & " ");
+         Put (Types.Node_Id'Image (Tree_Store.Key (S.Predecessor (I)))
+              & " ");
       end loop;
       New_Line;
    end Print_Stack;
@@ -32,7 +33,7 @@ is
      --  --# global in out Tree_Store;
    is
    begin
-      Tree_Store.Add_Node (The_Node, N);
+      Tree_Store.Add_Node (The_Node, Node_Tree.Element_Type'(Key => N));
    end New_Node;
 
    function Get_Child (Is_Right : Boolean; Node : Node_Tree.Tree_Node)
@@ -111,13 +112,13 @@ is
          loop
             --  A record of nodes visited is held in the Visited stack.
             List.Visited.Push (Current_Root);
-            Current_Value := Tree_Store.Value (Current_Root);
+            Current_Value := Tree_Store.Key (Current_Root);
             if Current_Value = N then
                Found := True;
             else
                --  Take the right branch if the value of N is greater
                --  to the Current_Node Value, otherwise take the left branch.
-               Is_Right := Tree_Store.Value (Current_Root) < N;
+               Is_Right := Tree_Store.Key (Current_Root) < N;
                Child := Get_Child (Is_Right, Current_Root);
             end if;
 
@@ -308,164 +309,58 @@ is
       List.Visited.New_Stack;
    end New_List;
 
-   ------------
-   -- Insert --
-   ------------
+   --------------
+   -- Insert_ --
+   --------------
 
-   procedure Insert (N : Types.Node_Id; List : in out Node_List)
-     with Refined_Global => (In_Out => Tree_Store)
-     --
-   is
-      New_Node : Node_Tree.Tree_Node;
-   begin
-      if List.Root = Node_Tree.Empty_Node then
-         --  First node of list - Enter a new node with level 1 into the store
-         Tree_Store.Add_Node
-           (N => New_Node,
-            V => N);
-         --  The new node is the root of the new list
-         List.Root := New_Node;
-      else
-         Do_Insert : declare
-             --  The Current_Root is initially set to the root of the tree.
-            Current_Root  : Node_Tree.Tree_Node := List.Root;
-            Top_Node      : Node_Tree.Tree_Node;
-            --  Direction: Left = False, Right = True
-            Dir           : Boolean;
-
-            --  A Child of the current node.
-            Child         : Node_Tree.Tree_Node;
-            --  The parent of the current node
-            Parent        : Node_Tree.Tree_Node;
-         begin
-            --  Search the binary tree to locate an appropriate leaf to
-            --  place the value of N.
-            loop
-               --  A record of nodes visited is held in the Visited stack.
-               List.Visited.Push (Current_Root);
-
-               --  Take the right branch if the value of N is greater (or equal)
-               --  to the Current_Node Value, otherwise take the left branch.
-               Dir := Tree_Store.Value (Current_Root) < N;
-               Child := Get_Child (Dir, Current_Root);
-
-               exit when Child = Node_Tree.Empty_Node;
-
-               --  Traverse the tree: the Current_Root is set to one of its
-               --  children.
-               Current_Root := Child;
-            end loop;
-
-            --  A leaf node has been reached in the search.
-            --  Add a new child node to extend the tree
-            Tree_Store.Add_Node
-              (N => Child,
-               V => N);
-            Set_Branch (Is_Right => Dir,
-                        Node     => Current_Root,
-                        New_Node => Child);
-
-            --  Now rebalance the tree by working back up through the visited
-            --  node indices on the stack, Up.
-            for Stack_Top in reverse Natural range 1 .. List.Visited.Count loop
-               --  Make the Current_Root equal to the the index at the top of
-               --  the stack and the Current_Node equal to the node selected
-               --  by the Current_Root.
-               List.Visited.Pop (Top_Node);
-               Current_Root := Top_Node;
-
-               if Stack_Top > 1 then
-                  --  There was more than element on the stack - the current
-                  --  stack top is the parent of the Current_Root
-                  --  As the Root has a parent, determine
-                  --  whether the Current_Root is a left or right child of
-                  --  its parent.
-                  Parent := List.Visited.Top;
-                  --  This boolean expression determines which branch of
-                  --  the parent has the the Current_Root as its child.
-                  --  False => Left, True => Right.
-                  --  The value of Dir has to be determined before the
-                  --  call of Skew and Split as these may change the
-                  --  Current_Root.
-               Dir :=
-                 Tree_Store.Right (Parent) = Top_Node;
-               end if;
-
-               --  Perform the Anderson Tree Skew and Split operations on
-               --  the Current_Root.  The node which is the Current_Root
-               --  may be changed by Skew and Split and so the Index contained
-               --  in Current_Root may change.
-               Skew (Current_Root);
-               Split (Current_Root);
-
-               --  Update the parent node to point to its new child.
-               if Current_Root /= Top_Node and then Stack_Top > 1 then
-                  --  The value of the Current_Root
-                  --  may have changed and the stack has the
-                  --  parent of the Current_Root at the top of the
-                  --  visited stack.
-                  --  The branch that has the Current_Root as its child
-                  --  has to be patched up to contain the new value of
-                  --  Current_Root as its child.
-                  --  As the value of the Current_Root may have changed.
-                  Set_Branch
-                    (Is_Right => Dir,
-                     Node     => Parent,
-                     New_Node => Current_Root);
-               end if;
-             end loop;
-
-            --  The root of the tree after inserting a node and rebalancing.
-            List.Root := Current_Root;
-         end Do_Insert;
-      end if;
-   end Insert;
-
-   --------------------------
-   -- Insert_No_Duplicates --
-   --------------------------
-
-   procedure Insert_No_Duplicates (N : Types.Node_Id;
-                                   List : in out Node_List;
-                                   Inserted : out Boolean)
+   procedure Insert (N : Types.Node_Id;
+                     List : in out Node_List;
+                     Inserted : out Boolean)
      with Refined_Global => (In_Out => Tree_Store)
      --  --# global in out Tree_Store;
    is
-      Node_Id_Found : Boolean;
+      Key_Found : Boolean;
       Is_Right      : Boolean;
       New_Node      : Node_Tree.Tree_Node;
       Current_Node  : Node_Tree.Tree_Node;
        --  A Child of the Current Node.
       Child         : Node_Tree.Tree_Node;
    begin
-      if List.Visited.Is_Empty then
-         --  The stack is empty and so the list is empty, there cannot be
-         --  a duplicate.  Node_Id_Found is False.
-         pragma Assert (not Node_Id_Found);
-          --  First node of list - Enter a new node with level 1 into the store
+      if not Tree_Store.Present (List.Root) then
+         --  First node of list - Enter a new node with level 1 into the store
+         Inserted := True;
          Tree_Store.Add_Node
            (N => New_Node,
-            V => N);
+            V => Node_Tree.Element_Type'(Key => N));
          --  The new node is the root of the new list
          List.Root := New_Node;
-         Inserted := True;
       else
-         Find (N, List, Node_Id_Found);
-         if Node_Id_Found then
+         --  Make sure that the list does not already include the key.
+         Find (N, List, Key_Found);
+         if Key_Found then
             --  The Node_Id, N, is already in the list, do not add it again.
             Inserted := False;
+         elsif List.Visited.Is_Empty then
+         --  The stack is empty and so the list is empty, there cannot be
+         --  a duplicate.
+         --  First node of list - Enter a new node with level 1 into the store
+            Inserted := True;
+            Tree_Store.Add_Node
+              (N => New_Node,
+               V => Node_Tree.Element_Type'(Key => N));
+            --  The new node is the root of the new list
+            List.Root := New_Node;
          else
-            --  Add a child to the Node_Id at the top of the stack.
             Inserted := True;
             Current_Node := List.Visited.Top;
             --  A right branch if the value of N is greater (or equal)
             --  to the Top Value, otherwise take the left branch.
-            Is_Right := Tree_Store.Value (Current_Node) < N;
+            Is_Right := Tree_Store.Key (Current_Node) < N;
 
             --  Add a new child node to extend the tree
             Tree_Store.Add_Node
               (N => Child,
-               V => N);
+               V => Node_Tree.Element_Type'(Key => N));
             Set_Branch (Is_Right => Is_Right,
                         Node     => Current_Node,
                         New_Node => Child);
@@ -473,56 +368,7 @@ is
            Rebalance_Tree (List);
          end if;
       end if;
-   end Insert_No_Duplicates;
-
-   -----------------------------
-   -- Insert_Allow_Duplicates --
-   -----------------------------
-
-   procedure Insert_Allow_Duplicates (N : Types.Node_Id;
-                                   List : in out Node_List)
-     with Refined_Global => (In_Out => Tree_Store)
-     --  --# global in out Tree_Store;
-   is
-      Is_Right      : Boolean;
-      New_Node      : Node_Tree.Tree_Node;
-      Current_Node  : Node_Tree.Tree_Node;
-       --  A Child of the Current Node.
-      Child         : Node_Tree.Tree_Node;
-      Node_Id_Found : Boolean;
-   begin
-      if List.Visited.Is_Empty then
-         --  The stack is empty and so the list is empty.
-          --  First node of list - Enter a new node with level 1 into the store
-         Tree_Store.Add_Node
-           (N => New_Node,
-            V => N);
-         --  The new node is the root of the new list
-         List.Root := New_Node;
-      else
-         Find (N, List, Node_Id_Found);
-         --  There may be multiple occurences of the value of the Node_Id, N.
-         --  The deepest one in the tree must be found as this will be a leaf
-         while Node_Id_Found loop
-
-
-         --  Add a child to the Node_Id at the top of the stack.
-         Current_Node := List.Visited.Top;
-         --  A right branch if the value of N is greater (or equal)
-         --  to the Top Value, otherwise take the left branch.
-         Is_Right := Tree_Store.Value (Current_Node) < N;
-
-         --  Add a new child node to extend the tree
-         Tree_Store.Add_Node
-           (N => Child,
-            V => N);
-         Set_Branch (Is_Right => Is_Right,
-                     Node     => Current_Node,
-                     New_Node => Child);
-         -- Now rebalance the tree
-         Rebalance_Tree (List);
-      end if;
-   end Insert_Allow_Duplicates;
+   end Insert;
 
    ---------------
    -- Save_List --
@@ -607,7 +453,7 @@ is
          E.Visited.Pop (Current_Node);
 --           Put_Line ("After Pop " & Types.Node_Id'Image
 --                     (Tree_Store.Value (E.Visited.Top)));
-         Next_Value := Tree_Store.Value (Current_Node);
+         Next_Value := Tree_Store.Key (Current_Node);
          Current_Node := Tree_Store.Right (Current_Node);
          if Current_Node /= Node_Tree.Empty_Node then
             E.Visited.Push (Current_Node);

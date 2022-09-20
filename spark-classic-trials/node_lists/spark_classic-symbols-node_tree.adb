@@ -61,6 +61,17 @@ package body SPARK_Classic.Symbols.Node_Tree is
    end Right;
    pragma Inline (Right);
 
+   ---------
+   -- Key --
+   ---------
+
+   function Key (T : Tree_Type; N : Tree_Node) return Key_Type
+   is
+   begin
+      return T.The_Tree.Table (N).Value.Key;
+   end Key;
+   pragma Inline (Key);
+
    -----------
    -- Value --
    -----------

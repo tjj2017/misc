@@ -1,7 +1,11 @@
 with Types,
      GNAT.Dynamic_Tables;
 package SPARK_Classic.Symbols.Node_Tree is
-   subtype Element_Type is Types.Node_Id;
+   subtype Key_Type is Types.Node_Id;
+   type Element_Type is
+      record
+         Key : Key_Type;
+      end record;
 
    type Tree_Node is private;
    Empty_Node : constant Tree_Node;
@@ -18,6 +22,8 @@ package SPARK_Classic.Symbols.Node_Tree is
    function Left  (T : Tree_Type; N : Tree_Node) return Tree_Node
      with Pre => In_Tree (T, N);
    function Right (T : Tree_Type; N : Tree_Node) return Tree_Node
+     with Pre => In_Tree (T, N);
+   function Key (T : Tree_Type; N : Tree_Node) return Key_Type
      with Pre => In_Tree (T, N);
    function Value (T : Tree_Type; N : Tree_Node) return Element_Type
      with Pre => In_Tree (T, N);
