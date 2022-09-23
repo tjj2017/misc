@@ -2,102 +2,90 @@ pragma SPARK_Mode;
 package body SPARK_Classic.Stacks is
 
    -----------
-   -- Stack --
+   -- Count --
    -----------
 
-   package body Stack is
+   function Count (S : Stack_Type) return Nearly_Natural is
+   begin
+      return S.Count;
+   end Count;
+   pragma Inline (Count);
 
-      -----------
-      -- Count --
-      -----------
+   --------------
+   -- Is_Empty --
+   --------------
 
-      function Count (S : Stack_Type) return Nearly_Natural is
-      begin
-         return S.Count;
-      end Count;
+   function Is_Empty (S : Stack_Type) return Boolean is
+   begin
+      return S.Count = 0;
+   end Is_Empty;
+   pragma Inline (Is_Empty);
 
-      --------------
-      -- Is_Empty --
-      --------------
+   ---------------
+   -- New_Stack --
+   ---------------
 
-      function Is_Empty
-        (S : Stack_Type)
-         return Boolean
-      is
-      begin
-         return Count (S) = 0;
-      end Is_Empty;
+   procedure New_Stack (S : out Stack_Type) is
+   begin
+      Dynamic_Stack.Init (S.Contents);
+      pragma Assert (Dynamic_Stack.First = 1);
+      S.Count := 0;
+   end New_Stack;
 
-      ---------------
-      -- New_Stack --
-      ---------------
+   ----------
+   -- Push --
+   ----------
 
-      function New_Stack
-         return Stack_Type
-      is
-         Result : Stack_Type;
-      begin
-         Dynamic_Stack.Init (Result.Contents);
-         pragma Assert (Dynamic_Stack.First = 1);
-         Result.Count := 0;
-         return Result;
-      end New_Stack;
+   procedure Push (S : in out Stack_Type; Value : Element_Type) is
+   begin
+      S.Count := S.Count + 1;
+      --  Use Set_Item as the stack may have to be extends
+      Dynamic_Stack.Set_Item
+        (T     => S.Contents,
+         Index => S.Count,
+         Item  => Value);
+   end Push;
+   pragma Inline (Push);
 
-      ----------
-      -- Push --
-      ----------
+   ---------
+   -- Pop --
+   ---------
 
-      procedure Push
-        (Value : Element_Type;
-         S : in out Stack_Type)
-      is
-      begin
-         S.Count := S.Count + 1;
-         --  Use Set_Item as the stack may have to be extends
-         Dynamic_Stack.Set_Item
-           (T     => S.Contents,
-            Index => S.Count,
-            Item  => Value);
-      end Push;
+   procedure Pop (S : in out Stack_Type; Value : out Element_Type) is
+   begin
+      Value := S.Contents.Table (S.Count);
+      S.Count := S.Count - 1;
+   end Pop;
+   pragma Inline (Pop);
 
-      ---------
-      -- Pop --
-      ---------
+   ---------
+   -- Top --
+   ---------
 
-      procedure Pop
-        (Value : out Element_Type;
-         S : in out Stack_Type)
-      is
-      begin
-         Value := S.Contents.Table (S.Count);
-         S.Count := S.Count - 1;
-      end Pop;
+   function Top (S : Stack_Type) return Element_Type is
+   begin
+      return S.Contents.Table (S.Count);
+   end Top;
+   pragma Inline (Top);
 
-      ---------
-      -- Top --
-      ---------
+   -----------------
+   -- Predecessor --
+   -----------------
 
-      function Top
-        (S : Stack_Type)
-         return Element_Type
-      is
-      begin
-         return S.Contents.Table (S.Count);
-      end Top;
+   function Predecessor (S : Stack_Type; Pred_Num : Nearly_Natural)
+                         return Element_Type is
+   begin
+      return S.Contents.Table (S.Count - Pred_Num);
+   end Predecessor;
+   pragma Inline (Predecessor);
 
-      -----------------
-      -- Predecessor --
-      -----------------
+   -----------
+   -- Clear --
+   -----------
 
-      function Predecessor
-        (Pred_Num : Nearly_Natural;
-         S : Stack_Type)
-         return Element_Type
-      is
-      begin
-         return S.Contents.Table (S.Count - Pred_Num);
-      end Predecessor;
-
-   end Stack;
+   procedure Clear (S : in out Stack_Type) is
+   begin
+      S.Count := 0;
+   end Clear;
 
 end SPARK_Classic.Stacks;
