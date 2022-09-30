@@ -155,7 +155,7 @@ package body SPARK_Classic.Trees is
                        N : out Tree_Node;
                        Key : Key_Type)
    is
-      Node : constant Actual_Node := Actual_Node'
+      Node : Actual_Node := Actual_Node'
         (Key   => Key,
          Value => Null_Value,
          Level => 1,

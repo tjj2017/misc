@@ -41,7 +41,7 @@ package SPARK_Classic.Trees is
                         Node_Value : Value_Type)
      with Pre => In_Tree (T, N);
    procedure Add_Node  (T : in out Tree_Type; N : out Tree_Node;
-                              Key : Key_Type)
+                        Key : Key_Type)
      with Post => In_Tree (T, N);
 
    procedure Clear (T : in out Tree_Type; N : Tree_Node)

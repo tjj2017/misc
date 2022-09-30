@@ -5,24 +5,29 @@ generic
    type Value_Type is private;
    Null_Value : Value_Type;
 
-   with package Trees is new
-     SPARK_Classic.Trees (Key_Type, Value_Type, Null_Value);
-
 package SPARK_Classic.Atrees is
+   package Trees is new
+     SPARK_Classic.Trees (Key_Type, Value_Type, Null_Value);
+   use type Trees.Tree_Node;
+
    type A_Tree is tagged private;
 
-   function Empty_Tree (Tree : A_Tree) return Boolean;
+   function Empty_Tree (Tree : A_Tree;
+                        Tree_Store : Trees.Tree_Type) return Boolean;
 
-   procedure New_Tree (Tree : out A_Tree)
-     with Post => Empty_Tree (Tree);
-   --  --# post Empty_Tree (Tree);
+   procedure New_Tree (Tree : out A_Tree;
+                      Tree_Store : Trees.Tree_Type)
+     with Post => Empty_Tree (Tree, Tree_Store);
+   --  --# post Empty_Tree (Tree, Tree_Store);
 
    procedure Insert (Tree       : in out A_Tree;
                      Key        : Key_Type;
                      Tree_Store : in out Trees.Tree_Type;
                      Inserted   : out Boolean)
-     with Post => Empty_Tree (Tree) = Inserted or Empty_Tree (Tree'Old);
-   --  --# post Empty_Tree (Tree) = Inserted or Empty_Tree (Tree~);
+     with Post => Empty_Tree (Tree, Tree_Store) = not Inserted and
+                              Empty_Tree (Tree'Old, Tree_Store);
+   --  --# post Empty_Tree (Tree, Tree_Store) = not Inserted and
+   --  --#                  Empty_Tree (Tree~, Tree_Store);
 
    function Is_Present (Tree       : A_Tree;
                         Key        : Key_Type;
@@ -35,11 +40,11 @@ package SPARK_Classic.Atrees is
 
    function New_Enumerator (Tree       : A_Tree;
                             Tree_Store : Trees.Tree_Type) return Enumerator
-     with Pre => not Empty_Tree (Tree);
+     with Pre => not Empty_Tree (Tree, Tree_Store);
 
-   procedure Next_Key (E : in out Enumerator; Key : out Key_Type);
+   procedure Next_Node (E : in out Enumerator; Tree_Store : Trees.Tree_Type;
+                        Node : out Trees.Tree_Node);
 
-   procedure Next_Value (E : in out Enumerator; Value: out Value_Type);
 private
    package Stacks is new SPARK_Classic.Stacks (Trees.Tree_Node);
 
