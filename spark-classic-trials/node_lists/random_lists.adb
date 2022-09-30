@@ -1,6 +1,6 @@
 with Ada.Numerics.Float_Random,
      Types,
-     SPARK_Classic.Symbols.Nodes,
+     SPARK_Classic.Symbols.Node_Trees,
      Ada.Text_IO;
 use Ada.Text_IO;
 use type Types.Node_Id;
@@ -13,7 +13,7 @@ procedure Random_Lists is
    subtype Node_Index is Positive range 1 .. Max_Number_Of_Nodes;
    type Restricted_List is
       record
-         List : SPARK_Classic.Symbols.Nodes.Node_List;
+         List : SPARK_Classic.Symbols.Node_Trees.Node_List;
          Len  : Node_Index;
       end record;
    type Lists is array (List_Index) of Restricted_List;
@@ -28,7 +28,7 @@ procedure Random_Lists is
    Random_Index : Node_Index;
    Random_Node  : Types.Node_Id;
    The_Nodes    : Node_Array;
-   Enum         : SPARK_Classic.Symbols.Nodes.Enumerator;
+   Enum         : SPARK_Classic.Symbols.Node_Trees.Enumerator;
    Next         : Types.Node_Id;
    Inserted     : Boolean;
 
@@ -47,19 +47,19 @@ procedure Random_Lists is
    end Is_Duplicate;
 
 begin
-   SPARK_Classic.Symbols.Nodes.Initialize_Store;
+   SPARK_Classic.Symbols.Node_Trees.Initialize_Store;
    for I in List_Index loop
       Random_Index := Node_Index (Float'Rounding
                                   (Ada.Numerics.Float_Random.Random (Random_Gen) * Max_Nodes_1)) + 1;
       The_Lists (I).Len := Random_Index;
-      SPARK_Classic.Symbols.Nodes.New_List (The_Lists (I).List);
+      SPARK_Classic.Symbols.Node_Trees.New_List (The_Lists (I).List);
       Random_Node := Types.Node_Id
         (Float'Rounding
            (Ada.Numerics.Float_Random.Random
                 (Random_Gen) * Max_Node_1)) + 1;
       for J in Node_Index range 1 .. Random_Index loop
          The_Nodes (J) := Random_Node;
-         SPARK_Classic.Symbols.Nodes.Insert
+         SPARK_Classic.Symbols.Node_Trees.Insert
            (Random_Node, The_Lists (I).List, Inserted);
          if not Inserted then
             Put_Line ("Duplicate - not inserted: " &
@@ -77,8 +77,8 @@ begin
 
       Put_Line ("List number: " & List_Index'Image (I));
       Put_Line ("Depth of tree: " & Integer'Image
-        (SPARK_Classic.Symbols.Nodes.Tree_Depth (The_Lists (I).List)));
-      Enum := SPARK_Classic.Symbols.Nodes.New_Enumerator (The_Lists (I).List);
+        (SPARK_Classic.Symbols.Node_Trees.Tree_Depth (The_Lists (I).List)));
+      Enum := SPARK_Classic.Symbols.Node_Trees.New_Enumerator (The_Lists (I).List);
 
       Put_Line ("The unsorted list:");
       for K in Node_Index range 1 .. Random_Index loop
@@ -88,7 +88,7 @@ begin
 
       Put_Line ("The sorted list:");
       loop
-         SPARK_Classic.Symbols.Nodes.Next (Enum, Next);
+         SPARK_Classic.Symbols.Node_Trees.Next (Enum, Next);
          exit when Next = Types.Empty;
          Put (Types.Node_Id'Image (Next) & " ");
       end loop;

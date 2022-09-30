@@ -1,4 +1,3 @@
-pragma Ada_2012;
 package body SPARK_Classic.Symbols.Node_Trees
 with Refined_State => (Store => (Tree_Store, In_Progress))
 --  --# own Store is Tree_Store, In_Progress;
@@ -25,9 +24,7 @@ is
       return Boolean
    is
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (Standard.True, "Building_List unimplemented");
-      return raise Program_Error with "Unimplemented function Building_List";
+      return In_Progress;
    end Building_List;
 
    ----------------
@@ -36,9 +33,7 @@ is
 
    function Empty_List (List : Node_List) return Boolean is
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (Standard.True, "Empty_List unimplemented");
-      return raise Program_Error with "Unimplemented function Empty_List";
+      return List.Tree.Empty_Tree (Tree_Store);
    end Empty_List;
 
    --------------
@@ -49,9 +44,8 @@ is
      (List : out Node_List)
    is
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (Standard.True, "New_List unimplemented");
-      raise Program_Error with "Unimplemented procedure New_List";
+      List.Tree.New_Tree (Tree_Store);
+      List.Length := 0;
    end New_List;
 
    ------------
@@ -64,9 +58,13 @@ is
       Inserted : out Boolean)
    is
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (Standard.True, "Insert unimplemented");
-      raise Program_Error with "Unimplemented procedure Insert";
+      List.Tree.Insert
+        (Key        => N,
+         Tree_Store => Tree_Store,
+         Inserted   => Inserted);
+      if Inserted then
+         List.Length := List.Length + 1;
+      end if;
    end Insert;
 
    ---------------
@@ -77,9 +75,7 @@ is
      (List : in out Node_List)
    is
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (Standard.True, "Save_List unimplemented");
-      raise Program_Error with "Unimplemented procedure Save_List";
+      In_Progress := False;
    end Save_List;
 
    ----------------
@@ -92,9 +88,7 @@ is
       return Boolean
    is
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (Standard.True, "Is_Present unimplemented");
-      return raise Program_Error with "Unimplemented function Is_Present";
+      return False;
    end Is_Present;
 
    ----------------
@@ -106,9 +100,7 @@ is
       return Natural
    is
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (Standard.True, "Tree_Depth unimplemented");
-      return raise Program_Error with "Unimplemented function Tree_Depth";
+      return N_List.Tree.Tree_Depth (Tree_Store);
    end Tree_Depth;
 
    --------------------
@@ -120,9 +112,10 @@ is
       return Enumerator
    is
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (Standard.True, "New_Enumerator unimplemented");
-      return raise Program_Error with "Unimplemented function New_Enumerator";
+      return Enumerator'
+        (E => Atrees.New_Enumerator
+           (Tree       => N_List.Tree,
+            Tree_Store => Tree_Store));
    end New_Enumerator;
 
    ----------
@@ -133,10 +126,17 @@ is
      (E : in out Enumerator;
       Next_Value: out Types.Node_Id)
    is
+      Next_Node : Atrees.Trees.Tree_Node;
    begin
-      --  Generated stub: replace with real body!
-      pragma Compile_Time_Warning (Standard.True, "Next unimplemented");
-      raise Program_Error with "Unimplemented procedure Next";
+      Atrees.Next_Node
+        (E          => E.E,
+         Tree_Store => Tree_Store,
+         Node       => Next_Node);
+      if Tree_Store.Present (Next_Node) then
+         Next_Value := Tree_Store.Key (Next_Node);
+      else
+         Next_Value := Types.Empty;
+      end if;
    end Next;
 
 end SPARK_Classic.Symbols.Node_Trees;
