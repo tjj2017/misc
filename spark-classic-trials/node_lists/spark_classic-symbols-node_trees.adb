@@ -78,6 +78,22 @@ is
       In_Progress := False;
    end Save_List;
 
+   ---------------
+   -- Are_Equal --
+   ---------------
+
+   function Are_Equal
+     (List_1 : Node_List;
+      List_2 : Node_List)
+      return Boolean
+   is
+   begin
+      return List_1.Tree.Is_Equal
+        (Tree_2       => List_2.Tree,
+         Tree_Store_1 => Tree_Store,
+         Tree_Store_2 => Tree_Store);
+   end Are_Equal;
+
    ----------------
    -- Is_Present --
    ----------------
@@ -88,7 +104,7 @@ is
       return Boolean
    is
    begin
-      return False;
+      return List.Tree.Is_Present (N, Tree_Store);
    end Is_Present;
 
    ----------------
@@ -102,6 +118,14 @@ is
    begin
       return N_List.Tree.Tree_Depth (Tree_Store);
    end Tree_Depth;
+
+   function Count
+     (N_List : Node_list)
+      return Natural
+   is
+   begin
+     return N_List.Tree.Count;
+   end Count;
 
    --------------------
    -- New_Enumerator --
