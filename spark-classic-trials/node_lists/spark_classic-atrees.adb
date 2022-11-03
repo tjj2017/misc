@@ -1,4 +1,3 @@
-with SPARK_Classic.Simple_Stack;
 package body SPARK_Classic.Atrees is
 
    --  Basic Predicate
@@ -295,42 +294,26 @@ package body SPARK_Classic.Atrees is
       Current_Node : Tree_Node :=
         Tree_Store.Left (E.Visited.Top);
    begin
---        Put_Line ("Trace_To_Left_Leaf - initial top: " &
---                    Types.Node_Id'Image (Tree_Store.Value (E.Visited.Top)));
       while Tree_Store.Present (Current_Node) loop
             E.Visited.Push (Current_Node);
             Current_Node := Tree_Store.Left (Current_Node);
       end loop;
    end Trace_To_Left_Leaf;
 
-   procedure Equal_To_Left_Leaf (Tree_Store_1     : Tree_Type;
-                                 Tree_Store_2   : Tree_Type;
-                                 Visited_1      : in out Stacks.Stack;
-                                 Visited_2      : in out Stacks.Stack;
-                                 Equal          : out Boolean);
+   procedure Init_Enumerator (Tree       : A_Tree;
+                              Tree_Store : Tree_Type;
+                              Enum       : out Enumerator);
 
-   procedure Equal_To_Left_Leaf (Tree_Store_1   : Tree_Type;
-                                 Tree_Store_2   : Tree_Type;
-                                 Visited_1      : in out Stacks.Stack;
-                                 Visited_2      : in out Stacks.Stack;
-                                 Equal          : out Boolean)
+   procedure Init_Enumerator (Tree       : A_Tree;
+                              Tree_Store : Tree_Type;
+                              Enum       : out Enumerator)
    is
-      Current_1 : Tree_Node := Visited_1.Top;
-      Current_2 : Tree_Node := Visited_2.Top;
-      Present_1 : Boolean;
    begin
-      loop
-         Equal := Tree_Store_1.Key (Current_1) = Tree_Store_2.Key (Current_2);
-         Current_1 := Tree_Store_1.Left (Current_1);
-         Current_2 := Tree_Store_2.Left (Current_2);
-         Present_1 := Tree_Store_1.Present (Current_1);
-         Equal := Equal and
-           not (Present_1 xor Tree_Store_2.Present (Current_2));
-         exit when not (Equal and Present_1);
-         Visited_1.Push (Current_1);
-         Visited_2.Push (Current_2);
-      end loop;
-   end Equal_To_Left_Leaf;
+      Enum.Root := Tree;
+      Enum.Visited.New_Stack;
+      Enum.Visited.Push (Tree.Root);
+      Trace_To_Left_Leaf (Enum, Tree_Store);
+   end Init_Enumerator;
 
   --------------
    -- New_Tree --
@@ -423,44 +406,31 @@ package body SPARK_Classic.Atrees is
                      Tree_Store_1 : Tree_Type;
                      Tree_Store_2 : Tree_Type) return Boolean
    is
-      Stack_1   : Stacks.Stack;
-      Stack_2   : Stacks.Stack;
+      Enum_1    : Enumerator;
+      Enum_2    : Enumerator;
       Current_1 : Tree_Node;
       Current_2 : Tree_Node;
       Present_1 : Boolean;
+      Present_2 : Boolean;
+      Both_Present : Boolean;
       Equal     : Boolean;
    begin
       Equal := Tree_1.Count = Tree_2.Count;
       if Equal and Tree_1.Count /= 0 then
-         Stack_1.New_Stack;
-         Stack_2.New_Stack;
-         Stack_1.Push (Tree_1.Root);
-         Stack_2.Push (Tree_2.Root);
-         while Equal and not Stack_1.Is_Empty loop
-            Equal_To_Left_Leaf
-              (Tree_Store_1 => Tree_Store_1,
-               Tree_Store_2 => Tree_Store_2,
-               Visited_1    => Stack_1,
-               Visited_2    => Stack_2,
-               Equal        => Equal);
-            if Equal then
-               Stack_1.Pop (Current_1);
-               Stack_2.Pop (Current_2);
-               Current_1 := Tree_Store_1.Right (Current_1);
-               Current_2 := Tree_Store_2.Right (Current_2);
-               Present_1 := Tree_Store_1.Present (Current_1);
-               Equal := not (Present_1 xor Tree_Store_2.Present (Current_2));
-               if Equal and Present_1 then
-                  Stack_1.Push (Current_1);
-                  Stack_2.Push (Current_2);
-                  Equal_To_Left_Leaf
-                    (Tree_Store_1 => Tree_Store_1,
-                     Tree_Store_2 => Tree_Store_2,
-                     Visited_1    => Stack_1,
-                     Visited_2    => Stack_2,
-                     Equal        => Equal);
-               end if;
+         Init_Enumerator (Tree_1, Tree_Store_1, Enum_1);
+         Init_Enumerator (Tree_2, Tree_Store_2, Enum_2);
+         loop
+            Next_Node (Enum_1, Tree_Store_1, Current_1);
+            Next_Node (Enum_2, Tree_Store_2, Current_2);
+            Present_1 := Tree_Store_1.Present (Current_1);
+            Present_2 := Tree_Store_2.Present (Current_2);
+            Both_Present := Present_1 and Present_2;
+            if Both_Present then
+               Equal := Tree_Store_1.Key (Current_1) = Tree_Store_2.Key (Current_2);
+            else
+               Equal := not (Present_1 or Present_2);
             end if;
+            exit when not Equal or else not Both_Present;
          end loop;
       end if;
       return Equal;
@@ -548,5 +518,6 @@ package body SPARK_Classic.Atrees is
          Node := Trees.Empty_Node;
       end if;
    end Next_Node;
+   pragma Inline (Next_Node);
 
 end SPARK_Classic.Atrees;
