@@ -5,12 +5,10 @@ package body SPARK_Classic.Atrees is
    -- Empty_Tree --
    ----------------
 
-   function Empty_Tree (Tree       : A_Tree;
-                        Tree_Store : Tree_Type)
-                        return Boolean
+   function Empty_Tree (Tree : A_Tree) return Boolean
    is
    begin
-      return not Tree_Store.Present (Tree.Root);
+      return Tree.Root = Trees.Empty_Node;
    end Empty_Tree;
 
    --  Local subprograms
@@ -135,7 +133,7 @@ package body SPARK_Classic.Atrees is
             Current_Node := Child;
          end loop;
          --  The Tree.Visited stack will not be empty.
-         --  if Found is True, the Tre_Store contains an Actual_Node with the
+         --  if Found is True, the Tree_Store contains an Actual_Node with the
          --  matching Key.  The Tree_Node on the top of the Tree.Visted
          --  stack references this Actual_Node.
          --  If Found is False, the Tree_Store does not contain an Actual_Node
@@ -319,14 +317,11 @@ package body SPARK_Classic.Atrees is
    -- New_Tree --
    --------------
 
-   procedure New_Tree
-     (Tree       : out A_Tree;
-      Tree_Store : Tree_Type)
+   procedure New_Tree (Tree       : out A_Tree)
    is
    begin
       Tree.Root := Trees.Empty_Node;
       Tree.Count := 0;
-      pragma Assert (not Tree_Store.Present (Tree.Root));
    end New_Tree;
 
    ------------
@@ -397,6 +392,97 @@ package body SPARK_Classic.Atrees is
       end if;
    end Insert;
 
+   -----------------------
+   -- Insert_With_Value --
+   -----------------------
+
+   procedure Insert_With_Value
+     (Tree          : in out A_Tree;
+      Key           : Key_Type;
+      Value         : Value_Type;
+      Tree_Store    : in out Trees.Tree_Type;
+      Inserted      : out Boolean;
+      Value_At_Node : out Value_Type)
+   is
+      Visited       : Stacks.Stack;
+      Key_Found     : Boolean;
+      Is_Right      : Boolean;
+      New_Node      : Trees.Tree_Node;
+      Current_Node  : Trees.Tree_Node;
+       --  A Child of the Current Node.
+      Child         : Trees.Tree_Node;
+   begin
+      if not Tree_Store.Present (Tree.Root) then
+         --  First node of tree - Enter a new node with level 1 into the store
+         Inserted := True;
+         Tree.Count := Tree.Count + 1;
+         Tree_Store.Add_Node
+           (N   => New_Node,
+            Key => Key);
+         Value_At_Node := Value;
+         Tree_Store.Set_Value (New_Node, Value_At_Node);
+         --  The new node is the root of the new tree
+         Tree.Root := New_Node;
+         --  The Visited stack is empty.
+         Visited.Clear;
+      else
+         --  Make sure that the tree does not already include the key.
+         Find (Tree, Key, Key_Found, Tree_Store, Visited);
+         if Key_Found then
+            --  The Key is already in the tree, do not add it again.
+            Inserted := False;
+            --  The node with the key is on the top of the visited stack.
+            --  Get its value.
+            Value_At_Node := Tree_Store.Value (Visited.Top);
+         elsif Visited.Is_Empty then
+         --  The stack is empty and so the tree is empty, there cannot be
+         --  a duplicate key.
+         --  First node of tree - Enter a new node with level 1 into the store
+            Inserted := True;
+            Tree.Count := Tree.Count + 1;
+            Tree_Store.Add_Node
+              (N   => New_Node,
+               Key => Key);
+            Value_At_Node := Value;
+            Tree_Store.Set_Value (New_Node, Value_At_Node);
+            --  The new node is the root of the new tree
+            Tree.Root := New_Node;
+         else
+            Inserted := True;
+            Tree.Count := Tree.Count + 1;
+            Current_Node := Visited.Top;
+            --  A right branch if the value of Key is greater (or equal)
+            --  to the Top Value, otherwise take the left branch.
+            Is_Right := Tree_Store.Key (Current_Node) < Key;
+
+            --  Add a new child node to extend the tree
+            Tree_Store.Add_Node
+              (N   => Child,
+               Key => Key);
+            Set_Branch (Is_Right   => Is_Right,
+                        Node       => Current_Node,
+                        New_Node   => Child,
+                        Tree_Store => Tree_Store);
+            Value_At_Node := Value;
+            Tree_Store.Set_Value (Child, Value_At_Node);
+            -- Now rebalance the tree
+           Rebalance_Tree (Tree, Tree_Store, Visited);
+         end if;
+      end if;
+   end Insert_With_Value;
+
+   -----------
+   -- Clear --
+   -----------
+
+   procedure Clear (Tree       : in out A_Tree;
+                    Tree_Store : in out Tree_Type)
+   is
+   begin
+      Tree_Store.Clear (Tree.Root);
+      Tree := Null_A_Tree;
+   end Clear;
+
     -------------
    -- Is_Equal --
    --------------
@@ -464,7 +550,7 @@ package body SPARK_Classic.Atrees is
    is
       Result : Natural;
    begin
-      if Tree.Empty_Tree (Tree_Store) then
+      if Tree.Empty_Tree then
          Result := 0;
       else
          Result := Tree_Store.Level (Tree.Root);

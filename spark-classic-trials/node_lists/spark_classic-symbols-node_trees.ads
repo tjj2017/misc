@@ -1,11 +1,11 @@
+with Types;
 with SPARK_Classic.Atrees;
+use type Types.Node_Id;
 package SPARK_Classic.Symbols.Node_Trees
 with Abstract_State => Store
 --  --# own Store;
 is
    type Node_List is tagged private;
-
-   type Enumerator is private;
 
    procedure Initialize_Store
      with Global => (Output => Store),
@@ -57,6 +57,8 @@ is
 
    function Count (N_list : Node_List) return Natural;
 
+   type Enumerator is private;
+
    function New_Enumerator (N_List : Node_List) return Enumerator
      with Global => (Input => Store),
           Pre    => not Empty_List (N_List);
@@ -97,4 +99,4 @@ private
       E : Atrees.Enumerator;
    end record;
 
-end SPARK_Classic.Symbols.Node_Trees;
+ end SPARK_Classic.Symbols.Node_Trees;

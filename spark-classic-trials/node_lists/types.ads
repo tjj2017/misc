@@ -5,7 +5,7 @@ package Types is
    --  allow a zero test for Empty). Actual tree node subscripts start at 0
    --  since Empty is a legitimate node value.
 
-   Node_High_Bound : constant := 099_999_999;
+   Node_High_Bound : constant := 12;  --  099_999_999;
    --  Maximum number of nodes that can be allocated is 100 million, which
    --  is in practice infinite, and there is no need to check the range.
 
