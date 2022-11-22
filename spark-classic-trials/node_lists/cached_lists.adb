@@ -6,7 +6,7 @@ use Ada.Text_IO;
 use type Types.Node_Id, SPARK_Classic.Symbols.Node_Trees.Node_List;
 procedure Cached_Lists is
    Number_Of_Lists     : constant := 50;
-   Max_Number_Of_Nodes : constant := 10;
+   Max_Number_Of_Nodes : constant := 100;
    Allow_Duplicates    : constant Boolean := False;
 
    subtype List_Index is Positive range 1 .. Number_Of_Lists;
