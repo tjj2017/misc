@@ -6,10 +6,11 @@ package body SPARK_Classic.Bounded_Stacks is
    -----------
 
    function Count (S : Stack) return Stack_Count
-   --# return C => (C = S.Count) and (C = 0 <-> S.Count = 0);
+   --# return C => (C = S.Count) and
+   --#             (C = 0 <-> S.Count = 0);
    is
    begin
-   	  --# assume S.Count < Stack_Count'Last;
+      --# assume S.Count < Stack_Count'Last;
       return S.Count;
    end Count;
    pragma Inline (Count);
@@ -21,11 +22,10 @@ package body SPARK_Classic.Bounded_Stacks is
    function Is_Empty
      (S : Stack)
       return Boolean
+   --# return E => E <-> S.Count = 0;
    is
-   	   Result : Boolean;
    begin
-   	  Result := S.Count = 0;
-      return Result;
+      return Count (S) = 0;
    end Is_Empty;
    pragma Inline (Is_Empty);
 
@@ -106,9 +106,10 @@ package body SPARK_Classic.Bounded_Stacks is
    procedure Clear
      (S : out Stack)
    is
-   	   --# return S.Count = 0;
    begin
       S.Count := 0;
+      --# check Is_Empty (S);
+      --# check Count (S) = 0;
       --# accept Flow, 32, S.Contents, "Setting Count to zero means no contents" &
       --#        Flow, 31, S.Contents, "As above" &
       --#        Flow, 602, S, S.Contents, "As above";
