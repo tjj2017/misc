@@ -1,16 +1,32 @@
 package body SPARK_Classic.Bounded_Stacks is
    --# accept W, 3, "pragma Inline has no semantic effect";
 
+   procedure Refined_Count (S : Stack)
+   --# post for all C in Stack_Count => ((S.Count = C) = (Count (S) = C));
+   is
+      --# hide Refined_Count;
+   begin
+      null;
+   end Refined_Count;
+
+   procedure Refined_Empty (S : Stack)
+   --# post Is_Empty (S) = (S.Count = 0);
+   is
+      --# hide Refined_Empty;
+   begin
+      null;
+   end Refined_Empty;
+
    -----------
    -- Count --
    -----------
 
    function Count (S : Stack) return Stack_Count
    --# return C => (C = S.Count) and
-   --#             (C = 0 <-> S.Count = 0);
+   --#             (for all S_Count in Stack_Count =>
+   --#                ((C = S_Count) = (S.Count = S_Count)));
    is
    begin
-      --# assume S.Count < Stack_Count'Last;
       return S.Count;
    end Count;
    pragma Inline (Count);
@@ -22,10 +38,10 @@ package body SPARK_Classic.Bounded_Stacks is
    function Is_Empty
      (S : Stack)
       return Boolean
-   --# return E => E <-> S.Count = 0;
    is
    begin
-      return Count (S) = 0;
+      Refined_Count (S);
+      return S.Count = 0;
    end Is_Empty;
    pragma Inline (Is_Empty);
 
@@ -38,9 +54,11 @@ package body SPARK_Classic.Bounded_Stacks is
    is
    begin
       S.Count := 0;
-      --# accept Flow, 32, S.Contents, "Setting Count to zero means no contents" &
+      --# accept Flow, 23, S.Contents, "Setting Count to zero means no contents" &
+      --#        Flow, 32, S.Contents, "As above" &
       --#        Flow, 31, S.Contents, "As above" &
       --#        Flow, 602, S, S.Contents, "As above";
+      Refined_Empty (S);
    end New_Stack;
    pragma Inline (New_Stack);
 
@@ -69,6 +87,7 @@ package body SPARK_Classic.Bounded_Stacks is
    begin
       Value := S.Contents (S.Count);
       S.Count := S.Count - 1;
+      --# check S.Count = Count (S~) - 1;
    end Pop;
    pragma Inline (Pop);
 
@@ -108,11 +127,11 @@ package body SPARK_Classic.Bounded_Stacks is
    is
    begin
       S.Count := 0;
-      --# check Is_Empty (S);
-      --# check Count (S) = 0;
-      --# accept Flow, 32, S.Contents, "Setting Count to zero means no contents" &
+      --# accept Flow, 23, S.Contents, "Setting Count to zero means no contents" &
       --#        Flow, 31, S.Contents, "As above" &
+      --#        Flow, 32, S.Contents, "As above" &
       --#        Flow, 602, S, S.Contents, "As above";
+      Refined_Empty (S);
     end Clear;
    pragma Inline (Clear);
 
