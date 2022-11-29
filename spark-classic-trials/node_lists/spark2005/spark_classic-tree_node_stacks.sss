@@ -2,15 +2,17 @@
 --  This file is a shadow to represent the generic
 --  package SPARK_Classic.Bounded_Stacks instantiated with
 --  SPARK_Classic.Node_Id.Tree_Node and Stack_Size 32.
---  generic
---   type Element_Type is private;
---   Stack_Size : Positive;
 with SPARK_Classic.Node_Id_Trees;
 --# inherit SPARK_Classic.Node_Id_Trees;
-package SPARK_Classic.Bounded_Stacks is
-   type Element_Type is record
-      El : Node_Id_Trees.Tree_Node;
-    end record;
+package SPARK_Classic.Tree_Node_Stacks is
+--  Ideally, Node_Id_Trees.Tree_Node would be renamed Element_Type by the
+--  following subtype declaration so as to be consistent with the generic
+--  type naming. Unfortunately, this subtype declaration crashes the
+--  SPARK 2005 Examiner during VC generation.  The easiest way to obviate
+--  the problem is to replacing every instance of Element_Type with
+--  Node_Id_Trees.Tree_Node.  This means that a shadow body is required
+--  with the same replacement rather than using the generic body directly.
+--  subtype Element_Type is Node_Id_Trees.Tree_Node;
       
    Stack_Size : constant Positive := 32;
    
@@ -28,26 +30,26 @@ package SPARK_Classic.Bounded_Stacks is
    --# post Is_Empty (S);
 
    procedure Push (S : in out Stack;
-                   Value : Element_Type);
+                   Value : Node_Id_Trees.Tree_Node);
 --     with Pre => Count (S) < Stack_Size,
 --          Post => Count (S) = Count (S'Old) + 1;
    --# pre  Count (S) < Stack_Size;
    --# post Count (S) = Count (S~) + 1;
 
    procedure Pop  (S : in out Stack;
-                   Value : out Element_Type);
+                   Value : out Node_Id_Trees.Tree_Node);
 --     with Pre  => not Is_Empty (S),
 --     Post => Count (S) = Count (S'Old) - 1;
    --# pre not Is_Empty (S);
    --# post Count (S) = Count (S~) - 1;
 
-   function Top (S : Stack) return Element_Type;
+   function Top (S : Stack) return Node_Id_Trees.Tree_Node;
  --    with Pre => not Is_Empty (S);
    --# pre  not Is_Empty (S);
 
    function Predecessor (S : Stack;
                          Pred_Num : Stack_Count)
-                         return Element_Type;
+                         return Node_Id_Trees.Tree_Node;
 --     with Pre => Pred_Num < Count (S);
    --# pre Pred_Num < Count (S);
 
@@ -56,7 +58,7 @@ package SPARK_Classic.Bounded_Stacks is
    --# post Is_Empty (S);
 private
    subtype Stack_Index is Stack_Count range 1 .. Stack_Count'Last;
-   type Stack_Contents is array (Stack_Index) of Element_Type;
+   type Stack_Contents is array (Stack_Index) of Node_Id_Trees.Tree_Node;
 
    type Stack is tagged
       record
@@ -64,4 +66,4 @@ private
          Contents : Stack_Contents;
       end record;
 
-end SPARK_Classic.Bounded_Stacks;
+end SPARK_Classic.Tree_Node_Stacks;

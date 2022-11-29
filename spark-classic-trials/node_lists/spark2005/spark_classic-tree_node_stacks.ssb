@@ -1,9 +1,13 @@
-package body SPARK_Classic.Bounded_Stacks is
+--  This file is a shadow of the generic package body of
+--  SPARK_Classic.Bounded_Stacks instantiated with an Element_Type
+--  of Node_Id_Trees.Tree_Node.
+package body SPARK_Classic.Tree_Node_Stacks is
    --# accept W, 3, "pragma Inline has no semantic effect";
 
    --  A null procedure to define the relationship between
    --  S.Count and Count (S).
    procedure Refined_Count (S : Stack)
+   --# derives null from S;
    --# post for all C in Stack_Count => ((S.Count = C) = (Count (S) = C));
    is
       --# hide Refined_Count;
@@ -14,6 +18,7 @@ package body SPARK_Classic.Bounded_Stacks is
    --  A null procedure to define the relationship between
    --  S.Count and Eempty (S).
    procedure Refined_Empty (S : Stack)
+   --# derives null from S;
    --# post Is_Empty (S) = (S.Count = 0);
    is
       --# hide Refined_Empty;
@@ -70,7 +75,7 @@ package body SPARK_Classic.Bounded_Stacks is
 
    procedure Push
      (S : in out Stack;
-      Value : Element_Type)
+      Value : Node_Id_Trees.Tree_Node)
    is
    begin
       S.Count := S.Count + 1;
@@ -84,7 +89,7 @@ package body SPARK_Classic.Bounded_Stacks is
 
    procedure Pop
      (S : in out Stack;
-      Value : out Element_Type)
+      Value : out Node_Id_Trees.Tree_Node)
    is
    begin
       Value := S.Contents (S.Count);
@@ -99,7 +104,7 @@ package body SPARK_Classic.Bounded_Stacks is
 
    function Top
      (S : Stack)
-      return Element_Type
+      return Node_Id_Trees.Tree_Node
    is
    begin
       return S.Contents (S.Count);
@@ -113,7 +118,7 @@ package body SPARK_Classic.Bounded_Stacks is
    function Predecessor
      (S : Stack;
       Pred_Num : Stack_Count)
-      return Element_Type
+      return Node_Id_Trees.Tree_Node
    is
    begin
       return S.Contents (S.Count - Pred_Num);
@@ -137,4 +142,4 @@ package body SPARK_Classic.Bounded_Stacks is
     end Clear;
    pragma Inline (Clear);
 
-end SPARK_Classic.Bounded_Stacks;
+end SPARK_Classic.Tree_Node_Stacks;
