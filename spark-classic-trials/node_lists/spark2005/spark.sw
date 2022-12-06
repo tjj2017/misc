@@ -1,1 +1,1 @@
--config=spark_classic -index=spark_classic 
+-config=spark_classic.cfg -index=spark_classic.idx
