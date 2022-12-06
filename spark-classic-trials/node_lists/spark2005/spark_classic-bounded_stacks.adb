@@ -4,6 +4,7 @@ package body SPARK_Classic.Bounded_Stacks is
    --  A null procedure to define the relationship between
    --  S.Count and Count (S).
    procedure Refined_Count (S : Stack)
+   --# derives null from S;
    --# post for all C in Stack_Count => ((S.Count = C) = (Count (S) = C));
    is
       --# hide Refined_Count;
@@ -14,6 +15,7 @@ package body SPARK_Classic.Bounded_Stacks is
    --  A null procedure to define the relationship between
    --  S.Count and Eempty (S).
    procedure Refined_Empty (S : Stack)
+   --# derives null from S;
    --# post Is_Empty (S) = (S.Count = 0);
    is
       --# hide Refined_Empty;
