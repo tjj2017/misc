@@ -1,16 +1,5 @@
--- Generic packages are not supported by SPARK 2005.
---  This file is a shadow to represent the generic
---  package SPARK_Classic.Bounded_Stacks instantiated with
---  SPARK_Classic.Node_Id.Tree_Node and Stack_Size 32.
---  generic
---   type Element_Type is private;
---   Stack_Size : Positive;
-with SPARK_Classic.Node_Id_Trees;
---# inherit SPARK_Classic.Node_Id_Trees;
 package SPARK_Classic.Bounded_Stacks is
-   type Element_Type is record
-      El : Node_Id_Trees.Tree_Node;
-    end record;
+   type Element_Type is private;
       
    Stack_Size : constant Positive := 32;
    
@@ -55,6 +44,8 @@ package SPARK_Classic.Bounded_Stacks is
 --     with Post => Is_Empty (S);
    --# post Is_Empty (S);
 private
+   type Element_Type is range 0 .. Natural'Last;
+   
    subtype Stack_Index is Stack_Count range 1 .. Stack_Count'Last;
    type Stack_Contents is array (Stack_Index) of Element_Type;
 

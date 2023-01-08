@@ -1,5 +1,6 @@
-with GNAT.Dynamic_Tables;
+with SPARK_Classic.Dynamic_Tables;
 generic
+   type Table_Component_Type is private;
    type Key_Type is (<>);
    type Value_Type is private;
    Null_Value : Value_Type;
@@ -61,7 +62,7 @@ private
          Right : Tree_Node;
       end record;
 
-   package Dynamic_Tree is new GNAT.Dynamic_Tables
+   package Dynamic_Tables is new SPARK_Classic.Dynamic_Tables
      (Table_Component_Type => Actual_Node,
       Table_Index_Type     => Valid_Tree_Node,
       Table_Low_Bound      => 1,
@@ -70,7 +71,7 @@ private
 
    type Tree_Type is tagged
       record
-         The_Tree : Dynamic_Tree.Instance;
+         The_Tree : Dynamic_Tables.Table_Type;
       end record;
 
 end SPARK_Classic.Trees;

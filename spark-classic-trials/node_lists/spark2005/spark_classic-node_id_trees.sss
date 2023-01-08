@@ -1,8 +1,3 @@
---  with GNAT.Dynamic_Tables;
---  generic
---   type Key_Type is (<>);
---   type Value_Type is private;
---   Null_Value : Value_Type;
 with Types;
 --# inherit Types;
 package SPARK_Classic.Node_Id_Trees is
@@ -21,50 +16,39 @@ package SPARK_Classic.Node_Id_Trees is
    procedure New_Tree (T : out Tree_Type);
 
    function Level (T : Tree_Type; N : Tree_Node) return Natural;
---     with Pre => In_Tree (T, N);
    --# pre In_Tree (T, N);
    function Left  (T : Tree_Type; N : Tree_Node) return Tree_Node;
---     with Pre => In_Tree (T, N);
    --# pre In_Tree (T, N);
    function Right (T : Tree_Type; N : Tree_Node) return Tree_Node;
---     with Pre => In_Tree (T, N);
    --# pre In_Tree (T, N);
    function Key (T : Tree_Type; N : Tree_Node) return Key_Type;
---     with Pre => In_Tree (T, N);
    --# pre In_Tree (T, N);
    function Value (T : Tree_Type; N : Tree_Node) return Value_Type;
---     with Pre => In_Tree (T, N);
    --# pre In_Tree (T, N);
    procedure Set_Level (T : in out Tree_Type; N : Tree_Node;
                         Node_Level : Natural);
---     with Pre => In_Tree (T, N);
    --# pre In_Tree (T, N);
    procedure Set_Left  (T : in out Tree_Type; N : Tree_Node;
                         Branch : Tree_Node);
---     with Pre => In_Tree (T, N);
    --# pre In_Tree (T, N);
    procedure Set_Right (T : in out Tree_Type; N : Tree_Node;
                         Branch : Tree_Node);
---     with Pre => In_Tree (T, N);
    --# pre In_Tree (T, N);
    procedure Set_Key (T : in out Tree_Type; N : Tree_Node;
                       The_Key : Key_Type);
---     with Pre => In_Tree (T, N);
    procedure Set_Value (T : in out Tree_Type; N : Tree_Node;
                         Node_Value : Value_Type);
---     with Pre => In_Tree (T, N);
+   --# pre In_Tree (T, N);
    procedure Add_Node  (T : in out Tree_Type; N : out Tree_Node;
                         The_Key : Key_Type);
---     with Post => In_Tree (T, N);
    --# post In_Tree (T, N);
    procedure Clear (T : in out Tree_Type; N : Tree_Node);
---     with Post => not In_Tree (T, N);
   --# post not In_Tree (T, N);
 private
    --# hide SPARK_Classic.Node_Id_Trees;
 
-   type Value_Type is null record;
-   Null_Value : constant Value_Type := (null record);
+   type Value_Type is (nullrecord;
+   Null_Value : constant Value_Type := (null_record);
 
    type Tree_Node is range 0 .. Natural'Last - 1;
    subtype Valid_Tree_Node is Tree_Node range 1 .. Tree_Node'Last;

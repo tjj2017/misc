@@ -1,1 +1,1 @@
--config=spark_classic.cfg -index=spark_classic.idx
+-config=spark_classic.cfg -index=spark_classic.idx -warn=spark_classic.wrn

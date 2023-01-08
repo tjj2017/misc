@@ -1,12 +1,14 @@
 package body SPARK_Classic.Trees is
 
-   -------------
    -- In_Tree --
    -------------
 
-   function In_Tree (T : Tree_Type; N : Tree_Node) return Boolean is
+   function In_Tree (T : Tree_Type; N : Tree_Node) return Boolean
+   --# return  N > Empty_Node and N <= Dynamic_Tables.Last_Index (T.The_Tree);
+   is
    begin
-      return  N /= Empty_Node and then N <=  Dynamic_Tree.Last (T.The_Tree);
+      return  N > Empty_Node and then
+        N <= Dynamic_Tables.Last_Index (T.The_Tree);
    end In_Tree;
    pragma Inline (In_Tree);
 
@@ -26,7 +28,7 @@ package body SPARK_Classic.Trees is
 
    procedure New_Tree (T : out Tree_Type) is
    begin
-      Dynamic_Tree.Init (T.The_Tree);
+      Dynamic_Tables.Init (T.The_Tree);
    end New_Tree;
 
    -----------
@@ -35,7 +37,7 @@ package body SPARK_Classic.Trees is
 
    function Level (T : Tree_Type; N : Tree_Node) return Natural is
    begin
-      return T.The_Tree.Table (N).Level;
+      return Dynamic_Tables.Get_Item (T.The_Tree, N).Level;
    end Level;
    pragma Inline (Level);
 
@@ -45,8 +47,12 @@ package body SPARK_Classic.Trees is
 
    function Left (T : Tree_Type; N : Tree_Node) return Tree_Node
    is
+      L : Tree_Node;
    begin
-      return T.The_Tree.Table (N).Left;
+      L := Dynamic_Tables.Get_Item (T.The_Tree, N).Left;
+      --# accept W, 444, "The left branch is either empty or In_Tree";
+      --# assume L > Empty_Node -> In_Tree (T, L);
+      return L;
    end Left;
    pragma Inline (Left);
 
@@ -56,8 +62,12 @@ package body SPARK_Classic.Trees is
 
    function Right (T : Tree_Type; N : Tree_Node) return Tree_Node
    is
+      R : Tree_Node;
    begin
-      return T.The_Tree.Table (N).Right;
+      R := Dynamic_Tables.Get_Item (T.The_Tree, N).Right;
+      --# accept W, 444, "The right branch is either empty or In_Tree";
+      --# assume R > Empty_Node -> In_Tree (T, R);
+      return R;
    end Right;
    pragma Inline (Right);
 
@@ -65,10 +75,9 @@ package body SPARK_Classic.Trees is
    -- Key --
    ---------
 
-   function Key (T : Tree_Type; N : Tree_Node) return Key_Type
-   is
+   function Key (T : Tree_Type; N : Tree_Node) return Key_Type is
    begin
-      return T.The_Tree.Table (N).Key;
+      return Dynamic_Tables.Get_Item (T.The_Tree, N).Key;
    end Key;
    pragma Inline (Key);
 
@@ -79,7 +88,7 @@ package body SPARK_Classic.Trees is
    function Value (T : Tree_Type; N : Tree_Node) return Value_Type
    is
    begin
-      return T.The_Tree.Table (N).Value;
+      return Dynamic_Tables.Get_Item (T.The_Tree, N).Value;
    end Value;
    pragma Inline (Value);
 
@@ -91,8 +100,11 @@ package body SPARK_Classic.Trees is
                         N : Tree_Node;
                         Node_Level : Natural)
    is
+      Node_Contents : Actual_Node;
    begin
-      T.The_Tree.Table (N).Level := Node_Level;
+      Node_Contents := Dynamic_Tables.Get_Item (T.The_Tree, N);
+      Node_Contents.Level := Node_Level;
+      Dynamic_Tables.Set_Item (T.The_Tree, N, Node_Contents);
    end Set_Level;
    pragma Inline (Set_Level);
 
@@ -104,8 +116,11 @@ package body SPARK_Classic.Trees is
                        N : Tree_Node;
                        Branch : Tree_Node)
    is
+      Node_Contents : Actual_Node;
    begin
-      T.The_Tree.Table (N).Left := Branch;
+      Node_Contents := Dynamic_Tables.Get_Item (T.The_Tree, N);
+      Node_Contents.Left := Branch;
+      Dynamic_Tables.Set_Item (T.The_Tree, N, Node_Contents);
    end Set_Left;
    pragma Inline (Set_Left);
 
@@ -117,8 +132,11 @@ package body SPARK_Classic.Trees is
                         N : Tree_Node;
                         Branch : Tree_Node)
    is
+      Node_Contents : Actual_Node;
    begin
-      T.The_Tree.Table (N).Right := Branch;
+      Node_Contents := Dynamic_Tables.Get_Item (T.The_Tree, N);
+      Node_Contents.Right := Branch;
+      Dynamic_Tables.Set_Item (T.The_Tree, N, Node_Contents);
    end Set_Right;
    pragma Inline (Set_Right);
 
@@ -129,8 +147,11 @@ package body SPARK_Classic.Trees is
    procedure Set_Key (T : in out Tree_Type; N : Tree_Node;
                       The_Key : Key_Type)
    is
+      Node_Contents : Actual_Node;
    begin
-      T.The_Tree.Table (N).Key := The_Key;
+      Node_Contents := Dynamic_Tables.Get_Item (T.The_Tree, N);
+      Node_Contents.Key := The_Key;
+      Dynamic_Tables.Set_Item (T.The_Tree, N, Node_Contents);
    end Set_Key;
    pragma Inline (Set_Key);
 
@@ -142,8 +163,11 @@ package body SPARK_Classic.Trees is
                         N : Tree_Node;
                         Node_Value : Value_Type)
    is
+      Node_Contents : Actual_Node;
    begin
-      T.The_Tree.Table (N).Value := Node_Value;
+      Node_Contents := Dynamic_Tables.Get_Item (T.The_Tree, N);
+      Node_Contents.Value := Node_Value;
+      Dynamic_Tables.Set_Item (T.The_Tree, N, Node_Contents);
    end Set_Value;
    pragma Inline (Set_Value);
 
@@ -155,15 +179,23 @@ package body SPARK_Classic.Trees is
                        N : out Tree_Node;
                        The_Key : Key_Type)
    is
-      Node : Actual_Node := Actual_Node'
+      Node : Actual_Node;
+   begin
+      Node := Actual_Node'
         (Key   => The_Key,
          Value => Null_Value,
          Level => 1,
          Left  => Empty_Node,
          Right => Empty_Node);
-   begin
-      Dynamic_Tree.Append (T.The_Tree, Node);
-      N := Dynamic_Tree.Last (T.The_Tree);
+      Dynamic_Tables.Append (T.The_Tree, Node);
+      N := Dynamic_Tables.Last_Index (T.The_Tree);
+      --# accept W, 444, "Appending a node adds it into the tree";
+      --# assume T = Added (T~, N);
+      --# accept W, 444, "N is the position in the tree of the Actual_Node";
+      --# assume Left (T, N) = Empty_Node and
+      --#        Right (T, N) = Empty_Node and
+      --#        Value (T, N) = Null_Value and
+      --#        Key (T, N) = The_Key;
    end Add_Node;
    pragma Inline (Add_Node);
 
@@ -171,13 +203,25 @@ package body SPARK_Classic.Trees is
    -- Clear --
    -----------
 
-   procedure Clear (T : in out Tree_Type; N : Tree_Node) is
+   procedure Clear (T : in out Tree_Type; N : Tree_Node)
+   is
+      New_Last : Tree_Node;
    begin
-      if In_Tree (T, N) then
-         Dynamic_Tree.Set_Last
-           (T       => T.The_Tree,
-            New_Val => N - 1);
+      if N /= Empty_Node then
+         New_Last := N - 1;
+      else
+         New_Last := N;
       end if;
+
+      Dynamic_Tables.Set_Last
+        (T       => T.The_Tree,
+         New_Val => New_Last);
+
+      --# check Dynamic_Tables.Last_Index (T.The_Tree) = New_Last;
+      --# check N = Empty_Node or N > New_Last;
+      --# accept W, 444, "If N = Empty_Node or N > New_Last by definition ",
+      --#                "N is not in the tree";
+      --# assume not In_Tree (T, N);
    end Clear;
 
 end SPARK_Classic.Trees;
