@@ -1,0 +1,73 @@
+with SPARK_Classic.Expose_Nodes,
+     SPARK_Classic.Dynamic_Tables;
+use type SPARK_Classic.Expose_Nodes.Tree_Node;
+--# inherit SPARK_Classic.Expose_Nodes,
+--#         SPARK_Classic.Dynamic_Tables;
+package SPARK_Classic.Trees is
+   subtype Tree_Node is Expose_Nodes.Tree_Node;
+   subtype Key_Type is Expose_Nodes.Key_Type;
+   subtype Value_Type is Expose_Nodes.Value_Type;
+   subtype Actual_Node is Expose_Nodes.Actual_Node;
+   
+   Empty_Node : constant Tree_Node := Expose_Nodes.Empty_Node;
+   Null_Value : constant Value_Type := Expose_Nodes.Null_Value; 
+   
+   type Tree_Type is tagged private;
+
+   function In_Tree  (T : Tree_Type; N : Tree_Node) return Boolean;
+   function Present  (T : Tree_Type; N : Tree_Node) return Boolean;
+   --# return In_Tree (T, N);
+   
+   --# function Added (T : Tree_Type; N : Tree_Node) return Tree_Type;
+   --# return Tree => (for all Node in Tree_Node =>
+   --#                   ((In_Tree (T, Node) -> In_Tree (Tree, Node)) and 
+   --#                      (In_Tree (Tree, N))));
+
+   procedure New_Tree (T : out Tree_Type);
+
+   function Level (T : Tree_Type; N : Tree_Node) return Natural;
+   --# pre In_Tree (T, N);
+   function Left  (T : Tree_Type; N : Tree_Node) return Tree_Node;
+   --# pre In_Tree (T, N);
+   --# return L => L > Empty_Node -> In_Tree (T, L);
+   function Right (T : Tree_Type; N : Tree_Node) return Tree_Node;
+   --# pre In_Tree (T, N);
+   --# return R => R > Empty_Node -> In_Tree (T, R);
+   function Key (T : Tree_Type; N : Tree_Node) return Key_Type;
+   --# pre In_Tree (T, N);
+   function Value (T : Tree_Type; N : Tree_Node) return Value_Type;
+   --# pre In_Tree (T, N);
+
+   procedure Set_Level (T : in out Tree_Type; N : Tree_Node;
+                        Node_Level : Natural);
+   --# pre In_Tree (T, N);
+   procedure Set_Left  (T : in out Tree_Type; N : Tree_Node;
+                        Branch : Tree_Node);
+   --# pre In_Tree (T, N);
+   procedure Set_Right (T : in out Tree_Type; N : Tree_Node;
+                        Branch : Tree_Node);
+   --# pre In_Tree (T, N);
+   procedure Set_Key (T : in out Tree_Type; N : Tree_Node;
+                      The_Key : Key_Type);
+   --# pre In_Tree (T, N);
+   procedure Set_Value (T : in out Tree_Type; N : Tree_Node;
+                        Node_Value : Value_Type);
+   --# pre In_Tree (T, N);
+   procedure Add_Node  (T : in out Tree_Type; N : out Tree_Node;
+                        The_Key : Key_Type);
+   --# post In_Tree (T, N) and T = Added (T~, N) and
+   --#      Key (T, N) = The_Key and 
+   --#      Left (T, N) = Empty_Node and
+   --#      Right (T, N) = Empty_Node and
+   --#      Value (T, N) = Null_Value;
+
+   procedure Clear (T : in out Tree_Type; N : Tree_Node);
+   --# post not In_Tree (T, N);
+
+private
+   type Tree_Type is tagged
+      record
+         The_Tree : Dynamic_Tables.Table_Type;
+      end record;
+
+end SPARK_Classic.Trees;

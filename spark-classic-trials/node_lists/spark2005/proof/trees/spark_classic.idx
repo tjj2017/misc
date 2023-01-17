@@ -1,0 +1,7 @@
+types                        specification is in types.ads
+spark_classic                specification is in spark_classic.ads
+spark_classic.expose_nodes   specification is in spark_classic-expose_nodes.ads
+spark_classic.dynamic_tables specification is in spark_classic-dynamic_tables.sss
+spark_classic.trees          specification is in spark_classic-trees.sss
+spark_classic.atrees        specification is in spark_classic-atrees.sss
+spark_classic.bounded_stacks specification is in spark_classic-bounded_stacks.sss

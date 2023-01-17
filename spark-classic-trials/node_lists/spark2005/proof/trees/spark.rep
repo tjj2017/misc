@@ -1,0 +1,271 @@
+           *******************************************************
+                         Report of SPARK Examination
+                              Examiner GPL 2012
+             Copyright (C) 2012 Altran Praxis Limited, Bath, U.K.
+           *******************************************************
+
+
+                        DATE : 08-JAN-2023 13:00:08.55
+
+Options:
+    index_file=spark_classic.idx
+    warning_file=spark_classic.wrn
+    notarget_compiler_data
+    config_file=spark_classic.cfg
+    source_extension=ada
+    listing_extension=lst
+    nodictionary_file
+    report_file=spark.rep
+    nohtml
+    vcg
+    nostatistics
+    fdl_identifiers=accept
+    flow_analysis=data
+    language=95
+    profile=sequential
+    annotation_character=#
+    rules=lazy
+    error_explanations=off
+    justification_option=full
+    output_directory=.
+    output_directory (actual)=/home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/
+
+Selected files:
+   spark_classic-atrees.adb
+
+
+Index Filename(s) used were: 
+   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic.idx
+
+
+No Meta Files used
+
+
+Summary warning reporting selected for:
+   Pragmas: inline
+
+
+Target configuration file:
+Line
+   1  package Standard is
+   2     type Integer is range -2147483648 ..  2147483647;
+   3     type Float is digits  6 range -3.40282E+38 ..  3.40282E+38;
+   4     type Short_Short_Integer is range -128 ..  127;
+   5     type Short_Integer is range -32768 ..  32767;
+   6     type Long_Integer is range -2147483648 ..  2147483647;
+   7     type Long_Long_Integer is range -9223372036854775808 ..  9223372036854775807;
+   8     type Short_Float is digits  6 range -3.40282E+38 ..  3.40282E+38;
+   9  end Standard;
+  10  
+  11  package System is
+  12  
+  13     --  System-Dependent Named Numbers
+  14  
+  15     Min_Int               : constant := -9223372036854775808;
+  16     Max_Int               : constant :=  9223372036854775807;
+  17  
+  18     Max_Binary_Modulus    : constant := 2 ** 64;
+  19     Max_Mantissa          : constant := 63;
+  20  
+  21     --  Storage-related Declarations
+  22  
+  23     type Address is private;
+
+--- (  1)  Note              :  3: The deferred constant Null_Address has been 
+           implicitly defined here.
+
+  24  
+  25     Storage_Unit : constant := 8;
+  26     Word_Size    : constant := 32;
+  27  
+  28     --  Priority-related Declarations (RM D.1)
+  29  
+  30     subtype Any_Priority       is Integer      range  0 .. 31;
+  31     subtype Priority           is Any_Priority range  0 .. 30;
+
+--- (  2)  Note              :  4: The constant Default_Priority, of type Priority, 
+           has been implicitly defined here.
+
+  32     subtype Interrupt_Priority is Any_Priority range 31 .. 31;
+  33  
+  34  end System;
+No summarized warnings
+
+
+
+Source Filename(s) used were:
+   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-atrees.adb
+   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-atrees.sss
+   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-bounded_stacks.sss
+   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-trees.sss
+   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-expose_nodes.ads
+   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/spark_classic.ads
+   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/types.ads
+   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-dynamic_tables.sss
+
+
+
+Source Filename:   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-atrees.sss
+No Listing File
+
+   Unit name:  SPARK_Classic.Atrees
+   Unit type:  package specification
+   Unit has been analysed, any errors are listed below.
+
+No errors found
+
+No summarized warnings
+
+
+Source Filename:   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-bounded_stacks.sss
+No Listing File
+
+   Unit name:  SPARK_Classic.Bounded_Stacks
+   Unit type:  package specification
+   Unit has been analysed, any errors are listed below.
+
+No errors found
+
+No summarized warnings
+
+
+Source Filename:   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-trees.sss
+No Listing File
+
+   Unit name:  SPARK_Classic.Trees
+   Unit type:  package specification
+   Unit has been analysed, any errors are listed below.
+
+2 error(s) or warning(s)
+
+Line
+  21     --# function Added (T : Tree_Type; N : Tree_Node) return Tree_Type;
+                      ^1
+--- (  1)  Warning           :320: The proof function Added has a non-boolean return 
+           and a return annotation. Please make sure that the return is always 
+           in-type.
+
+  22     --# return Tree => (for all Node in Tree_Node =>
+                    ^2
+--- (  2)  Warning           :321: The proof function Added has an implicit return 
+           annotation. Please be careful not to introduce unsoundness.
+
+No summarized warnings
+
+
+Source Filename:   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-expose_nodes.ads
+No Listing File
+
+   Unit name:  SPARK_Classic.Expose_Nodes
+   Unit type:  package specification
+   Unit has been analysed, any errors are listed below.
+
+No errors found
+
+No summarized warnings
+
+
+Source Filename:   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/spark_classic.ads
+No Listing File
+
+   Unit name:  SPARK_Classic
+   Unit type:  package specification
+   Unit has been analysed, any errors are listed below.
+
+No errors found
+
+No summarized warnings
+
+
+Source Filename:   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/types.ads
+No Listing File
+
+   Unit name:  Types
+   Unit type:  package specification
+   Unit has been analysed, any errors are listed below.
+
+No errors found
+
+No summarized warnings
+
+
+Source Filename:   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-dynamic_tables.sss
+No Listing File
+
+   Unit name:  SPARK_Classic.Dynamic_Tables
+   Unit type:  package specification
+   Unit has been analysed, any errors are listed below.
+
+1 error(s) or warning(s)
+
+Line
+  73  end SPARK_Classic.Dynamic_Tables;
+
+--- (  1)  Warning           : 10: The private part of package Dynamic_Tables is 
+           hidden - hidden text is ignored by the Examiner.
+
+No summarized warnings
+
+
+Source Filename:   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-atrees.adb
+Listing Filename:  /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-atrees.lst
+
+   Unit name:  SPARK_Classic.Atrees
+   Unit type:  package body
+   Unit has been analysed, any errors are listed below.
+
+5 error(s) or warning(s)
+
+Line
+  30     --# function Tree_Count (Tree : A_Tree) return Natural;
+                      ^1
+--- (  1)  Warning           :320: The proof function Tree_Count has a non-boolean 
+           return and a return annotation. Please make sure that the return is 
+           always in-type.
+
+  31     --# return C => C = Tree.Count and
+                    ^2
+--- (  2)  Warning           :321: The proof function Tree_Count has an implicit 
+           return annotation. Please be careful not to introduce unsoundness.
+
+ 322        for Stack_Top in reverse Natural range 1 .. Bounded_Stacks.Count (Visited)
+
+--- (  3)  Warning           :402: Default assertion planted to cut loop.
+
+ 380        while Trees.Present (Tree_Store, Current_Node) loop
+
+--- (  4)  Warning           :402: Default assertion planted to cut loop.
+
+ 645              Next_Node (Enum_1, Tree_Store_1, Current_1);
+
+--- (  5)  Warning           :402: Default assertion planted to cut loop.
+
+
+Expected messages marked with the accept annotation
+Type Msg    Lines              Reason                    Match
+     No.  From    To                                    No.  Line
+Flow  30    40   end  Tree_Store only used in proof co    1    48
+Warn 444    42   end  A Stack_Size of 32 allows the tr    1    45
+Flow  30    57   end  Tree_Store only used in proof co    1    65
+Warn 444    61   end  The exclusive use of Push_In_Tre    1    64
+Flow  30    74   end  Tree_Store only used in proof co    1    86
+Warn 444    78   end  The exclusive use of Push_In_Tre    1    81
+Flow  50    83   end  Tree_Store only used in proof co    1    86
+Flow  10   220   end  Current_Node exported only for p    1   222
+Flow  33   220   end  Current_Node exported only for p    1   228
+Warn 444   449   end  The number of nodes is bounded b    1   451
+Warn 444   461   end  The number of nodes is bounded b    2   497
+Flow  10   490   end  Visited must be an in out paramt    1   493
+Flow  10   577   end  Visited must be an in out paramt    1   580
+Flow  10   677   end  Visited stack is used by Find       1   679
+Flow  33   677   end  Final value of Visited is not re    1   681
+
+
+6 summarized warning(s), comprising:
+     6 pragma(s)*
+(*Note: the above warnings may affect the validity of the analysis.)
+
+Note: Data flow analysis mode selected
+
+
+--End of file--------------------------------------------------
