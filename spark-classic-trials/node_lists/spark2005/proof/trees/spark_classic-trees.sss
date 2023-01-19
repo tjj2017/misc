@@ -15,14 +15,12 @@ package SPARK_Classic.Trees is
    type Tree_Type is tagged private;
 
    function In_Tree  (T : Tree_Type; N : Tree_Node) return Boolean;
-   function Present  (T : Tree_Type; N : Tree_Node) return Boolean;
-   --# return In_Tree (T, N);
    
-   --# function Added (T : Tree_Type; N : Tree_Node) return Tree_Type;
-   --# return Tree => (for all Node in Tree_Node =>
-   --#                   ((In_Tree (T, Node) -> In_Tree (Tree, Node)) and 
-   --#                      (In_Tree (Tree, N))));
-
+   --# function Persists (T_Pre, T_Post : Tree_Type) 
+   --# return Boolean;
+   --# return for all N in Tree_Node => 
+   --#           (In_Tree (T_Pre, N) -> In_Tree (T_Post, N));
+   
    procedure New_Tree (T : out Tree_Type);
 
    function Level (T : Tree_Type; N : Tree_Node) return Natural;
@@ -41,21 +39,32 @@ package SPARK_Classic.Trees is
    procedure Set_Level (T : in out Tree_Type; N : Tree_Node;
                         Node_Level : Natural);
    --# pre In_Tree (T, N);
+   --# post Persists (T~, T);
+   
    procedure Set_Left  (T : in out Tree_Type; N : Tree_Node;
                         Branch : Tree_Node);
    --# pre In_Tree (T, N);
+   --# post Persists (T~, T);
+   
    procedure Set_Right (T : in out Tree_Type; N : Tree_Node;
                         Branch : Tree_Node);
    --# pre In_Tree (T, N);
+   --# post Persists (T~, T);
+   
    procedure Set_Key (T : in out Tree_Type; N : Tree_Node;
                       The_Key : Key_Type);
    --# pre In_Tree (T, N);
+   --# post Persists (T~, T);
+   
    procedure Set_Value (T : in out Tree_Type; N : Tree_Node;
                         Node_Value : Value_Type);
    --# pre In_Tree (T, N);
+   --# post Persists (T~, T);
+   
    procedure Add_Node  (T : in out Tree_Type; N : out Tree_Node;
                         The_Key : Key_Type);
-   --# post In_Tree (T, N) and T = Added (T~, N) and
+   --# post Persists (T~, T) and
+   --#      In_Tree (T, N) and
    --#      Key (T, N) = The_Key and 
    --#      Left (T, N) = Empty_Node and
    --#      Right (T, N) = Empty_Node and

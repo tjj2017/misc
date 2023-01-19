@@ -64,8 +64,8 @@ private
       Table_Index_Type     => Table_Index_Type,
       Table_Low_Bound      => Table_Low_Bound,
       Table_Initial        => Table_Initial,
-      Table_Increment      => Table_Increment,
-      Release_Threshold    => Release_Threshold);
+      Table_Increment      => Table_Increment);
+--      Release_Threshold    => Release_Threshold);
 
    type Table_Type is tagged record
       The_Table : Gnat_Table.Instance;

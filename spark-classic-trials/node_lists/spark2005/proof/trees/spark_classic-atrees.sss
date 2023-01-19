@@ -30,16 +30,26 @@ package SPARK_Classic.Atrees is
    function Is_Present (Tree       : A_Tree;
                         Key        : Key_Type;
                         Tree_Store : Trees.Tree_Type) return Boolean;
-    --# pre Populated (Tree, Tree_Store);
+   --# pre Populated (Tree, Tree_Store);
  
+   --# function Persists (AT_Pre, AT_Post : A_Tree; 
+   --#                    TS_Pre, TS_Post : Trees.Tree_Type) 
+   --# return Boolean;
+   --# pre Populated (AT_Pre, TS_Pre);
+   --# return Populated (AT_Post, TS_Post) and
+   --#        Trees.Persists (TS_Pre, TS_Post) and
+   --#        Count (AT_Pre) = Count (AT_Post);
+   
    procedure Insert (Tree       : in out A_Tree;
                      Key        : Key_Type;
                      Tree_Store : in out Trees.Tree_Type;
                      Inserted   : out Boolean);
    --# post Is_Present (Tree, Key, Tree_Store) and
    --#      Populated (Tree, Tree_Store) and
-   --#      (Inserted -> (((not Populated (Tree~, Tree_Store~)) -> Count (Tree) = 1) and
-   --#                    ((Populated (Tree~, Tree_Store~)) -> Count (Tree) = Count (Tree~) + 1)));
+   --#      (Inserted -> (((not Populated (Tree~, Tree_Store~)) -> 
+   --#                        Count (Tree) = 1) and
+   --#                    ((Populated (Tree~, Tree_Store~)) -> 
+   --#                        Count (Tree) = Count (Tree~) + 1)));
 
    procedure Insert_With_Value (Tree          : in out A_Tree;
                                 Key           : Key_Type;
@@ -47,9 +57,12 @@ package SPARK_Classic.Atrees is
                                 Tree_Store    : in out Trees.Tree_Type;
                                 Inserted      : out Boolean;
                                 Value_At_Node : out Value_Type);
-   --# post Populated (Tree, Tree_Store) and
-   --#      Is_Present (Tree, Key, Tree_Store) and
-   --#      (Inserted -> (Count (Tree) = Count (Tree~) + 1));
+   --# post Is_Present (Tree, Key, Tree_Store) and
+   --#      Populated (Tree, Tree_Store) and
+   --#      (Inserted -> (((not Populated (Tree~, Tree_Store~)) -> 
+   --#                        Count (Tree) = 1) and
+   --#                    ((Populated (Tree~, Tree_Store~)) -> 
+   --#                        Count (Tree) = Count (Tree~) + 1)));
 
    procedure Clear (Tree       : in out A_Tree;
                     Tree_Store : in out Trees.Tree_Type);
@@ -60,7 +73,8 @@ package SPARK_Classic.Atrees is
                       Tree_2       : A_Tree;
                       Tree_Store_1 : Trees.Tree_Type;
                       Tree_Store_2 : Trees.Tree_Type) return Boolean;
-   --# return Tree_1 = Tree_2;
+   --# pre Populated (Tree_1, Tree_Store_1) and Populated (Tree_2, Tree_Store_2);
+   --# return E => E -> Tree_1 = Tree_2;
 
    function Tree_Depth (Tree       : A_Tree;
                         Tree_Store : Trees.Tree_Type) return Natural;
@@ -79,8 +93,9 @@ private
       record
          Root    : A_Tree;
          --  A stack to record visited nodes when enumerating.
-         Visited : Bounded_Stacks.Stack;
+         Visited : Bounded_Stacks.Stack; 
       end record;
+         
 
    type A_Tree is tagged
       record

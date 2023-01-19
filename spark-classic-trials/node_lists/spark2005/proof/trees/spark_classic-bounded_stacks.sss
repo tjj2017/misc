@@ -19,7 +19,8 @@ package SPARK_Classic.Bounded_Stacks is
    procedure Push (S : in out Stack;
                    Value : Element_Type);
    --# pre  Count (S) < Stack_Size;
-   --# post Count (S) = Count (S~) + 1;
+   --# post not Is_Empty (S) and 
+   --#     Count (S) = Count (S~) + 1;
 
    procedure Pop  (S : in out Stack;
                    Value : out Element_Type);

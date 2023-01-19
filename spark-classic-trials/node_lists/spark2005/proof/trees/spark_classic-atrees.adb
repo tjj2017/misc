@@ -35,6 +35,7 @@ package body SPARK_Classic.Atrees is
                                 Tree_Store : Trees.Tree_Type;
                                 Node : Tree_Node)
    --# pre Trees.In_Tree (Tree_Store, Node);
+   --# post not Bounded_Stacks.Is_Empty (S);
    is
    begin
       --# accept F, 30, Tree_Store, "Tree_Store only used in proof context.";
@@ -51,6 +52,7 @@ package body SPARK_Classic.Atrees is
    procedure Pop_In_Tree_Node (S : in out Bounded_Stacks.Stack;
                                Tree_Store : Trees.Tree_Type;
                                Node : out Tree_Node)
+   --# pre not Bounded_Stacks.Is_Empty (S);
    --# post Trees.In_Tree (Tree_Store, Node);
    is
    begin
@@ -67,6 +69,7 @@ package body SPARK_Classic.Atrees is
 
    function Top_In_Tree_Node (S : Bounded_Stacks.Stack;
                               Tree_Store : Trees.Tree_Type) return Tree_Node
+   --# pre not Bounded_Stacks.Is_Empty (S);
    --# return N => Trees.In_Tree (Tree_Store, N);
    is
       Result : Tree_Node;
@@ -117,6 +120,7 @@ package body SPARK_Classic.Atrees is
                          Node       : Tree_Node;
                          Set_Node   : Tree_Node;
                          Tree_Store : in out Trees.Tree_Type)
+   --# post Trees.Persists (Tree_Store~, Tree_Store);
    is
    begin
       if Is_Right then
@@ -139,8 +143,8 @@ package body SPARK_Classic.Atrees is
                    Tree_Store : Trees.Tree_Type;
                    Visited    : out Bounded_Stacks.Stack)
    --# pre Populated (Tree, Tree_Store);
-   --# post Found -> Is_Found (Found);
-     --  --# post Found -> for some Node in Tree_Node (Trees.Key (Tree_Store, Node) = Key);
+   --# post Found -> (Is_Found (Found) and
+   --#                not Bounded_Stacks.Is_Empty (Visited));
      --  The Tree is not empty (Populated) so the given Key may be present.
      --  If found is true, the top of the Tree.Visited stack is the Tree_Node
      --  that references the The Actual_Node in the Tree_Store which
@@ -156,7 +160,8 @@ package body SPARK_Classic.Atrees is
                             Visited      : out Bounded_Stacks.Stack;
                             Current_Node : out Tree_Node)
      --# pre Populated (Tree, Tree_Store);
-     --# post Is_Found (Found) = (Trees.Key (Tree_Store, Current_Node) = Key);
+     --# post Is_Found (Found) = (Trees.Key (Tree_Store, Current_Node) = Key)
+     --#       and (Found -> not Bounded_Stacks.Is_Empty (Visited));
       is
          Current_Key   : Key_Type;
 
@@ -235,7 +240,7 @@ package body SPARK_Classic.Atrees is
       Left_Child := Trees.Left (Tree_Store, Root);
       --  No action is performed if the levels of the root and left nodes
       --  are not equal.
-      if Trees.Present (Tree_Store, Left_Child) and then
+      if Trees.In_Tree (Tree_Store, Left_Child) and then
         Trees.Level (Tree_Store, Left_Child) = Trees.Level (Tree_Store, Root)
       then
          --  The left child has the same level as its parent breaking
@@ -264,7 +269,7 @@ package body SPARK_Classic.Atrees is
       Right_Right_Child : Tree_Node;
    begin
       Right_Child  := Trees.Right (Tree_Store, Root);
-      if Trees.Present (Tree_Store, Right_Child) then
+      if Trees.In_Tree (Tree_Store, Right_Child) then
          Right_Right_Child := Trees.Right (Tree_Store, Right_Child);
       else
          Right_Right_Child := Trees.Empty_Node;
@@ -272,7 +277,7 @@ package body SPARK_Classic.Atrees is
 
       --  No action is taken if there are not two consecutive right children
       -- with the same level
-      if Trees.Present (Tree_Store, Right_Right_Child) and then
+      if Trees.In_Tree (Tree_Store, Right_Right_Child) and then
         Trees.Level (Tree_Store, Right_Right_Child) = Trees.Level (Tree_Store, Root)
       then
          --  There are two consecutive right children with the same level
@@ -303,7 +308,9 @@ package body SPARK_Classic.Atrees is
    procedure Rebalance_Tree (Tree       : in out A_Tree;
                              Tree_Store : in out Trees.Tree_Type;
                              Visited    : in out Bounded_Stacks.Stack)
-
+   --# pre Populated (Tree, Tree_Store);
+   --# post Populated (Tree, Tree_Store) and
+   --#      Persists (Tree~, Tree, Tree_Store~, Tree_Store);
    is
       Current_Node : Tree_Node;
       Top_Node     : Tree_Node;
@@ -377,7 +384,7 @@ package body SPARK_Classic.Atrees is
    begin
       Current_Node :=
         Trees.Left (Tree_Store, Top_In_Tree_Node (E.Visited, Tree_Store));
-      while Trees.Present (Tree_Store, Current_Node) loop
+      while Trees.In_Tree (Tree_Store, Current_Node) loop
             Push_In_Tree_Node (E.Visited, Tree_Store, Current_Node);
             Current_Node := Trees.Left (Tree_Store, Current_Node);
       end loop;
@@ -386,7 +393,6 @@ package body SPARK_Classic.Atrees is
    procedure Init_Enumerator (Tree       : A_Tree;
                               Tree_Store : Trees.Tree_Type;
                               Enum       : out Enumerator)
-   --# pre Trees.In_Tree (Tree_Store, Tree.Root);
    is
    begin
       Enum.Root := Tree;
@@ -449,6 +455,7 @@ package body SPARK_Classic.Atrees is
             --# accept W, 444, "The number of nodes is bounded by ",
             --#                "the number of possible nodes.";
             --# assume Tree.Count <= Integer (Trees.Tree_Node'Last);
+            --# end accept;
             Tree.Count := Tree.Count + 1;
             Trees.Add_Node
               (T       => Tree_Store,
@@ -461,6 +468,7 @@ package body SPARK_Classic.Atrees is
             --# accept W, 444, "The number of nodes is bounded by ",
             --#                "the number of possible nodes.";
             --# assume Tree.Count <= Integer (Trees.Tree_Node'Last);
+            --# end accept;
             Tree.Count := Tree.Count + 1;
             Current_Node := Top_In_Tree_Node (Visited, Tree_Store);
             --  A right branch if the value of Key is greater (or equal)
@@ -472,20 +480,13 @@ package body SPARK_Classic.Atrees is
               (T       => Tree_Store,
                N       => Child,
                The_Key => Key);
-            --# check Tree.Count > 0;
-            --# check Trees.In_Tree (Tree_Store~, Tree.Root);
-            --# check Trees.in_Tree (Tree_Store, Tree.Root);
-            --# check Populated (Tree, Tree_Store);
-            --# check Trees.In_Tree (Tree_Store, Tree.Root);
+            --# check Tree_Count (Tree) = Count (Tree);
              Set_Branch (Is_Right   => Is_Right,
                         Node       => Current_Node,
                         Set_Node   => Child,
                         Tree_Store => Tree_Store);
-            --# check Tree.Count > 0;
-            --# check Trees.In_Tree (Tree_Store~, Tree.Root);
             --# check Trees.in_Tree (Tree_Store, Tree.Root);
             --# check Populated (Tree, Tree_Store);
-            --# check Trees.In_Tree (Tree_Store, Tree.Root);
             -- Now rebalance the tree
             --# accept F, 10, Visited, "Visited must be an in out paramter ",
             --#                        "as it is updated by Rebalance_Tree",
@@ -494,7 +495,9 @@ package body SPARK_Classic.Atrees is
          end if;
       end if;
       --# check Tree_Count (Tree) = Tree.Count;
+      --# accept W, 444, "The Key has been inserted into the Tree";
       --#  assume Is_Present (Tree, Key, Tree_Store);
+      --# end accept;
    end Insert;
 
    -----------------------
@@ -508,7 +511,6 @@ package body SPARK_Classic.Atrees is
       Tree_Store    : in out Trees.Tree_Type;
       Inserted      : out Boolean;
       Value_At_Node : out Value_Type)
-     --# post Trees.In_Tree (Tree_Store, Tree.Root);
    is
       Visited       : Bounded_Stacks.Stack;
       Key_Found     : Boolean;
@@ -518,10 +520,11 @@ package body SPARK_Classic.Atrees is
        --  A Child of the Current Node.
       Child         : Trees.Tree_Node;
    begin
-      if not Trees.Present (Tree_Store, Tree.Root) then
+       --# check Tree_Count (Tree) = Count (Tree);
+     if not Populated (Tree, Tree_Store) then
          --  First node of tree - Enter a new node with level 1 into the store
          Inserted := True;
-         Tree.Count := Tree.Count + 1;
+         Tree.Count := 1;
          Trees.Add_Node
            (T       => Tree_Store,
             N       => Insert_Node,
@@ -545,6 +548,10 @@ package body SPARK_Classic.Atrees is
          --  a duplicate key.
          --  First node of tree - Enter a new node with level 1 into the store
             Inserted := True;
+            --# accept W, 444, "The number of nodes is bounded by ",
+            --#                "the number of possible nodes.";
+            --# assume Tree.Count <= Integer (Trees.Tree_Node'Last);
+            --# end accept;
             Tree.Count := Tree.Count + 1;
             Trees.Add_Node
               (T       => Tree_Store,
@@ -556,6 +563,10 @@ package body SPARK_Classic.Atrees is
             Tree.Root := Insert_Node;
          else
             Inserted := True;
+            --# accept W, 444, "The number of nodes is bounded by ",
+            --#                "the number of possible nodes.";
+            --# assume Tree.Count <= Integer (Trees.Tree_Node'Last);
+            --# end accept;
             Tree.Count := Tree.Count + 1;
             Current_Node := Top_In_Tree_Node (Visited, Tree_Store);
             --  A right branch if the value of Key is greater (or equal)
@@ -567,12 +578,15 @@ package body SPARK_Classic.Atrees is
               (T       => Tree_Store,
                N       => Child,
                The_Key => Key);
+            --# check Tree_Count (Tree) = Count (Tree);
             Set_Branch (Is_Right   => Is_Right,
                         Node       => Current_Node,
                         Set_Node   => Child,
                         Tree_Store => Tree_Store);
-            Value_At_Node := Value;
+           Value_At_Node := Value;
             Trees.Set_Value (Tree_Store, Child, Value_At_Node);
+            --# check Trees.in_Tree (Tree_Store, Tree.Root);
+            --# check Populated (Tree, Tree_Store);
             -- Now rebalance the tree
             --# accept F, 10, Visited, "Visited must be an in out paramter ",
             --#                        "as it is updated by Rebalance_Tree",
@@ -580,6 +594,10 @@ package body SPARK_Classic.Atrees is
             Rebalance_Tree (Tree, Tree_Store, Visited);
          end if;
       end if;
+      --# check Tree_Count (Tree) = Tree.Count;
+      --# accept W, 444, "The Key has been inserted into the Tree";
+      --#  assume Is_Present (Tree, Key, Tree_Store);
+      --# end accept;
    end Insert_With_Value;
 
    -----------
@@ -609,7 +627,7 @@ package body SPARK_Classic.Atrees is
       if not Bounded_Stacks.Is_Empty (E.Visited) then
          Pop_In_Tree_Node (E.Visited, Tree_Store, Node);
          Right_Child := Trees.Right (Tree_Store, Node);
-         if  Trees.Present (Tree_Store, Right_Child) then
+         if  Trees.In_Tree (Tree_Store, Right_Child) then
             Push_In_Tree_Node (E.Visited, Tree_Store, Right_Child);
             Trace_To_Left_Leaf (E, Tree_Store);
          end if;
@@ -638,20 +656,20 @@ package body SPARK_Classic.Atrees is
       Equal     : Boolean;
    begin
       Equal := Tree_1.Count = Tree_2.Count;
-      if Equal and Tree_1.Count /= 0 then
+      if Equal then
          Init_Enumerator (Tree_1, Tree_Store_1, Enum_1);
          Init_Enumerator (Tree_2, Tree_Store_2, Enum_2);
          loop
             Next_Node (Enum_1, Tree_Store_1, Current_1);
             Next_Node (Enum_2, Tree_Store_2, Current_2);
-            Present_1 := Trees.Present (Tree_Store_1, Current_1);
-            Present_2 := Trees.Present (Tree_Store_2, Current_2);
+            Present_1 := Trees.In_Tree (Tree_Store_1, Current_1);
+            Present_2 := Trees.In_Tree (Tree_Store_2, Current_2);
             Both_Present := Present_1 and Present_2;
             if Both_Present then
                Equal := Trees.Key (Tree_Store_1, Current_1) =
                  Trees.Key (Tree_Store_2, Current_2);
             else
-               Equal := not (Present_1 or Present_2);
+               Equal := False;
             end if;
             exit when not Equal or else not Both_Present;
          end loop;
