@@ -5,7 +5,7 @@
            *******************************************************
 
 
-                        DATE : 19-JAN-2023 17:55:07.44
+                        DATE : 24-JAN-2023 12:33:28.64
 
 Options:
     index_file=spark_classic.idx
@@ -202,7 +202,7 @@ Listing Filename:  /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark
    Unit type:  package body
    Unit has been analysed, any errors are listed below.
 
-5 error(s) or warning(s)
+4 error(s) or warning(s)
 
 Line
   30     --# function Tree_Count (Tree : A_Tree) return Natural;
@@ -216,17 +216,13 @@ Line
 --- (  2)  Warning           :321: The proof function Tree_Count has an implicit 
            return annotation. Please be careful not to introduce unsoundness.
 
- 329        for Stack_Top in reverse Natural range 1 .. Bounded_Stacks.Count (Visited)
+ 394        while Trees.In_Tree (Tree_Store, Current_Node) loop
 
 --- (  3)  Warning           :402: Default assertion planted to cut loop.
 
- 387        while Trees.In_Tree (Tree_Store, Current_Node) loop
+ 671              Next_Node (Enum_1, Tree_Store_1, Current_1);
 
 --- (  4)  Warning           :402: Default assertion planted to cut loop.
-
- 663              Next_Node (Enum_1, Tree_Store_1, Current_1);
-
---- (  5)  Warning           :402: Default assertion planted to cut loop.
 
 
 Expected messages marked with the accept annotation
@@ -234,23 +230,23 @@ Type Msg    Lines              Reason                    Match
      No.  From    To                                    No.  Line
 Flow  30    41   end  Tree_Store only used in proof co    1    49
 Warn 444    43   end  A Stack_Size of 32 allows the tr    1    46
-Flow  30    59   end  Tree_Store only used in proof co    1    67
-Warn 444    63   end  The exclusive use of Push_In_Tre    1    66
-Flow  30    77   end  Tree_Store only used in proof co    1    89
-Warn 444    81   end  The exclusive use of Push_In_Tre    1    84
-Flow  50    86   end  Tree_Store only used in proof co    1    89
-Flow  10   225   end  Current_Node exported only for p    1   227
-Flow  33   225   end  Current_Node exported only for p    1   233
-Warn 444   455   458  The number of nodes is bounded b    1   457
-Warn 444   468   471  The number of nodes is bounded b    1   470
-Flow  10   491   end  Visited must be an in out paramt    1   494
-Warn 444   498   500  The Key has been inserted into t    1   499
-Warn 444   551   554  The number of nodes is bounded b    1   553
-Warn 444   566   569  The number of nodes is bounded b    1   568
-Flow  10   591   end  Visited must be an in out paramt    1   594
-Warn 444   598   600  The Key has been inserted into t    1   599
-Flow  10   695   end  Visited stack is used by Find       1   697
-Flow  33   695   end  Final value of Visited is not re    1   699
+Flow  30    60   end  Tree_Store only used in proof co    1    68
+Warn 444    64   end  The exclusive use of Push_In_Tre    1    67
+Flow  30    78   end  Tree_Store only used in proof co    1    90
+Warn 444    82   end  The exclusive use of Push_In_Tre    1    85
+Flow  50    87   end  Tree_Store only used in proof co    1    90
+Flow  10   226   end  Current_Node exported only for p    1   228
+Flow  33   226   end  Current_Node exported only for p    1   234
+Warn 444   463   466  The number of nodes is bounded b    1   465
+Warn 444   476   479  The number of nodes is bounded b    1   478
+Flow  10   499   end  Visited must be an in out paramt    1   502
+Warn 444   506   508  The Key has been inserted into t    1   507
+Warn 444   559   562  The number of nodes is bounded b    1   561
+Warn 444   574   577  The number of nodes is bounded b    1   576
+Flow  10   599   end  Visited must be an in out paramt    1   602
+Warn 444   606   608  The Key has been inserted into t    1   607
+Flow  10   703   end  Visited stack is used by Find       1   705
+Flow  33   703   end  Final value of Visited is not re    1   707
 
 
 6 summarized warning(s), comprising:

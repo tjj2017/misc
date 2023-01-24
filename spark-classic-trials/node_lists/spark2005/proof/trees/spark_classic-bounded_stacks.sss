@@ -11,7 +11,7 @@ package SPARK_Classic.Bounded_Stacks is
 
    function Count    (S : Stack) return Stack_Count;
    function Is_Empty (S : Stack) return Boolean;
-   --# return Count (S) = 0;
+   --# return Is_Empty (S) <-> Count (S) = 0;
 
    procedure New_Stack (S : out Stack);
    --# post Is_Empty (S);

@@ -37,8 +37,9 @@ package SPARK_Classic.Atrees is
    --# return Boolean;
    --# pre Populated (AT_Pre, TS_Pre);
    --# return Populated (AT_Post, TS_Post) and
-   --#        Trees.Persists (TS_Pre, TS_Post) and
-   --#        Count (AT_Pre) = Count (AT_Post);
+   --#        Count (AT_Pre) = Count (AT_Post) and
+   --#        ((AT_Pre = AT_Post and TS_Pre = TS_Post) or
+   --#         (Trees.Persists (TS_Pre, TS_Post)));
    
    procedure Insert (Tree       : in out A_Tree;
                      Key        : Key_Type;

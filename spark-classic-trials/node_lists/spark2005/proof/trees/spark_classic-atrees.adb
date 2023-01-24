@@ -53,7 +53,8 @@ package body SPARK_Classic.Atrees is
                                Tree_Store : Trees.Tree_Type;
                                Node : out Tree_Node)
    --# pre not Bounded_Stacks.Is_Empty (S);
-   --# post Trees.In_Tree (Tree_Store, Node);
+   --# post Trees.In_Tree (Tree_Store, Node) and
+   --#      Bounded_Stacks.Count (S) = Bounded_Stacks.Count (S~) - 1;
    is
    begin
       --# accept F, 30, Tree_Store, "Tree_Store only used in proof context.";
@@ -317,6 +318,7 @@ package body SPARK_Classic.Atrees is
       --  The parent of the Current_Node
       Parent       : Tree_Node;
       Is_Right     : Boolean;
+      Stack_Count  : Natural;
    begin
       --  The following two initalizing statements avoid
       --  flow errors using SPARK 2005 Examiner.
@@ -326,8 +328,13 @@ package body SPARK_Classic.Atrees is
       Current_Node := Tree.Root;
       --  Rebalance the tree by working back up through the visited
       --  node indices on the Tree.Visited stack.
-      for Stack_Top in reverse Natural range 1 .. Bounded_Stacks.Count (Visited)
+      Stack_Count := Bounded_Stacks.Count (Visited);
+      for Stack_Top in reverse Natural range 1 .. Stack_Count
       loop
+         --# assert Stack_Top > 0 and Stack_Top <= Stack_Count and
+         --#        Stack_Top = Bounded_Stacks.Count (Visited) and
+         --#        not Bounded_Stacks.Is_Empty (Visited) and
+         --#        Persists (Tree~, Tree, Tree_Store~, Tree_Store);
          --  Make the Current_Node equal to the Tree_Node at the top of
          --  the stack.
          Pop_In_Tree_Node (Visited, Tree_Store, Top_Node);
@@ -393,6 +400,7 @@ package body SPARK_Classic.Atrees is
    procedure Init_Enumerator (Tree       : A_Tree;
                               Tree_Store : Trees.Tree_Type;
                               Enum       : out Enumerator)
+   --# pre Trees.In_Tree (Tree_Store, Tree.Root);
    is
    begin
       Enum.Root := Tree;
