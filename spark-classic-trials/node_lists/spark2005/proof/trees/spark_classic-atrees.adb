@@ -5,40 +5,75 @@ package body SPARK_Classic.Atrees is
    -- Empty_Tree --
    ----------------
 
-   function Empty_Tree (Tree : A_Tree) return Boolean
-   --# return Tree.Root = Trees.Empty_Node;
+   function Empty_Tree (ATree : A_Tree) return Boolean
+   --# return ATree.Root = Trees.Empty_Node;
    is
    begin
-      return Tree.Root = Trees.Empty_Node;
+      return ATree.Root = Trees.Empty_Node;
    end Empty_Tree;
 
-   function Populated (Tree : A_Tree; Tree_Store : Trees.Tree_Type)
-                       return Boolean
-   --# return (Trees.In_Tree (Tree_Store, Tree.Root) and
-   --#        Tree.Count > 0);
+   function Populated (ATree : A_Tree) return Boolean
+   --# return (Trees.In_Tree (ATree.Container, ATree.Root) and
+   --#         ATree.Count > 0);
    is
    begin
-      return Trees.In_Tree (Tree_Store, Tree.Root) and
-        Tree.Count > 0;
+      return Trees.In_Tree (ATree.Container, ATree.Root) and
+        ATree.Count > 0;
    end Populated;
 
    --  Proof helper subprograms
 
+   --# function Retains (AT_Pre, AT_Post : A_Tree) return Boolean;
+   --# pre Populated (AT_Pre);
+   --# return Populated (AT_Post) and
+   --#        ((AT_Pre = AT_Post) or
+   --#         (Trees.Persists (AT_Pre.Container, AT_Post.Container)));
+
+   --# function Persists (AT_Pre, AT_Post : A_Tree)
+   --# return Boolean;
+   --# pre Populated (AT_Pre);
+   --# return Retains (AT_Pre, AT_Post) and
+   --#        Count (AT_Pre) = Count (AT_Post) and
+   --#        AT_Pre.Root = AT_Post.Root;
+
    --# function Is_Found (Found : Boolean) return Boolean;
    --# return Found;
 
-   --# function Tree_Count (Tree : A_Tree) return Natural;
-   --# return C => C = Tree.Count and
-   --#        Tree_Count (Tree) = Count (Tree);
+   procedure Set_Count (A_T : in out A_Tree; C : Natural)
+   --# post Count (A_T) = C and Retains (A_T~, A_T);
+   is
+   begin
+      A_T.Count := C;
+      --# accept W, 444, "Count (A_T) = A_T.Count by definition";
+      --# assume Count (A_T) = A_T.Count and Retains (A_T~, A_T);
+      --# end accept;
+   end Set_Count;
+   pragma Inline (Set_Count);
+
+   procedure Inc_Count (A_T : in out A_Tree)
+   --# post Count (A_T) = Count (A_T~) + 1 and
+   --#      Trees.Persists (A_T~.Container, A_T.Container) and A_T~.Root = A_T.Root;
+   is
+   begin
+      --# accept W, 444, "The number of nodes is bounded by ",
+      --#                "the number of possible nodes.";
+      --# assume A_T.Count <= Integer (Trees.Tree_Node'Last);
+      --# end accept;
+      A_T.Count := A_T.Count + 1;
+      --# accept W, 444, "Count (A_T) = A_T.Count by definition";
+      --# assume Count (A_T) = A_T.Count and A_T.Count = Count (A_T~) + 1;
+      --# end accept;
+   end Inc_Count;
+   pragma Inline (Inc_Count);
 
    procedure Push_In_Tree_Node (S : in out Bounded_Stacks.Stack;
-                                Tree_Store : Trees.Tree_Type;
+                                Tree : Trees.Tree_Type;
                                 Node : Tree_Node)
-   --# pre Trees.In_Tree (Tree_Store, Node);
+   --# pre Trees.In_Tree (Tree, Node);
    --# post not Bounded_Stacks.Is_Empty (S);
    is
    begin
-      --# accept F, 30, Tree_Store, "Tree_Store only used in proof context.";
+      --# accept F, 30, Tree, "Tree_Store only used in proof context.";
 
       --# accept W, 444, "A Stack_Size of 32 allows the traversal of ",
       --#                "balanced tree with more distinct nodes ",
@@ -50,68 +85,68 @@ package body SPARK_Classic.Atrees is
    pragma Inline (Push_In_Tree_Node);
 
    procedure Pop_In_Tree_Node (S : in out Bounded_Stacks.Stack;
-                               Tree_Store : Trees.Tree_Type;
+                               Tree : Trees.Tree_Type;
                                Node : out Tree_Node)
    --# pre not Bounded_Stacks.Is_Empty (S);
-   --# post Trees.In_Tree (Tree_Store, Node) and
+   --# post Trees.In_Tree (Tree, Node) and
    --#      Bounded_Stacks.Count (S) = Bounded_Stacks.Count (S~) - 1;
    is
    begin
-      --# accept F, 30, Tree_Store, "Tree_Store only used in proof context.";
+      --# accept F, 30, Tree, "Tree only used in proof context.";
 
       Bounded_Stacks.Pop (S, Node);
 
       --# accept W, 444, "The exclusive use of Push_In_Tree ensures all ",
       --#                "pushed nodes are In_Tree, so, ",
       --#                "all nodes popped by Pop_In_Tree_Node will also be.";
-      --# assume Trees.In_Tree (Tree_Store, Node);
+      --# assume Trees.In_Tree (Tree, Node);
    end Pop_In_Tree_Node;
    pragma Inline (Pop_In_Tree_Node);
 
    function Top_In_Tree_Node (S : Bounded_Stacks.Stack;
-                              Tree_Store : Trees.Tree_Type) return Tree_Node
+                              Tree : Trees.Tree_Type) return Tree_Node
    --# pre not Bounded_Stacks.Is_Empty (S);
-   --# return N => Trees.In_Tree (Tree_Store, N);
+   --# return N => Trees.In_Tree (Tree, N);
    is
       Result : Tree_Node;
    begin
-      --# accept F, 30, Tree_Store, "Tree_Store only used in proof context.";
+      --# accept F, 30, Tree, "Tree only used in proof context.";
 
       Result := Bounded_Stacks.Top (S);
 
       --# accept W, 444, "The exclusive use of Push_In_Tree ensures all ",
       --#                "pushed nodes are In_Tree, so, ",
       --#                "all nodes in the stack are In_Tree";
-      --# assume Trees.In_Tree (Tree_Store, Result);
+      --# assume Trees.In_Tree (Tree, Result);
 
-      --# accept F, 50, Tree_Store, "Tree_Store only used in proof context.";
+      --# accept F, 50, Tree, "Tree only used in proof context.";
 
       return Result;
    end Top_In_Tree_Node;
    pragma Inline (Top_In_Tree_Node);
 
    --  Local subprograms
-   procedure New_Node (Key        : Key_Type;
-                       Tree_Store : in out Trees.Tree_Type;
-                       The_Node   : out Tree_Node)
+   procedure New_Node (Key      : Key_Type;
+                       Tree     : in out Trees.Tree_Type;
+                       The_Node : out Tree_Node)
    is
    begin
-      Trees.Add_Node (Tree_Store, The_Node, Key);
+      Trees.Add_Node (Tree, The_Node, Key);
    end New_Node;
 
    function Get_Child (Is_Right : Boolean;
-                       Node : Tree_Node;
-                       Tree_Store : Trees.Tree_Type)
+                       Node     : Tree_Node;
+                       Tree    : Trees.Tree_Type)
                        return Tree_Node
-   --# pre Trees.In_Tree (Tree_Store, Node);
-   --# return C => ((C /= Trees.Empty_Node) -> Trees.In_Tree (Tree_Store, C));
+   --# pre Trees.In_Tree (Tree, Node);
+   --# return C => ((C /= Trees.Empty_Node) -> Trees.In_Tree (Tree, C));
    is
       Result : Tree_Node;
    begin
       if Is_Right then
-         Result := Trees.Right (Tree_Store, Node);
+         Result := Trees.Right (Tree, Node);
       else
-         Result := Trees.Left (Tree_Store, Node);
+         Result := Trees.Left (Tree, Node);
       end if;
       return Result;
    end Get_Child;
@@ -120,30 +155,31 @@ package body SPARK_Classic.Atrees is
    procedure Set_Branch (Is_Right   : Boolean;
                          Node       : Tree_Node;
                          Set_Node   : Tree_Node;
-                         Tree_Store : in out Trees.Tree_Type)
-   --# post Trees.Persists (Tree_Store~, Tree_Store);
+                         Tree       : in out Trees.Tree_Type)
+   --# pre Trees.In_Tree (Tree, Node);
+   --# post Trees.Persists (Tree~, Tree) and
+   --#      Trees.In_Tree (Tree, Set_Node);
    is
    begin
       if Is_Right then
          Trees.Set_Right
-           (T      => Tree_Store,
+           (T      => Tree,
             N      => Node,
             Branch => Set_Node);
       else
          Trees.Set_Left
-           (T      => Tree_Store,
+           (T      => Tree,
             N      => Node,
             Branch => Set_Node);
       end if;
    end Set_Branch;
    pragma Inline (Set_Branch);
 
-   procedure Find (Tree       : A_Tree;
+   procedure Find (ATree      : A_Tree;
                    Key        : Key_Type;
                    Found      : out Boolean;
-                   Tree_Store : Trees.Tree_Type;
                    Visited    : out Bounded_Stacks.Stack)
-   --# pre Populated (Tree, Tree_Store);
+   --# pre Populated (ATree);
    --# post Found -> (Is_Found (Found) and
    --#                not Bounded_Stacks.Is_Empty (Visited));
      --  The Tree is not empty (Populated) so the given Key may be present.
@@ -154,14 +190,13 @@ package body SPARK_Classic.Atrees is
 
       Current_Node  : Tree_Node;
 
-      procedure Find_Proof (Tree         : A_Tree;
+      procedure Find_Proof (ATree        : A_Tree;
                             Key          : Key_Type;
                             Found        : out Boolean;
-                            Tree_Store   : Trees.Tree_Type;
                             Visited      : out Bounded_Stacks.Stack;
                             Current_Node : out Tree_Node)
-     --# pre Populated (Tree, Tree_Store);
-     --# post Is_Found (Found) = (Trees.Key (Tree_Store, Current_Node) = Key)
+     --# pre Populated (ATree);
+     --# post Is_Found (Found) = (Trees.Key (ATree.Container, Current_Node) = Key)
      --#       and (Found -> not Bounded_Stacks.Is_Empty (Visited));
       is
          Current_Key   : Key_Type;
@@ -183,7 +218,7 @@ package body SPARK_Classic.Atrees is
          --  There is nothing more to be done.
 
          --  The Current_Node is initially set to the root of the tree.
-         Current_Node := Tree.Root;
+         Current_Node := ATree.Root;
          --  Search the binary tree to find a matching Key or, if it is
          --  not found, locate an appropriate leaf to place the Key.
          --  If Found the node with the matching Key is on the top of the
@@ -193,24 +228,24 @@ package body SPARK_Classic.Atrees is
          --  branches.
          loop
             --  A record of nodes visited is held in the Visited stack.
-            Push_In_Tree_Node (Visited, Tree_Store, Current_Node);
-            Current_Key := Trees.Key (Tree_Store, Current_Node);
+            Push_In_Tree_Node (Visited, ATree.Container, Current_Node);
+            Current_Key := Trees.Key (ATree.Container, Current_Node);
             Found := Current_Key = Key;
             if not Found then
                --  Take the right branch if the Key value is greater
                --  than the Current_Node Key, otherwise take the left branch.
-               Is_Right := Trees.Key (Tree_Store, Current_Node) < Key;
-               Child := Get_Child (Is_Right, Current_Node, Tree_Store);
+               Is_Right := Trees.Key (ATree.Container, Current_Node) < Key;
+               Child := Get_Child (Is_Right, Current_Node, ATree.Container);
             end if;
 
-            exit when Found or else not Trees.In_Tree (Tree_Store, Child);
+            exit when Found or else not Trees.In_Tree (ATree.Container, Child);
 
             --  Traverse the tree: the Current_Node is set to one of its
             --  children.
             Current_Node := Child;
-            --# assert not (Found or (not Trees.In_Tree (Tree_Store, Current_Node)));
+            --# assert not (Found or (not Trees.In_Tree (ATree.Container, Current_Node)));
          end loop;
-         --# check Found -> (Trees.Key (Tree_Store, Current_Node) = Key);
+         --# check Found -> (Trees.Key (ATree.Container, Current_Node) = Key);
          --  The Tree.Visited stack will not be empty.
          --  if Found is True, the Tree_Store contains an Actual_Node with the
          --  matching Key.  The Tree_Node on the top of the Tree.Visted
@@ -225,24 +260,24 @@ package body SPARK_Classic.Atrees is
    begin
       --# accept F, 10, Current_Node, "Current_Node exported only for proof" &
       --#        F, 33, Current_Node, "Current_Node exported only for proof";
-      Find_Proof (Tree         => Tree,
+      Find_Proof (ATree        => ATree,
                   Key          => Key,
                   Found        => Found,
-                  Tree_Store   => Tree_Store,
                   Visited      => Visited,
                   Current_Node => Current_Node);
    end Find;
 
    procedure Skew (Root       : in out Tree_Node;
-                   Tree_Store : in out Trees.Tree_Type)
+                   Tree       : in out Trees.Tree_Type)
+   --# pre Trees.In_Tree (Tree, Root);
    is
       Left_Child : Trees.Tree_Node;
    begin
-      Left_Child := Trees.Left (Tree_Store, Root);
+      Left_Child := Trees.Left (Tree, Root);
       --  No action is performed if the levels of the root and left nodes
       --  are not equal.
-      if Trees.In_Tree (Tree_Store, Left_Child) and then
-        Trees.Level (Tree_Store, Left_Child) = Trees.Level (Tree_Store, Root)
+      if Trees.In_Tree (Tree, Left_Child) and then
+        Trees.Level (Tree, Left_Child) = Trees.Level (Tree, Root)
       then
          --  The left child has the same level as its parent breaking
          --  rule 2 of an Anderson tree. To resolve rotate right at the parent.
@@ -251,11 +286,11 @@ package body SPARK_Classic.Atrees is
          --  becomes the root index, and lastly, the index of the root
          --  left child becomes the new root {index}.
          Trees.Set_Left
-           (T      => Tree_Store,
+           (T      => Tree,
             N      => Root,
-            Branch => Trees.Right (Tree_Store, Left_Child));
+            Branch => Trees.Right (Tree, Left_Child));
          Trees.Set_Right
-           (T      => Tree_Store,
+           (T      => Tree,
             N      => Left_Child,
             Branch => Root);
          --  The root now becomes the left child.
@@ -263,23 +298,25 @@ package body SPARK_Classic.Atrees is
       end if;
    end Skew;
 
-   procedure Split (Root       : in out Tree_Node;
-                    Tree_Store : in out Trees.Tree_Type)
+   procedure Split (Root : in out Tree_Node;
+                    Tree : in out Trees.Tree_Type)
+   --# pre Trees.In_Tree (Tree, Root);
    is
       Right_Child       : Tree_Node;
       Right_Right_Child : Tree_Node;
    begin
-      Right_Child  := Trees.Right (Tree_Store, Root);
-      if Trees.In_Tree (Tree_Store, Right_Child) then
-         Right_Right_Child := Trees.Right (Tree_Store, Right_Child);
+      Right_Child  := Trees.Right (Tree, Root);
+      if Trees.In_Tree (Tree, Right_Child) then
+         Right_Right_Child := Trees.Right (Tree, Right_Child);
       else
          Right_Right_Child := Trees.Empty_Node;
       end if;
 
       --  No action is taken if there are not two consecutive right children
       -- with the same level
-      if Trees.In_Tree (Tree_Store, Right_Right_Child) and then
-        Trees.Level (Tree_Store, Right_Right_Child) = Trees.Level (Tree_Store, Root)
+      if Trees.In_Tree (Tree, Right_Child) and then
+        Trees.In_Tree (Tree, Right_Right_Child) and then
+        Trees.Level (Tree, Right_Right_Child) = Trees.Level (Tree, Root)
       then
          --  There are two consecutive right children with the same level
          --  Breaking rule 3 of an Anderson tree.
@@ -290,28 +327,28 @@ package body SPARK_Classic.Atrees is
          --  the right child of the root becomes the new root and its level
          --  is incremented.
          Trees.Set_Right
-           (T      => Tree_Store,
+           (T      => Tree,
             N      => Root,
-            Branch => Trees.Left (Tree_Store, Right_Child));
+            Branch => Trees.Left (Tree, Right_Child));
          Trees.Set_Left
-           (T      => Tree_Store,
+           (T      => Tree,
             N      => Right_Child,
             Branch => Root);
          --  The root now becomes the right child.
          Root := Right_Child;
+         --# accept W, 444, "The Level cannot exceed the number of nodes";
+         --# assume Trees.Level (Tree, Root) < Natural'Last;
          --  Increment the level of the new root.
-         Trees.Set_Level (Tree_Store,
+         Trees.Set_Level (Tree,
                           Root,
-                          Trees.Level (Tree_Store, Root) + 1);
+                          Trees.Level (Tree, Root) + 1);
       end if;
    end Split;
 
-   procedure Rebalance_Tree (Tree       : in out A_Tree;
-                             Tree_Store : in out Trees.Tree_Type;
-                             Visited    : in out Bounded_Stacks.Stack)
-   --# pre Populated (Tree, Tree_Store);
-   --# post Populated (Tree, Tree_Store) and
-   --#      Persists (Tree~, Tree, Tree_Store~, Tree_Store);
+   procedure Rebalance_A_Tree (ATree       : in out A_Tree;
+                               Visited    : in out Bounded_Stacks.Stack)
+   --# pre Populated (ATree);
+   --# post Populated (ATree) and Persists (ATree~, ATree);
    is
       Current_Node : Tree_Node;
       Top_Node     : Tree_Node;
@@ -325,7 +362,7 @@ package body SPARK_Classic.Atrees is
       Is_Right := False;
       Parent := Trees.Empty_Node;
 
-      Current_Node := Tree.Root;
+      Current_Node := ATree.Root;
       --  Rebalance the tree by working back up through the visited
       --  node indices on the Tree.Visited stack.
       Stack_Count := Bounded_Stacks.Count (Visited);
@@ -334,10 +371,10 @@ package body SPARK_Classic.Atrees is
          --# assert Stack_Top > 0 and Stack_Top <= Stack_Count and
          --#        Stack_Top = Bounded_Stacks.Count (Visited) and
          --#        not Bounded_Stacks.Is_Empty (Visited) and
-         --#        Persists (Tree~, Tree, Tree_Store~, Tree_Store);
+         --#        Persists (ATree~, ATree);
          --  Make the Current_Node equal to the Tree_Node at the top of
          --  the stack.
-         Pop_In_Tree_Node (Visited, Tree_Store, Top_Node);
+         Pop_In_Tree_Node (Visited, ATree.Container, Top_Node);
          Current_Node := Top_Node;
 
          if Stack_Top > 1 then
@@ -346,7 +383,7 @@ package body SPARK_Classic.Atrees is
             --  As the Current_Node has a parent, determine
             --  whether the Current_Node is a left or right child of
             --  its parent.
-            Parent := Top_In_Tree_Node (Visited,  Tree_Store);
+            Parent := Top_In_Tree_Node (Visited,  ATree.Container);
             --  This boolean expression determines which branch of
             --  the parent has the the Current_Node as its child.
             --  False => Left, True => Right.
@@ -354,14 +391,14 @@ package body SPARK_Classic.Atrees is
             --  call of Skew and Split as these may change the
             --  Current_Node.
             Is_Right :=
-              Trees.Right (Tree_Store, Parent) = Top_Node;
+              Trees.Right (ATree.Container, Parent) = Top_Node;
          end if;
 
          --  Perform the Anderson Tree Skew and Split operations on
          --  the Current_Node.  The Current_Node
          --  may be changed by Skew and Split.
-         Skew (Current_Node, Tree_Store);
-         Split (Current_Node, Tree_Store);
+         Skew (Current_Node, ATree.Container);
+         Split (Current_Node, ATree.Container);
 
          --  Update the parent node to point to its new child.
          if Current_Node /= Top_Node and then Stack_Top > 1 then
@@ -377,81 +414,84 @@ package body SPARK_Classic.Atrees is
               (Is_Right   => Is_Right,
                Node       => Parent,
                Set_Node   => Current_Node,
-               Tree_Store => Tree_Store);
+               Tree       => ATree.Container);
          end if;
       end loop;
       --  The root of the tree after inserting a node and rebalancing.
-      Tree.Root := Current_Node;
-   end Rebalance_Tree;
+      ATree.Root := Current_Node;
+   end Rebalance_A_Tree;
 
-   procedure Trace_To_Left_Leaf (E : in out Enumerator;
-                                 Tree_Store : Trees.Tree_Type)
+   procedure Trace_To_Left_Leaf (E    : in out Enumerator;
+                                 Tree : Trees.Tree_Type)
+   --# pre not Bounded_Stacks.Is_Empty (E.Visited);
    is
       Current_Node : Tree_Node;
    begin
       Current_Node :=
-        Trees.Left (Tree_Store, Top_In_Tree_Node (E.Visited, Tree_Store));
-      while Trees.In_Tree (Tree_Store, Current_Node) loop
-            Push_In_Tree_Node (E.Visited, Tree_Store, Current_Node);
-            Current_Node := Trees.Left (Tree_Store, Current_Node);
+        Trees.Left (Tree, Top_In_Tree_Node (E.Visited, Tree));
+      while Trees.In_Tree (Tree, Current_Node) loop
+            Push_In_Tree_Node (E.Visited, Tree, Current_Node);
+            Current_Node := Trees.Left (Tree, Current_Node);
       end loop;
    end Trace_To_Left_Leaf;
 
-   procedure Init_Enumerator (Tree       : A_Tree;
-                              Tree_Store : Trees.Tree_Type;
+   procedure Init_Enumerator (ATree      : A_Tree;
                               Enum       : out Enumerator)
-   --# pre Trees.In_Tree (Tree_Store, Tree.Root);
+   --# pre Trees.In_Tree (ATree.Container, ATree.Root);
    is
    begin
-      Enum.Root := Tree;
+      Enum.ATree := ATree;
       Bounded_Stacks.New_Stack (Enum.Visited);
-      Push_In_Tree_Node (Enum.Visited, Tree_Store, Tree.Root);
-      Trace_To_Left_Leaf (Enum, Tree_Store);
+      Push_In_Tree_Node (Enum.Visited, ATree.Container, ATree.Root);
+      Trace_To_Left_Leaf (Enum, ATree.Container);
    end Init_Enumerator;
 
   --------------
    -- New_Tree --
    --------------
 
-   procedure New_Tree (Tree       : out A_Tree)
+   procedure New_A_Tree (ATree : out A_Tree; Tree_Container : Trees.Tree_Type)
    is
    begin
-      Tree.Root := Trees.Empty_Node;
-      Tree.Count := 0;
-   end New_Tree;
+      ATree.Container := Tree_Container;
+      ATree.Root      := Trees.Empty_Node;
+      ATree.Count     := 0;
+   end New_A_Tree;
 
    ------------
    -- Insert --
    ------------
 
    procedure Insert
-     (Tree       : in out A_Tree;
+     (ATree      : in out A_Tree;
       Key        : Key_Type;
-      Tree_Store : in out Trees.Tree_Type;
       Inserted   : out Boolean)
    is
-      Visited       : Bounded_Stacks.Stack;
-      Key_Found     : Boolean;
-      Is_Right      : Boolean;
-      Insert_Node   : Trees.Tree_Node;
-      Current_Node  : Trees.Tree_Node;
+      Tree_Container : Trees.Tree_Type;
+      Tree_Root      : Tree_Node;
+      Visited        : Bounded_Stacks.Stack;
+      Key_Found      : Boolean;
+      Is_Right       : Boolean;
+      Insert_Node    : Trees.Tree_Node;
+      Current_Node   : Trees.Tree_Node;
        --  A Child of the Current Node.
-      Child         : Trees.Tree_Node;
+      Child          : Trees.Tree_Node;
    begin
-      --# check Tree_Count (Tree) = Count (Tree);
-      if not Populated (Tree, Tree_Store) then
+      Tree_Root := ATree.Root;
+      if not Populated (ATree) then
          --  First node of tree - Enter a new node with level 1 into the store
          Inserted := True;
-         Tree.Count := 1;
+         Set_Count (ATree, 1);
+         --# check Count (ATree) = 1;
          Trees.Add_Node
-           (T       => Tree_Store,
+           (T       => ATree.Container,
             N       => Insert_Node,
             The_Key => Key);
          --  The new node is the root of the new tree
-         Tree.Root := Insert_Node;
+         ATree.Root := Insert_Node;
       else
          --  Make sure that the tree does not already include the key.
-         Find (Tree, Key, Key_Found, Tree_Store, Visited);
+         Find (ATree, Key, Key_Found, Visited);
          if Key_Found then
             --  The Key is already in the tree, do not add it again.
             Inserted := False;
@@ -460,51 +500,48 @@ package body SPARK_Classic.Atrees is
          --  a duplicate key.
          --  First node of tree - Enter a new node with level 1 into the store
             Inserted := True;
-            --# accept W, 444, "The number of nodes is bounded by ",
-            --#                "the number of possible nodes.";
-            --# assume Tree.Count <= Integer (Trees.Tree_Node'Last);
-            --# end accept;
-            Tree.Count := Tree.Count + 1;
+            Inc_Count (ATree);
             Trees.Add_Node
-              (T       => Tree_Store,
+              (T       => ATree.Container,
                N       => Insert_Node,
                The_Key => Key);
             --  The new node is the root of the new tree
-            Tree.Root := Insert_Node;
+            ATree.Root := Insert_Node;
          else
             Inserted := True;
-            --# accept W, 444, "The number of nodes is bounded by ",
-            --#                "the number of possible nodes.";
-            --# assume Tree.Count <= Integer (Trees.Tree_Node'Last);
-            --# end accept;
-            Tree.Count := Tree.Count + 1;
-            Current_Node := Top_In_Tree_Node (Visited, Tree_Store);
+            --# check Trees.in_Tree (ATree.Container, ATree.Root);
+            Inc_Count (ATree);
+            --# check ATree.Root = Tree_Root;
+
+             --# check Trees.in_Tree (ATree.Container, Tree_Root);
+           Tree_Container := ATree.Container;
+            Current_Node := Top_In_Tree_Node (Visited, Tree_Container);
             --  A right branch if the value of Key is greater (or equal)
             --  to the Top Value, otherwise take the left branch.
-            Is_Right := Trees.Key (Tree_Store, Current_Node) < Key;
+            Is_Right := Trees.Key (Tree_Container, Current_Node) < Key;
 
             --  Add a new child node to extend the tree
             Trees.Add_Node
-              (T       => Tree_Store,
+              (T       => Tree_Container,
                N       => Child,
                The_Key => Key);
-            --# check Tree_Count (Tree) = Count (Tree);
+            --# check Trees.in_Tree (Tree_Container, ATree.Root);
              Set_Branch (Is_Right   => Is_Right,
                         Node       => Current_Node,
                         Set_Node   => Child,
-                        Tree_Store => Tree_Store);
-            --# check Trees.in_Tree (Tree_Store, Tree.Root);
-            --# check Populated (Tree, Tree_Store);
+                        Tree       => Tree_Container);
+            --# check Trees.in_Tree (Tree_Container, ATree.Root);
+            ATree.Container := Tree_Container;
+            --# check Populated (ATree);
             -- Now rebalance the tree
             --# accept F, 10, Visited, "Visited must be an in out paramter ",
             --#                        "as it is updated by Rebalance_Tree",
             --#                        " but its final value is unrequired";
-            Rebalance_Tree (Tree, Tree_Store, Visited);
+            Rebalance_A_Tree (ATree, Visited);
          end if;
       end if;
-      --# check Tree_Count (Tree) = Tree.Count;
       --# accept W, 444, "The Key has been inserted into the Tree";
-      --#  assume Is_Present (Tree, Key, Tree_Store);
+      --#  assume Is_Present (ATree, Key);
       --# end accept;
    end Insert;
 
@@ -513,10 +550,9 @@ package body SPARK_Classic.Atrees is
    -----------------------
 
    procedure Insert_With_Value
-     (Tree          : in out A_Tree;
+     (ATree         : in out A_Tree;
       Key           : Key_Type;
       Value         : Value_Type;
-      Tree_Store    : in out Trees.Tree_Type;
       Inserted      : out Boolean;
       Value_At_Node : out Value_Type)
    is
@@ -528,116 +564,107 @@ package body SPARK_Classic.Atrees is
        --  A Child of the Current Node.
       Child         : Trees.Tree_Node;
    begin
-       --# check Tree_Count (Tree) = Count (Tree);
-     if not Populated (Tree, Tree_Store) then
+     if not Populated (ATree) then
          --  First node of tree - Enter a new node with level 1 into the store
          Inserted := True;
-         Tree.Count := 1;
+         Set_Count (ATree, 1);
          Trees.Add_Node
-           (T       => Tree_Store,
+           (T       => ATree.Container,
             N       => Insert_Node,
             The_Key => Key);
          Value_At_Node := Value;
-         Trees.Set_Value (Tree_Store, Insert_Node, Value_At_Node);
+         Trees.Set_Value (ATree.Container, Insert_Node, Value_At_Node);
          --  The new node is the root of the new tree
-         Tree.Root := Insert_Node;
+         ATree.Root := Insert_Node;
       else
          --  Make sure that the tree does not already include the key.
-         Find (Tree, Key, Key_Found, Tree_Store, Visited);
+         Find (ATree, Key, Key_Found, Visited);
          if Key_Found then
             --  The Key is already in the tree, do not add it again.
             Inserted := False;
             --  The node with the key is on the top of the visited stack.
             --  Get its value.
             Value_At_Node :=
-              Trees.Value (Tree_Store, Top_In_Tree_Node (Visited, Tree_Store));
+              Trees.Value (ATree.Container,
+                           Top_In_Tree_Node (Visited, ATree.Container));
          elsif Bounded_Stacks.Is_Empty (Visited) then
          --  The stack is empty and so the tree is empty, there cannot be
          --  a duplicate key.
          --  First node of tree - Enter a new node with level 1 into the store
             Inserted := True;
-            --# accept W, 444, "The number of nodes is bounded by ",
-            --#                "the number of possible nodes.";
-            --# assume Tree.Count <= Integer (Trees.Tree_Node'Last);
-            --# end accept;
-            Tree.Count := Tree.Count + 1;
+            Inc_Count (ATree);
             Trees.Add_Node
-              (T       => Tree_Store,
+              (T       => ATree.Container,
                N       => Insert_Node,
                The_Key => Key);
             Value_At_Node := Value;
-            Trees.Set_Value (Tree_Store, Insert_Node, Value_At_Node);
+            Trees.Set_Value (ATree.Container, Insert_Node, Value_At_Node);
             --  The new node is the root of the new tree
-            Tree.Root := Insert_Node;
+            ATree.Root := Insert_Node;
          else
             Inserted := True;
-            --# accept W, 444, "The number of nodes is bounded by ",
-            --#                "the number of possible nodes.";
-            --# assume Tree.Count <= Integer (Trees.Tree_Node'Last);
-            --# end accept;
-            Tree.Count := Tree.Count + 1;
-            Current_Node := Top_In_Tree_Node (Visited, Tree_Store);
+            Inc_Count (ATree);
+            Current_Node := Top_In_Tree_Node (Visited, ATree.Container);
             --  A right branch if the value of Key is greater (or equal)
             --  to the Top Value, otherwise take the left branch.
-            Is_Right := Trees.Key (Tree_Store, Current_Node) < Key;
+            Is_Right := Trees.Key (ATree.Container, Current_Node) < Key;
 
             --  Add a new child node to extend the tree
             Trees.Add_Node
-              (T       => Tree_Store,
+              (T       => ATree.Container,
                N       => Child,
                The_Key => Key);
-            --# check Tree_Count (Tree) = Count (Tree);
             Set_Branch (Is_Right   => Is_Right,
                         Node       => Current_Node,
                         Set_Node   => Child,
-                        Tree_Store => Tree_Store);
+                        Tree       => ATree.Container);
            Value_At_Node := Value;
-            Trees.Set_Value (Tree_Store, Child, Value_At_Node);
-            --# check Trees.in_Tree (Tree_Store, Tree.Root);
-            --# check Populated (Tree, Tree_Store);
+            Trees.Set_Value (ATree.Container, Child, Value_At_Node);
+            --# check Trees.in_Tree (ATree.Container, ATree.Root);
+            --# check Populated (ATree);
             -- Now rebalance the tree
             --# accept F, 10, Visited, "Visited must be an in out paramter ",
             --#                        "as it is updated by Rebalance_Tree",
             --#                        " but its final value is unrequired";
-            Rebalance_Tree (Tree, Tree_Store, Visited);
+            Rebalance_A_Tree (ATree, Visited);
          end if;
       end if;
-      --# check Tree_Count (Tree) = Tree.Count;
       --# accept W, 444, "The Key has been inserted into the Tree";
-      --#  assume Is_Present (Tree, Key, Tree_Store);
+      --#  assume Is_Present (ATree, Key);
       --# end accept;
    end Insert_With_Value;
 
-   -----------
-   -- Clear --
-   -----------
+   ------------------
+   -- Clear_A_Tree --
+   ------------------
 
-   procedure Clear (Tree       : in out A_Tree;
-                    Tree_Store : in out Trees.Tree_Type)
+   procedure Clear_A_Tree (ATree       : in out A_Tree)
    is
    begin
-      Trees.Clear (Tree_Store, Tree.Root);
+      Trees.Clear (ATree.Container, ATree.Root);
       --  Tree := Null_A_Tree;
       --  SPARK Examiner 2005 Simplifier does not infer that
       --  Tree := Null_A_Tree implies Tree.Root = Trees.Empty_Node;
-      Tree.Root := Trees.Empty_Node;
-      Tree.Count := 0;
-   end Clear;
+      ATree.Root := Trees.Empty_Node;
+      ATree.Count := 0;
+   end Clear_A_Tree;
 
    ---------------
    -- Next_Node --
    ---------------
 
-   procedure Next_Node (E    : in out Enumerator; Tree_Store : Trees.Tree_Type;
-                        Node : out Tree_Node) is
+   procedure Next_Node (E    : in out Enumerator; Node : out Tree_Node) is
       Right_Child : Trees.Tree_Node;
+      Tree_Container : Trees.Tree_Type;
    begin
       if not Bounded_Stacks.Is_Empty (E.Visited) then
-         Pop_In_Tree_Node (E.Visited, Tree_Store, Node);
-         Right_Child := Trees.Right (Tree_Store, Node);
-         if  Trees.In_Tree (Tree_Store, Right_Child) then
-            Push_In_Tree_Node (E.Visited, Tree_Store, Right_Child);
-            Trace_To_Left_Leaf (E, Tree_Store);
+         Tree_Container := E.ATree.Container;
+         Pop_In_Tree_Node (E.Visited, Tree_Container, Node);
+         Right_Child := Trees.Right (Tree_Container, Node);
+         if  Trees.In_Tree (Tree_Container, Right_Child) then
+            Push_In_Tree_Node (E.Visited, Tree_Container, Right_Child);
+            Trace_To_Left_Leaf (E, Tree_Container);
+            E.ATree.Container := Tree_Container;
          end if;
       else
          Node := Trees.Empty_Node;
@@ -649,10 +676,7 @@ package body SPARK_Classic.Atrees is
    -- Is_Equal --
    --------------
 
-  function Is_Equal (Tree_1       : A_Tree;
-                     Tree_2       : A_Tree;
-                     Tree_Store_1 : Trees.Tree_Type;
-                     Tree_Store_2 : Trees.Tree_Type) return Boolean
+  function Is_Equal (ATree_1, ATree_2 : A_Tree) return Boolean
    is
       Enum_1    : Enumerator;
       Enum_2    : Enumerator;
@@ -663,19 +687,19 @@ package body SPARK_Classic.Atrees is
       Both_Present : Boolean;
       Equal     : Boolean;
    begin
-      Equal := Tree_1.Count = Tree_2.Count;
+      Equal := ATree_1.Count = ATree_2.Count;
       if Equal then
-         Init_Enumerator (Tree_1, Tree_Store_1, Enum_1);
-         Init_Enumerator (Tree_2, Tree_Store_2, Enum_2);
+         Init_Enumerator (ATree_1, Enum_1);
+         Init_Enumerator (ATree_2, Enum_2);
          loop
-            Next_Node (Enum_1, Tree_Store_1, Current_1);
-            Next_Node (Enum_2, Tree_Store_2, Current_2);
-            Present_1 := Trees.In_Tree (Tree_Store_1, Current_1);
-            Present_2 := Trees.In_Tree (Tree_Store_2, Current_2);
+            Next_Node (Enum_1, Current_1);
+            Next_Node (Enum_2, Current_2);
+            Present_1 := Trees.In_Tree (ATree_1.Container, Current_1);
+            Present_2 := Trees.In_Tree (ATree_2.Container, Current_2);
             Both_Present := Present_1 and Present_2;
             if Both_Present then
-               Equal := Trees.Key (Tree_Store_1, Current_1) =
-                 Trees.Key (Tree_Store_2, Current_2);
+               Equal := Trees.Key (ATree_1.Container, Current_1) =
+                 Trees.Key (ATree_2.Container, Current_2);
             else
                Equal := False;
             end if;
@@ -690,11 +714,8 @@ package body SPARK_Classic.Atrees is
    ----------------
 
    function Is_Present
-     (Tree       : A_Tree;
-      Key        : Key_Type;
-      Tree_Store : Trees.Tree_Type)
-      return Boolean
-   --# pre Populated (Tree, Tree_Store);
+     (ATree : A_Tree; Key : Key_Type) return Boolean
+   --# pre Populated (ATree);
    --# return R => (R -> Is_Found (R));
    is
       Visited : Bounded_Stacks.Stack;
@@ -702,7 +723,7 @@ package body SPARK_Classic.Atrees is
    begin
       --# accept F, 10, Visited, "Visited stack is used by Find" &
       --#        F, 33, Visited, "Final value of Visited is not required";
-      Find (Tree, Key, Found, Tree_Store, Visited);
+      Find (ATree, Key, Found, Visited);
       return Found;
    end Is_Present;
 
@@ -710,17 +731,14 @@ package body SPARK_Classic.Atrees is
    -- Tree_Depth --
    ----------------
 
-   function Tree_Depth
-     (Tree       : A_Tree;
-      Tree_Store : Trees.Tree_Type)
-      return Natural
+   function Tree_Depth (ATree : A_Tree) return Natural
    is
       Result : Natural;
    begin
-      if Empty_Tree (Tree) then
+      if Empty_Tree (ATree) then
          Result := 0;
       else
-         Result := Trees.Level (Tree_Store, Tree.Root);
+         Result := Trees.Level (ATree.Container, ATree.Root);
       end if;
       return Result;
    end Tree_Depth;
@@ -729,28 +747,25 @@ package body SPARK_Classic.Atrees is
    -- Count --
    -----------
 
-   function Count (Tree : A_Tree) return Natural
-   --# return Tree_Count (Tree);
+   function Count (ATree : A_Tree) return Natural
+   --# return ATree.Count;
    is
    begin
-      return Tree.count;
+      return ATree.Count;
    end Count;
 
    --------------------
    -- New_Enumerator --
    --------------------
 
-   function New_Enumerator
-     (Tree       : A_Tree;
-      Tree_Store : Trees.Tree_Type)
-      return Enumerator
+   function New_Enumerator (ATree : A_Tree) return Enumerator
    is
       Result : Enumerator;
    begin
-      Result.Root := Tree;
+      Result.ATree := ATree;
       Bounded_Stacks.New_Stack (Result.Visited);
-      Push_In_Tree_Node (Result.Visited, Tree_Store, Tree.Root);
-      Trace_To_Left_Leaf (Result, Tree_Store);
+      Push_In_Tree_Node (Result.Visited, ATree.Container, ATree.Root);
+      Trace_To_Left_Leaf (Result, ATree.Container);
       return Result;
    end New_Enumerator;
 
