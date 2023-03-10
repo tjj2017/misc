@@ -35,9 +35,8 @@ package SPARK_Classic.Atrees is
                      Key        : Key_Type;
                      Inserted   : out Boolean);
    --# post Is_Present (ATree, Key) and Populated (ATree) and
-   --#      (Inserted -> (((not Populated (ATree~)) -> Count (ATree) = 1) and
-   --#                    ((Populated (ATree~)) -> 
-   --#                        Count (ATree) = Count (ATree~) + 1)));
+   --#      (Inserted -> (Count (ATree) = Count (ATree~) + 1)) and
+   --#      (not Inserted -> Count (ATree) = Count (ATree~));
 
    procedure Insert_With_Value (ATree         : in out A_Tree;
                                 Key           : Key_Type;
@@ -45,9 +44,8 @@ package SPARK_Classic.Atrees is
                                 Inserted      : out Boolean;
                                 Value_At_Node : out Value_Type);
    --# post Is_Present (ATree, Key) and Populated (ATree) and
-   --#      (Inserted -> (((not Populated (ATree~)) -> Count (ATree) = 1) and
-   --#                    ((Populated (ATree~)) -> 
-   --#                        Count (ATree) = Count (ATree~) + 1)));
+   --#      (Inserted -> (Count (ATree) = Count (ATree~) + 1)) and
+   --#      (not Inserted -> Count (ATree) = Count (ATree~));
 
    procedure Clear_A_Tree (ATree : in out A_Tree);
    --# pre not Empty_Tree (ATree);

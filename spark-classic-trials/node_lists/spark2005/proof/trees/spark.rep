@@ -5,7 +5,7 @@
            *******************************************************
 
 
-                        DATE : 27-JAN-2023 17:29:47.42
+                        DATE : 07-MAR-2023 16:39:24.69
 
 Options:
     index_file=spark_classic.idx
@@ -28,14 +28,14 @@ Options:
     error_explanations=off
     justification_option=full
     output_directory=.
-    output_directory (actual)=/home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/
+    output_directory (actual)=/home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/
 
 Selected files:
    spark_classic-atrees.adb
 
 
 Index Filename(s) used were: 
-   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic.idx
+   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic.idx
 
 
 No Meta Files used
@@ -94,18 +94,18 @@ No summarized warnings
 
 
 Source Filename(s) used were:
-   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-atrees.adb
-   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-atrees.sss
-   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-bounded_stacks.sss
-   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-trees.sss
-   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-expose_nodes.ads
-   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/spark_classic.ads
-   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/types.ads
-   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-dynamic_tables.sss
+   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-atrees.adb
+   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-atrees.sss
+   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-bounded_stacks.sss
+   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-trees.sss
+   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-expose_nodes.ads
+   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/spark_classic.ads
+   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/types.ads
+   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-dynamic_tables.sss
 
 
 
-Source Filename:   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-atrees.sss
+Source Filename:   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-atrees.sss
 No Listing File
 
    Unit name:  SPARK_Classic.Atrees
@@ -117,7 +117,7 @@ No errors found
 No summarized warnings
 
 
-Source Filename:   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-bounded_stacks.sss
+Source Filename:   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-bounded_stacks.sss
 No Listing File
 
    Unit name:  SPARK_Classic.Bounded_Stacks
@@ -129,7 +129,7 @@ No errors found
 No summarized warnings
 
 
-Source Filename:   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-trees.sss
+Source Filename:   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-trees.sss
 No Listing File
 
    Unit name:  SPARK_Classic.Trees
@@ -141,7 +141,7 @@ No errors found
 No summarized warnings
 
 
-Source Filename:   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-expose_nodes.ads
+Source Filename:   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-expose_nodes.ads
 No Listing File
 
    Unit name:  SPARK_Classic.Expose_Nodes
@@ -153,7 +153,7 @@ No errors found
 No summarized warnings
 
 
-Source Filename:   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/spark_classic.ads
+Source Filename:   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/spark_classic.ads
 No Listing File
 
    Unit name:  SPARK_Classic
@@ -165,7 +165,7 @@ No errors found
 No summarized warnings
 
 
-Source Filename:   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/types.ads
+Source Filename:   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/types.ads
 No Listing File
 
    Unit name:  Types
@@ -177,7 +177,7 @@ No errors found
 No summarized warnings
 
 
-Source Filename:   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-dynamic_tables.sss
+Source Filename:   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-dynamic_tables.sss
 No Listing File
 
    Unit name:  SPARK_Classic.Dynamic_Tables
@@ -195,60 +195,50 @@ Line
 No summarized warnings
 
 
-Source Filename:   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-atrees.adb
-Listing Filename:  /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-atrees.lst
+Source Filename:   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-atrees.adb
+Listing Filename:  /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-atrees.lst
 
    Unit name:  SPARK_Classic.Atrees
    Unit type:  package body
    Unit has been analysed, any errors are listed below.
 
-4 error(s) or warning(s)
+2 error(s) or warning(s)
 
 Line
- 432        while Trees.In_Tree (Tree, Current_Node) loop
+ 417        while Trees.In_Tree (Tree, Current_Node) loop
 
 --- (  1)  Warning           :402: Default assertion planted to cut loop.
 
- 480        Tree_Root := ATree.Root;
-            ^2
-!!! (  2)  Flow Error        : 10: Ineffective statement.
+ 668              Next_Node (Enum_1, Current_1);
 
- 546     end Insert;
-
-!!! (  3)  Flow Error        : 33: The variable Tree_Root is neither referenced nor 
-           exported.
-
- 695              Next_Node (Enum_1, Current_1);
-
---- (  4)  Warning           :402: Default assertion planted to cut loop.
+--- (  2)  Warning           :402: Default assertion planted to cut loop.
 
 
 Expected messages marked with the accept annotation
 Type Msg    Lines              Reason                    Match
      No.  From    To                                    No.  Line
-Warn 444    47    49  Count (A_T) = A_T.Count by defin    1    48
-Warn 444    58    61  The number of nodes is bounded b    1    60
-Warn 444    63    65  Count (A_T) = A_T.Count by defin    1    64
-Flow  30    76   end  Tree_Store only used in proof co    1    84
-Warn 444    78   end  A Stack_Size of 32 allows the tr    1    81
-Flow  30    95   end  Tree only used in proof context.    1   103
-Warn 444    99   end  The exclusive use of Push_In_Tre    1   102
-Flow  30   113   end  Tree only used in proof context.    1   125
-Warn 444   117   end  The exclusive use of Push_In_Tre    1   120
-Flow  50   122   end  Tree only used in proof context.    1   125
-Flow  10   261   end  Current_Node exported only for p    1   263
-Flow  33   261   end  Current_Node exported only for p    1   268
-Warn 444   339   end  The Level cannot exceed the numb    1   340
-Flow  10   537   end  Visited must be an in out paramt    1   540
-Warn 444   543   545  The Key has been inserted into t    1   544
-Flow  10   626   end  Visited must be an in out paramt    1   629
-Warn 444   632   634  The Key has been inserted into t    1   633
-Flow  10   724   end  Visited stack is used by Find       1   726
-Flow  33   724   end  Final value of Visited is not re    1   728
+Flow  30    55   end  Tree is only used in proof conte    1    63
+Warn 444    57   end  A Stack_Size of 32 allows the tr    1    60
+Flow  30    76   end  Tree only used in proof context.    1    84
+Warn 444    80   end  The exclusive use of Push_In_Tre    1    83
+Flow  30    96   end  Tree only used in proof context.    1   108
+Warn 444   100   end  The exclusive use of Push_In_Tre    1   103
+Flow  50   105   end  Tree only used in proof context.    1   108
+Flow  10   244   end  Current_Node exported only for p    1   246
+Flow  33   244   end  Current_Node exported only for p    1   251
+Warn 444   322   end  The Level cannot exceed the numb    1   323
+Warn 444   467   472  There cannot be Natural'Last tre    3   471
+Flow  10   514   end  Visited must be an in out paramt    1   517
+Warn 444   520   524  The Key is in the Tree Definitio    2   523
+Warn 444   546   551  There cannot be Natural'Last tre    3   550
+Flow  10   597   end  Visited must be an in out paramt    1   600
+Warn 444   603   607  The Key is in the Tree Definitio    2   606
+Flow  10   697   end  Visited stack is used by Find       1   699
+Flow  33   697   end  Final value of Visited is not re    1   701
 
 
-8 summarized warning(s), comprising:
-     8 pragma(s)*
+6 summarized warning(s), comprising:
+     6 pragma(s)*
 (*Note: the above warnings may affect the validity of the analysis.)
 
 Note: Data flow analysis mode selected
