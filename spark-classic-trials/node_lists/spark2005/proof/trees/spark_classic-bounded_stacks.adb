@@ -1,34 +1,12 @@
 package body SPARK_Classic.Bounded_Stacks is
    --# accept W, 3, "pragma Inline has no semantic effect";
 
-   --  A null procedure to define the relationship between
-   --  S.Count and Count (S).
-   procedure Refined_Count (S : Stack)
-   --# derives null from S;
-   --# post for all C in Stack_Count => ((S.Count = C) = (Count (S) = C));
-   is
-      --# hide Refined_Count;
-   begin
-      null;
-   end Refined_Count;
-
-   --  A null procedure to define the relationship between
-   --  S.Count and Eempty (S).
-   procedure Refined_Empty (S : Stack)
-   --# derives null from S;
-   --# post Is_Empty (S) = (S.Count = 0);
-   is
-      --# hide Refined_Empty;
-   begin
-      null;
-   end Refined_Empty;
-
    -----------
    -- Count --
    -----------
 
    function Count (S : Stack) return Stack_Count
-   --# return S.Count;
+   --# return C => (Count (S) = C) <-> (S.Count = C);
    is
    begin
       return S.Count;
@@ -44,8 +22,7 @@ package body SPARK_Classic.Bounded_Stacks is
       return Boolean
    is
    begin
-      Refined_Count (S);
-      return S.Count = 0;
+      return Count (S) = 0;
    end Is_Empty;
    pragma Inline (Is_Empty);
 
@@ -58,11 +35,11 @@ package body SPARK_Classic.Bounded_Stacks is
    is
    begin
       S.Count := 0;
-      --# accept Flow, 23, S.Contents, "Setting Count to zero means no contents" &
-      --#        Flow, 32, S.Contents, "As above" &
+      --# accept Flow, 32, S.Contents, "Setting Count to zero means no contents" &
       --#        Flow, 31, S.Contents, "As above" &
-      --#        Flow, 602, S, S.Contents, "As above";
-      Refined_Empty (S);
+      --#        Flow, 602, S, S.Contents, "As above" &
+      --#        Warn, 444, "The definition of Count (S) and Is_Empty (S)";
+      --# assume (S.Count = 0) -> Is_Empty (S);
    end New_Stack;
    pragma Inline (New_Stack);
 
@@ -77,6 +54,8 @@ package body SPARK_Classic.Bounded_Stacks is
    begin
       S.Count := S.Count + 1;
       S.Contents (S.Count) := Value;
+      --# accept Warn, 444, "The definition of Count(S) and Is_Empty (S)";
+      --# assume (S.Count > 0) -> not Is_Empty (S);
    end Push;
    pragma Inline (Push);
 
@@ -131,11 +110,12 @@ package body SPARK_Classic.Bounded_Stacks is
    is
    begin
       S.Count := 0;
-      --# accept Flow, 23, S.Contents, "Setting Count to zero means no contents" &
-      --#        Flow, 31, S.Contents, "As above" &
+      --  --# accept Flow, 23, S.Contents, "Setting Count to zero means no contents" &
+      --# accept Flow, 31, S.Contents, "Setting Count to zero means no contents" &
       --#        Flow, 32, S.Contents, "As above" &
-      --#        Flow, 602, S, S.Contents, "As above";
-      Refined_Empty (S);
+      --#        Flow, 602, S, S.Contents, "As above" &
+      --#        Warn, 444, "The definition of Count (S) and Is_Empty (S)";
+      --# assume (S.Count = 0) -> Is_Empty (S);
     end Clear;
    pragma Inline (Clear);
 

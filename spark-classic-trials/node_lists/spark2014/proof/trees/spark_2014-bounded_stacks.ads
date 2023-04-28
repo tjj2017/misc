@@ -5,13 +5,13 @@ generic
 package SPARK_2014.Bounded_Stacks
 with SPARK_Mode
 is
-   type Stack is tagged private;
+   type Stack is private;
 
    subtype Stack_Count is Natural range 0 .. Stack_Size;
 
    function Count    (S : Stack) return Stack_Count;
-   function Is_Empty (S : Stack) return Boolean
-     with Post => Is_Empty'Result = (Count (S) = 0);
+   function Is_Empty (S : Stack) return Boolean is (Count (S) = 0);
+   pragma Inline (Is_Empty);
 
    procedure New_Stack (S : out Stack)
      with Post => Is_Empty (S);
@@ -24,7 +24,7 @@ is
 
    procedure Pop  (S : in out Stack;
                    Value : out Element_Type)
-     with Pre  => not Is_Empty (S),
+     with Pre => not Is_Empty (S),
      Post => Count (S) = Count (S'Old) - 1;
 
    function Top (S : Stack) return Element_Type

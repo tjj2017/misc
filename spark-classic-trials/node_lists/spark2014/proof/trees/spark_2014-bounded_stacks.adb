@@ -1,68 +1,21 @@
-package body SPARK_Classic.Bounded_Stacks is
-   --# accept W, 3, "pragma Inline has no semantic effect";
-
-   --  A null procedure to define the relationship between
-   --  S.Count and Count (S).
-   procedure Refined_Count (S : Stack)
-   --# derives null from S;
-   --# post for all C in Stack_Count => ((S.Count = C) = (Count (S) = C));
-   is
-      --# hide Refined_Count;
-   begin
-      null;
-   end Refined_Count;
-
-   --  A null procedure to define the relationship between
-   --  S.Count and Eempty (S).
-   procedure Refined_Empty (S : Stack)
-   --# derives null from S;
-   --# post Is_Empty (S) = (S.Count = 0);
-   is
-      --# hide Refined_Empty;
-   begin
-      null;
-   end Refined_Empty;
+package body SPARK_2014.Bounded_Stacks
+with SPARK_Mode
+is
 
    -----------
    -- Count --
    -----------
 
-   function Count (S : Stack) return Stack_Count
-   --# return S.Count;
-   is
-   begin
-      return S.Count;
-   end Count;
+   function Count (S : Stack) return Stack_Count is (S.Count);
    pragma Inline (Count);
-
-    --------------
-   -- Is_Empty --
-   --------------
-
-   function Is_Empty
-     (S : Stack)
-      return Boolean
-   is
-   begin
-      Refined_Count (S);
-      return S.Count = 0;
-   end Is_Empty;
-   pragma Inline (Is_Empty);
-
-   ---------------
-   -- New_Stack --
-   ---------------
 
    procedure New_Stack
      (S : out Stack)
-   is
+     with SPARK_Mode => Off
+  is
    begin
+      --  Setting Count to Zero initialises the stack S
       S.Count := 0;
-      --# accept Flow, 23, S.Contents, "Setting Count to zero means no contents" &
-      --#        Flow, 32, S.Contents, "As above" &
-      --#        Flow, 31, S.Contents, "As above" &
-      --#        Flow, 602, S, S.Contents, "As above";
-      Refined_Empty (S);
    end New_Stack;
    pragma Inline (New_Stack);
 
@@ -91,7 +44,6 @@ package body SPARK_Classic.Bounded_Stacks is
    begin
       Value := S.Contents (S.Count);
       S.Count := S.Count - 1;
-      --# check S.Count = Count (S~) - 1;
    end Pop;
    pragma Inline (Pop);
 
@@ -128,15 +80,12 @@ package body SPARK_Classic.Bounded_Stacks is
 
    procedure Clear
      (S : out Stack)
+     with SPARK_Mode => Off
    is
    begin
+      --  Setting Count to zero means no contents.
       S.Count := 0;
-      --# accept Flow, 23, S.Contents, "Setting Count to zero means no contents" &
-      --#        Flow, 31, S.Contents, "As above" &
-      --#        Flow, 32, S.Contents, "As above" &
-      --#        Flow, 602, S, S.Contents, "As above";
-      Refined_Empty (S);
-    end Clear;
+   end Clear;
    pragma Inline (Clear);
 
-end SPARK_Classic.Bounded_Stacks;
+end SPARK_2014.Bounded_Stacks;

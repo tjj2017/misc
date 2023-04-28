@@ -5,7 +5,7 @@
            *******************************************************
 
 
-                        DATE : 07-MAR-2023 16:39:24.69
+                        DATE : 11-APR-2023 15:35:56.95
 
 Options:
     index_file=spark_classic.idx
@@ -28,14 +28,14 @@ Options:
     error_explanations=off
     justification_option=full
     output_directory=.
-    output_directory (actual)=/home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/
+    output_directory (actual)=/home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/
 
 Selected files:
-   spark_classic-atrees.adb
+   spark_classic-bounded_stacks.adb
 
 
 Index Filename(s) used were: 
-   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic.idx
+   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic.idx
 
 
 No Meta Files used
@@ -94,30 +94,15 @@ No summarized warnings
 
 
 Source Filename(s) used were:
-   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-atrees.adb
-   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-atrees.sss
-   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-bounded_stacks.sss
-   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-trees.sss
-   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-expose_nodes.ads
-   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/spark_classic.ads
-   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/types.ads
-   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-dynamic_tables.sss
+   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-bounded_stacks.adb
+   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-bounded_stacks.sss
+   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-expose_nodes.ads
+   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/spark_classic.ads
+   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/types.ads
 
 
 
-Source Filename:   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-atrees.sss
-No Listing File
-
-   Unit name:  SPARK_Classic.Atrees
-   Unit type:  package specification
-   Unit has been analysed, any errors are listed below.
-
-No errors found
-
-No summarized warnings
-
-
-Source Filename:   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-bounded_stacks.sss
+Source Filename:   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-bounded_stacks.sss
 No Listing File
 
    Unit name:  SPARK_Classic.Bounded_Stacks
@@ -129,19 +114,7 @@ No errors found
 No summarized warnings
 
 
-Source Filename:   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-trees.sss
-No Listing File
-
-   Unit name:  SPARK_Classic.Trees
-   Unit type:  package specification
-   Unit has been analysed, any errors are listed below.
-
-No errors found
-
-No summarized warnings
-
-
-Source Filename:   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-expose_nodes.ads
+Source Filename:   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-expose_nodes.ads
 No Listing File
 
    Unit name:  SPARK_Classic.Expose_Nodes
@@ -153,7 +126,7 @@ No errors found
 No summarized warnings
 
 
-Source Filename:   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/spark_classic.ads
+Source Filename:   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/spark_classic.ads
 No Listing File
 
    Unit name:  SPARK_Classic
@@ -165,7 +138,7 @@ No errors found
 No summarized warnings
 
 
-Source Filename:   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/types.ads
+Source Filename:   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/types.ads
 No Listing File
 
    Unit name:  Types
@@ -177,69 +150,32 @@ No errors found
 No summarized warnings
 
 
-Source Filename:   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-dynamic_tables.sss
-No Listing File
+Source Filename:   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-bounded_stacks.adb
+Listing Filename:  /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-bounded_stacks.lst
 
-   Unit name:  SPARK_Classic.Dynamic_Tables
-   Unit type:  package specification
-   Unit has been analysed, any errors are listed below.
-
-1 error(s) or warning(s)
-
-Line
-  73  end SPARK_Classic.Dynamic_Tables;
-
---- (  1)  Warning           : 10: The private part of package Dynamic_Tables is 
-           hidden - hidden text is ignored by the Examiner.
-
-No summarized warnings
-
-
-Source Filename:   /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-atrees.adb
-Listing Filename:  /home/trengs/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-atrees.lst
-
-   Unit name:  SPARK_Classic.Atrees
+   Unit name:  SPARK_Classic.Bounded_Stacks
    Unit type:  package body
    Unit has been analysed, any errors are listed below.
 
-2 error(s) or warning(s)
-
-Line
- 417        while Trees.In_Tree (Tree, Current_Node) loop
-
---- (  1)  Warning           :402: Default assertion planted to cut loop.
-
- 668              Next_Node (Enum_1, Current_1);
-
---- (  2)  Warning           :402: Default assertion planted to cut loop.
+No errors found
 
 
 Expected messages marked with the accept annotation
 Type Msg    Lines              Reason                    Match
      No.  From    To                                    No.  Line
-Flow  30    55   end  Tree is only used in proof conte    1    63
-Warn 444    57   end  A Stack_Size of 32 allows the tr    1    60
-Flow  30    76   end  Tree only used in proof context.    1    84
-Warn 444    80   end  The exclusive use of Push_In_Tre    1    83
-Flow  30    96   end  Tree only used in proof context.    1   108
-Warn 444   100   end  The exclusive use of Push_In_Tre    1   103
-Flow  50   105   end  Tree only used in proof context.    1   108
-Flow  10   244   end  Current_Node exported only for p    1   246
-Flow  33   244   end  Current_Node exported only for p    1   251
-Warn 444   322   end  The Level cannot exceed the numb    1   323
-Warn 444   467   472  There cannot be Natural'Last tre    3   471
-Flow  10   514   end  Visited must be an in out paramt    1   517
-Warn 444   520   524  The Key is in the Tree Definitio    2   523
-Warn 444   546   551  There cannot be Natural'Last tre    3   550
-Flow  10   597   end  Visited must be an in out paramt    1   600
-Warn 444   603   607  The Key is in the Tree Definitio    2   606
-Flow  10   697   end  Visited stack is used by Find       1   699
-Flow  33   697   end  Final value of Visited is not re    1   701
+Warn   3     2   end  pragma Inline has no semantic ef    8   120
+Flow  32    38   end  Setting Count to zero means no c    1    43
+Flow  31    38   end  As above                            1    43
+Flow 602    38   end  As above                            1    43
+Warn 444    38   end  The definition of Count (S) and     1    42
+Warn 444    57   end  The definition of Count(S) and I    1    58
+Flow  31   114   end  Setting Count to zero means no c    1   119
+Flow  32   114   end  As above                            1   119
+Flow 602   114   end  As above                            1   119
+Warn 444   114   end  The definition of Count (S) and     1   118
 
 
-6 summarized warning(s), comprising:
-     6 pragma(s)*
-(*Note: the above warnings may affect the validity of the analysis.)
+No summarized warnings
 
 Note: Data flow analysis mode selected
 

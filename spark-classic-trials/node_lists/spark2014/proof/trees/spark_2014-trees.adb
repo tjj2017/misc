@@ -1,15 +1,11 @@
-package body SPARK_Classic.Trees is
+package body SPARK_2014.Trees
+is
 
    -- In_Tree --
    -------------
 
-   function In_Tree (T : Tree_Type; N : Tree_Node) return Boolean
-   --# return  N > Empty_Node and N <= Dynamic_Tables.Last_Index (T.The_Tree);
-   is
-   begin
-      return  N > Empty_Node and then
-        N <= Dynamic_Tables.Last_Index (T.The_Tree);
-   end In_Tree;
+   function In_Tree (T : Tree_Type; N : Tree_Node) return Boolean is
+     (N > Empty_Node and then N <= Dynamic_Tables.Last_Index (T.The_Tree));
    pragma Inline (In_Tree);
 
    -------------
@@ -21,6 +17,14 @@ package body SPARK_Classic.Trees is
       return In_Tree (T, N);
    end Present;
    pragma Inline (Present);
+
+   --------------
+   -- Persists --
+   --------------
+
+   function Persists (T_Pre, T_Post : Tree_Type) return Boolean is
+     (for all N in Tree_Node =>
+        (if In_Tree (T_Pre, N) then In_Tree (T_Post, N)));
 
    --------------
    -- New_Tree --
@@ -101,12 +105,17 @@ package body SPARK_Classic.Trees is
                         Node_Level : Natural)
    is
       Node_Contents : Actual_Node;
+      T_Entry : constant Tree_Type := T
+        with Ghost;
    begin
       Node_Contents := Dynamic_Tables.Get_Item (T.The_Tree, N);
       Node_Contents.Level := Node_Level;
       Dynamic_Tables.Set_Item (T.The_Tree, N, Node_Contents);
-      --# accept W, 444, "Setting a component of a tree does not remove Nodes";
-      --# assume Persists (T~, T);
+     --# accept W, 444, "Setting a component of a tree does not remove Nodes";
+     --# assume Persists (T~, T);
+      pragma Assume (Persists (T_Entry, T),
+                     "Setting a component of a tree does not remove Nodes");
+       return L;
    end Set_Level;
    pragma Inline (Set_Level);
 
@@ -119,12 +128,17 @@ package body SPARK_Classic.Trees is
                        Branch : Tree_Node)
    is
       Node_Contents : Actual_Node;
+      T_Entry : constant Tree_Type := T
+        with Ghost;
    begin
       Node_Contents := Dynamic_Tables.Get_Item (T.The_Tree, N);
       Node_Contents.Left := Branch;
       Dynamic_Tables.Set_Item (T.The_Tree, N, Node_Contents);
-      --# accept W, 444, "Setting a component of a tree does not remove Nodes";
-      --# assume Persists (T~, T);
+     --# accept W, 444, "Setting a component of a tree does not remove Nodes";
+     --# assume Persists (T~, T);
+      pragma Assume (Persists (T_Entry, T),
+                     "Setting a component of a tree does not remove Nodes");
+       return L;
    end Set_Left;
    pragma Inline (Set_Left);
 
@@ -137,12 +151,17 @@ package body SPARK_Classic.Trees is
                         Branch : Tree_Node)
    is
       Node_Contents : Actual_Node;
+      T_Entry : constant Tree_Type := T
+        with Ghost;
    begin
       Node_Contents := Dynamic_Tables.Get_Item (T.The_Tree, N);
       Node_Contents.Right := Branch;
       Dynamic_Tables.Set_Item (T.The_Tree, N, Node_Contents);
-      --# accept W, 444, "Setting a component of a tree does not remove Nodes";
-      --# assume Persists (T~, T);
+     --# accept W, 444, "Setting a component of a tree does not remove Nodes";
+     --# assume Persists (T~, T);
+      pragma Assume (Persists (T_Entry, T),
+                     "Setting a component of a tree does not remove Nodes");
+       return L;
    end Set_Right;
    pragma Inline (Set_Right);
 
@@ -154,12 +173,17 @@ package body SPARK_Classic.Trees is
                       The_Key : Key_Type)
    is
       Node_Contents : Actual_Node;
+      T_Entry : constant Tree_Type := T
+        with Ghost;
    begin
       Node_Contents := Dynamic_Tables.Get_Item (T.The_Tree, N);
       Node_Contents.Key := The_Key;
       Dynamic_Tables.Set_Item (T.The_Tree, N, Node_Contents);
-      --# accept W, 444, "Setting a component of a tree does not remove Nodes";
-      --# assume Persists (T~, T);
+     --# accept W, 444, "Setting a component of a tree does not remove Nodes";
+     --# assume Persists (T~, T);
+      pragma Assume (Persists (T'Entry, T),
+                     "Setting a component of a tree does not remove Nodes");
+       return L;
    end Set_Key;
    pragma Inline (Set_Key);
 
@@ -172,12 +196,17 @@ package body SPARK_Classic.Trees is
                         Node_Value : Value_Type)
    is
       Node_Contents : Actual_Node;
+      T_Entry : constant Tree_Type := T
+        with Ghost;
    begin
       Node_Contents := Dynamic_Tables.Get_Item (T.The_Tree, N);
       Node_Contents.Value := Node_Value;
       Dynamic_Tables.Set_Item (T.The_Tree, N, Node_Contents);
-      --# accept W, 444, "Setting a component of a tree does not remove Nodes";
-      --# assume Persists (T~, T);
+     --# accept W, 444, "Setting a component of a tree does not remove Nodes";
+     --# assume Persists (T~, T);
+      pragma Assume (Persists (T'Entry, T),
+                     "Setting a component of a tree does not remove Nodes");
+       return L;
    end Set_Value;
    pragma Inline (Set_Value);
 
@@ -198,18 +227,12 @@ package body SPARK_Classic.Trees is
          Left  => Empty_Node,
          Right => Empty_Node);
       Dynamic_Tables.Append (T.The_Tree, Node);
+     --# accept W, 444, "Setting a component of a tree does not remove Nodes";
+     --# assume Persists (T~, T);
+      pragma Assume (Persists (T'Old, T),
+                     "Setting a component of a tree does not remove Nodes");
+       return L;
       N := Dynamic_Tables.Last_Index (T.The_Tree);
-      --# accept W, 444, "Appending a node adds it into the tree";
-      --# assume In_Tree (T, N);
-      --# end accept;
-      --# accept W, 444, "Adding a node does not remove any existing nodes";
-      --# assume Persists (T~, T);
-      --# end accept;
-      --# accept W, 444, "N is the position in the tree of the Actual_Node";
-      --# assume Left (T, N) = Empty_Node and
-      --#        Right (T, N) = Empty_Node and
-      --#        Value (T, N) = Null_Value and
-      --#        Key (T, N) = The_Key;
    end Add_Node;
    pragma Inline (Add_Node);
 
@@ -230,12 +253,6 @@ package body SPARK_Classic.Trees is
       Dynamic_Tables.Set_Last
         (T       => T.The_Tree,
          New_Val => New_Last);
-
-      --# check Dynamic_Tables.Last_Index (T.The_Tree) = New_Last;
-      --# check N = Empty_Node or N > New_Last;
-      --# accept W, 444, "If N = Empty_Node or N > New_Last by definition ",
-      --#                "N is not in the tree";
-      --# assume not In_Tree (T, N);
    end Clear;
 
-end SPARK_Classic.Trees;
+end SPARK_2014.Trees;
