@@ -6,6 +6,8 @@ generic
 package SPARK_2014.Trees is
    type Tree_Node is private;
    Empty_Node : constant Tree_Node;
+   function Is_A_Node (N : Tree_Node) return Boolean
+     with Ghost;
 
    type Tree_Type is private;
 
@@ -19,9 +21,12 @@ package SPARK_2014.Trees is
    function Level (T : Tree_Type; N : Tree_Node) return Natural
      with Pre => In_Tree (T, N);
    function Left  (T : Tree_Type; N : Tree_Node) return Tree_Node
-     with Pre => In_Tree (T, N);
+     with Pre  => In_Tree (T, N),
+          Post => (if Is_A_Node (Left'Result)then In_Tree (T, Left'Result));
    function Right (T : Tree_Type; N : Tree_Node) return Tree_Node
-     with Pre => In_Tree (T, N);
+     with Pre  => In_Tree (T, N),
+          Post => (if Is_A_Node (Right'Result) then
+                     In_Tree (T, Right'Result));
    function Key (T : Tree_Type; N : Tree_Node) return Key_Type
      with Pre => In_Tree (T, N);
    function Value (T : Tree_Type; N : Tree_Node) return Value_Type
@@ -29,19 +34,26 @@ package SPARK_2014.Trees is
 
    procedure Set_Level (T : in out Tree_Type; N : Tree_Node;
                         Node_Level : Natural)
-     with Pre => In_Tree (T, N);
+     with Pre  => In_Tree (T, N),
+          Post => Persists (T'Old, T);
    procedure Set_Left  (T : in out Tree_Type; N : Tree_Node;
                         Branch : Tree_Node)
-     with Pre => In_Tree (T, N);
+     with Pre  => In_Tree (T, N),
+          Post => Persists (T'Old, T) and
+                  (if In_Tree (T'Old, Branch) then In_Tree (T, Branch));
    procedure Set_Right (T : in out Tree_Type; N : Tree_Node;
                         Branch : Tree_Node)
-     with Pre => In_Tree (T, N);
+     with Pre  => In_Tree (T, N),
+          Post => Persists (T'Old, T) and
+                  (if In_Tree (T'Old, Branch) then In_Tree (T, Branch));
    procedure Set_Key (T : in out Tree_Type; N : Tree_Node;
                       The_Key : Key_Type)
-     with Pre => In_Tree (T, N);
+     with Pre  => In_Tree (T, N),
+          Post => Persists (T'Old, T);
    procedure Set_Value (T : in out Tree_Type; N : Tree_Node;
                         Node_Value : Value_Type)
-     with Pre => In_Tree (T, N);
+     with Pre  => In_Tree (T, N),
+          Post => Persists (T'Old, T);
    procedure Add_Node  (T : in out Tree_Type; N : out Tree_Node;
                         The_Key : Key_Type)
      with Post => In_Tree (T, N);

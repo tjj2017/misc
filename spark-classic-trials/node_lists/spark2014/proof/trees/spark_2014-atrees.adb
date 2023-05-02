@@ -535,6 +535,11 @@ is
       Value         : Value_Type;
       Inserted      : out Boolean;
       Value_At_Node : out Value_Type)
+   with Refined_Post => Is_Present (ATree, Key) and Populated (ATree) and
+                (if Inserted then
+                    Count (ATree) = Count (ATree'Old) + 1
+                 else
+                    Count (ATree) = Count (ATree'Old))
    is
       Visited       : Bounded_Stacks.Stack;
       Key_Found     : Boolean;

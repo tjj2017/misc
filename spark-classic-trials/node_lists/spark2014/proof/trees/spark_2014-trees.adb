@@ -1,6 +1,12 @@
 package body SPARK_2014.Trees
 is
+   ---------------
+   -- Is_A_Node --
+   ---------------
 
+   function Is_A_Node (N : Tree_Node) return Boolean is (N > Empty_Node);
+
+   ------------
    -- In_Tree --
    -------------
 
@@ -49,13 +55,14 @@ is
    -- Left --
    ----------
 
-   function Left (T : Tree_Type; N : Tree_Node) return Tree_Node
-   is
+   function Left (T : Tree_Type; N : Tree_Node) return Tree_Node is
       L : Tree_Node;
    begin
       L := Dynamic_Tables.Get_Item (T.The_Tree, N).Left;
       --# accept W, 444, "The left branch is either empty or In_Tree";
       --# assume L > Empty_Node -> In_Tree (T, L);
+      pragma Assume ((if L > Empty_Node then In_Tree (T, L)),
+                    "The left branch is either empty or In_Tree");
       return L;
    end Left;
    pragma Inline (Left);
@@ -71,6 +78,8 @@ is
       R := Dynamic_Tables.Get_Item (T.The_Tree, N).Right;
       --# accept W, 444, "The right branch is either empty or In_Tree";
       --# assume R > Empty_Node -> In_Tree (T, R);
+      pragma Assume ((if R > Empty_Node then In_Tree (T, R)),
+                    "The right branch is either empty or In_Tree");
       return R;
    end Right;
    pragma Inline (Right);
@@ -115,7 +124,6 @@ is
      --# assume Persists (T~, T);
       pragma Assume (Persists (T_Entry, T),
                      "Setting a component of a tree does not remove Nodes");
-       return L;
    end Set_Level;
    pragma Inline (Set_Level);
 
@@ -138,7 +146,6 @@ is
      --# assume Persists (T~, T);
       pragma Assume (Persists (T_Entry, T),
                      "Setting a component of a tree does not remove Nodes");
-       return L;
    end Set_Left;
    pragma Inline (Set_Left);
 
@@ -161,7 +168,6 @@ is
      --# assume Persists (T~, T);
       pragma Assume (Persists (T_Entry, T),
                      "Setting a component of a tree does not remove Nodes");
-       return L;
    end Set_Right;
    pragma Inline (Set_Right);
 
@@ -181,9 +187,8 @@ is
       Dynamic_Tables.Set_Item (T.The_Tree, N, Node_Contents);
      --# accept W, 444, "Setting a component of a tree does not remove Nodes";
      --# assume Persists (T~, T);
-      pragma Assume (Persists (T'Entry, T),
+      pragma Assume (Persists (T_Entry, T),
                      "Setting a component of a tree does not remove Nodes");
-       return L;
    end Set_Key;
    pragma Inline (Set_Key);
 
@@ -204,9 +209,8 @@ is
       Dynamic_Tables.Set_Item (T.The_Tree, N, Node_Contents);
      --# accept W, 444, "Setting a component of a tree does not remove Nodes";
      --# assume Persists (T~, T);
-      pragma Assume (Persists (T'Entry, T),
+      pragma Assume (Persists (T_Entry, T),
                      "Setting a component of a tree does not remove Nodes");
-       return L;
    end Set_Value;
    pragma Inline (Set_Value);
 
@@ -219,6 +223,8 @@ is
                        The_Key : Key_Type)
    is
       Node : Actual_Node;
+      T_Entry : constant Tree_Type := T
+        with Ghost;
    begin
       Node := Actual_Node'
         (Key   => The_Key,
@@ -229,9 +235,8 @@ is
       Dynamic_Tables.Append (T.The_Tree, Node);
      --# accept W, 444, "Setting a component of a tree does not remove Nodes";
      --# assume Persists (T~, T);
-      pragma Assume (Persists (T'Old, T),
+      pragma Assume (Persists (T_Entry, T),
                      "Setting a component of a tree does not remove Nodes");
-       return L;
       N := Dynamic_Tables.Last_Index (T.The_Tree);
    end Add_Node;
    pragma Inline (Add_Node);
