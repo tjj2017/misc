@@ -54,10 +54,10 @@ is
    function Top
      (S : Stack)
       return Element_Type
-   is
-   begin
-      return S.Contents (S.Count);
-   end Top;
+   is (S.Contents (S.Count));
+   --  begin
+   --     return S.Contents (S.Count);
+   --  end Top;
    pragma Inline (Top);
 
    -----------------

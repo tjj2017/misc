@@ -14,15 +14,15 @@ is
      (N > Empty_Node and then N <= Dynamic_Tables.Last_Index (T.The_Tree));
    pragma Inline (In_Tree);
 
-   -------------
-   -- Present --
-   -------------
+   ---------------------
+   -- Node_Is_Present --
+   ---------------------
 
-   function Present (T : Tree_Type; N : Tree_Node) return Boolean is
+   function Node_Is_Present (T : Tree_Type; N : Tree_Node) return Boolean is
    begin
       return In_Tree (T, N);
-   end Present;
-   pragma Inline (Present);
+   end Node_is_Present;
+   pragma Inline (Node_Is_Present);
 
    --------------
    -- Persists --
@@ -104,6 +104,13 @@ is
       return Dynamic_Tables.Get_Item (T.The_Tree, N).Value;
    end Value;
    pragma Inline (Value);
+
+   --------------------
+   -- Key_Is_Present --
+   --------------------
+
+   function Key_Is_Present (T : Tree_Type; K : Key_Type) return Boolean is
+      (for some N in Tree_Node => In_Tree (T, N) and then Key (T, N) = K);
 
    ---------------
    -- Set_Level --
@@ -238,6 +245,7 @@ is
       pragma Assume (Persists (T_Entry, T),
                      "Setting a component of a tree does not remove Nodes");
       N := Dynamic_Tables.Last_Index (T.The_Tree);
+      pragma Assert (Key (T, N) = The_Key);
    end Add_Node;
    pragma Inline (Add_Node);
 

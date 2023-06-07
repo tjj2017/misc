@@ -139,9 +139,8 @@ package body SPARK_Classic.Atrees is
                          Node       : Tree_Node;
                          Set_Node   : Tree_Node;
                          Tree       : in out Trees.Tree_Type)
-   --# pre Trees.In_Tree (Tree, Node);
-   --# post Trees.Persists (Tree~, Tree) and
-   --#      Trees.In_Tree (Tree, Set_Node);
+   --# pre Trees.In_Tree (Tree, Node) and Trees.In_Tree (Tree, Set_Node);
+   --# post Trees.Persists (Tree~, Tree);
    is
    begin
       if Is_Right then
@@ -349,58 +348,61 @@ package body SPARK_Classic.Atrees is
       Current_Node := ATree.Root;
       --  Rebalance the tree by working back up through the visited
       --  node indices on the Tree.Visited stack.
-      Stack_Count := Bounded_Stacks.Count (Visited);
-      for Stack_Top in reverse Natural range 1 .. Stack_Count
-      loop
-         --# assert Stack_Top > 0 and Stack_Top <= Stack_Count and
-         --#        Stack_Top = Bounded_Stacks.Count (Visited) and
-         --#        not Bounded_Stacks.Is_Empty (Visited) and
-         --#        Persists (ATree~, ATree);
-         --  Make the Current_Node equal to the Tree_Node at the top of
-         --  the stack.
-         Pop_In_Tree_Node (Visited, ATree.Container, Top_Node);
-         Current_Node := Top_Node;
+      if not Bounded_Stacks.Is_Empty (Visited) then
+         Stack_Count := Bounded_Stacks.Count (Visited);
+         for Stack_Top in reverse Natural range 1 .. Stack_Count
+         loop
+            --# assert Stack_Top > 0 and Stack_Top <= Stack_Count and
+            --#        Stack_Top = Bounded_Stacks.Count (Visited) and
+            --#        Bounded_Stacks.Count (Visited) > 0 and
+            --#        not Bounded_Stacks.Is_Empty (Visited) and
+            --#        Persists (ATree~, ATree);
+            --  Make the Current_Node equal to the Tree_Node at the top of
+            --  the stack.
+            Pop_In_Tree_Node (Visited, ATree.Container, Top_Node);
+            Current_Node := Top_Node;
 
-         if Stack_Top > 1 then
-            --  There was more than element on the stack - the current
-            --  stack top is the parent of the Current_Node
-            --  As the Current_Node has a parent, determine
-            --  whether the Current_Node is a left or right child of
-            --  its parent.
-            Parent := Top_In_Tree_Node (Visited,  ATree.Container);
-            --  This boolean expression determines which branch of
-            --  the parent has the the Current_Node as its child.
-            --  False => Left, True => Right.
-            --  The value of Is_Right has to be determined before the
-            --  call of Skew and Split as these may change the
-            --  Current_Node.
-            Is_Right :=
-              Trees.Right (ATree.Container, Parent) = Top_Node;
-         end if;
+            if Stack_Top > 1 then
+               --  There was more than element on the stack - the current
+               --  stack top is the parent of the Current_Node
+               --  As the Current_Node has a parent, determine
+               --  whether the Current_Node is a left or right child of
+               --  its parent.
+               Parent := Top_In_Tree_Node (Visited,  ATree.Container);
+               --  This boolean expression determines which branch of
+               --  the parent has the the Current_Node as its child.
+               --  False => Left, True => Right.
+               --  The value of Is_Right has to be determined before the
+               --  call of Skew and Split as these may change the
+               --  Current_Node.
+               Is_Right :=
+                 Trees.Right (ATree.Container, Parent) = Top_Node;
+            end if;
 
-         --  Perform the Anderson Tree Skew and Split operations on
-         --  the Current_Node.  The Current_Node
-         --  may be changed by Skew and Split.
-         Skew (Current_Node, ATree.Container);
-         Split (Current_Node, ATree.Container);
+            --  Perform the Anderson Tree Skew and Split operations on
+            --  the Current_Node.  The Current_Node
+            --  may be changed by Skew and Split.
+            Skew (Current_Node, ATree.Container);
+            Split (Current_Node, ATree.Container);
 
-         --  Update the parent node to point to its new child.
-         if Current_Node /= Top_Node and then Stack_Top > 1 then
-            --  The value of the Current_Node
-            --  may have changed and the stack has the
-            --  parent of the Current_Node at the top of the
-            --  visited stack.
-            --  The branch that has the Current_Node as its child
-            --  has to be patched up to contain the new value of
-            --  Current_Node as its child.
-            --  As the value of the Current_Node may have changed.
-            Set_Branch
-              (Is_Right   => Is_Right,
-               Node       => Parent,
-               Set_Node   => Current_Node,
-               Tree       => ATree.Container);
-         end if;
-      end loop;
+            --  Update the parent node to point to its new child.
+            if Current_Node /= Top_Node and then Stack_Top > 1 then
+               --  The value of the Current_Node
+               --  may have changed and the stack has the
+               --  parent of the Current_Node at the top of the
+               --  visited stack.
+               --  The branch that has the Current_Node as its child
+               --  has to be patched up to contain the new value of
+               --  Current_Node as its child.
+               --  As the value of the Current_Node may have changed.
+               Set_Branch
+                 (Is_Right   => Is_Right,
+                  Node       => Parent,
+                  Set_Node   => Current_Node,
+                  Tree       => ATree.Container);
+            end if;
+         end loop;
+      end if;
       --  The root of the tree after inserting a node and rebalancing.
       ATree.Root := Current_Node;
       --# check Retains (ATree~, ATree);

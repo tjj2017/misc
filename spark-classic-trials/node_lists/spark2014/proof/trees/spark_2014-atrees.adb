@@ -18,21 +18,39 @@ is
 
    --  The contents of the tree are the same but the tree structure may change.
    --  The root of the tree may be reassigned.
-   --# function Retains (AT_Pre, AT_Post : A_Tree) return Boolean;
-   --# pre Populated (AT_Pre);
-   --# return (Populated (AT_Post) and Count (AT_Pre) = Count (AT_Post)) and
-   --#        ((AT_Pre = AT_Post) or
-   --#         (Trees.Persists (AT_Pre.Container, AT_Post.Container)));
-
+   function Retains (AT_Pre, AT_Post : A_Tree) return Boolean is
+     ((Populated (AT_Post) and Count (AT_Pre) = Count (AT_Post)) and
+        ((AT_Pre = AT_Post) or
+             (Trees.Persists (AT_Pre.Container, AT_Post.Container))))
+   with Pre  => Populated (AT_Pre),
+        Ghost;
    --  The Tree is retained, in addition the root of the tree is unchanged.
-   --# function Persists (AT_Pre, AT_Post : A_Tree)
-   --# return Boolean;
-   --# pre Populated (AT_Pre);
-   --# return Retains (AT_Pre, AT_Post) and
-   --#        AT_Pre.Root = AT_Post.Root;
+   function Persists (AT_Pre, AT_Post : A_Tree) return Boolean is
+     (Retains (AT_Pre, AT_Post) and AT_Pre.Root = AT_Post.Root)
+   with Pre => Populated (AT_Pre),
+        Ghost;
 
-   --  Used to propagate the result of Find_Proof to Proof.
-   function Is_Found (Found : Boolean) return Boolean is (Found);
+   --  Pushing exclusively using Push_In_Tree_Node ensures that
+   --  every Node on the stack is in the Tree.
+   function Top_In_Tree_Node (S : Bounded_Stacks.Stack;
+                              Tree : Trees.Tree_Type) return Tree_Node
+   with Pre  => not Bounded_Stacks.Is_Empty (S),
+        Post => Trees.In_Tree (Tree, Top_In_Tree_Node'Result)
+   is
+      Result : Tree_Node;
+   begin
+      Result := Bounded_Stacks.Top (S);
+      pragma Assume (Trees.In_Tree (Tree, Result),
+                     "The exclusive use of Push_In_Tree ensures all " &
+                     "pushed nodes are In_Tree, so, " &
+                     "all nodes popped by Pop_In_Tree_Node will also be.");
+
+      return Result;
+      pragma Warnings (Off, "unused variable ""Tree""",
+                      Reason => "Tree is only used in proof context");
+   end Top_In_Tree_Node;
+   pragma Warnings (On, "unused variable ""Tree""");
+   pragma Inline (Top_In_Tree_Node);
 
    --  Ensures that each Node pushed on the stack is in the Tree.
    --  With a stack size of 32 a balanced tree would be enormous, it would
@@ -41,20 +59,17 @@ is
                                 Tree : Trees.Tree_Type;
                                 Node : Tree_Node)
    with Pre  => Trees.In_Tree (Tree, Node),
-        Post => not Bounded_Stacks.Is_Empty (S)
+        Post => not Bounded_Stacks.Is_Empty (S) and
+                Top_In_Tree_Node (S, Tree) = Node
    is
    begin
-      --# accept F, 30, Tree, "Tree is only used in proof context.";
-
-      --# accept W, 444, "A Stack_Size of 32 allows the traversal of ",
-      --#                "balanced tree with more distinct nodes ",
-      --#                "than can be handled by the gnat front-end";
-      --# assume Bounded_Stacks.Count (S) < Bounded_Stacks.Stack_Size;
       pragma Assume (Bounded_Stacks.Count (S) < Bounded_Stacks.Stack_Count'Last,
                      "A Stack_Size of 32 allows the traversal of " &
                      "balanced tree with more distinct nodes " &
                      "than can be handled by the gnat front-end");
       Bounded_Stacks.Push (S, Node);
+      pragma Assume (Top_In_Tree_Node (S, Tree) = Node,
+                     "The Node pushed on the stack is the top of the stack");
       pragma Warnings (Off, "unused variable ""Tree""",
                       Reason => "Tree is only used in proof context");
    end Push_In_Tree_Node;
@@ -71,55 +86,17 @@ is
                 Bounded_Stacks.Count (S) = Bounded_Stacks.Count (S'Old) - 1
    is
    begin
-      --# accept F, 30, Tree, "Tree only used in proof context.";
-
       Bounded_Stacks.Pop (S, Node);
       pragma Assume (Trees.In_Tree (Tree, Node),
                      "The exclusive use of Push_In_Tree ensures all " &
                      "pushed nodes are In_Tree, so, " &
                      "all nodes popped by Pop_In_Tree_Node will also be.");
 
-      --# accept W, 444, "The exclusive use of Push_In_Tree ensures all ",
-      --#                "pushed nodes are In_Tree, so, ",
-      --#                "all nodes popped by Pop_In_Tree_Node will also be.";
-      --# assume Trees.In_Tree (Tree, Node);
       pragma Warnings (Off, "unused variable ""Tree""",
                       Reason => "Tree is only used in proof context");
    end Pop_In_Tree_Node;
    pragma Warnings (On, "unused variable ""Tree""");
    pragma Inline (Pop_In_Tree_Node);
-
-   --  Pushing exclusively using Push_In_Tree_Node ensures that
-   --  every Node on the stack is in the Tree.
-   function Top_In_Tree_Node (S : Bounded_Stacks.Stack;
-                              Tree : Trees.Tree_Type) return Tree_Node
-   with Pre  => not Bounded_Stacks.Is_Empty (S),
-        Post => Trees.In_Tree (Tree, Top_In_Tree_Node'Result)
-   is
-      Result : Tree_Node;
-   begin
-      --# accept F, 30, Tree, "Tree only used in proof context.";
-
-      Result := Bounded_Stacks.Top (S);
-      pragma Assume (Trees.In_Tree (Tree, Result),
-                     "The exclusive use of Push_In_Tree ensures all " &
-                     "pushed nodes are In_Tree, so, " &
-                     "all nodes popped by Pop_In_Tree_Node will also be.");
-
-
-      --# accept W, 444, "The exclusive use of Push_In_Tree ensures all ",
-      --#                "pushed nodes are In_Tree, so, ",
-      --#                "all nodes in the stack are In_Tree";
-      --# assume Trees.In_Tree (Tree, Result);
-
-      --# accept F, 50, Tree, "Tree only used in proof context.";
-
-      return Result;
-      pragma Warnings (Off, "unused variable ""Tree""",
-                      Reason => "Tree is only used in proof context");
-   end Top_In_Tree_Node;
-   pragma Warnings (On, "unused variable ""Tree""");
-   pragma Inline (Top_In_Tree_Node);
 
    --  Local subprograms
    procedure New_Node (Key      : Key_Type;
@@ -153,8 +130,8 @@ is
                          Node       : Tree_Node;
                          Set_Node   : Tree_Node;
                          Tree       : in out Trees.Tree_Type)
-   with Pre  => Trees.In_Tree (Tree, Node),
-        Post => Trees.In_Tree (Tree, Set_Node)
+   with Pre  => Trees.In_Tree (Tree, Node) and Trees.In_Tree (Tree, Set_Node),
+        Post => Trees.Persists (Tree'Old, Tree)
    is
    begin
       if Is_Right then
@@ -176,10 +153,11 @@ is
                    Found      : out Boolean;
                    Visited    : out Bounded_Stacks.Stack)
    with Pre  => Populated (ATree),
-        Post => (if Found then
-                    not Bounded_Stacks.Is_Empty (Visited) and then
-                     (Trees.Key
-                      (ATree.Container, Bounded_Stacks.Top (Visited)) = Key))
+     Post => (if Found then
+                not Bounded_Stacks.Is_Empty (Visited) and then
+                ((Trees.Key (ATree.Container,
+                   Top_In_Tree_Node (Visited, ATree.Container)) = Key) and
+                       Trees.Key_Is_Present (ATree.Container, Key)))
      --  The Tree is not empty (Populated) so the given Key may be present.
      --  If found is true, the top of the Tree.Visited stack is the Tree_Node
      --  that references the The Actual_Node in the Tree_Store which
@@ -216,14 +194,24 @@ is
       loop
          --  A record of nodes visited is held in the Visited stack.
          Push_In_Tree_Node (Visited, ATree.Container, Current_Node);
+
          Current_Key := Trees.Key (ATree.Container, Current_Node);
          Found := Current_Key = Key;
+         pragma Assert (if Found then Trees.In_Tree (ATree.Container, Current_Node));
          if not Found then
             --  Take the right branch if the Key value is greater
             --  than the Current_Node Key, otherwise take the left branch.
             Is_Right := Trees.Key (ATree.Container, Current_Node) < Key;
             Child := Get_Child (Is_Right, Current_Node, ATree.Container);
          end if;
+
+         pragma Loop_Invariant
+           (not Bounded_Stacks.Is_Empty (Visited) and
+                (if Found then
+                      Trees.In_Tree (ATree.Container, Current_Node) and
+                      Trees.Key (ATree.Container,
+                   Top_In_Tree_Node (Visited, ATree.Container)) = Key and
+                trees.Key_Is_Present (ATree.Container, Key)));
 
          exit when Found or else not Trees.In_Tree (ATree.Container, Child);
 
@@ -232,6 +220,7 @@ is
          Current_Node := Child;
          --# assert not (Found or (not Trees.In_Tree (ATree.Container, Current_Node)));
       end loop;
+      pragma Assert (if Found then Trees.In_Tree (ATree.Container, Current_Node));
       --# check Found -> (Trees.Key (ATree.Container, Current_Node) = Key);
       --  The Tree.Visited stack will not be empty.
       --  if Found is True, the Tree_Store contains an Actual_Node with the
@@ -246,7 +235,8 @@ is
 
    procedure Skew (Root       : in out Tree_Node;
                    Tree       : in out Trees.Tree_Type)
-   with Pre => Trees.In_Tree (Tree, Root)
+   with Pre => Trees.In_Tree (Tree, Root),
+        Post => Trees.Persists (Tree'Old, Tree) and Trees.In_Tree (Tree, Root)
    is
       Left_Child : Trees.Tree_Node;
    begin
@@ -277,7 +267,8 @@ is
 
    procedure Split (Root : in out Tree_Node;
                     Tree : in out Trees.Tree_Type)
-   with Pre => Trees.In_Tree (Tree, Root)
+   with Pre  => Trees.In_Tree (Tree, Root),
+        Post => Trees.Persists (Tree'Old, Tree) and Trees.In_Tree (Tree, Root)
    is
       Right_Child       : Tree_Node;
       Right_Right_Child : Tree_Node;
@@ -313,8 +304,8 @@ is
             Branch => Root);
          --  The root now becomes the right child.
          Root := Right_Child;
-         --# accept W, 444, "The Level cannot exceed the number of nodes";
-         --# assume Trees.Level (Tree, Root) < Natural'Last;
+         pragma Assume (Trees.Level (Tree, Root) < Natural'Last,
+                        "The Level cannot exceed the number of nodes");
          --  Increment the level of the new root.
          Trees.Set_Level (Tree,
                           Root,
@@ -325,7 +316,7 @@ is
    procedure Rebalance_A_Tree (ATree      : in out A_Tree;
                                Visited    : in out Bounded_Stacks.Stack)
    with Pre  => Populated (ATree),
-        Post => Populated (ATree) and --  Retains (ATree~, ATree) and
+        Post => Retains (ATree'Old, ATree) and
                 ATree'Old.Count = ATree.Count
    is
       Current_Node : Tree_Node;
@@ -341,11 +332,26 @@ is
       Parent := Trees.Empty_Node;
 
       Current_Node := ATree.Root;
+      pragma Assert (Trees.In_Tree (ATree.Container, Current_Node));
       --  Rebalance the tree by working back up through the visited
       --  node indices on the Tree.Visited stack.
       Stack_Count := Bounded_Stacks.Count (Visited);
       for Stack_Top in reverse Natural range 1 .. Stack_Count
       loop
+         pragma Assert (Populated (ATree));
+         pragma Assert (Count (ATree'Loop_Entry) = Count (ATree));
+         pragma Assert (Trees.Persists (ATree.Container'Loop_Entry,
+                        ATree.Container));
+         pragma Assert (Trees.In_Tree (ATree.Container, Current_Node));
+         pragma Assert (not Bounded_Stacks.Is_Empty (Visited));
+         pragma Assert (Retains (ATree'Loop_Entry, ATree));
+         pragma Loop_Invariant (Trees.In_Tree (ATree.Container, Current_Node) and
+                                not Bounded_Stacks.Is_Empty (Visited) and
+                                  Stack_Top = Bounded_Stacks.Count (Visited) and
+                                  Populated (ATree) and
+                                  Trees.Persists (ATree.Container'Loop_Entry,
+                                    ATree.Container) and
+                                Count (ATree'Loop_Entry) = Count (ATree));
          --# assert Stack_Top > 0 and Stack_Top <= Stack_Count and
          --#        Stack_Top = Bounded_Stacks.Count (Visited) and
          --#        not Bounded_Stacks.Is_Empty (Visited) and
@@ -354,6 +360,7 @@ is
          --  the stack.
          Pop_In_Tree_Node (Visited, ATree.Container, Top_Node);
          Current_Node := Top_Node;
+         pragma Assert (Trees.In_Tree (ATree.Container, Current_Node));
 
          if Stack_Top > 1 then
             --  There was more than element on the stack - the current
@@ -393,6 +400,10 @@ is
                Node       => Parent,
                Set_Node   => Current_Node,
                Tree       => ATree.Container);
+            pragma Assert (Trees.In_Tree (ATree.Container, Current_Node));
+            pragma Assert (Trees.In_Tree (ATree.Container, Parent));
+            pragma Assert (not Bounded_Stacks.Is_Empty (Visited));
+            pragma Assert (Stack_Top = Bounded_Stacks.Count (Visited) + 1);
          end if;
       end loop;
       --  The root of the tree after inserting a node and rebalancing.
@@ -445,7 +456,8 @@ is
      (ATree      : in out A_Tree;
       Key        : Key_Type;
       Inserted   : out Boolean)
-   with Refined_Post => Is_Present (ATree, Key) and Populated (ATree) and
+     with Refined_Post => Trees.Key_Is_Present (ATree.Container, Key) and
+                Populated (ATree) and
                 (if Inserted then
                     Count (ATree) = Count (ATree'Old) + 1
                  else
@@ -476,6 +488,8 @@ is
            (T       => ATree.Container,
             N       => Insert_Node,
             The_Key => Key);
+         pragma Assert (Trees.In_Tree (ATree.Container, Insert_Node));
+         pragma Assert (Trees.Key_Is_Present (ATree.Container, Key));
          --  The new node is the root of the new tree
          ATree.Root := Insert_Node;
       else
@@ -535,7 +549,8 @@ is
       Value         : Value_Type;
       Inserted      : out Boolean;
       Value_At_Node : out Value_Type)
-   with Refined_Post => Is_Present (ATree, Key) and Populated (ATree) and
+     with Refined_Post => Trees.Key_Is_Present (ATree.Container, Key) and
+                Populated (ATree) and
                 (if Inserted then
                     Count (ATree) = Count (ATree'Old) + 1
                  else
@@ -699,6 +714,9 @@ is
 
    function Is_Present
      (ATree : A_Tree; Key : Key_Type) return Boolean
+     with Refined_Post=>
+       (if Is_Present'Result then
+          Trees.Key_Is_Present (ATree.Container, Key))
    is
       Visited : Bounded_Stacks.Stack;
       Found   : Boolean;
@@ -707,10 +725,11 @@ is
       --#        F, 33, Visited, "Final value of Visited is not required";
       pragma Warnings (Off, """Visited""",
                       Reason => "Visited must be an in out paramter " &
-                                 "as it is updated by Rebalance_Tree" &
+                                 "as it is updated by Find" &
                                  " but its final value is unrequired");
       Find (ATree, Key, Found, Visited);
       pragma Warnings (On, """Visited""");
+      pragma Assert (if Found then Trees.Key_Is_Present (ATree.Container, Key));
       return Found;
    end Is_Present;
 

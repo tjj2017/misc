@@ -20,7 +20,8 @@ is
                    Value : Element_Type)
      with Pre => Count (S) < Stack_Size,
           Post => not Is_Empty (S) and
-                  Count (S) = Count (S'Old) + 1;
+                  Count (S) = Count (S'Old) + 1 and
+                  Top (S) = Value;
 
    procedure Pop  (S : in out Stack;
                    Value : out Element_Type)

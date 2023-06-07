@@ -30,8 +30,7 @@ is
 
    function Empty_Tree (ATree : A_Tree) return Boolean;
 
-   function Populated (ATree : A_Tree)
-      return Boolean;
+   function Populated (ATree : A_Tree) return Boolean;
 
    procedure New_A_Tree (ATree : out A_Tree; Tree_Container : Trees.Tree_Type)
      with Post => Empty_Tree (ATree);
@@ -41,7 +40,8 @@ is
    procedure Insert (ATree      : in out A_Tree;
                      Key        : Key_Type;
                      Inserted   : out Boolean)
-     with Post => (if Inserted then
+     with Pre  => Count (ATree) < Natural'Last,
+          Post => (if Inserted then
                      Count (ATree) = Count (ATree'Old) + 1
                    else
                      Count (ATree) = Count (ATree'Old));
@@ -64,7 +64,7 @@ is
    function Is_Equal (ATree_1, ATree_2 : A_Tree) return Boolean;
 
    function Is_Present (ATree : A_Tree; Key : Key_Type) return Boolean
-   with Pre => Populated (ATree);
+     with Pre  => Populated (ATree);
 
    function Tree_Depth (ATree : A_Tree) return Natural;
 

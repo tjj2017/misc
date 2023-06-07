@@ -12,7 +12,8 @@ package SPARK_2014.Trees is
    type Tree_Type is private;
 
    function In_Tree  (T : Tree_Type; N : Tree_Node) return Boolean;
-   function Present  (T : Tree_Type; N : Tree_Node) return Boolean;
+   function Node_Is_Present  (T : Tree_Type; N : Tree_Node) return Boolean;
+   function Key_Is_Present (T : Tree_Type; K : Key_Type) return Boolean;
    function Persists (T_Pre, T_Post : Tree_Type) return Boolean
      with Ghost;
 
@@ -56,7 +57,8 @@ package SPARK_2014.Trees is
           Post => Persists (T'Old, T);
    procedure Add_Node  (T : in out Tree_Type; N : out Tree_Node;
                         The_Key : Key_Type)
-     with Post => In_Tree (T, N);
+     with Post => Persists (T'Old, T) and In_Tree (T, N) and
+                  Key_Is_Present (T, The_Key);
 
    procedure Clear (T : in out Tree_Type; N : Tree_Node)
      with Post => not In_Tree (T, N);
