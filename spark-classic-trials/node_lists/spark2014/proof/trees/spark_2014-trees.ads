@@ -50,7 +50,7 @@ package SPARK_2014.Trees is
    procedure Set_Key (T : in out Tree_Type; N : Tree_Node;
                       The_Key : Key_Type)
      with Pre  => In_Tree (T, N),
-          Post => Persists (T'Old, T);
+          Post => Persists (T'Old, T) and Key_Is_Present (T, The_Key);
    procedure Set_Value (T : in out Tree_Type; N : Tree_Node;
                         Node_Value : Value_Type)
      with Pre  => In_Tree (T, N),

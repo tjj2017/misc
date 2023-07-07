@@ -153,8 +153,8 @@ is
                    Found      : out Boolean;
                    Visited    : out Bounded_Stacks.Stack)
    with Pre  => Populated (ATree),
-     Post => (if Found then
-                not Bounded_Stacks.Is_Empty (Visited) and then
+     Post => not Bounded_Stacks.Is_Empty (Visited) and
+             (if Found then
                 ((Trees.Key (ATree.Container,
                    Top_In_Tree_Node (Visited, ATree.Container)) = Key) and
                        Trees.Key_Is_Present (ATree.Container, Key)))
@@ -238,6 +238,8 @@ is
    with Pre => Trees.In_Tree (Tree, Root),
         Post => Trees.Persists (Tree'Old, Tree) and Trees.In_Tree (Tree, Root)
    is
+      T_In : constant Trees.Tree_Type := Tree
+      with Ghost;
       Left_Child : Trees.Tree_Node;
    begin
       Left_Child := Trees.Left (Tree, Root);
@@ -256,10 +258,13 @@ is
            (T      => Tree,
             N      => Root,
             Branch => Trees.Right (Tree, Left_Child));
+         pragma Assert (Trees.Persists (T_In, Tree));
          Trees.Set_Right
            (T      => Tree,
             N      => Left_Child,
             Branch => Root);
+         pragma Assume (Trees.Persists (T_In, Tree),
+                        "Tree Persists across both Left & Right ops.");
          --  The root now becomes the left child.
          Root := Left_Child;
       end if;
@@ -270,6 +275,8 @@ is
    with Pre  => Trees.In_Tree (Tree, Root),
         Post => Trees.Persists (Tree'Old, Tree) and Trees.In_Tree (Tree, Root)
    is
+      T_In : constant Trees.Tree_Type := Tree
+      with Ghost;
       Right_Child       : Tree_Node;
       Right_Right_Child : Tree_Node;
    begin
@@ -298,6 +305,7 @@ is
            (T      => Tree,
             N      => Root,
             Branch => Trees.Left (Tree, Right_Child));
+         pragma Assert (Trees.Persists (T_In, Tree));
          Trees.Set_Left
            (T      => Tree,
             N      => Right_Child,
@@ -310,14 +318,16 @@ is
          Trees.Set_Level (Tree,
                           Root,
                           Trees.Level (Tree, Root) + 1);
-      end if;
+         pragma Assume (Trees.Persists (T_In, Tree),
+                       "Tree is Persistant across Right, Left & Level ops.");
+     end if;
    end Split;
 
-   procedure Rebalance_A_Tree (ATree      : in out A_Tree;
-                               Visited    : in out Bounded_Stacks.Stack)
-   with Pre  => Populated (ATree),
-        Post => Retains (ATree'Old, ATree) and
-                ATree'Old.Count = ATree.Count
+   procedure Rebalance (Root    : in out Tree_Node;
+                        Tree    : in out Trees.Tree_Type;
+                        Visited : in out Bounded_Stacks.Stack)
+   with Pre  => Trees.In_Tree (Tree, Root),
+        Post => Trees.Persists (Tree'Old, Tree) and Trees.In_Tree (Tree, Root)
    is
       Current_Node : Tree_Node;
       Top_Node     : Tree_Node;
@@ -331,36 +341,25 @@ is
       Is_Right := False;
       Parent := Trees.Empty_Node;
 
-      Current_Node := ATree.Root;
-      pragma Assert (Trees.In_Tree (ATree.Container, Current_Node));
+      Current_Node := Root;
       --  Rebalance the tree by working back up through the visited
       --  node indices on the Tree.Visited stack.
       Stack_Count := Bounded_Stacks.Count (Visited);
       for Stack_Top in reverse Natural range 1 .. Stack_Count
       loop
-         pragma Assert (Populated (ATree));
-         pragma Assert (Count (ATree'Loop_Entry) = Count (ATree));
-         pragma Assert (Trees.Persists (ATree.Container'Loop_Entry,
-                        ATree.Container));
-         pragma Assert (Trees.In_Tree (ATree.Container, Current_Node));
-         pragma Assert (not Bounded_Stacks.Is_Empty (Visited));
-         pragma Assert (Retains (ATree'Loop_Entry, ATree));
-         pragma Loop_Invariant (Trees.In_Tree (ATree.Container, Current_Node) and
+         pragma Loop_Invariant (Trees.In_Tree (Tree, Current_Node) and
                                 not Bounded_Stacks.Is_Empty (Visited) and
                                   Stack_Top = Bounded_Stacks.Count (Visited) and
-                                  Populated (ATree) and
-                                  Trees.Persists (ATree.Container'Loop_Entry,
-                                    ATree.Container) and
-                                Count (ATree'Loop_Entry) = Count (ATree));
+                                  Trees.Persists (Tree'Loop_Entry, Tree));
          --# assert Stack_Top > 0 and Stack_Top <= Stack_Count and
          --#        Stack_Top = Bounded_Stacks.Count (Visited) and
          --#        not Bounded_Stacks.Is_Empty (Visited) and
          --#        Persists (ATree~, ATree);
          --  Make the Current_Node equal to the Tree_Node at the top of
          --  the stack.
-         Pop_In_Tree_Node (Visited, ATree.Container, Top_Node);
+         Pop_In_Tree_Node (Visited, Tree, Top_Node);
          Current_Node := Top_Node;
-         pragma Assert (Trees.In_Tree (ATree.Container, Current_Node));
+         pragma Assert (Trees.In_Tree (Tree, Current_Node));
 
          if Stack_Top > 1 then
             --  There was more than element on the stack - the current
@@ -368,7 +367,7 @@ is
             --  As the Current_Node has a parent, determine
             --  whether the Current_Node is a left or right child of
             --  its parent.
-            Parent := Top_In_Tree_Node (Visited,  ATree.Container);
+            Parent := Top_In_Tree_Node (Visited,  Tree);
             --  This boolean expression determines which branch of
             --  the parent has the the Current_Node as its child.
             --  False => Left, True => Right.
@@ -376,15 +375,14 @@ is
             --  call of Skew and Split as these may change the
             --  Current_Node.
             Is_Right :=
-              Trees.Right (ATree.Container, Parent) = Top_Node;
+              Trees.Right (Tree, Parent) = Top_Node;
          end if;
 
          --  Perform the Anderson Tree Skew and Split operations on
          --  the Current_Node.  The Current_Node
          --  may be changed by Skew and Split.
-         Skew (Current_Node, ATree.Container);
-         Split (Current_Node, ATree.Container);
-
+         Skew (Current_Node, Tree);
+         Split (Current_Node, Tree);
          --  Update the parent node to point to its new child.
          if Current_Node /= Top_Node and then Stack_Top > 1 then
             --  The value of the Current_Node
@@ -399,17 +397,21 @@ is
               (Is_Right   => Is_Right,
                Node       => Parent,
                Set_Node   => Current_Node,
-               Tree       => ATree.Container);
-            pragma Assert (Trees.In_Tree (ATree.Container, Current_Node));
-            pragma Assert (Trees.In_Tree (ATree.Container, Parent));
-            pragma Assert (not Bounded_Stacks.Is_Empty (Visited));
-            pragma Assert (Stack_Top = Bounded_Stacks.Count (Visited) + 1);
+               Tree       => Tree);
          end if;
+         --  SPARK 2014 does not treat Tree_Type as completely private.
+         --  It knows it is a record type with a component of an access type.
+         --  It therefore assumes that it may be changed indirectly.
+         --  Skew, Split and Set_Branch all maintain Persistence but SPARK 2014
+         --  does not assume this. Should a private type be really private?
+         pragma Assume
+           (Trees.Persists (Tree'Loop_Entry, Tree),
+            "Split, Skew, Rebalance and Set_Branch retain Persistence");
       end loop;
       --  The root of the tree after inserting a node and rebalancing.
-      ATree.Root := Current_Node;
+      Root := Current_Node;
       --# check Retains (ATree~, ATree);
-   end Rebalance_A_Tree;
+   end Rebalance;
 
    procedure Trace_To_Left_Leaf (E    : in out Enumerator;
                                  Tree : Trees.Tree_Type)
@@ -458,12 +460,14 @@ is
       Inserted   : out Boolean)
      with Refined_Post => Trees.Key_Is_Present (ATree.Container, Key) and
                 Populated (ATree) and
-                (if Inserted then
-                    Count (ATree) = Count (ATree'Old) + 1
+                (if not Populated (ATree'Old) then
+                   Count (ATree) = 1
+                     elsif Inserted then
+                       Count (ATree) = Count (ATree'Old) + 1
                  else
                     Count (ATree) = Count (ATree'Old))
    is
-      Tree_Container : Trees.Tree_Type;
+      Tree_Container : Trees.Tree_Type ;
       Visited        : Bounded_Stacks.Stack;
       Key_Found      : Boolean;
       Is_Right       : Boolean;
@@ -488,8 +492,6 @@ is
            (T       => ATree.Container,
             N       => Insert_Node,
             The_Key => Key);
-         pragma Assert (Trees.In_Tree (ATree.Container, Insert_Node));
-         pragma Assert (Trees.Key_Is_Present (ATree.Container, Key));
          --  The new node is the root of the new tree
          ATree.Root := Insert_Node;
       else
@@ -503,7 +505,7 @@ is
             --# check Trees.in_Tree (ATree.Container, ATree.Root);
             --  Inc_Count (ATree);
             ATree.Count := ATree.Count + 1;
-          Tree_Container := ATree.Container;
+            Tree_Container := ATree.Container;
             Current_Node := Top_In_Tree_Node (Visited, Tree_Container);
             --  A right branch if the value of Key is greater (or equal)
             --  to the Top Value, otherwise take the left branch.
@@ -514,11 +516,10 @@ is
               (T       => Tree_Container,
                N       => Child,
                The_Key => Key);
-             Set_Branch (Is_Right   => Is_Right,
+            Set_Branch (Is_Right   => Is_Right,
                         Node       => Current_Node,
                         Set_Node   => Child,
                         Tree       => Tree_Container);
-            ATree.Container := Tree_Container;
             --# check Populated (ATree);
             -- Now rebalance the tree
             --# accept F, 10, Visited, "Visited must be an in out paramter ",
@@ -528,7 +529,19 @@ is
                       Reason => "Visited must be an in out paramter " &
                                  "as it is updated by Rebalance_Tree" &
                                  " but its final value is unrequired");
-            Rebalance_A_Tree (ATree, Visited);
+            Rebalance (ATree.Root, Tree_Container, Visited);
+            --  SPARK 2014 does not treat Tree_Type as completely private.
+            --  It knows it is a record type with a component of an access type.
+            --  It therefore assumes that it may be changed indirectly.
+            --  Set_Branch and Reblance maintain Persistence and therefore
+            --  the precence of a key but SPARK 2014 does not assume this.
+            --  Should a private type be really private?
+            pragma Assume (Trees.Persists (ATree.Container, Tree_Container),
+                          "Set_Branch and Rebalance maintain Persistence");
+            pragma Assume (Trees.Key_Is_Present (Tree_Container, Key),
+                           "Set_Branch and Rebalance maintain keys");
+            ATree.Container := Tree_Container;
+
             pragma Warnings (On, """Visited""");
          end if;
       end if;
@@ -551,18 +564,21 @@ is
       Value_At_Node : out Value_Type)
      with Refined_Post => Trees.Key_Is_Present (ATree.Container, Key) and
                 Populated (ATree) and
-                (if Inserted then
-                    Count (ATree) = Count (ATree'Old) + 1
+                (if not Populated (ATree'Old) then
+                   Count (ATree) = 1
+                     elsif Inserted then
+                       Count (ATree) = Count (ATree'Old) + 1
                  else
                     Count (ATree) = Count (ATree'Old))
    is
-      Visited       : Bounded_Stacks.Stack;
-      Key_Found     : Boolean;
-      Is_Right      : Boolean;
-      Insert_Node   : Trees.Tree_Node;
-      Current_Node  : Trees.Tree_Node;
+      Tree_Container : Trees.Tree_Type ;
+      Visited        : Bounded_Stacks.Stack;
+      Key_Found      : Boolean;
+      Is_Right       : Boolean;
+      Insert_Node    : Trees.Tree_Node;
+      Current_Node   : Trees.Tree_Node;
        --  A Child of the Current Node.
-      Child         : Trees.Tree_Node;
+      Child          : Trees.Tree_Node;
    begin
       --# accept W, 444, "There cannot be Natural'Last tree nodes",
       --#                "Definition of Populated and Count";
@@ -596,22 +612,23 @@ is
          else
             Inserted := True;
             ATree.Count := ATree.Count + 1;
-            Current_Node := Top_In_Tree_Node (Visited, ATree.Container);
+            Tree_Container := ATree.Container;
+            Current_Node := Top_In_Tree_Node (Visited, Tree_Container);
             --  A right branch if the value of Key is greater (or equal)
             --  to the Top Value, otherwise take the left branch.
-            Is_Right := Trees.Key (ATree.Container, Current_Node) < Key;
+            Is_Right := Trees.Key (Tree_Container, Current_Node) < Key;
 
             --  Add a new child node to extend the tree
             Trees.Add_Node
-              (T       => ATree.Container,
+              (T       => Tree_Container,
                N       => Child,
                The_Key => Key);
             Set_Branch (Is_Right   => Is_Right,
                         Node       => Current_Node,
                         Set_Node   => Child,
-                        Tree       => ATree.Container);
-           Value_At_Node := Value;
-            Trees.Set_Value (ATree.Container, Child, Value_At_Node);
+                        Tree       => Tree_Container);
+            Value_At_Node := Value;
+            Trees.Set_Value (Tree_Container, Child, Value_At_Node);
             --# check Trees.in_Tree (ATree.Container, ATree.Root);
             --# check Populated (ATree);
             -- Now rebalance the tree
@@ -622,10 +639,22 @@ is
                       Reason => "Visited must be an in out paramter " &
                                  "as it is updated by Rebalance_Tree" &
                                  " but its final value is unrequired");
-            Rebalance_A_Tree (ATree, Visited);
+            Rebalance (ATree.Root, Tree_Container, Visited);
+               --  SPARK 2014 does not treat Tree_Type as completely private.
+            --  It knows it is a record type with a component of an access type.
+            --  It therefore assumes that it may be changed indirectly.
+            --  Set_Branch and Reblance maintain Persistence and therefore
+            --  the precence of a key but SPARK 2014 does not assume this.
+            --  Should a private type be really private?
+            pragma Assume (Trees.Persists (ATree.Container, Tree_Container),
+                          "Set_Branch and Rebalance maintain Persistence");
+            ATree.Container := Tree_Container;
+
             pragma Warnings (On, """Visited""");
          end if;
       end if;
+      pragma Assume (Trees.Key_Is_Present (ATree.Container, Key),
+                     "Set_Branch and Rebalance maintain keys");
       --# accept W, 444, "The Key is in the Tree",
       --#                "Definition of Count";
       --# assume Is_Present (ATree, Key);

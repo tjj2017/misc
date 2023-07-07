@@ -41,7 +41,9 @@ is
                      Key        : Key_Type;
                      Inserted   : out Boolean)
      with Pre  => Count (ATree) < Natural'Last,
-          Post => (if Inserted then
+     Post => (if not Populated (ATree'Old) then
+                Count (ATree) = 1
+                  elsif Inserted then
                      Count (ATree) = Count (ATree'Old) + 1
                    else
                      Count (ATree) = Count (ATree'Old));
@@ -52,7 +54,9 @@ is
                                 Inserted      : out Boolean;
                                 Value_At_Node : out Value_Type)
      with Pre  => Count (ATree) < Natural'Last,
-          Post => (if Inserted then
+     Post => (if not Populated (ATree'Old) then
+                Count (ATree) = 1
+                  elsif Inserted then
                      Count (ATree) = Count (ATree'Old) + 1
                    else
                      Count (ATree) = Count (ATree'Old));
@@ -61,17 +65,19 @@ is
      with Pre => not Empty_Tree (ATree),
           Post => Empty_Tree (ATree);
 
-   function Is_Equal (ATree_1, ATree_2 : A_Tree) return Boolean;
+   function Is_Equal (ATree_1, ATree_2 : A_Tree) return Boolean
+   with Pre => Populated (ATree_1) and Populated (ATree_2);
 
    function Is_Present (ATree : A_Tree; Key : Key_Type) return Boolean
      with Pre  => Populated (ATree);
 
-   function Tree_Depth (ATree : A_Tree) return Natural;
+   function Tree_Depth (ATree : A_Tree) return Natural
+     with Pre => Populated (ATree);
 
    type Enumerator is private;
 
    function New_Enumerator (ATree : A_Tree) return Enumerator
-     with Pre => not Empty_Tree (ATree);
+     with Pre => Populated (ATree);
 
    procedure Next_Node (E : in out Enumerator; Node : out Tree_Node);
 
