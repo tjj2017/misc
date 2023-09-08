@@ -11,9 +11,10 @@ is
       (ATree.Root = Trees.Empty_Node);
 
    function Populated (ATree : A_Tree) return Boolean is
-     (not Trees.Is_Empty_Tree (ATree.Container) and
-      Trees.In_Tree (ATree.Container, ATree.Root) and
-        ATree.Count > 0);
+     (not (Trees.Is_Empty_Tree (ATree.Container)) and
+        Trees.In_Tree (ATree.Container, ATree.Root) and
+          ATree.Root /= Trees.Empty_Node and
+            ATree.Count > 0);
 
    --  Proof helper subprograms
 
@@ -122,8 +123,9 @@ is
                        Node     : Tree_Node;
                        Tree    : Trees.Tree_Type)
                        return Tree_Node
-   with Pre  => not Trees.Is_Empty_Tree (Tree) and Trees.In_Tree (Tree, Node),
-        Post => (if Get_Child'Result /= Trees.Empty_Node then
+     with Pre  => Node /= Trees.Empty_Node and not Trees.Is_Empty_Tree (Tree)
+                  and Trees.In_Tree (Tree, Node),
+          Post => (if Get_Child'Result /= Trees.Empty_Node then
                     Trees.In_Tree (Tree, Get_Child'Result))
    is
       Result : Tree_Node;
@@ -141,7 +143,7 @@ is
                          Node       : Tree_Node;
                          Set_Node   : Tree_Node;
                          Tree       : in out Trees.Tree_Type) with
-     Pre  => not Trees.Is_Empty_Tree (Tree) and
+     Pre  => Node /= Trees.Empty_Node and not Trees.Is_Empty_Tree (Tree) and
              Trees.In_Model (Trees.To_Model (Tree), Node) and
              Trees.In_Tree (Tree, Node) and Trees.In_Tree (Tree, Set_Node),
      Post => Trees.Persists (Trees.To_Model(Tree)'Old, Trees.To_Model (Tree))
@@ -210,7 +212,6 @@ is
 
          Current_Key := Trees.Key (ATree.Container, Current_Node);
          Found := Current_Key = Key;
-         pragma Assert (if Found then Trees.In_Tree (ATree.Container, Current_Node));
          if not Found then
             --  Take the right branch if the Key value is greater
             --  than the Current_Node Key, otherwise take the left branch.
@@ -224,7 +225,9 @@ is
                       Trees.In_Tree (ATree.Container, Current_Node) and
                       Trees.Key (ATree.Container,
                    Top_In_Tree_Node (Visited, ATree.Container)) = Key and
-                trees.Key_Is_Present (ATree.Container, Key)));
+                   Trees.Key_Is_Present (ATree.Container, Key) and
+                       Top_In_Tree_Node (Visited, ATree.Container) /=
+                       Trees.Empty_Node));
 
          exit when Found or else not Trees.In_Tree (ATree.Container, Child);
 
@@ -233,7 +236,6 @@ is
          Current_Node := Child;
          --# assert not (Found or (not Trees.In_Tree (ATree.Container, Current_Node)));
       end loop;
-      pragma Assert (if Found then Trees.In_Tree (ATree.Container, Current_Node));
       --# check Found -> (Trees.Key (ATree.Container, Current_Node) = Key);
       --  The Tree.Visited stack will not be empty.
       --  if Found is True, the Tree_Store contains an Actual_Node with the
@@ -248,14 +250,16 @@ is
 
    procedure Skew (Root       : in out Tree_Node;
                    Tree       : in out Trees.Tree_Type)
-   with Pre => not Trees.Is_Empty_Tree (Tree) and Trees.In_Tree (Tree, Root),
+     with Pre => Root /= Trees.Empty_Node and not Trees.Is_Empty_Tree (Tree)
+                 and Trees.In_Tree (Tree, Root),
         Post => Trees.Persists (Trees.To_Model (Tree)'Old,
                                 Trees.To_Model (Tree))
                 and Trees.In_Tree (Tree, Root)
    is
       T_In : constant Trees.Tree_Model := Trees.To_Model (Tree)
-      with Ghost;
+        with Ghost;
       Left_Child : Trees.Tree_Node;
+      New_Left_Branch : Trees.Tree_Node;
    begin
       Left_Child := Trees.Left (Tree, Root);
       --  No action is performed if the levels of the root and left nodes
@@ -263,17 +267,19 @@ is
       if Trees.In_Tree (Tree, Left_Child) and then
         Trees.Level (Tree, Left_Child) = Trees.Level (Tree, Root)
       then
-         --  The left child has the same level as its parent breaking
+        pragma Assert (Trees.In_Tree (Tree, Left_Child));
+       --  The left child has the same level as its parent breaking
          --  rule 2 of an Anderson tree. To resolve rotate right at the parent.
          --  That is, the root node left child becomes the right child of
          --  root node left node.  The right child of the root node left child
          --  becomes the root index, and lastly, the index of the root
          --  left child becomes the new root {index}.
+         New_Left_Branch := Trees.Right (Tree, Left_Child);
          Trees.Set_Left
            (T      => Tree,
             N      => Root,
-            Branch => Trees.Right (Tree, Left_Child));
-         --  pragma Assert (Trees.Persists (T_In, Trees.To_Model (Tree)));
+            Branch => New_Left_Branch);
+         pragma Assert (Trees.Left (Tree, Root) = New_Left_Branch);
          Trees.Set_Right
            (T      => Tree,
             N      => Left_Child,
@@ -486,17 +492,17 @@ is
       Inserted   : out Boolean)
      with Refined_Post =>
        (Inserted and not Model_Populated (To_Model (ATree)'Old) and
-          Trees.Key_In_Model (Trees.To_Model (ATree.Container), Key) and
+          Trees.Key_is_Present (ATree.Container, Key) and
             Model_Populated (To_Model (ATree)) and
           Count (ATree) = 1)
        or
          (Inserted and Model_Populated (To_Model (ATree)'Old) and
-          Trees.Key_In_Model (Trees.To_Model (ATree.Container), Key) and
+          Trees.Key_Is_Present (ATree.Container, Key) and
             Model_Populated (To_Model (ATree)) and
             Count (ATree) = Model_Count (To_Model (ATree)'Old) + 1)
          or
            (not Inserted and
-              Trees.Key_In_Model (Trees.To_Model (ATree.Container), Key) and
+              Trees.Key_Is_Present (ATree.Container, Key) and
                 Model_Populated (To_Model (ATree)) =
               Model_Populated (To_Model (ATree)'Old) and
               Count (ATree) = Model_Count (To_Model (ATree)'Old))
@@ -598,17 +604,17 @@ is
       Value_At_Node : out Value_Type)
    with Refined_Post =>
        (Inserted and not Model_Populated (To_Model (ATree)'Old) and
-          Trees.Key_In_Model (Trees.To_Model (ATree.Container), Key) and
+          Trees.Key_Is_Present (ATree.Container, Key) and
             Model_Populated (To_Model (ATree)) and
           Count (ATree) = 1)
        or
          (Inserted and Model_Populated (To_Model (ATree)'Old) and
-          Trees.Key_In_Model (Trees.To_Model (ATree.Container), Key) and
+          Trees.Key_Is_Present (ATree.Container, Key) and
             Model_Populated (To_Model (ATree)) and
             Count (ATree) = Model_Count (To_Model (ATree)'Old) + 1)
          or
            (not Inserted and
-              Trees.Key_In_Model (Trees.To_Model (ATree.Container), Key) and
+              Trees.Key_Is_Present (ATree.Container, Key) and
                 Model_Populated (To_Model (ATree)) =
               Model_Populated (To_Model (ATree)'Old) and
               Count (ATree) = Model_Count (To_Model (ATree)'Old))

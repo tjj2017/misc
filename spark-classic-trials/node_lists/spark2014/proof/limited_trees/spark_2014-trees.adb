@@ -12,6 +12,10 @@ is
 
    function Is_Empty_Model (M : Tree_Model) return Boolean is (M'Length = 0);
 
+   function Persist_Contents (T : Tree_Type; N : Tree_Node) return Persist_Node
+   is
+      (Dynamic_Tables.Get_Item (T.The_Tree, N).Conts);
+
    --------------
    -- To_Model --
    --------------
@@ -29,19 +33,39 @@ is
             Dynamic_Array_Diff + 1
          else
             Model_Index'Last);
-      M  : Tree_Model (1 .. Tree_Size);
+      M  : Tree_Model (1 .. Tree_Size) :=
+        (others => Model_Node'(Key => Key_Type'First, Value => Null_Value));
    begin
-      if Dynamic_Tables.Is_Empty (T.The_Tree) then
-         M := (1 .. 0 => (Key => Key_Type'First));
-      else
+      if not Dynamic_Tables.Is_Empty (T.The_Tree) then
          for I in M'Range loop
             pragma Loop_Invariant (not Dynamic_Tables.Is_Empty (T.The_Tree));
-            M (I).Key := Dynamic_Tables.Get_Item
-              (T.The_Tree, Tree_Node (I)).Key;
+            M (I) := Model_Node
+              (Dynamic_Tables.Get_Item (T.The_Tree, Tree_Node (I)).Conts);
          end loop;
       end if;
+      pragma Assume (Model_Equivalence (T, M));
       return M;
    end To_Model;
+
+   function To_Tree_Node (N : Model_Index) return Tree_Node is (Tree_Node (N));
+
+   function To_Persist_Node (M_Node : Model_Node) return Persist_Node is
+     (Persist_Node (M_Node));
+
+   -----------------------
+   -- Model_Equivalence --
+   --------------
+
+   function Model_Equivalence (T : Tree_Type; M : Tree_Model) return Boolean is
+     (Integer (M'First) = Integer (Valid_Tree_Node'First) and
+          Integer (M'Last) <= Integer (Tree_Node'Last) and
+          (if not Is_Empty_Tree (T) and M'First > 0 then
+             (for all I in M'Range =>
+                (if In_Tree (T, Tree_Node (I)) then
+                      In_Model (M, Tree_Node (I)) and
+                   M (I) = Model_Node (Dynamic_Tables.Get_Item
+                     (T.The_Tree, Tree_Node (I)).Conts)))));
+
 
    --------------
    -- In_Model --
@@ -102,9 +126,20 @@ is
    --------------
 
    function Persists (T_Pre, T_Post : Tree_Model) return Boolean is
-     (T_Pre = T_Post);
+     (T_Pre'First = T_Post'First and T_Pre'Last = T_Post'Last and
+        (for all I in T_Pre'Range => T_Pre (I) = T_Post (I) and
+             In_Model (T_Pre, Tree_Node (I)) =
+           In_Model (T_Post, Tree_Node (I))));
 
-   --------------
+   function New_Persists (T_Pre : Tree_Model; T_Post : Tree_Type) return Boolean
+   is
+     (for all I in 1 .. T_Pre'Last =>
+         In_Model (T_Pre, Tree_Node (I)) = In_Tree (T_Post, Tree_Node (I)) and
+        T_Pre (I) = Model_Node (Dynamic_Tables.Get_Item
+          (T_Post.The_Tree, Tree_Node (I)).Conts) and
+          In_Model (T_Pre, Tree_Node (I)) = In_Tree (T_Post, Tree_Node (I)));
+
+    --------------
    -- New_Tree --
    --------------
 
@@ -162,7 +197,7 @@ is
 
    function Key (T : Tree_Type; N : Tree_Node) return Key_Type is
    begin
-      return Dynamic_Tables.Get_Item (T.The_Tree, N).Key;
+      return Dynamic_Tables.Get_Item (T.The_Tree, N).Conts.Key;
    end Key;
    pragma Inline (Key);
 
@@ -173,7 +208,7 @@ is
    function Value (T : Tree_Type; N : Tree_Node) return Value_Type
    is
    begin
-      return Dynamic_Tables.Get_Item (T.The_Tree, N).Value;
+      return Dynamic_Tables.Get_Item (T.The_Tree, N).Conts.Value;
    end Value;
    pragma Inline (Value);
 
@@ -235,8 +270,9 @@ is
                      "If a Node is not removed by setting its left branch");
       pragma Assume (Left (T, N) = Branch,
                      "The Left component of the node is set to Branch");
-      pragma Assume ((if In_Model (T_Entry, Branch) then In_Tree (T, Branch)),
-                    "If the node is in the model it is also in the Tree");
+      pragma Assume (In_Model (T_Entry, Branch) = In_Tree (T, Branch),
+                     "If the node is in the model it is also in the Tree");
+      pragma Assume (Model_Equivalence (T, To_Model (T)));
    end Set_Left;
    pragma Inline (Set_Left);
 
@@ -281,7 +317,7 @@ is
         with Ghost;
    begin
       Node_Contents := Dynamic_Tables.Get_Item (T.The_Tree, N);
-      Node_Contents.Key := The_Key;
+      Node_Contents.Conts.Key := The_Key;
       Dynamic_Tables.Set_Item (T.The_Tree, N, Node_Contents);
      --# accept W, 444, "Setting a component of a tree does not remove Nodes";
      --# assume Persists (T~, T);
@@ -289,10 +325,10 @@ is
                      "Setting a component of a tree does not remove Nodes");
       pragma Assume (In_Tree (T, N),
                      "If a Node is not removed by setting its key");
-      --  pragma Assume (Key_In_Model (To_Model (T), The_Key),
-      --                 "The key has just been set.");
-      --  pragma Assume (Key (T, N) = The_Key,
-                     --  "The  Key component of the node is set to The_Key");
+      pragma Assume (Key_Is_Present (T, The_Key),
+                     "The key has just been set.");
+      pragma Assume (Key (T, N) = The_Key,
+                     "The  Key component of the node is set to The_Key");
    end Set_Key;
    pragma Inline (Set_Key);
 
@@ -309,7 +345,7 @@ is
         with Ghost;
    begin
       Node_Contents := Dynamic_Tables.Get_Item (T.The_Tree, N);
-      Node_Contents.Value := Node_Value;
+      Node_Contents.Conts.Value := Node_Value;
       Dynamic_Tables.Set_Item (T.The_Tree, N, Node_Contents);
      --# accept W, 444, "Setting a component of a tree does not remove Nodes";
      --# assume Persists (T~, T);
@@ -335,8 +371,7 @@ is
         with Ghost;
    begin
       Node := Actual_Node'
-        (Key   => The_Key,
-         Value => Null_Value,
+        (Conts => Persist_Node'(Key => The_Key, Value => Null_Value),
          Level => 1,
          Left  => Empty_Node,
          Right => Empty_Node);
@@ -349,8 +384,8 @@ is
                      "Setting a component of a tree does not remove Nodes");
       pragma Assume (In_Tree (T, N),
                     "The node N has been added to the tree");
-      --  pragma Assume (Key_In_Model (To_Model (T), The_Key),
-      --                 "The_node N, has a Key component set to The_Key");
+      pragma Assume (Key_Is_Present (T, The_Key),
+                     "The_node N, has a Key component set to The_Key");
       pragma Assume (Key (T, N) = The_Key,
                      "A node with Key = The Key has been created by Append");
       pragma Assume (Left (T, N) = Empty_Node,

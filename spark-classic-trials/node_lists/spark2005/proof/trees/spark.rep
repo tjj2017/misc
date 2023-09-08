@@ -5,7 +5,7 @@
            *******************************************************
 
 
-                        DATE : 02-JUN-2023 12:56:30.68
+                        DATE : 21-JUL-2023 12:55:50.21
 
 Options:
     index_file=spark_classic.idx
@@ -30,7 +30,7 @@ Options:
     output_directory (actual)=/home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/
 
 Selected files:
-   spark_classic-atrees.adb
+   spark_classic-trees.adb
 
 
 Index Filename(s) used were: 
@@ -93,39 +93,13 @@ No summarized warnings
 
 
 Source Filename(s) used were:
-   /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-atrees.adb
-   /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-atrees.sss
-   /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-bounded_stacks.sss
+   /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-trees.adb
    /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-trees.sss
+   /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-dynamic_tables.sss
    /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-expose_nodes.ads
    /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/spark_classic.ads
    /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/types.ads
-   /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-dynamic_tables.sss
 
-
-
-Source Filename:   /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-atrees.sss
-No Listing File
-
-   Unit name:  SPARK_Classic.Atrees
-   Unit type:  package specification
-   Unit has been analysed, any errors are listed below.
-
-No errors found
-
-No summarized warnings
-
-
-Source Filename:   /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-bounded_stacks.sss
-No Listing File
-
-   Unit name:  SPARK_Classic.Bounded_Stacks
-   Unit type:  package specification
-   Unit has been analysed, any errors are listed below.
-
-No errors found
-
-No summarized warnings
 
 
 Source Filename:   /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-trees.sss
@@ -136,6 +110,24 @@ No Listing File
    Unit has been analysed, any errors are listed below.
 
 No errors found
+
+No summarized warnings
+
+
+Source Filename:   /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-dynamic_tables.sss
+No Listing File
+
+   Unit name:  SPARK_Classic.Dynamic_Tables
+   Unit type:  package specification
+   Unit has been analysed, any errors are listed below.
+
+1 error(s) or warning(s)
+
+Line
+  73  end SPARK_Classic.Dynamic_Tables;
+
+--- (  1)  Warning           : 10: The private part of package Dynamic_Tables is 
+           hidden - hidden text is ignored by the Examiner.
 
 No summarized warnings
 
@@ -176,67 +168,34 @@ No errors found
 No summarized warnings
 
 
-Source Filename:   /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-dynamic_tables.sss
-No Listing File
+Source Filename:   /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-trees.adb
+Listing Filename:  /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-trees.lst
 
-   Unit name:  SPARK_Classic.Dynamic_Tables
-   Unit type:  package specification
-   Unit has been analysed, any errors are listed below.
-
-1 error(s) or warning(s)
-
-Line
-  73  end SPARK_Classic.Dynamic_Tables;
-
---- (  1)  Warning           : 10: The private part of package Dynamic_Tables is 
-           hidden - hidden text is ignored by the Examiner.
-
-No summarized warnings
-
-
-Source Filename:   /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-atrees.adb
-Listing Filename:  /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-atrees.lst
-
-   Unit name:  SPARK_Classic.Atrees
+   Unit name:  SPARK_Classic.Trees
    Unit type:  package body
    Unit has been analysed, any errors are listed below.
 
-2 error(s) or warning(s)
-
-Line
- 694     --# return Found;
-                    ^1
-*** (  1)  Semantic Error    :  1: The identifier Found is either undeclared or not 
-           visible at this point.
---- (  2)  Warning           :430: SLI generation abandoned owing to syntax or 
-           semantic errors or multiple units in a single source file.
+No errors found
 
 
 Expected messages marked with the accept annotation
 Type Msg    Lines              Reason                    Match
      No.  From    To                                    No.  Line
-Flow  30    55   end  Tree is only used in proof conte    1    63
-Warn 444    57   end  A Stack_Size of 32 allows the tr    1    60
-Flow  30    76   end  Tree only used in proof context.    1    84
-Warn 444    80   end  The exclusive use of Push_In_Tre    1    83
-Flow  30    96   end  Tree only used in proof context.    1   108
-Warn 444   100   end  The exclusive use of Push_In_Tre    1   103
-Flow  50   105   end  Tree only used in proof context.    1   108
-Flow  10   243   end  Current_Node exported only for p    1   245
-Flow  33   243   end  Current_Node exported only for p    1   250
-Warn 444   321   end  The Level cannot exceed the numb    1   322
-Warn 444   469   474  There cannot be Natural'Last tre    3   473
-Flow  10   516   end  Visited must be an in out paramt    1   519
-Warn 444   522   526  The Key is in the Tree Definitio    2   525
-Warn 444   548   553  There cannot be Natural'Last tre    3   552
-Flow  10   599   end  Visited must be an in out paramt    1   602
-Warn 444   605   609  The Key is in the Tree Definitio    2   608
-Flow  10   699   end  Visited stack is used by Find       0  !!! No match found.
-Flow  33   699   end  Final value of Visited is not re    0  !!! No match found.
+Warn 444    53   end  The left branch is either empty     1    54
+Warn 444    68   end  The right branch is either empty    1    69
+Warn 444   108   end  Setting a component of a tree do    1   109
+Warn 444   126   end  Setting a component of a tree do    1   127
+Warn 444   144   end  Setting a component of a tree do    1   145
+Warn 444   161   end  Setting a component of a tree do    1   162
+Warn 444   179   end  Setting a component of a tree do    1   180
+Warn 444   202   204  Appending a node adds it into th    1   203
+Warn 444   205   207  Adding a node does not remove an    1   206
+Warn 444   208   end  N is the position in the tree of    1   209
+Warn 444   236   end  If N = Empty_Node or N > New_Las    1   238
 
 
-6 summarized warning(s), comprising:
-     6 pragma(s)*
+13 summarized warning(s), comprising:
+    13 pragma(s)*
 (*Note: the above warnings may affect the validity of the analysis.)
 
 Note: Data flow analysis mode selected
