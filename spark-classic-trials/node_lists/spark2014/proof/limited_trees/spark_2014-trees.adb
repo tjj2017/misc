@@ -52,21 +52,6 @@ is
    function To_Persist_Node (M_Node : Model_Node) return Persist_Node is
      (Persist_Node (M_Node));
 
-   -----------------------
-   -- Model_Equivalence --
-   --------------
-
-   function Model_Equivalence (T : Tree_Type; M : Tree_Model) return Boolean is
-     (Integer (M'First) = Integer (Valid_Tree_Node'First) and
-          Integer (M'Last) <= Integer (Tree_Node'Last) and
-          (if not Is_Empty_Tree (T) and M'First > 0 then
-             (for all I in M'Range =>
-                (if In_Tree (T, Tree_Node (I)) then
-                      In_Model (M, Tree_Node (I)) and
-                   M (I) = Model_Node (Dynamic_Tables.Get_Item
-                     (T.The_Tree, Tree_Node (I)).Conts)))));
-
-
    --------------
    -- In_Model --
    --------------
@@ -133,7 +118,7 @@ is
 
    function New_Persists (T_Pre : Tree_Model; T_Post : Tree_Type) return Boolean
    is
-     (for all I in 1 .. T_Pre'Last =>
+     (for all I in T_Pre'Range =>
          In_Model (T_Pre, Tree_Node (I)) = In_Tree (T_Post, Tree_Node (I)) and
         T_Pre (I) = Model_Node (Dynamic_Tables.Get_Item
           (T_Post.The_Tree, Tree_Node (I)).Conts) and

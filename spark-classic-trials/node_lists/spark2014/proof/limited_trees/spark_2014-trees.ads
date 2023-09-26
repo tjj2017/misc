@@ -17,19 +17,29 @@ package SPARK_2014.Trees is
      with Pre => In_Tree (T, N),
      Ghost;
 
-   subtype Model_Index is Natural range 0 .. Natural'Last - 1;
+   subtype Model_Index is Natural range 1 .. Natural'Last - 1;
    type Model_Node is private with Ghost;
    type Tree_Model is array (Model_Index range  <>) of Model_Node with Ghost;
    function Is_Empty_Model (M :Tree_Model) return Boolean with Ghost;
    function To_Tree_Node (N : Model_Index) return Tree_Node with Ghost;
    function To_Persist_Node (M_Node : Model_Node) return Persist_Node with Ghost;
+   function In_Model (M : Tree_Model; N : Tree_Node) return Boolean with Ghost;
 
-   function Model_Equivalence (T : Tree_Type; M : Tree_Model) return Boolean
-     with Ghost;
+   function In_Tree  (T : Tree_Type; N : Tree_Node) return Boolean with
+     Post => (In_Tree'Result = (not Is_Empty_Tree (T) and
+                  N /= Empty_Node));
+
+   function Model_Equivalence (T : Tree_Type; M : Tree_Model) return Boolean is
+     (for all I in M'Range =>
+         In_Tree (T, To_Tree_Node (I)) and
+         In_Model (M, To_Tree_Node (I)) and
+        To_Persist_Node (M (I)) =
+          Persist_Contents (T, To_Tree_Node (I)))
+   with Ghost;
+
    function To_Model (T : Tree_Type) return Tree_Model with
      Post => Model_Equivalence (T, To_Model'Result),
      Ghost;
-   function In_Model (M : Tree_Model; N : Tree_Node) return Boolean with Ghost;
    --  function Key_In_Model (M : Tree_Model; K : Key_Type) return Boolean
    --    with Ghost;
 
@@ -39,18 +49,18 @@ package SPARK_2014.Trees is
    function New_Persists (T_Pre : Tree_Model; T_Post : Tree_Type) return Boolean
      with
        Pre => not Is_Empty_Model (T_Pre) and not Is_Empty_Tree (T_Post),
-       Post => New_Persists'Result =(for all I in 1 .. T_Pre'Last =>
-                  In_Model (T_Pre, To_Tree_Node (I)) =
-                    In_Tree (T_Post, To_Tree_Node (I))
-                and
-                  To_Persist_Node (T_Pre (I)) =
-                    Persist_Contents (T_Post, To_Tree_Node (I))),
+     Post => New_Persists'Result =
+              (for all I in T_Pre'Range =>
+                 In_Model (T_Pre, To_Tree_Node (I)) =
+                   In_Tree (T_Post, To_Tree_Node (I))
+               and
+                 In_Tree (T_Post, To_Tree_Node (I)) and
+                   I in T_Pre'Range and T_Pre'Length > 0 and
+                     T_Pre'Last > T_Pre'First and
+                 To_Persist_Node (T_Pre (I)) =
+                   Persist_Contents (T_Post, To_Tree_Node (I))),
        Ghost;
 
-   function In_Tree  (T : Tree_Type; N : Tree_Node) return Boolean with
-     Post => (In_Tree'Result = (not Is_Empty_Tree (T) and
-                  N /= Empty_Node and
-                  In_Model (To_Model (T), N)));
    function Node_Is_Present  (T : Tree_Type; N : Tree_Node) return Boolean;
    function Key_Is_Present (T : Tree_Type; K : Key_Type) return Boolean
      with Pre => not Is_Empty_Tree (T),
