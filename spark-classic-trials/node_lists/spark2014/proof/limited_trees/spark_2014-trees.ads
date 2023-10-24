@@ -31,32 +31,34 @@ package SPARK_2014.Trees is
 
    function Model_Equivalence (T : Tree_Type; M : Tree_Model) return Boolean is
      (for all I in M'Range =>
+         To_Tree_Node (I) /= Empty_Node and
          In_Tree (T, To_Tree_Node (I)) and
-         In_Model (M, To_Tree_Node (I)) and
+        In_Model (M, To_Tree_Node (I)) and
+          In_Tree (T, To_Tree_Node (I)) and
         To_Persist_Node (M (I)) =
           Persist_Contents (T, To_Tree_Node (I)))
-   with Ghost;
+     with Pre => (for all I in M'Range =>
+                    In_Tree (T, To_Tree_Node (I))),
+          Ghost;
 
    function To_Model (T : Tree_Type) return Tree_Model with
      Post => Model_Equivalence (T, To_Model'Result),
      Ghost;
-   --  function Key_In_Model (M : Tree_Model; K : Key_Type) return Boolean
-   --    with Ghost;
 
    function Persists (T_Pre, T_Post : Tree_Model) return Boolean
-     with Ghost;
+     with Pre => T_Pre'First = T_Post'First and T_Pre'Last = T_Post'Last,
+          Ghost;
 
    function New_Persists (T_Pre : Tree_Model; T_Post : Tree_Type) return Boolean
      with
-       Pre => not Is_Empty_Model (T_Pre) and not Is_Empty_Tree (T_Post),
-     Post => New_Persists'Result =
+       Pre => not Is_Empty_Model (T_Pre) and not Is_Empty_Tree (T_Post) and
+              (for all I in T_Pre'Range => In_Tree (T_Post, To_Tree_Node (I))),
+      Post => New_Persists'Result =
               (for all I in T_Pre'Range =>
                  In_Model (T_Pre, To_Tree_Node (I)) =
                    In_Tree (T_Post, To_Tree_Node (I))
                and
                  In_Tree (T_Post, To_Tree_Node (I)) and
-                   I in T_Pre'Range and T_Pre'Length > 0 and
-                     T_Pre'Last > T_Pre'First and
                  To_Persist_Node (T_Pre (I)) =
                    Persist_Contents (T_Post, To_Tree_Node (I))),
        Ghost;
@@ -85,9 +87,11 @@ package SPARK_2014.Trees is
 
    procedure Set_Level (T : in out Tree_Type; N : Tree_Node;
                         Node_Level : Natural)
-     with Pre => N /= Empty_Node and not Is_Empty_Tree (T) and In_Tree (T, N),
-          Post => not Is_Empty_Tree (T) and
-                  Persists (To_Model (T)'Old, To_Model (T)) and
+     with Pre => N /= Empty_Node and not Is_Empty_Tree (T) and In_Tree (T, N)
+                  and not Is_Empty_Model (To_Model (T)),
+     Post => In_Tree (T, N) and
+             not Is_Empty_Tree (T) and
+                  New_Persists (To_Model (T)'Old, T) and
              In_Tree (T, N) and Level (T, N) = Node_Level;
 
    procedure Set_Left  (T : in out Tree_Type; N : Tree_Node;
@@ -103,34 +107,40 @@ package SPARK_2014.Trees is
 
    procedure Set_Right (T : in out Tree_Type; N : Tree_Node;
                         Branch : Tree_Node)
-     with Pre => N /= Empty_Node and not Is_Empty_Tree (T) and In_Tree (T, N),
+     with Pre => N /= Empty_Node and not Is_Empty_Tree (T) and In_Tree (T, N)
+                  and not Is_Empty_Model (To_Model (T)),
           Post => In_Tree (T, N) and
-                  Persists (To_Model (T)'Old, To_Model (T)) and
-                  (if In_Model (To_Model (T)'Old, Branch) then
-                     In_Tree (T, Branch))
-                  and
-                   Right (T, N) = Branch;
+                  not Is_Empty_Tree (T) and
+                  New_Persists (To_Model (T)'Old, T) and
+                  In_Model (To_Model (T)'Old, Branch) = In_Tree (T, Branch)
+                  and Right (T, N) = Branch and
+                  Model_Equivalence (T, To_Model (T));
 
    procedure Set_Key (T : in out Tree_Type; N : Tree_Node;
                       The_Key : Key_Type)
-     with Pre => N /= Empty_Node and not Is_Empty_Tree (T) and In_Tree (T, N),
-          Post => not Is_Empty_Tree (T) and
-                  Persists (To_Model (T)'Old, To_Model (T)) and
+     with Pre => N /= Empty_Node and not Is_Empty_Tree (T) and In_Tree (T, N)
+                 and not Is_Empty_Model (To_Model (T)),
+      Post => In_Tree (T, N) and
+             not Is_Empty_Tree (T) and
+                  New_Persists (To_Model (T)'Old, T) and
                     Key_Is_Present (T, The_Key) and
                       Key (T, N) = The_Key;
 
    procedure Set_Value (T : in out Tree_Type; N : Tree_Node;
                         Node_Value : Value_Type)
-     with Pre => N /= Empty_Node and not Is_Empty_Tree (T) and In_Tree (T, N),
+     with Pre => N /= Empty_Node and not Is_Empty_Tree (T) and In_Tree (T, N)
+                 and not Is_Empty_Model (To_Model (T)),
           Post => not Is_Empty_Tree (T) and
-                  Persists (To_Model (T)'Old, To_Model (T)) and
+                  New_Persists (To_Model (T)'Old, T) and
                   Value (T, N) = Node_Value;
 
    procedure Add_Node  (T : in out Tree_Type; N : out Tree_Node;
                         The_Key : Key_Type)
      with Post => not Is_Empty_Tree (T) and
                   In_Tree (T, N) and
-                  Persists (To_Model (T)'Old, To_Model (T)) and
+                  In_Model (To_Model (T), N) and
+                  not Is_Empty_Model (To_Model (T)) and
+                   New_Persists (To_Model (T)'Old,T) and
                   Key_Is_Present (T, The_Key) and
                   Key (T, N) = The_Key and
                   Left (T, N) = Empty_Node and

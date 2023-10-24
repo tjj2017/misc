@@ -20,7 +20,11 @@ is
    -- To_Model --
    --------------
 
-   function To_Model (T : Tree_Type) return Tree_Model is
+   function To_Model (T : Tree_Type) return Tree_Model with
+     Refined_Post => (for all I in To_Model'Result'Range =>
+                        In_Tree (T, To_Tree_Node (I))) and
+                     Model_Equivalence(T, To_Model'Result)
+   is
       Dynamic_Array_Diff : constant Integer :=
         (if Dynamic_Tables.Is_Empty (T.The_Tree) then
               -1
@@ -86,7 +90,10 @@ is
    -- In_Tree --
    -------------
 
-   function In_Tree (T : Tree_Type; N : Tree_Node) return Boolean is
+   function In_Tree (T : Tree_Type; N : Tree_Node) return Boolean with
+   Refined_Post => (In_Tree'Result = (not Is_Empty_Tree (T) and
+                N /= Empty_Node))
+   is
       Result : constant Boolean :=
         (N > Empty_Node and then N <= Dynamic_Tables.Last_Index (T.The_Tree));
    begin
@@ -111,18 +118,17 @@ is
    --------------
 
    function Persists (T_Pre, T_Post : Tree_Model) return Boolean is
-     (T_Pre'First = T_Post'First and T_Pre'Last = T_Post'Last and
-        (for all I in T_Pre'Range => T_Pre (I) = T_Post (I) and
+     (for all I in T_Pre'Range => T_Pre (I) = T_Post (I) and
              In_Model (T_Pre, Tree_Node (I)) =
-           In_Model (T_Post, Tree_Node (I))));
+           In_Model (T_Post, Tree_Node (I)));
 
    function New_Persists (T_Pre : Tree_Model; T_Post : Tree_Type) return Boolean
    is
      (for all I in T_Pre'Range =>
          In_Model (T_Pre, Tree_Node (I)) = In_Tree (T_Post, Tree_Node (I)) and
-        T_Pre (I) = Model_Node (Dynamic_Tables.Get_Item
-          (T_Post.The_Tree, Tree_Node (I)).Conts) and
-          In_Model (T_Pre, Tree_Node (I)) = In_Tree (T_Post, Tree_Node (I)));
+        In_Tree (T_Post, To_Tree_Node (I)) and
+              Persist_Node'(To_Persist_Node (T_Pre (I))) =
+          Persist_Node'(Persist_Contents (T_Post, To_Tree_Node (I))));
 
     --------------
    -- New_Tree --
@@ -223,7 +229,7 @@ is
       Dynamic_Tables.Set_Item (T.The_Tree, N, Node_Contents);
      --# accept W, 444, "Setting a component of a tree does not remove Nodes";
      --# assume Persists (T~, T);
-      pragma Assume (Persists (T_Entry, To_Model (T)),
+      pragma Assume (New_Persists (T_Entry, T),
                      "Setting a component of a tree does not remove Nodes");
       pragma Assume (In_Tree (T, N),
                      "If a Node is not removed by setting its level");
@@ -249,7 +255,7 @@ is
       Dynamic_Tables.Set_Item (T.The_Tree, N, Node_Contents);
      --# accept W, 444, "Setting a component of a tree does not remove Nodes";
      --# assume Persists (T~, T);
-      pragma Assume (Persists (T_Entry, To_Model (T)),
+      pragma Assume (New_Persists (T_Entry, T),
                      "Setting a component of a tree does not remove Nodes");
       pragma Assume (In_Tree (T, N),
                      "If a Node is not removed by setting its left branch");
@@ -279,15 +285,16 @@ is
       Dynamic_Tables.Set_Item (T.The_Tree, N, Node_Contents);
      --# accept W, 444, "Setting a component of a tree does not remove Nodes";
      --# assume Persists (T~, T);
-      pragma Assume (Persists (T_Entry, To_Model (T)),
+      pragma Assume (New_Persists (T_Entry, T),
                      "Setting a component of a tree does not remove Nodes");
       pragma Assume (In_Tree (T, N),
                      "If a Node is not removed by setting its right branch");
       pragma Assume (Right (T, N) = Branch,
                      "The Right component of the node is set to Branch");
-      pragma Assume ((if In_Model (T_Entry, Branch) then In_Tree (T, Branch)),
+      pragma Assume (In_Model (T_Entry, Branch) = In_Tree (T, Branch),
                     "If the node is in the model it is also in the Tree");
-   end Set_Right;
+     pragma Assume (Model_Equivalence (T, To_Model (T)));
+    end Set_Right;
    pragma Inline (Set_Right);
 
    -------------
@@ -306,10 +313,10 @@ is
       Dynamic_Tables.Set_Item (T.The_Tree, N, Node_Contents);
      --# accept W, 444, "Setting a component of a tree does not remove Nodes";
      --# assume Persists (T~, T);
-      pragma Assume (Persists (T_Entry, To_Model (T)),
-                     "Setting a component of a tree does not remove Nodes");
       pragma Assume (In_Tree (T, N),
-                     "If a Node is not removed by setting its key");
+                     "A Node is not removed by setting its key");
+      pragma Assume (New_Persists (T_Entry, T),
+                     "Setting a component of a tree does not remove Nodes");
       pragma Assume (Key_Is_Present (T, The_Key),
                      "The key has just been set.");
       pragma Assume (Key (T, N) = The_Key,
@@ -334,10 +341,12 @@ is
       Dynamic_Tables.Set_Item (T.The_Tree, N, Node_Contents);
      --# accept W, 444, "Setting a component of a tree does not remove Nodes";
      --# assume Persists (T~, T);
-      pragma Assume (Persists (T_Entry, To_Model (T)),
-                     "Setting a component of a tree does not remove Nodes");
+      pragma Assume (not Is_Empty_Tree (T));
       pragma Assume (In_Tree (T, N),
-                     "If a Node is not removed by setting its value");
+                      "A Node is not removed by setting its value");
+      pragma Assume (not Is_Empty_Model (To_Model (T)));
+      pragma Assume (New_Persists (T_Entry, T),
+                     "Setting a component of a tree does not remove Nodes");
       pragma Assume (Value (T, N) = Node_Value,
                      "The Value component of the node is set to Node_Value");
   end Set_Value;
@@ -365,8 +374,9 @@ is
       --# accept W, 444, "Setting a component of a tree does not remove Nodes";
       --# assume Persists (T~, T);
       pragma Assert (not Is_Empty_Tree (T));
-      pragma Assume (Persists (T_Entry, To_Model (T)),
+      pragma Assume (New_Persists (T_Entry, T),
                      "Setting a component of a tree does not remove Nodes");
+      pragma Assume (In_Model (To_Model (T), N));
       pragma Assume (In_Tree (T, N),
                     "The node N has been added to the tree");
       pragma Assume (Key_Is_Present (T, The_Key),
