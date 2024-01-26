@@ -140,7 +140,9 @@ package SPARK_2014.Trees is
                   In_Tree (T, N) and
                   In_Model (To_Model (T), N) and
                   not Is_Empty_Model (To_Model (T)) and
-                   New_Persists (To_Model (T)'Old,T) and
+                  ((not Is_Empty_Model (To_Model (T)'Old) and
+                        New_Persists (To_Model (T)'Old,T)) or
+                   Is_Empty_Model (To_Model (T)'Old)) and
                   Key_Is_Present (T, The_Key) and
                   Key (T, N) = The_Key and
                   Left (T, N) = Empty_Node and

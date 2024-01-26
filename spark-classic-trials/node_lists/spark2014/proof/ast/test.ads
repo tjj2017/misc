@@ -15,7 +15,8 @@ is
    package Trees is new SPARK_2014.Trees
      (Key_Type             => Integer,
       Value_Type           => Integer,
-      Null_Value           => 0);
+      Null_Value           => 0,
+      Null_Key             => 0);
 
    --  package Stacks is new SPARK_2014.Bounded_Stacks
    --    (Element_Type => Integer,

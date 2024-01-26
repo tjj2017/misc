@@ -3,6 +3,7 @@ generic
    type Key_Type is (<>);
    type Value_Type is private;
    Null_Value : Value_Type;
+   Null_Key : Key_Type;
 package SPARK_2014.Trees with
   Abstract_State => Tree_Store,
   Initializes    => Tree_Store
@@ -23,8 +24,10 @@ is
      Global => Tree_Store;
    function Node_Is_Present  (N : Tree_Node) return Boolean with
      Global => Tree_Store;
+   function Is_Empty_Tree (T : Tree_Type) return Boolean with Ghost;
    function Persists (T_Pre, T_Post : Tree_Type) return Boolean with
      Global => Tree_Store,
+--     Pre => not Is_Empty_Tree (T_Pre) and not Is_Empty_Tree (T_Post),
      Ghost;
 
    function Level (N : Tree_Node) return Natural with
@@ -47,29 +50,32 @@ is
 
    procedure Set_Level (N : Tree_Node; Node_Level : Natural) with
      Global => (In_Out => Tree_Store),
-     Pre    => In_Tree (N),
-     Post   => Persists (TS'Old, TS) and Level (N) = Node_Level;
+     Pre    => In_Tree (N) and not Is_Empty_Tree (TS),
+     Post   => not Is_Empty_Tree (TS) and
+               Persists (TS'Old, TS) and Level (N) = Node_Level;
    procedure Set_Left  (N : Tree_Node; Branch : Tree_Node) with
      Global => (In_Out => Tree_Store),
-     Pre    => In_Tree (N),
-     Post   => Persists (TS'Old, TS) and
+     Pre    => In_Tree (N) and not Is_Empty_Tree (TS),
+     Post   => not Is_Empty_Tree (TS) and Persists (TS'Old, TS) and
                   (if In_Tree (Branch)'Old then In_Tree (Branch));
    procedure Set_Right (N : Tree_Node; Branch : Tree_Node) with
      Global => (In_Out => Tree_Store),
-     Pre    => In_Tree (N),
-     Post   => Persists (TS'Old, TS) and
+     Pre    => In_Tree (N) and not Is_Empty_Tree (TS),
+     Post   => not Is_Empty_Tree (TS) and Persists (TS'Old, TS) and
                   (if In_Tree (Branch)'Old then In_Tree (Branch));
    procedure Set_Key (N : Tree_Node; The_Key : Key_Type) with
      Global => (In_Out => Tree_Store),
-     Pre    => In_Tree (N),
-     Post   => Persists (TS'Old, TS) and Key_Is_Present (The_Key);
+     Pre    => In_Tree (N) and not Is_Empty_Tree (TS),
+     Post   => not Is_Empty_Tree (TS) and Persists (TS'Old, TS) and
+               Key_Is_Present (The_Key);
    procedure Set_Value (N : Tree_Node; Node_Value : Value_Type) with
      Global => (In_Out => Tree_Store),
-     Pre    => In_Tree (N),
-     Post   => Persists (TS'Old, TS);
+     Pre    => In_Tree (N) and not Is_Empty_Tree (TS),
+     Post   => not Is_Empty_Tree (TS) and Persists (TS'Old, TS);
    procedure Add_Node  (N : out Tree_Node; The_Key : Key_Type) with
      Global => (In_Out => Tree_Store),
-     Post   => Persists (TS'Old, TS) and In_Tree (N) and
+     Post   => not Is_Empty_Tree (TS) and
+               Persists (TS'Old, TS) and In_Tree (N) and
                   Key_Is_Present (The_Key);
 
    procedure Clear (N : Tree_Node) with
@@ -90,6 +96,13 @@ private
          Right : Tree_Node;
       end record;
 
+   Null_Actual_Node : constant Actual_Node := Actual_Node'
+     (Key   => Null_Key,
+      Value => Null_Value,
+      Level => 0,
+      Left  => Empty_Node,
+      Right => Empty_Node) with Ghost;
+
    package Dynamic_Tables is new SPARK_2014.Dynamic_Tables
      (Table_Component_Type => Actual_Node,
       Table_Index_Type     => Valid_Tree_Node,
@@ -102,6 +115,10 @@ private
          The_Tree : Dynamic_Tables.Table_Type;
       end record;
 
-   type Tree_Type is new Actual_Tree_Type;
+   type Tree_Type_Model is array (Valid_Tree_Node) of Actual_Node with Ghost;
+   type Tree_Type is record
+      Is_Empty : Boolean;
+      Tree     : Tree_Type_Model;
+   end record;
 
 end SPARK_2014.Trees;

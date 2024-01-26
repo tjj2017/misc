@@ -3,22 +3,46 @@ package body SPARK_2014.Trees with
 is
    Refined_Tree_Store : Actual_Tree_Type;
 
-   function TS return Tree_Type is (Tree_Type (Refined_Tree_Store))
-     with Refined_Global => Refined_Tree_Store;
+   function TS return Tree_Type with
+     Refined_Global => Refined_Tree_Store
+   is
+      Result : Tree_Type;
+   begin
+      Result.Is_Empty := Dynamic_Tables.Is_Empty (Refined_Tree_Store.The_Tree);
+      if not Result.Is_Empty then
+         for I in Valid_Tree_Node'First ..
+           Dynamic_Tables.Last_Index (Refined_Tree_Store.The_Tree)
+         loop
+            Result.Tree (I) :=
+              Dynamic_Tables.Get_Item (Refined_Tree_Store.The_Tree, I);
+         end loop;
+      end if;
+      return Result;
+   end TS;
 
    --  Ghost functions which use the Ghost Type representing the type
    --  of the Abstract_State Tree_Store.
+
+   function Is_Empty_Tree (T : Tree_Type) return Boolean is (T.Is_Empty);
 
    function In_Tree_Ghost (T : Tree_Type; N : Tree_Node) return Boolean is
      (N > Empty_Node and then
       N <= Dynamic_Tables.Last_Index (T.The_Tree)) with Ghost;
 
    function Key_Ghost (T : Tree_Type; N : Tree_Node) return Key_Type is
-     (Dynamic_Tables.Get_Item (T.The_Tree, N).Key) with Ghost;
+     (T.Tree (N)) with
+   Pre => not T.Is_Empty and
+          N in Valid_Tree_Node,
+   Ghost;
 
    function Key_Is_Present_Ghost (T : Tree_Type; K : Key_Type) return Boolean
-   is (for some N in Tree_Node => In_Tree_Ghost (T, N) and then
-       Key_Ghost (T, N) = K) with Ghost;
+   is (if not  then
+         (for some N in Tree_Node => In_Tree_Ghost (T, N) and then
+          Key_Ghost (T, N) = K)
+       else
+          False) with
+ --  Pre => not Is_Empty_Tree (T),
+   Ghost;
 
    ---------------
    -- Is_A_Node --
@@ -32,7 +56,7 @@ is
 
 
    function In_Tree (N : Tree_Node) return Boolean is
-     (N > Empty_Node and then
+     (N in Valid_Tree_Node and then
       N <= Dynamic_Tables.Last_Index (Refined_Tree_Store.The_Tree))
        with Refined_Global => Refined_Tree_Store;
    pragma Inline (In_Tree);
@@ -57,8 +81,7 @@ is
    -- Persists --
    --------------
 
-   function Persists (T_Pre, T_Post : Tree_Type) return Boolean with
-     Refined_Global => Refined_Tree_Store
+   function Persists (T_Pre, T_Post : Tree_Type) return Boolean
    is
    begin
      return (for all N in Tree_Node =>
@@ -153,6 +176,13 @@ is
 
       pragma Assume (Persists (T_Entry, TS),
                      "Setting a component of a tree does not remove Nodes");
+      pragma Assume (In_Tree (N),
+                     "In_Tree (N)'Old -> In_Tree (N)");
+      pragma Assume (Level (N) = Node_Level,
+                     "The Node_Level component has been set to Node_Level");
+      pragma Assume (not Is_Empty_Tree (TS),
+                     "The tree is not empty on entry");
+
    end Set_Level;
    pragma Inline (Set_Level);
 
@@ -165,13 +195,22 @@ is
      Refined_Global => (In_Out => Refined_Tree_Store)
    is
       Node_Contents : Actual_Node;
-      T_Entry : constant Tree_Type := TS with Ghost;
+      T_Entry   : constant Tree_Type := TS with Ghost;
+      B_In_Tree : constant Boolean := In_Tree (Branch) with Ghost;
    begin
       Node_Contents := Dynamic_Tables.Get_Item (Refined_Tree_Store.The_Tree, N);
       Node_Contents.Left := Branch;
       Dynamic_Tables.Set_Item (Refined_Tree_Store.The_Tree, N, Node_Contents);
       pragma Assume (Persists (T_Entry, TS),
                      "Setting a component of a tree does not remove Nodes");
+      pragma Assume (In_Tree (N),
+                     "In_Tree (N)'Old -> In_Tree (N)");
+      pragma Assume ((if B_In_Tree then In_Tree (Branch)),
+                     "The Left component is set tho Branch");
+      pragma Assume (Left (N) = Branch,
+                     "The Left component has been set to Branch");
+      pragma Assume (not Is_Empty_Tree (TS),
+                     "The tree is not empty on entry");
    end Set_Left;
    pragma Inline (Set_Left);
 
@@ -185,12 +224,21 @@ is
    is
       Node_Contents : Actual_Node;
       T_Entry : constant Tree_Type := TS with Ghost;
+      B_In_Tree : constant Boolean := In_Tree (Branch) with Ghost;
    begin
       Node_Contents := Dynamic_Tables.Get_Item (Refined_Tree_Store.The_Tree, N);
       Node_Contents.Right := Branch;
       Dynamic_Tables.Set_Item (Refined_Tree_Store.The_Tree, N, Node_Contents);
       pragma Assume (Persists (T_Entry, TS),
                      "Setting a component of a tree does not remove Nodes");
+      pragma Assume (In_Tree (N),
+                     "In_Tree (N)'Old -> In_Tree (N)");
+      pragma Assume ((if B_In_Tree then In_Tree (Branch)),
+                     "The Right component is set tho Branch");
+      pragma Assume (Right (N) = Branch,
+                     "The Right component has been set to Branch");
+      pragma Assume (not Is_Empty_Tree (TS),
+                     "The tree is not empty on entry");
    end Set_Right;
    pragma Inline (Set_Right);
 
@@ -211,6 +259,8 @@ is
                      "Setting a component of a tree does not remove Nodes");
       pragma Assume (Key_Is_Present (The_Key),
                      "The key has just been set.");
+      pragma Assume (not Is_Empty_Tree (TS),
+                     "The tree is not empty on entry");
    end Set_Key;
    pragma Inline (Set_Key);
 
@@ -230,6 +280,8 @@ is
       Dynamic_Tables.Set_Item (Refined_Tree_Store.The_Tree, N, Node_Contents);
       pragma Assume (Persists (T_Entry, TS),
                      "Setting a component of a tree does not remove Nodes");
+      pragma Assume (not Is_Empty_Tree (TS),
+                     "The tree is not empty on entry");
    end Set_Value;
    pragma Inline (Set_Value);
 
@@ -256,6 +308,8 @@ is
       N := Dynamic_Tables.Last_Index (Refined_Tree_Store.The_Tree);
       pragma Assume (Key (N) = The_Key,
                     "A node with a Key = The Key has been created by Append");
+      pragma Assume (not Is_Empty_Tree (TS),
+                     "The tree has a node added");
    end Add_Node;
    pragma Inline (Add_Node);
 
@@ -279,4 +333,6 @@ is
          New_Val => New_Last);
    end Clear;
 
+begin
+   Dynamic_Tables.Init (Refined_Tree_Store.The_Tree);
 end SPARK_2014.Trees;
