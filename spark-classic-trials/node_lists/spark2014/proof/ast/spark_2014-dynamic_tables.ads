@@ -18,11 +18,13 @@ is
    subtype Table_Last_Type is Table_Index_Type'Base
      range Table_Low_Bound - 1 .. Table_Index_Type'Base'Last;
 
-   function Last_Index (T : Table_Type) return Table_Last_Type;
+   function Last_Index (T : Table_Type) return Table_Last_Type with
+   Post => Last_Index'Result <= Valid_Table_Index_Type'Last;
    --  Returns the current value of the last used entry in the table, which can
    --  then be used as a subscript for Table.
 
-   function First_Index return Table_Last_Type;
+   function First_Index return Table_Last_Type with
+   Post => First_Index'Result <= Valid_Table_Index_Type'Last;
    --  Returns the current value of the first used entry in the table, which can
    --  then be used as a subscript for Table.
 

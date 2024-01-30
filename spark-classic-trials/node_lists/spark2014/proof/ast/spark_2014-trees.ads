@@ -26,7 +26,7 @@ is
      Global => Tree_Store;
    function Is_Empty_Tree (T : Tree_Type) return Boolean with Ghost;
    function Persists (T_Pre, T_Post : Tree_Type) return Boolean with
-     Global => Tree_Store,
+--     Global => Tree_Store,
 --     Pre => not Is_Empty_Tree (T_Pre) and not Is_Empty_Tree (T_Post),
      Ghost;
 

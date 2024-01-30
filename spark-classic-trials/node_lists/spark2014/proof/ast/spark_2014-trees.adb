@@ -13,6 +13,7 @@ is
          for I in Valid_Tree_Node'First ..
            Dynamic_Tables.Last_Index (Refined_Tree_Store.The_Tree)
          loop
+            pragma Loop_Invariant (I <= Result.Tree'Last);
             Result.Tree (I) :=
               Dynamic_Tables.Get_Item (Refined_Tree_Store.The_Tree, I);
          end loop;
@@ -26,17 +27,16 @@ is
    function Is_Empty_Tree (T : Tree_Type) return Boolean is (T.Is_Empty);
 
    function In_Tree_Ghost (T : Tree_Type; N : Tree_Node) return Boolean is
-     (N > Empty_Node and then
-      N <= Dynamic_Tables.Last_Index (T.The_Tree)) with Ghost;
+     (N in Valid_Tree_Node) with Ghost;
 
    function Key_Ghost (T : Tree_Type; N : Tree_Node) return Key_Type is
-     (T.Tree (N)) with
+     (T.Tree (N).Key) with
    Pre => not T.Is_Empty and
           N in Valid_Tree_Node,
    Ghost;
 
    function Key_Is_Present_Ghost (T : Tree_Type; K : Key_Type) return Boolean
-   is (if not  then
+   is (if not Is_Empty_Tree (T)  then
          (for some N in Tree_Node => In_Tree_Ghost (T, N) and then
           Key_Ghost (T, N) = K)
        else
