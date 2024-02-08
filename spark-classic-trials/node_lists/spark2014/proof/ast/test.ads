@@ -1,6 +1,6 @@
-pragma SPARK_Mode;
+with Trees_ADT;
 --  with SPARK_2014.Atrees;
-with SPARK_2014.Trees;
+--  with SPARK_2014.Trees;
 --  with SPARK_2014.Bounded_Stacks;
 --  with SPARK_2014.Dynamic_Tables;
 package Test
@@ -12,11 +12,11 @@ is
    --     Null_Value           => 0,
    --     Stack_Size           => 32);
 
-   package Trees is new SPARK_2014.Trees
-     (Key_Type             => Integer,
-      Value_Type           => Integer,
-      Null_Value           => 0,
-      Null_Key             => 0);
+--     package Trees is new SPARK_2014.Trees
+--       (Key_Type             => Integer,
+--        Value_Type           => Integer,
+--        Null_Value           => 0,
+--        Null_Key             => 0);
 
    --  package Stacks is new SPARK_2014.Bounded_Stacks
    --    (Element_Type => Integer,
