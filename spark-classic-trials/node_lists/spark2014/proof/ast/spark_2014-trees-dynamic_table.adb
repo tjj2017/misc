@@ -1,19 +1,13 @@
----------------------  SPARK_2014.Dynamic_Tables ----------------------------
+---------------------  SPARK_2014.Trees.Dynamic_Tables ----------------------
+--  This is a specialisation of the package SPARK_2014-Dynamic_Tables      --
 --  This package body has to be excluded from SPARK 2014 analysis as,      --
 --  with the 2021 version of SPARK being used, SPARK_Mode => Off does not  --
 --  entirely prevent analysis of the body and SPARK 2014 does not resolve  --
---  the state refinement properly.  In this package body abstract state    --
---  The_Table is refined to T, but the Pre and Post aspects in the         --
---  declaration that call other functions of the package with the Global   --
---  The_Table, then an error message is generated stating                  --
---  "Dynamic_Tables.The_Table is referenced in Post (Pre) but is missing   --
---  from the Global" - It's not!                                           --
---  This body can be used as the body of a generic declaration or the body --
---  of a general package.  Ths package cannot be generic if it is to       --
---  analysed by SPARK 2014 as it requires the body to be present.          --
+--  the state refinement properly.                                         --
+-----------------------------------------------------------------------------
 
 pragma SPARK_Mode (Off);
-package body SPARK_2014.Dynamic_Tables with
+package body SPARK_2014.Trees.Dynamic_Tables with
    Refined_State => (The_Table => T)
 is
    package Gnat_Table is new GNAT.Dynamic_Tables
@@ -99,4 +93,4 @@ is
       Gnat_Table.Set_Last (T, New_Val);
    end Set_Last;
 
-end SPARK_2014.Dynamic_Tables;
+end SPARK_2014.Trees.Dynamic_Tables;

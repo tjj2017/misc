@@ -45,9 +45,8 @@ is
    --  Returns the current value of the last used entry in the table, which can
    --  then be used as a subscript for The_Table.
 
-   function Is_Empty return Boolean with
-     Global => The_Table,
-     Post   => Is_Empty'Result = (Last_Index > First_Index);
+   function Is_Empty return Boolean is (Last_Index < First_Index) with
+     Global => The_Table;
 
    procedure Init with
      Global => (Output => The_Table);
