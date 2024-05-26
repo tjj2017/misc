@@ -7,7 +7,7 @@
 -----------------------------------------------------------------------------
 
 pragma SPARK_Mode (Off);
-package body SPARK_2014.Trees.Dynamic_Tables with
+package body SPARK_2014.Dynamic_Table with
    Refined_State => (The_Table => T)
 is
    package Gnat_Table is new GNAT.Dynamic_Tables
@@ -36,8 +36,8 @@ is
    -- Is_Empty --
    --------------
 
-   function Is_Empty return Boolean is (Last_Index > First_Index) with
-     Refined_Global => The_Table;
+   --  function Is_Empty return Boolean is (Last_Index > First_Index) with
+   --  Refined_Global => T;
 
    ----------
    -- Init --
@@ -93,4 +93,4 @@ is
       Gnat_Table.Set_Last (T, New_Val);
    end Set_Last;
 
-end SPARK_2014.Trees.Dynamic_Tables;
+end SPARK_2014.Dynamic_Table;

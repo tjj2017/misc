@@ -1,4 +1,4 @@
--------------------------  SPARK.Dynamic_Tables  -----------------------------
+-----------------------  SPARK_2014.Dynamic_Table  ---------------------------
 --  A template for providing a dynamic table for SPARK programs using the   --
 --  GNAT.Dynamic_Tables package.  The underlying table type is an           --
 --  access type and making the reference to the table an abstract state     --
@@ -16,7 +16,7 @@
 ------------------------------------------------------------------------------
 pragma SPARK_Mode (On);
 with GNAT.Dynamic_Tables;
-package SPARK_2014.Dynamic_Tables with
+package SPARK_2014.Dynamic_Table with
    Abstract_State => The_Table
 is
    --  The next two declarations are essentially the generic parameters.
@@ -45,7 +45,7 @@ is
    --  Returns the current value of the last used entry in the table, which can
    --  then be used as a subscript for The_Table.
 
-   function Is_Empty return Boolean is (Last_Index < First_Index) with
+   function Is_Empty return Boolean is (Last_Index > First_Index) with
      Global => The_Table;
 
    procedure Init with
@@ -65,7 +65,7 @@ is
 
    procedure Set_Item (Index : Valid_Table_Index_Type;
                        Item  : Table_Component_Type) with
-     Global => (In_Out => The_Table),
+     Global => (In_Out => Dynamic_Table.The_Table),
      Pre  => not Is_Empty,
      Post => not Is_Empty;
    --  Put Item in the table at position Index. If Index points to an existing
@@ -88,5 +88,5 @@ is
    --  the table. If Set_Last increases the size of the table, then new entries
    --  are logically added to the table.
 
-end SPARK_2014.Dynamic_Tables;
+end SPARK_2014.Dynamic_Table;
 
