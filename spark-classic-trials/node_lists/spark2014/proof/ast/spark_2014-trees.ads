@@ -1,3 +1,19 @@
+-------------------------  SPARK.Dynamic_Trees  ------------------------------
+--  A template for providing a dynamic table for SPARK programs using the   --
+--  GNAT.Dynamic_Tables package.  The underlying table type is an           --
+--  access type and making the reference to the table an abstract state     --
+--  prevents ailiasing through pointers.                                    --
+--                                                                          --
+--  The package is intended to be customised for each particular           --
+--  application.  It is leu of a generic package.                           --
+--  A generic version does not seem to be compatible with the 2021 version  --
+--  of SPARK 2014 being used.  The generic name of the abstract state       --
+--  does not seem to work in the SPARK aspects, it expects the              --
+--  the instantiated name which, of course, is not generally known when a   --
+--  generic package is being written.                                       --
+--  A customised version of this template could appear at library level     --
+--  possibly as a child of another package or it could be embedded.         --
+------------------------------------------------------------------------------
 with SPARK_2014.Dynamic_Tables;
 generic
    type Key_Type is (<>);

@@ -1,21 +1,11 @@
------------------------  SPARK_2014.Dynamic_Table  ---------------------------
---  A template for providing a dynamic table for SPARK programs using the   --
---  GNAT.Dynamic_Tables package.  The underlying table type is an           --
---  access type and making the reference to the table an abstract state     --
---  prevents ailiasing through pointers.                                    --
---                                                                          --
---  The package is intended to be customised for each particular           --
---  application.  It is leu of a generic package.                           --
---  A generic version does not seem to be compatible with the 2021 version  --
---  of SPARK 2014 being used.  The generic name of the abstract state       --
---  does not seem to work in the SPARK aspects, it expects the              --
---  the instantiated name which, of course, is not generally known when a   --
---  generic package is being written.                                       --
---  A customised version of this template could appear at library level     --
---  possibly as a child of another package or it could be embedded.         --
-------------------------------------------------------------------------------
+--------------------  SPARK_2014.Trees.Dynamic_Table ------------------------
+--  This is a specialisation of the package SPARK_2014-Dynamic_Tables      --
+--  This package specification has its body excluded from SPARK 2014       --
+--  as, with the 2021 version of SPARK being used, SPARK_Mode => Off does  --
+--  not entirely prevent analysis of the body and SPARK 2014 is unable to  --
+--  the resolve the state refinement properly.                             --
+-----------------------------------------------------------------------------
 pragma SPARK_Mode (On);
-with GNAT.Dynamic_Tables;
 package SPARK_2014.Dynamic_Table with
    Abstract_State => The_Table
 is
