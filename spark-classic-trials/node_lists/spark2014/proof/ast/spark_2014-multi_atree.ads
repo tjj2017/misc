@@ -8,9 +8,13 @@
 with SPARK_2014.Bounded_Stacks;
 package SPARK_2014.Multi_Atree with
   SPARK_Mode,
-  Abstract_State => Tree_Container,
-  Initializes => Tree_Container
+  Abstract_State => Status,
+  Initializes    => Status,
+  Initial_Condition => not Is_Building
 is
+   function Is_Building return Boolean with
+     Global => Status;
+
    type Key_Type is private;
    type Value_Type is private;
    Null_Value : constant Value_Type;
@@ -31,18 +35,24 @@ is
 
    function Populated (ATree : A_Tree) return Boolean;
 
+   function Building (ATree : A_Tree) return Boolean with
+     Global => Status,
+     Post   => (if Building'Result then Is_Building);
+
    procedure New_A_Tree (ATree : out A_Tree) with
-     Global => (In_Out => Tree_Container),
-     Post => Empty_Tree (ATree);
+     Global => (In_Out => Status),
+     Pre    => not Is_Building,
+     Post => Empty_Tree (ATree) and Is_Building and Building (ATree);
 
    function Count (ATree : A_Tree) return Natural;
 
    procedure Insert (ATree      : in out A_Tree;
                      Key        : Key_Type;
                      Inserted   : out Boolean) with
-     Global => (In_Out => Tree_Container),
-     Pre  => Count (ATree) < Natural'Last,
-     Post => (if not Populated (ATree'Old) then
+     Global => (Input => Status),
+     Pre    => Building (ATree) and Count (ATree) < Natural'Last,
+     Post   => Building (ATree) and
+              (if not Populated (ATree'Old) then
                 Count (ATree) = 1
                   elsif Inserted then
                      Count (ATree) = Count (ATree'Old) + 1
@@ -54,9 +64,10 @@ is
                                 Value         : Value_Type;
                                 Inserted      : out Boolean;
                                 Value_At_Node : out Value_Type) with
-     Global => (In_Out => Tree_Container),
-     Pre  => Count (ATree) < Natural'Last,
-     Post => (if not Populated (ATree'Old) then
+     Global => (Input => Status),
+     Pre  => Building (ATree) and Count (ATree) < Natural'Last,
+     Post => Building (ATree) and
+             (if not Populated (ATree'Old) then
                 Count (ATree) = 1
                   elsif Inserted then
                      Count (ATree) = Count (ATree'Old) + 1
@@ -64,16 +75,14 @@ is
                      Count (ATree) = Count (ATree'Old));
 
    procedure Clear_A_Tree (ATree       : in out A_Tree) with
-     Global => (In_Out => Tree_Container),
-     Pre => not Empty_Tree (ATree),
-     Post => Empty_Tree (ATree);
+     Global => (In_Out => Status),
+     Pre => Building (ATree) and not Empty_Tree (ATree),
+     Post => not Building (ATree) and not Is_Building and Empty_Tree (ATree);
 
    function Is_Equal (ATree_1, ATree_2 : A_Tree) return Boolean with
-     Global => Tree_Container,
      Pre => Populated (ATree_1) and Populated (ATree_2);
 
    function Is_Present (ATree : A_Tree; Key : Key_Type) return Boolean with
-     Global => Tree_Container,
      Pre  => Populated (ATree);
 
    function Tree_Depth (ATree : A_Tree) return Natural with
@@ -84,12 +93,12 @@ is
    function New_Enumerator (ATree : A_Tree) return Enumerator with
      Pre => Populated (ATree);
 
-   procedure Next_Node (E : in out Enumerator; Node : out Tree_Node) with
-     Global => Tree_Container ;
+   procedure Next_Node (E : in out Enumerator; Node : out Tree_Node);
 
 private
    type Tree_Node is range 0 .. Natural'Last - 1;
    subtype Valid_Tree_Node is Tree_Node range 1 .. Tree_Node'Last;
+   Empty_Node : constant Tree_Node := 0;
 
    package Bounded_Stacks is new
      SPARK_2014.Bounded_Stacks (Tree_Node, Stack_Size);
@@ -105,10 +114,15 @@ private
          Visited : Bounded_Stacks.Stack;
       end record;
 
+   type Statuses is (Unassigned, Constructing, Free);
+   subtype A_Tree_Status is Statuses range Unassigned .. Constructing;
+   subtype Pack_Status   is Statuses range Constructing .. Free;
+
    type A_Tree is
       record
          Root      : Tree_Node;
          Count     : Natural;
+         State     : A_Tree_Status;
       end record;
 
    type Direction is (Left, Right);

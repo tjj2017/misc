@@ -10,8 +10,8 @@
 package SPARK_2014.Multi_Atree.Tree_Abs with
   SPARK_Mode
 is
-   type Tree_Node is private;
-   Empty_Node : constant Tree_Node;
+   --  type Tree_Node is private;
+   --  Empty_Node : constant Tree_Node;
    function Is_A_Node (N : Tree_Node) return Boolean;
 
    function Is_A_Valid_Tree_Node (N : Tree_Node) return Boolean;
@@ -78,9 +78,9 @@ is
      Post   => not In_Tree (N);
 
 private
-   type Tree_Node is range 0 .. Natural'Last - 1;
-   subtype Valid_Tree_Node is Tree_Node range 1 .. Tree_Node'Last;
-   Empty_Node : constant Tree_Node := 0;
+   --  type Tree_Node is range 0 .. Natural'Last - 1;
+   --  subtype Valid_Tree_Node is Tree_Node range 1 .. Tree_Node'Last;
+   --  Empty_Node : constant Tree_Node := 0;
 
    type Actual_Node is
       record

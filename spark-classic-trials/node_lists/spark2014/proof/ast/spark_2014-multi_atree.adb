@@ -1,18 +1,34 @@
-with SPARK_2014.Multi_Atree.Tree_Abs.Tree;
+with SPARK_2014.Multi_Atree.Tree_Abs;
 package body SPARK_2014.Multi_Atree with
-  SPARK_Mode => Off
+   Refined_State => (Status => Refined_Status)
 is
-   Store : Integer;
-   --  Basic Predicate
+   Refined_Status : Pack_Status := Free;
+
+   --  Basic Predicates
+
+   ------------------
+   -- Is_Building  --
+   ------------------
+
+   function Is_Building return Boolean is (Refined_Status = Constructing) with
+     Refined_Global => Refined_Status;
+
+   ----------------
+   --  Building  --
+   ----------------
+
+   function Building (ATree : A_Tree) return Boolean is
+     (ATree.State = Constructing);
+
    ----------------
    -- Empty_Tree --
    ----------------
 
    function Empty_Tree (ATree : A_Tree) return Boolean is
-      (ATree.Root = Tree.Empty_Node);
+      (ATree.Root = Empty_Node);
 
    function Populated (ATree : A_Tree) return Boolean is
-      (Tree.In_Tree (ATree.Root) and
+      (Tree_Abs.In_Tree (ATree.Root) and
         ATree.Count > 0);
 
    --  Proof helper subprograms
