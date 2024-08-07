@@ -16,14 +16,14 @@ is
 
    function Is_A_Valid_Tree_Node (N : Tree_Node) return Boolean;
 
-   subtype Key_Type is Natural;
-   subtype Valid_Key_Type is Key_Type range
-     Key_Type'Succ (Key_Type'First) .. Key_Type'Last;
-   subtype Value_Type is Integer;
-
-   Null_Key : constant Key_Type := Key_Type'First;
-   Null_Value : constant Value_Type := 0;
-
+   --  subtype Key_Type is Natural;
+   --  subtype Valid_Key_Type is Key_Type range
+   --    Key_Type'Succ (Key_Type'First) .. Key_Type'Last;
+   --  subtype Value_Type is Integer;
+   --
+   --  Null_Key : constant Key_Type := Key_Type'First;
+   --  Null_Value : constant Value_Type := 0;
+   --
    function Is_Empty (N : Tree_Node) return Boolean with Inline;
 
    function In_Tree  (N : Tree_Node) return Boolean with
@@ -49,29 +49,23 @@ is
 
    procedure Set_Level (N : in out Tree_Node; Node_Level : Natural) with
      Pre    => In_Tree (N) and not Is_Empty (N),
-     Post   => not Is_Empty (N); -- and
-               --  Persists (N'Old, N) and Level (N) = Node_Level;
+     Post   => not Is_Empty (N) and In_Tree (N) and Level (N) = Node_Level;
    procedure Set_Left  (N : in out Tree_Node; Branch : Tree_Node) with
      Pre    => In_Tree (N) and not Is_Empty (N),
-     Post   => not Is_Empty (N) and --  Persists (N'Old, N) and
-                  (if In_Tree (Branch)'Old then In_Tree (Branch));
+     Post   => not Is_Empty (N) and In_Tree (N) and Left (N) = Branch;
    procedure Set_Right (N : in out Tree_Node; Branch : Tree_Node) with
      Pre    => In_Tree (N) and not Is_Empty (N),
-     Post   => not Is_Empty (N) and --  Persists (N'Old, N) and
-                  (if In_Tree (Branch)'Old then In_Tree (Branch));
+     Post   => not Is_Empty (N) and In_Tree (N) and Right (N) = Branch;
    procedure Set_Key (N : in out Tree_Node; The_Key : Key_Type) with
      Pre    => In_Tree (N) and not Is_Empty (N),
-     Post   => not Is_Empty (N) and --  Persists (N'Old, N) and
-               Key_Is_Present (The_Key, N);
+     Post   => not Is_Empty (N) and In_Tree (N) and Key_Is_Present (The_Key, N);
    procedure Set_Value (N : in out Tree_Node; Node_Value : Value_Type) with
      Pre    => In_Tree (N) and not Is_Empty (N),
-     Post   => not Is_Empty (N);  --  Persists (N'Old, N);
+     Post   => not Is_Empty (N) and In_Tree (N) and Value (N) = Node_Value;
    procedure Add_Node  (N : in out Tree_Node;
                         New_Node : out Tree_Node;
                         The_Key : Key_Type) with
-     Post   => not Is_Empty (N) and
-              --  Persists (N'Old, N) and
-              In_Tree (New_Node) and
+     Post   => not Is_Empty (N) and In_Tree (New_Node) and
                   Key_Is_Present (The_Key, New_Node);
 
    procedure Clear (N : in out Tree_Node) with

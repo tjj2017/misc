@@ -5,7 +5,7 @@ generic
 package SPARK_2014.Bounded_Stacks
 with SPARK_Mode
 is
-   type Stack is limited private;
+   type Stack is private;
 
    subtype Stack_Count is Natural range 0 .. Stack_Size;
 

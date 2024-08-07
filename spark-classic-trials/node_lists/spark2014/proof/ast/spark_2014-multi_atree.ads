@@ -104,10 +104,13 @@ private
      SPARK_2014.Bounded_Stacks (Tree_Node, Stack_Size);
 
    type Key_Type is new Natural;
+   subtype Valid_Key_Type is Key_Type range
+     Key_Type'Succ (Key_Type'First) .. Key_Type'Last;
    type Value_Type is new Integer;
+   Null_Key : constant Key_Type := Key_Type'First;
    Null_Value : constant Value_Type := 0;
 
-   type Enumerator is
+  type Enumerator is
       record
          ATree   : A_Tree;
          --  A stack to record visited nodes when enumerating.
