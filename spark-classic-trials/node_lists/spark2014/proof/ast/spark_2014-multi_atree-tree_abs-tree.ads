@@ -15,10 +15,10 @@ is
    function Is_A_Valid_Tree_Node (N : Tree_Node) return Boolean with
      Global => Tree_Store;
 
-   subtype Key_Type is Natural;
-   subtype Valid_Key_Type is Key_Type range
-     Key_Type'Succ (Key_Type'First) .. Key_Type'Last;
-   subtype Value_Type is Integer;
+   --  subtype Key_Type is Natural;
+   --  subtype Valid_Key_Type is Key_Type range
+   --    Key_Type'Succ (Key_Type'First) .. Key_Type'Last;
+   --  subtype Value_Type is Integer;
 
    Null_Key : constant Key_Type := Key_Type'First;
    Null_Value : constant Value_Type := 0;

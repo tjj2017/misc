@@ -9,8 +9,12 @@ with SPARK_2014.Bounded_Stacks;
 package SPARK_2014.Multi_Atree with
   SPARK_Mode,
   Abstract_State => Status,
-  Initializes    => Status,
-  Initial_Condition => not Is_Building
+  Initializes    => Status
+--  The following Initial_Condition does not work with 2021 version of
+--  SPARK_2014 as it does not seem to realise that Is_Building has an
+--  Input global, Status, and gives an error that the Status must be mentioned
+--  in theInitializes aspect of Multi_Atree
+  --  Initial_Condition => not Is_Building
 is
    function Is_Building return Boolean with
      Global => Status;
@@ -42,7 +46,8 @@ is
    procedure New_A_Tree (ATree : out A_Tree) with
      Global => (In_Out => Status),
      Pre    => not Is_Building,
-     Post => Empty_Tree (ATree) and Is_Building and Building (ATree);
+     Post => Empty_Tree (ATree) and Is_Building and Building (ATree) and
+             Count (ATree) = 0;
 
    function Count (ATree : A_Tree) return Natural;
 
@@ -75,8 +80,8 @@ is
                      Count (ATree) = Count (ATree'Old));
 
    procedure Clear_A_Tree (ATree       : in out A_Tree) with
-     Global => (In_Out => Status),
-     Pre => Building (ATree) and not Empty_Tree (ATree),
+     Global => (Output => Status),
+     Pre => Building (ATree),
      Post => not Building (ATree) and not Is_Building and Empty_Tree (ATree);
 
    function Is_Equal (ATree_1, ATree_2 : A_Tree) return Boolean with
