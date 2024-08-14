@@ -37,6 +37,10 @@ is
 
    function Empty_Tree (ATree : A_Tree) return Boolean;
 
+   function In_A_Tree (N : Tree_Node; Tree : A_Tree) return Boolean;
+
+   function Target_Node_In_Tree (T : A_Tree) return Boolean;
+
    function Populated (ATree : A_Tree) return Boolean;
 
    function Building (ATree : A_Tree) return Boolean with
@@ -128,9 +132,10 @@ private
 
    type A_Tree is
       record
-         Root      : Tree_Node;
-         Count     : Natural;
-         State     : A_Tree_Status;
+         Root        : Tree_Node;
+         Target_Node : Tree_Node;  -- Node of interest for applied operation
+         Count       : Natural;
+         State       : A_Tree_Status;
       end record;
 
    type Direction is (Left, Right);

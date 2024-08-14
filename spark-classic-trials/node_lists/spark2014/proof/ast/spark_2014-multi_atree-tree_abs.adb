@@ -12,50 +12,56 @@ is
    --------------
    -- Is_Empty --
    --------------
-   function Is_Empty (N : Tree_Node) return Boolean is (Tree.Is_Empty);
-
-   ---------------
-   -- Is_A_Node --
-   ---------------
-
-   function Is_A_Node (N : Tree_Node) return Boolean is (N > Empty_Node);
-
-   --------------------------
-   -- Is_A_Valid_Tree_Node --
-   --------------------------
-
-   function Is_A_Valid_Tree_Node (N : Tree_Node) return Boolean is
-     (Tree.Is_A_Valid_Tree_Node (N));
-
-
-   ------------
-   -- In_Tree --
-   -------------
-
-
-   function In_Tree (N : Tree_Node) return Boolean is
-      Result : Boolean;
-   begin
-      Result := Tree.Is_A_Valid_Tree_Node (N);
-      pragma Assume (if Result then not Is_Empty (N));
-      return Result;
-   end In_Tree;
-   pragma Inline (In_Tree);
+   function Is_Empty (N : Tree_Node) return Boolean is (N = Empty_Node);
 
    --------------------
-   -- Key_Is_Present --
+   --  Key_Of_Node  --
    --------------------
+   function Key_Of_Node (N : Tree_Node; T : A_Tree) return Key_Type is
+     (Tree.Key (N));
 
-   function Key_Is_Present (K : Key_Type; T : Tree_Node) return Boolean is
-     (for some N in Tree_Node => In_Tree (N) and then Key (N) = K);
-
-   ---------------------
-   -- Node_Is_Present --
-   ---------------------
-
-   function Node_Is_Present (N : Tree_Node) return Boolean is
-     (Tree.In_Tree (N));
-   pragma Inline (Node_Is_Present);
+   --  ---------------
+   --  -- Is_A_Node --
+   --  ---------------
+   --
+   --  function Is_A_Node (N : Tree_Node) return Boolean is (N > Empty_Node);
+   --
+   --  --------------------------
+   --  -- Is_A_Valid_Tree_Node --
+   --  --------------------------
+   --
+   --  function Is_A_Valid_Tree_Node (N : Tree_Node) return Boolean is
+   --    (Tree.Is_A_Valid_Tree_Node (N));
+   --
+   --
+   --  ------------
+   --  -- In_Tree --
+   --  -------------
+   --
+   --
+   --  function In_Tree (N : Tree_Node) return Boolean is
+   --     Result : Boolean;
+   --  begin
+   --     Result := Tree.Is_A_Valid_Tree_Node (N);
+   --     pragma Assume (if Result then not Is_Empty (N));
+   --     return Result;
+   --  end In_Tree;
+   --  pragma Inline (In_Tree);
+   --
+   --  --------------------
+   --  -- Key_Is_Present --
+   --  --------------------
+   --
+   --  function Key_Is_Present (K : Key_Type; T : Tree_Node) return Boolean is
+   --    (for some N in Tree_Node => In_Tree (N) and then Key (N) = K);
+   --
+   --  ---------------------
+   --  -- Node_Is_Present --
+   --  ---------------------
+   --
+   --  function Node_Is_Present (N : Tree_Node) return Boolean is
+   --    (Tree.In_Tree (N));
+   --  pragma Inline (Node_Is_Present);
 
    --------------
    -- Persists --
@@ -71,12 +77,12 @@ is
    -- Level --
    -----------
 
-   function Level (N : Tree_Node) return Natural is
+   function Level (T : A_Tree) return Natural is
    begin
-      if Tree.Is_Empty then
+      if Empty_Tree (T)  then
          return 0;
       else
-         return (Tree.Level (N));
+         return (Tree.Level (T.Target_Node));
       end if;
    end Level;
    pragma Inline (Level);
@@ -85,12 +91,12 @@ is
    -- Left --
    ----------
 
-   function Left (N : Tree_Node) return Tree_Node is
+   function Left (T : A_Tree) return Tree_Node is
       L : Tree_Node;
    begin
-      L := Tree.Left (N);
-      pragma Assume ((if L > Empty_Node then In_Tree (L)),
-                    "The left branch is either empty or In_Tree");
+      L := Tree.Left (T.Target_Node);
+      pragma Assume ((if L > Empty_Node then In_A_Tree (L, T)),
+                    "The left branch is either empty or In_A_Tree");
       return L;
    end Left;
    pragma Inline (Left);
@@ -99,12 +105,12 @@ is
    -- Right --
    -----------
 
-   function Right (N : Tree_Node) return Tree_Node is
+   function Right (T : A_Tree) return Tree_Node is
       R : Tree_Node;
    begin
-      R := Tree.Right (N);
-      pragma Assume ((if R > Empty_Node then In_Tree (R)),
-                    "The right branch is either empty or In_Tree");
+      R := Tree.Right (T.Target_Node);
+      pragma Assume ((if R > Empty_Node then In_A_Tree (R, T)),
+                    "The right branch is either empty or In_A_Tree");
       return R;
    end Right;
    pragma Inline (Right);
@@ -113,9 +119,9 @@ is
    -- Key --
    ---------
 
-   function Key (N : Tree_Node) return Key_Type is
+   function Key (T : A_Tree) return Key_Type is
    begin
-     return Tree.Key (N);
+     return Tree.Key (T.Target_Node);
    end Key;
    pragma Inline (Key);
 
@@ -123,9 +129,9 @@ is
    -- Value --
    -----------
 
-   function Value (N : Tree_Node) return Value_Type is
+   function Value (T : A_Tree) return Value_Type is
    begin
-     return Tree.Value (N);
+     return Tree.Value (T.Target_Node);
    end Value;
    pragma Inline (Value);
 
@@ -133,20 +139,14 @@ is
    -- Set_Level --
    ---------------
 
-   procedure Set_Level (N : in out Tree_Node;
-                        Node_Level : Natural) is
+   procedure Set_Level (T : in out A_Tree; Node_Level : Natural) is
    begin
-      Tree.Set_Level (N, Node_Level);
+      Tree.Set_Level (T.Target_Node, Node_Level);
 
-      --  pragma Assume (Persists (T_Entry, TS),
-      --                 "Setting a component of a tree does not remove Nodes");
-      pragma Assume (In_Tree (N),
-                     "In_Tree (N)'Old -> In_Tree (N)");
-      pragma Assume (Level (N) = Node_Level,
+      pragma Assume (Target_Node_In_Tree (T),
+                     "Target_Node_In_Tree (T)'Old -> Target_Node_In_Tree (T)");
+      pragma Assume (Level (T) = Node_Level,
                      "The Node_Level component has been set to Node_Level");
-      --  pragma Assume (not Is_Empty_Tree (TS),
-      --                 "The tree is not empty on entry");
-
    end Set_Level;
    pragma Inline (Set_Level);
 
@@ -154,21 +154,18 @@ is
    -- Set_Left --
    --------------
 
-   procedure Set_Left (N : in out Tree_Node;
-                       Branch : Tree_Node) is
+   procedure Set_Left (T : in out A_Tree; Branch : Tree_Node) is
+      Entry_T : constant A_Tree := T with Ghost;
    begin
-      Tree.Set_Left (N, Branch);
+      Tree.Set_Left (T.Target_Node, Branch);
 
-      --  pragma Assume (Persists (T_Entry, TS),
-      --                 "Setting a component of a tree does not remove Nodes");
-      pragma Assume (In_Tree (N),
-                     "Tree.In_Tree (N) -> In_Tree (N)");
-      pragma Assume ((if Tree.In_Tree (Branch) then In_Tree (Branch)),
-                     "The Left component is set tho Branch");
-      pragma Assume (Left (N) = Branch,
+      pragma Assume (Target_Node_In_Tree (T),
+                     "Target_Node_In_Tree (T)'Old -> Target_Node_In_Tree (T)");
+      pragma Assume ((if In_A_Tree (Branch, Entry_T) then
+                        In_A_Tree (Branch, T)),
+                     "The Tree still contains the node, Branchh");
+      pragma Assume (Left (T) = Branch,
                      "The Left component has been set to Branch");
-      pragma Assume (not Is_Empty (N),
-                     "The tree is not empty on entry");
    end Set_Left;
    pragma Inline (Set_Left);
 
@@ -176,21 +173,18 @@ is
    -- Set_Right --
    ---------------
 
-   procedure Set_Right (N : in out Tree_Node;
-                        Branch : Tree_Node) is
-   begin
-      Tree.Set_Right (N, Branch);
+   procedure Set_Right (T : in out A_Tree; Branch : Tree_Node) is
+      Entry_T : constant A_Tree := T with Ghost;
+begin
+      Tree.Set_Right (T.Target_Node, Branch);
 
-      --  pragma Assume (Persists (T_Entry, TS),
-      --                 "Setting a component of a tree does not remove Nodes");
-      pragma Assume (In_Tree (N),
-                     "Tree.In_Tree (N) -> In_Tree (N)");
-      pragma Assume ((if Tree.In_Tree (Branch) then In_Tree (Branch)),
-                     "The Right component is set tho Branch");
-      pragma Assume (Right (N) = Branch,
+      pragma Assume (Target_Node_In_Tree (T),
+                     "Target_Node_In_Tree (N)'Old -> Target_Node_In_Tree (T)");
+      pragma Assume ((if In_A_Tree (Branch, Entry_T) then
+                        In_A_Tree (Branch, T)),
+                     "The Tree still contains the node, Branch.");
+      pragma Assume (Right (T) = Branch,
                      "The Right component has been set to Branch");
-      pragma Assume (not Is_Empty (N),
-                     "The tree is not empty on entry");
    end Set_Right;
    pragma Inline (Set_Right);
 
@@ -198,17 +192,14 @@ is
    -- Set_Key --
    -------------
 
-   procedure Set_Key (N : in out Tree_Node; The_Key : Key_Type) is
+   procedure Set_Key (T : in out A_Tree; The_Key : Key_Type) is
    begin
-      Tree.Set_Key (N, The_Key);
+      Tree.Set_Key (T.Target_Node, The_Key);
 
-
-      --  pragma Assume (Persists (T_Entry, TS),
-      --                 "Setting a component of a tree does not remove Nodes");
-      pragma Assume (Key_Is_Present (The_Key, N),
+      pragma Assume (Target_Node_In_Tree (T),
+                     "The Target_Node is unchanged");
+      pragma Assume (Key (T) = The_Key,
                      "The key has just been set.");
-      pragma Assume (not Is_Empty (N),
-                     "The tree is not empty on entry");
    end Set_Key;
    pragma Inline (Set_Key);
 
@@ -216,15 +207,15 @@ is
    -- Set_Value --
    ---------------
 
-   procedure Set_Value (N : in out Tree_Node;
+   procedure Set_Value (T : in out A_Tree;
                         Node_Value : Value_Type) is
    begin
-      Tree.Set_Value (N, Node_Value);
+      Tree.Set_Value (T.Target_Node, Node_Value);
 
-      --  pragma Assume (Persists (T_Entry, TS),
-      --                 "Setting a component of a tree does not remove Nodes");
-      pragma Assume (not Is_Empty (N),
-                     "The tree is not empty on entry");
+      pragma Assume (Target_Node_In_Tree (T),
+                     "The Target_Node is unchanged");
+      pragma Assume (Value (T) = Node_Value,
+                     "The Value has been set to Node_Value");
    end Set_Value;
    pragma Inline (Set_Value);
 
@@ -232,19 +223,14 @@ is
    -- Add_Node --
    --------------
 
-   procedure Add_Node (N : in out Tree_Node;
-                       New_Node : out Tree_Node;
-                       The_Key : Key_Type) is
+   procedure Add_Node (T : in out A_Tree; The_Key : Key_Type) is
    begin
-      Tree.Add_Node (New_Node, The_Key);
+      Tree.Add_Node (T.Target_Node, The_Key);
 
-      --  pragma Assume (Persists (T_Entry, TS),
-      --                 "Adding a Node to a tree does not remove Nodes");
-      pragma Assume (Tree.In_Tree (N) and then
-                     (In_Tree (N) and In_Tree (New_Node) and Key (N) = The_Key),
+      pragma Assume (Target_Node_In_Tree (T),
+                     "The Target_Node is the new node added to the tree.");
+        pragma Assume (Key (T) = The_Key,
                     "A node with a Key = The Key has been created by Append");
-      pragma Assume (not Is_Empty (N),
-                     "The tree has a node added");
    end Add_Node;
    pragma Inline (Add_Node);
 
@@ -252,9 +238,11 @@ is
    -- Clear --
    -----------
 
-   procedure Clear (N : in out Tree_Node) is
+   procedure Clear (T : in out A_Tree) is
    begin
-      Tree.Clear (N);
+      Tree.Clear (T.Root);
+      T.Root := Empty_Node;
+      T.Target_Node := Empty_Node;
    end Clear;
 
 end SPARK_2014.Multi_Atree.Tree_Abs;

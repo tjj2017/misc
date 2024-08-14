@@ -1,6 +1,6 @@
 --------------------------  SPARK_2014.Tree_Abs  -----------------------------
 --  A thin interface which provides a stateless abstraction to the          --
---  SPARK_2014-Dynamic_Trees package.                                       --
+--  SPARK_2014-Tree package.                                       --
 --  Any package using this abstraction should make it a private child of    --
 --  the package and ensure the abstracion is sound. Only one tree can exist.--
 --  All references to the underlying state have been removed and the        --
