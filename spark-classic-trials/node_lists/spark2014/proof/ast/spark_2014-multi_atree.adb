@@ -32,8 +32,8 @@ is
       (ATree.Root /= Empty_Node and ATree.Count > 0);
 
     function In_A_Tree (N : Tree_Node; Tree : A_Tree) return Boolean is
-     (N > Empty_Node and Tree.Root > Empty_Node and
-        N < Tree.Root + Tree_Node (Tree.Count));
+     (N > Empty_Node and Tree.Root > Empty_Node and N >= Tree.Root and
+        N - Tree.Root + 1 = Tree_Node (Tree.Count));
 
    --------------------------
    -- Target_Node_In_Tree  --
@@ -270,7 +270,7 @@ is
      Pre  => Building (Tree) and Target_Node_In_Tree (Tree),
      Post => Building (Tree) and Maintains (Tree'Old, Tree)
    is
-      Left_Child : A_Tree;
+      Left_Child : A_Tree := Tree;
    begin
       --
       Left_Child.Target_Node := Tree_Abs.Left (Tree);
@@ -348,16 +348,12 @@ is
       Post => Building (Tree) and Maintains (Tree'Old, Tree)
    is
       Top_Node       : Tree_Node;
-      --  The parent of the Current_Node
-      Parent         : A_Tree := Tree;
-      Is_Right       : Boolean;
-      Stack_Count    : Natural;
+      --  The parent of the Target_Node
+      Parent          : A_Tree := Tree;
+      Current_Subroot : Tree_Node;
+      Is_Right        : Boolean := False;
+      Stack_Count     : Natural;
    begin
-      --  The following two initalizing statements avoid
-      --  flow errors using SPARK 2005 Examiner.
-      Is_Right := False;
-      Parent.Target_Node := Empty_Node;
-
       --  Current_Target := Tree.Target_Node;
       --  Rebalance the tree by working back up through the visited
       --  node indices on the Tree.Visited stack.
@@ -410,10 +406,12 @@ is
             --  has to be patched up to contain the new value of
             --  Target_Node as its child.
             --  As the value of the Current_Node may have changed.
+            Current_Subroot := Tree.Target_Node;
+            Tree.Target_Node := Parent.Target_Node;
             Set_Branch
               (Is_Right   => Is_Right,
-               Set_Node   => Tree.Target_Node,
-               Tree       => Parent);
+               Set_Node   => Current_Subroot,
+               Tree       => Tree);
          end if;
       end loop;
    end Rebalance;
@@ -480,11 +478,10 @@ is
      --              else
      --               Count (ATree) = Count (ATree'Old))
    is
-      Visited        : Bounded_Stacks.Stack;
-      Key_Found      : Boolean;
-      Is_Right       : Boolean;
-      Insert_Node    : Tree_Node;
-      Current_Node   : Tree_Node;
+      Visited          : Bounded_Stacks.Stack;
+      Key_Found        : Boolean;
+      Is_Right         : Boolean;
+      Current_Subroot  : Tree_Node;
        --  A Child of the Current Node.
       Child          : Tree_Node;
    begin
@@ -516,18 +513,25 @@ is
             --# check Trees.in_Tree (ATree.Container, ATree.Root);
             --  Inc_Count (ATree);
             ATree.Count := ATree.Count + 1;
-            Current_Node := Top_In_Tree_Node (Visited, ATree);
+            Current_Subroot := Top_In_Tree_Node (Visited, ATree);
+            --  Set the Target_Node to the Current_Subroot to get the key.
+            ATree.Target_Node := Current_Subroot;
             --  A right branch if the value of Key is greater (or equal)
             --  to the Top Value, otherwise take the left branch.
-            Is_Right := Tree_Abs.Key (Current_Node) < Key;
+            Is_Right := Tree_Abs.Key (ATree) < Key;
 
-            --  Add a new child node to extend the tree
+            --  Add a new node to extend the tree.
+            --  The new node is placed in ATree.Target_Node.
             Tree_Abs.Add_Node
-              (N        => Sub_Tree_Root,
-               New_Node => Child,
+              (T        => ATree,
                The_Key  => Key);
+
+            --  Transfer the Target_Node_(the new node) to Child and
+            --  reset the Target_Node to Current_Subroot and set its branch
+            --  to Child.
+            Child := ATree.Target_Node;
+            ATree.Target_Node := Current_Subroot;
             Set_Branch (Is_Right   => Is_Right,
-                        Node       => Current_Node,
                         Set_Node   => Child,
                         Tree       => ATree);
             --# check Populated (ATree);
@@ -539,21 +543,8 @@ is
                       Reason => "Visited must be an in out paramter " &
                                  "as it is updated by Rebalance_Tree" &
                                  " but its final value is unrequired");
-            Rebalance (Sub_Tree_Root, ATree, Visited);
-            ATree.Root := Sub_Tree_Root;
-            --  SPARK 2014 does not treat Tree_Type as completely private.
-            --  It knows it is a record type with a component of an access type.
-            --  It therefore assumes that it may be changed indirectly.
-            --  Set_Branch and Reblance maintain Persistence and therefore
-            --  the precence of a key but SPARK 2014 does not assume this.
-            --  Should a private type be really private?
-            --  pragma Assume (Trees.Persists (ATree.Container, Tree_Container),
-            --                "Set_Branch and Rebalance maintain Persistence");
-            --  pragma Assume (Trees.Key_Is_Present (Tree_Container, Key),
-            --                 "Set_Branch and Rebalance maintain keys");
-            --  ATree.Container := Tree_Container;
-
-            --  pragma Warnings (On, """Visited""");
+            Rebalance (ATree, Visited);
+            pragma Warnings (On, """Visited""");
          end if;
       end if;
       --# accept W, 444, "The Key is in the Tree",
@@ -582,16 +573,13 @@ is
      --              else
      --                 Count (ATree) = Count (ATree'Old))
    is
-      Visited        : Bounded_Stacks.Stack;
-      Key_Found      : Boolean;
-      Is_Right       : Boolean;
-      Insert_Node    : Tree_Node;
-      Current_Node   : Tree_Node;
-       --  A Child of the Current Node.
-      Child          : Tree_Node;
-      --  Required to satisfy abstraction
-      Dummy_Tree_Node : Tree_Node := ATree.Root;
-   begin
+      Visited         : Bounded_Stacks.Stack;
+      Key_Found       : Boolean;
+      Is_Right        : Boolean;
+      Current_Subroot : Tree_Node;
+       --  A Child of the Current Subroot.
+      Child           : Tree_Node;
+    begin
       --# accept W, 444, "There cannot be Natural'Last tree nodes",
       --#                "Definition of Populated and Count";
       --# assume ATree.Count < Natural'Last;
@@ -599,17 +587,18 @@ is
       --# assume ATree.Count = Count (ATree);
       --# end accept;
       if not Populated (ATree) then
-         --  First node of tree - Enter a new node with level 1 into the store
+         --  First node of tree - Add a new node with level 1.
+         --  The new node is placed in the Target_Node.
          Inserted := True;
          ATree.Count := 1;
          Tree_Abs.Add_Node
-           (N        => Dummy_Tree_Node,
-            New_Node => Insert_Node,
+           (T        => ATree,
             The_Key  => Key);
          Value_At_Node := Value;
-         Tree_Abs.Set_Value (Insert_Node, Value_At_Node);
-         --  The new node is the root of the new tree
-         ATree.Root := Insert_Node;
+         --  The new node is the root of the new tree.
+         --  Set its Value.
+         ATree.Root := ATree.Target_Node;
+         Tree_Abs.Set_Value (ATree, Value);
       else
          --  Make sure that the tree does not already include the key.
          Find (ATree, Key, Key_Found, Visited);
@@ -618,48 +607,44 @@ is
             Inserted := False;
             --  The node with the key is on the top of the visited stack.
             --  Get its value.
-            Value_At_Node :=
-              Tree_Abs.Value (Top_In_Tree_Node (Visited, ATree));
+            --  Set the Target_Node to the node with the Key.
+            ATree.Target_Node := Top_In_Tree_Node (Visited, ATree);
+            Value_At_Node := Tree_Abs.Value (ATree);
          else
             Inserted := True;
+            --# check Trees.in_Tree (ATree.Container, ATree.Root);
+            --  Inc_Count (ATree);
             ATree.Count := ATree.Count + 1;
-            Current_Node := Top_In_Tree_Node (Visited, ATree);
+            Current_Subroot := Top_In_Tree_Node (Visited, ATree);
+            --  Set the Target_Node to the Current_Subroot to get the key.
+            ATree.Target_Node := Current_Subroot;
             --  A right branch if the value of Key is greater (or equal)
             --  to the Top Value, otherwise take the left branch.
-            Is_Right := Tree_Abs.Key (Current_Node) < Key;
+            Is_Right := Tree_Abs.Key (ATree) < Key;
 
-            --  Add a new child node to extend the tree
+            --  Add a new node to extend the tree.
+            --  The new node is placed in ATree.Target_Node.
             Tree_Abs.Add_Node
-              (N        => Dummy_Tree_Node,
-               New_Node => Child,
+              (T        => ATree,
                The_Key  => Key);
+
+            --  Transfer the Target_Node_(the new node) to Child and
+            --  reset the Target_Node to Current_Subroot and set its branch
+            --  to Child.
+            Child := ATree.Target_Node;
+            ATree.Target_Node := Current_Subroot;
             Set_Branch (Is_Right   => Is_Right,
-                        Node       => Current_Node,
                         Set_Node   => Child,
                         Tree       => ATree);
-            Value_At_Node := Value;
-            Tree_Abs.Set_Value (Child, Value_At_Node);
-            --# check Trees.in_Tree (ATree.Container, ATree.Root);
             --# check Populated (ATree);
             -- Now rebalance the tree
-            --# accept F, 10, Visited, "Visited must be an in out paramter ",
-            --#                        "as it is updated by Rebalance_Tree",
-            --#                        " but its final value is unrequired";
             pragma Warnings (Off, """Visited""",
                       Reason => "Visited must be an in out paramter " &
                                  "as it is updated by Rebalance_Tree" &
                                  " but its final value is unrequired");
-            Rebalance (ATree.Root, ATree, Visited);
-               --  SPARK 2014 does not treat Tree_Type as completely private.
-            --  It knows it is a record type with a component of an access type.
-            --  It therefore assumes that it may be changed indirectly.
-            --  Set_Branch and Reblance maintain Persistence and therefore
-            --  the precence of a key but SPARK 2014 does not assume this.
-            --  Should a private type be really private?
-            --  pragma Assume (Trees.Persists (ATree.Container, Tree_Container),
-            --                "Set_Branch and Rebalance maintain Persistence");
-
-            --  pragma Warnings (On, """Visited""");
+            Rebalance (ATree, Visited);
+            pragma Warnings (On, """Visited""");
+            Value_At_Node := Value;
          end if;
       end if;
       --  pragma Assume (Trees.Key_Is_Present (ATree.Container, Key),
@@ -676,16 +661,10 @@ is
    ------------------
 
    procedure Clear_A_Tree (ATree       : in out A_Tree) with
-     Refined_Global => (Output => Refined_Status)
+     Refined_Global => (In_Out => Refined_Status)
    is
    begin
-      Tree_Abs.Clear (ATree.Root);
-      --  Tree := Null_A_Tree;
-      --  SPARK Examiner 2005 Simplifier does not infer that
-      --  Tree := Null_A_Tree implies Tree.Root = Trees.Empty_Node;
-      ATree.Root := Empty_Node;
-      ATree.Count := 0;
-      ATree.State := Unassigned;
+      Tree_Abs.Clear (ATree);
       Refined_Status := Free;
    end Clear_A_Tree;
 
@@ -693,18 +672,19 @@ is
    -- Next_Node --
    ---------------
 
-   procedure Next_Node (E    : in out Enumerator; Node : out Tree_Node) is
-      Right_Child : Tree_Node;
+   procedure Next_Node (E    : in out Enumerator; ATree : out A_Tree) is
+      Right_Child : A_Tree := E.ATree;
    begin
+      ATree := E.ATree;
       if not Bounded_Stacks.Is_Empty (E.Visited) then
-         Pop_In_Tree_Node (E.Visited, E.ATree, Node);
-         Right_Child := Tree_Abs.Right (Node);
-         if  In_A_Tree (Right_Child, E.ATree) then
-            Push_In_Tree_Node (E.Visited, E.ATree, Right_Child);
-            Trace_To_Left_Leaf (E, E.ATree);
+         Pop_In_Tree_Node (E.Visited, E.ATree, ATree.Target_Node);
+         Right_Child.Target_Node := Tree_Abs.Right (ATree);
+         if  Target_Node_In_Tree (Right_Child) then
+            Push_In_Tree_Node (E.Visited, E.ATree, Right_Child.Target_Node);
+            Trace_To_Left_Leaf (E, ATree);
          end if;
       else
-         Node := Empty_Node;
+         ATree.Target_Node := Empty_Node;
       end if;
    end Next_Node;
    pragma Inline (Next_Node);
@@ -717,8 +697,8 @@ is
    is
       Enum_1    : Enumerator;
       Enum_2    : Enumerator;
-      Current_1 : Tree_Node;
-      Current_2 : Tree_Node;
+      Current_1 : A_Tree;
+      Current_2 : A_Tree;
       Present_1 : Boolean;
       Present_2 : Boolean;
       Both_Present : Boolean;
@@ -731,8 +711,9 @@ is
          loop
             Next_Node (Enum_1, Current_1);
             Next_Node (Enum_2, Current_2);
-            Present_1 := In_A_Tree (Current_1, ATree_1);
-            Present_2 := In_A_Tree (Current_2, ATree_2);
+            --  The_Target_Nodes of Current_1 and Current_2 have the next nodes
+            Present_1 := Target_Node_In_Tree (Current_1);
+            Present_2 := Target_Node_In_Tree (Current_2);
             Both_Present := Present_1 and Present_2;
             if Both_Present then
                Equal := Tree_Abs.Key (Current_1) = Tree_Abs.Key (Current_2);
@@ -759,15 +740,12 @@ is
       Visited : Bounded_Stacks.Stack;
       Found   : Boolean;
    begin
-      --  --# accept F, 10, Visited, "Visited stack is used by Find" &
-      --  --#        F, 33, Visited, "Final value of Visited is not required";
-      --  pragma Warnings (Off, """Visited""",
-      --                  Reason => "Visited must be an in out paramter " &
-      --                             "as it is updated by Find" &
-      --                             " but its final value is unrequired");
+      pragma Warnings (Off, """Visited""",
+                      Reason => "Visited must be an in out paramter " &
+                                 "as it is updated by Find" &
+                                 " but its final value is unrequired");
       Find (ATree, Key, Found, Visited);
-      --  pragma Warnings (On, """Visited""");
-      pragma Assert (if Found then Tree_Abs.Key_Is_Present (Key, ATree.Root));
+      pragma Warnings (On, """Visited""");
       return Found;
    end Is_Present;
 
@@ -777,12 +755,14 @@ is
 
    function Tree_Depth (ATree : A_Tree) return Natural
    is
+      T : A_Tree := ATree;
       Result : Natural;
    begin
       if Empty_Tree (ATree) then
          Result := 0;
       else
-         Result := Tree_Abs.Level (ATree.Root);
+         T.Target_Node := T.Root;
+         Result := Tree_Abs.Level (T);
       end if;
       return Result;
    end Tree_Depth;

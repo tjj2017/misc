@@ -44,7 +44,7 @@ is
    function Populated (ATree : A_Tree) return Boolean;
 
    function Building (ATree : A_Tree) return Boolean with
-     Global => Status,
+     Global => (Proof_In => Status),
      Post   => (if Building'Result then Is_Building);
 
    procedure New_A_Tree (ATree : out A_Tree) with
@@ -58,7 +58,6 @@ is
    procedure Insert (ATree      : in out A_Tree;
                      Key        : Key_Type;
                      Inserted   : out Boolean) with
-     Global => (Input => Status),
      Pre    => Building (ATree) and Count (ATree) < Natural'Last,
      Post   => Building (ATree) and
               (if not Populated (ATree'Old) then
@@ -73,7 +72,6 @@ is
                                 Value         : Value_Type;
                                 Inserted      : out Boolean;
                                 Value_At_Node : out Value_Type) with
-     Global => (Input => Status),
      Pre  => Building (ATree) and Count (ATree) < Natural'Last,
      Post => Building (ATree) and
              (if not Populated (ATree'Old) then
@@ -84,7 +82,7 @@ is
                      Count (ATree) = Count (ATree'Old));
 
    procedure Clear_A_Tree (ATree       : in out A_Tree) with
-     Global => (Output => Status),
+     Global => (In_Out => Status),
      Pre => Building (ATree),
      Post => not Building (ATree) and not Is_Building and Empty_Tree (ATree);
 
@@ -102,7 +100,7 @@ is
    function New_Enumerator (ATree : A_Tree) return Enumerator with
      Pre => Populated (ATree);
 
-   procedure Next_Node (E : in out Enumerator; Node : out Tree_Node);
+   procedure Next_Node (E : in out Enumerator; ATree : out A_Tree);
 
 private
    type Tree_Node is range 0 .. Natural'Last - 1;
@@ -129,7 +127,7 @@ private
    type Statuses is (Unassigned, Constructing, Free);
    subtype A_Tree_Status is Statuses range Unassigned .. Constructing;
    subtype Pack_Status   is Statuses range Constructing .. Free;
-
+   subtype Node_Count is Natural range  0 .. Natural (Tree_Node'Last);
    type A_Tree is
       record
          Root        : Tree_Node;
