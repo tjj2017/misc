@@ -35,18 +35,12 @@ is
      (N > Empty_Node and Tree.Root > Empty_Node and N >= Tree.Root and
         N - Tree.Root + 1 = Tree_Node (Tree.Count));
 
-   --------------------------
-   -- Target_Node_In_Tree  --
-   --------------------------
-   function Target_Node_In_Tree (T : A_Tree) return Boolean is
-      (In_A_Tree (T.Target_Node, T));
-
    --  Proof helper subprograms
 
    --  The contents of the tree are the same but the tree structure may change.
    --  The root of the tree may be reassigned.
    function Retains (AT_Pre, AT_Post : A_Tree) return Boolean is
-     (Count (AT_Post) >= Count (AT_Pre) and
+     (AT_Post.Count >= AT_Pre.Count and
           (for all N in Tree_Node => (if In_A_Tree (N, AT_Pre) then
                                           In_A_Tree (N, AT_Post))))
        with Ghost;
@@ -66,15 +60,14 @@ is
 
     --  Pushing exclusively using Push_In_Tree_Node ensures that
    --  every Node on the stack is in the A_Tree.
-   function Top_In_Tree_Node (S    : Bounded_Stacks.Stack;
-                              Tree : A_Tree) return Tree_Node with
-     Pre  => Building (Tree) and not Bounded_Stacks.Is_Empty (S),
-     Post => In_A_Tree (Top_In_Tree_Node'Result, Tree)
+   function Top_In_Tree_Node (S : Bounded_Stacks.Stack) return Tree_Node with
+     Pre  => not Bounded_Stacks.Is_Empty (S),
+     Post => Tree_Abs.In_Tree (Top_In_Tree_Node'Result)
    is
       Result : Tree_Node;
    begin
       Result := Bounded_Stacks.Top (S);
-      pragma Assume (In_A_Tree (Result, Tree),
+      pragma Assume (Tree_Abs.In_Tree (Result),
                      "The exclusive use of Push_In_Tree ensures all " &
                      "pushed nodes are In_Tree, so, " &
                      "all nodes popped by Pop_In_Tree_Node will also be.");
@@ -87,11 +80,10 @@ is
    --  With a stack size of 32 a balanced tree would be enormous, it would
    --  have more nodes than the number actually available.
    procedure Push_In_Tree_Node (S    : in out Bounded_Stacks.Stack;
-                                Tree : A_Tree;
                                 Node : Tree_Node)
-   with Pre  => Building (Tree) and In_A_Tree (Node, Tree),
+   with Pre  => Tree_Abs.In_Tree (Node),
         Post => not Bounded_Stacks.Is_Empty (S) and
-                Top_In_Tree_Node (S, Tree) = Node
+                Top_In_Tree_Node (S) = Node
    is
    begin
       pragma Assume (Bounded_Stacks.Count (S) < Bounded_Stacks.Stack_Count'Last,
@@ -99,7 +91,7 @@ is
                      "balanced tree with more distinct nodes " &
                      "than can be handled by the gnat front-end");
       Bounded_Stacks.Push (S, Node);
-      pragma Assume (Top_In_Tree_Node (S, Tree) = Node,
+      pragma Assume (Top_In_Tree_Node (S) = Node,
                      "The Node pushed on the stack is the top of the stack");
    end Push_In_Tree_Node;
    pragma Inline (Push_In_Tree_Node);
@@ -107,73 +99,53 @@ is
    --  Pushing exclusively using Push_In_Tree_Node ensures that
    --  every Node on the stack is in the Tree.
    procedure Pop_In_Tree_Node (S    : in out Bounded_Stacks.Stack;
-                               Tree : A_Tree;
                                Node : out Tree_Node)
-   with Pre  => Building (Tree) and not Bounded_Stacks.Is_Empty (S),
-        Post => In_A_Tree (Node, Tree) and
+   with Pre  => not Bounded_Stacks.Is_Empty (S),
+        Post => Tree_Abs.In_Tree (Node) and
                 Bounded_Stacks.Count (S) = Bounded_Stacks.Count (S'Old) - 1
    is
    begin
       Bounded_Stacks.Pop (S, Node);
-      pragma Assume (In_A_Tree (Node, Tree),
+      pragma Assume (Tree_Abs.In_Tree (Node),
                      "The exclusive use of Push_In_Tree ensures all " &
                      "pushed nodes are In_Tree, so, " &
                      "all nodes popped by Pop_In_Tree_Node will also be.");
    end Pop_In_Tree_Node;
    pragma Inline (Pop_In_Tree_Node);
 
-   procedure New_Node (Key      : Key_Type;
-                       Tree     : in out A_Tree) with
-     Pre  => Building (Tree),
-     Post => Building (Tree) and
-             Retains (Tree'Old, Tree) and Target_Node_In_Tree (Tree) and
-             Tree_Abs.Key (Tree) = Key
-   is
-   begin
-      Tree_Abs.Add_Node (Tree, Key);
-      --  pragma Assume (Target_Node_In_A_Tree (Tree),
-      --                 "The exclusive use of Push_In_Tree ensures all " &
-      --                 "pushed nodes are In_Tree, so, " &
-      --                 "all nodes popped by Pop_In_Tree_Node will also be.");
-   end New_Node;
-
    function Get_Child (Is_Right : Boolean;
-                       Tree     : A_Tree)
+                       Node      : Tree_Node)
                        return Tree_Node
-   with Pre  => Building (Tree) and Target_Node_In_Tree (Tree),
+   with Pre  => Tree_Abs.In_Tree (Node),
         Post => (if Get_Child'Result /= Empty_Node then
-                    In_A_Tree (Get_Child'Result, Tree))
+                    Tree_Abs.In_Tree (Get_Child'Result))
    is
       Result : Tree_Node;
    begin
       if Is_Right then
-         Result := Tree_Abs.Right (Tree);
+         Result := Tree_Abs.Right (Node);
       else
-         Result := Tree_Abs.Left (Tree);
+         Result := Tree_Abs.Left (Node);
       end if;
       return Result;
    end Get_Child;
    pragma Inline (Get_Child);
 
    procedure Set_Branch (Is_Right   : Boolean;
-                         Set_Node   : Tree_Node;
-                         Tree       : in out A_Tree) with
-     Pre  => Building (Tree) and
-             Target_Node_In_Tree (Tree) and In_A_Tree (Set_Node, Tree),
-     Post => Building (Tree) and
-             Maintains (Tree'Old, Tree) and
-             in_A_Tree (Set_Node, Tree) and
-             Get_Child (Is_Right, Tree) = Set_Node
+                         Node       : in out Tree_Node;
+                         Branch     : Tree_Node) with
+     Pre  => Tree_Abs.In_Tree (Node),
+     Post => Tree_Abs.In_Tree (Node) and Get_Child (Is_Right, Node) = Branch
    is
    begin
       if Is_Right then
          Tree_Abs.Set_Right
-           (T      => Tree,
-            Branch => Set_Node);
+           (N      => Node,
+            Branch => Branch);
       else
          Tree_Abs.Set_Left
-           (T      => Tree,
-            Branch => Set_Node);
+           (N      => Node,
+            Branch => Branch);
       end if;
    end Set_Branch;
    pragma Inline (Set_Branch);
@@ -185,18 +157,12 @@ is
      Pre  => Populated (ATree),
      Post => not Bounded_Stacks.Is_Empty (Visited) and
              (if Found  then
-                Tree_Abs.Key_Of_Node
-                (Top_In_Tree_Node (Visited, ATree), ATree) = Key)
+                Tree_Abs.Key (Top_In_Tree_Node (Visited)) = Key)
      --  The Tree is Populated so the given Key may be present.
      --  If found is true, the top of the Tree.Visited stack is the
      --  Tree_Node that references the Actual_Node which contains the Key.
    is
-      --  Notionally Find should not affect the Tree but the Target_Node
-      --  has to be changed to perform the task so a local copy of the A_Tree
-      --  object is made allowing the ATree parameter to be mode "in".
-      Local_Tree      : A_Tree := ATree;
       Current_Target  : Tree_Node;
-
       Current_Key     : Key_Type;
 
       --  A Child of the current node.
@@ -224,26 +190,24 @@ is
       --  branches.
       loop
          --  A record of nodes visited is held in the Visited stack.
-         Push_In_Tree_Node (Visited, ATree, Current_Target);
-         Local_Tree.Target_Node := Current_Target;
+         Push_In_Tree_Node (Visited, Current_Target);
 
-         Current_Key := Tree_Abs.Key (Local_Tree);
+         Current_Key := Tree_Abs.Key (Current_Target);
          Found := Current_Key = Key;
-         pragma Assert (if Found then Target_Node_In_Tree (Local_Tree));
+         pragma Assert (In_A_Tree (Current_Target, ATree));
          if not Found then
 
             --  Take the right branch if the Key value is greater
             --  than the Current_Node Key, otherwise take the left branch.
-            Is_Right := Tree_Abs.Key (Local_Tree) < Key;
-            Child := Get_Child (Is_Right, Local_Tree);
+            Is_Right := Tree_Abs.Key (Current_Target) < Key;
+            Child := Get_Child (Is_Right, Current_Target);
          end if;
 
          pragma Loop_Invariant
            (not Bounded_Stacks.Is_Empty (Visited) and
                 (if Found then
-                      Target_Node_In_Tree (Local_Tree) and
-                       Tree_Abs.Key_Of_Node
-                   (Top_In_Tree_Node (Visited, ATree), ATree) = Key));
+                      In_A_Tree (Current_Target, ATree) and
+                       Tree_Abs.Key (Top_In_Tree_Node (Visited)) = Key));
 
          exit when Found or else not In_A_Tree (Child, ATree);
 
@@ -267,77 +231,79 @@ is
 
    procedure Skew (Tree : in out A_Tree) with
      --  Tree.Target_Node must be set to the subtree root to be skewed.
-     Pre  => Building (Tree) and Target_Node_In_Tree (Tree),
+     Pre  => Building (Tree) and In_A_Tree (Tree.Target_Node, Tree),
      Post => Building (Tree) and Maintains (Tree'Old, Tree)
    is
-      Left_Child : A_Tree := Tree;
+      Left_Child : Tree_Node := Tree_Abs.Left (Tree.Target_Node);
    begin
       --
-      Left_Child.Target_Node := Tree_Abs.Left (Tree);
       --  No action is performed if the levels of the root and left nodes
       --  are not equal.
-      if Target_Node_In_Tree (Left_Child) and then
-        Tree_Abs.Level (Left_Child) = Tree_Abs.Level (Tree)
+      if In_A_Tree (Left_Child, Tree) and then
+        Tree_Abs.Level (Left_Child) = Tree_Abs.Level (Tree.Target_Node)
       then
          --  The left child has the same level as its parent breaking
          --  rule 2 of an Anderson tree. To resolve rotate right at the parent.
-         --  That is, the root node left child becomes the right child of
-         --  root node left node.  The right child of the root node left child
-         --  becomes the root index, and lastly, the index of the root
-         --  left child becomes the new Target subroot {index}.
+         --  That is, the Target node left child becomes the right child
+         --  of the Target node left node.
+         --  The right child of the Target node left child
+         --  becomes the current Target, and lastly, the
+         --  new Target is set to the original Left_Child.
          Tree_Abs.Set_Left
-           (T      => Tree,
+           (N      => Tree.Target_Node,
             Branch => Tree_Abs.Right (Left_Child));
          Tree_Abs.Set_Right
-           (T      => Left_Child,
+           (N      => Left_Child,
             Branch => Tree.Target_Node);
-         Tree.Target_Node := Left_Child.Target_Node;
+         Tree.Target_Node := Left_Child;
       end if;
    end Skew;
 
    procedure Split (Tree : in out A_Tree) with
      --  Tree.Target_Node must be set to the subtree root to be split.
-        Pre  => Building (Tree) and Target_Node_In_Tree (Tree),
+        Pre  => Building (Tree) and In_A_Tree (Tree.Target_Node, Tree),
         Post => Building (Tree) and Maintains (Tree'Old, Tree)
    is
       --  T_In : constant Trees.Tree_Type := Tree
       --  with Ghost;
-      Right_Child       : A_Tree := Tree;
-      Right_Right_Child : A_Tree := Tree;
+      Right_Child       : Tree_Node;
+      Right_Right_Child : Tree_Node;
+      Current_Level     : NAtural;
    begin
-      Right_Child.Target_Node  := Tree_Abs.Right (Tree);
-      if Target_Node_In_Tree (Right_Child) then
-         Right_Right_Child.Target_Node := Tree_Abs.Right (Right_Child);
+      Right_Child := Tree_Abs.Right (Tree.Target_Node);
+      if In_A_Tree (Right_Child, Tree) then
+         Right_Right_Child:= Tree_Abs.Right (Right_Child);
       else
-         Right_Right_Child.Target_Node := Empty_Node;
+         Right_Right_Child := Empty_Node;
       end if;
 
       --  No action is taken if there are not two consecutive right children
       -- with the same level
-      if Target_Node_In_Tree (Right_Child) and then
-        Target_Node_In_Tree (Right_Right_Child) and then
-        Tree_Abs.Level (Right_Right_Child) = Tree_Abs.Level (Tree)
+      if In_A_Tree (Right_Child, Tree) and then
+        In_A_Tree (Right_Right_Child, Tree) and then
+        Tree_Abs.Level (Right_Right_Child) = Tree_Abs.Level (Tree.Target_Node)
       then
          --  There are two consecutive right children with the same level
          --  Breaking rule 3 of an Anderson tree.
          --  To resolve rotate left and increment the level of the parent.
-         --  That is, the right child of the root becomes the left child
-         --  of the right child of the root. The right child of the
+         --  That is, the right child of the Target becomes the left child
+         --  of the right child of the Target. The right child of the
          --  right child of the root becomes the root
          --  the right child of the root becomes the new root and its level
          --  is incremented.
          Tree_Abs.Set_Right
-           (T      => Tree,
+           (N      => Tree.Target_Node,
             Branch => Tree_Abs.Left (Right_Child));
          Tree_Abs.Set_Left
-           (T      =>  Right_Child,
+           (N      =>  Right_Child,
             Branch => Tree.Target_Node);
          --  The root now becomes the right child.
-         Tree.Target_Node := Right_Child.Target_Node;
-         pragma Assume (Tree_Abs.Level (Tree) < Natural'Last,
+         Tree.Target_Node := Right_Child;
+         Current_Level := Tree_Abs.Level (Tree.Target_Node);
+         pragma Assume (Current_Level < Natural'Last,
                         "The Level cannot exceed the number of nodes");
          --  Increment the level of the new root.
-         Tree_Abs.Set_Level (Tree, Tree_Abs.Level (Tree) + 1);
+         Tree_Abs.Set_Level (Tree.Target_Node, Current_Level + 1);
      end if;
    end Split;
 
@@ -771,7 +737,7 @@ is
    -- Count --
    -----------
 
-   function Count (ATree : A_Tree) return Natural is (ATree.Count);
+   function Count (ATree : A_Tree) return Node_Count is (ATree.Count);
 
    --------------------
    -- New_Enumerator --

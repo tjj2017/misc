@@ -44,7 +44,7 @@ is
    function Persists (T_Pre, T_Post : Tree_Type) return Boolean with
      Ghost;
 
-   function Level (N : Tree_Node) return Natural with
+   function Level (N : Tree_Node) return Node_Count with
      Global => Tree_Store,
      Pre    => In_Tree (N);
    function Left  (N : Tree_Node) return Tree_Node with
@@ -62,7 +62,7 @@ is
      Global => Tree_Store,
      Pre    => In_Tree (N);
 
-   procedure Set_Level (N : Tree_Node; Node_Level : Natural) with
+   procedure Set_Level (N : Tree_Node; Node_Level : Node_Count) with
      Global => (In_Out => Tree_Store),
      Pre    => In_Tree (N) and not Is_Empty_Tree (TS),
      Post   => not Is_Empty_Tree (TS) and
@@ -105,7 +105,7 @@ private
       record
          Key   : Key_Type;
          Value : Value_Type;
-         Level : Natural;
+         Level : Node_Count;
          Left  : Tree_Node;
          Right : Tree_Node;
       end record;

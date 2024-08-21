@@ -127,7 +127,7 @@ is
    -- Level --
    -----------
 
-   function Level (N : Tree_Node) return Natural with
+   function Level (N : Tree_Node) return Node_Count with
      Refined_Global => Dynamic_Table.The_Table
    is
    begin
@@ -200,7 +200,7 @@ is
    ---------------
 
    procedure Set_Level (N : Tree_Node;
-                        Node_Level : Natural) with
+                        Node_Level : Node_Count) with
      Refined_Global => (In_Out => Dynamic_Table.The_Table)
    is
       Node_Contents : Actual_Node;

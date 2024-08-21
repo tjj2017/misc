@@ -19,6 +19,8 @@ is
    function Is_Building return Boolean with
      Global => Status;
 
+   -- Notional maximum nodes in a tree.
+   type Node_Count is range 0 .. Natural'Last - 1;
    type Key_Type is private;
    type Value_Type is private;
    Null_Value : constant Value_Type;
@@ -39,8 +41,6 @@ is
 
    function In_A_Tree (N : Tree_Node; Tree : A_Tree) return Boolean;
 
-   function Target_Node_In_Tree (T : A_Tree) return Boolean;
-
    function Populated (ATree : A_Tree) return Boolean;
 
    function Building (ATree : A_Tree) return Boolean with
@@ -53,12 +53,12 @@ is
      Post => Empty_Tree (ATree) and Is_Building and Building (ATree) and
              Count (ATree) = 0;
 
-   function Count (ATree : A_Tree) return Natural;
+   function Count (ATree : A_Tree) return Node_Count;
 
    procedure Insert (ATree      : in out A_Tree;
                      Key        : Key_Type;
                      Inserted   : out Boolean) with
-     Pre    => Building (ATree) and Count (ATree) < Natural'Last,
+     Pre    => Building (ATree) and Count (ATree) < Node_Count'Last,
      Post   => Building (ATree) and
               (if not Populated (ATree'Old) then
                 Count (ATree) = 1
@@ -72,7 +72,7 @@ is
                                 Value         : Value_Type;
                                 Inserted      : out Boolean;
                                 Value_At_Node : out Value_Type) with
-     Pre  => Building (ATree) and Count (ATree) < Natural'Last,
+     Pre  => Building (ATree) and Count (ATree) < Node_Count'Last,
      Post => Building (ATree) and
              (if not Populated (ATree'Old) then
                 Count (ATree) = 1
@@ -103,7 +103,7 @@ is
    procedure Next_Node (E : in out Enumerator; ATree : out A_Tree);
 
 private
-   type Tree_Node is range 0 .. Natural'Last - 1;
+   type Tree_Node is new Node_Count;
    subtype Valid_Tree_Node is Tree_Node range 1 .. Tree_Node'Last;
    Empty_Node : constant Tree_Node := 0;
 
@@ -127,12 +127,11 @@ private
    type Statuses is (Unassigned, Constructing, Free);
    subtype A_Tree_Status is Statuses range Unassigned .. Constructing;
    subtype Pack_Status   is Statuses range Constructing .. Free;
-   subtype Node_Count is Natural range  0 .. Natural (Tree_Node'Last);
    type A_Tree is
       record
          Root        : Tree_Node;
          Target_Node : Tree_Node;  -- Node of interest for applied operation
-         Count       : Natural;
+         Count       : Node_Count;
          State       : A_Tree_Status;
       end record;
 
