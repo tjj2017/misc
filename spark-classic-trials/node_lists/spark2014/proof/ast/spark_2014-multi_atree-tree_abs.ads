@@ -37,7 +37,7 @@ is
    --  function Node_Is_Present  (N : Tree_Node) return Boolean;
 --   function Persists (T_Pre, T_Post : Tree_Node) return Boolean;
 
-   function Level (N : Tree_Node) return Natural with
+   function Level (N : Tree_Node) return Node_Count with
      Pre    => In_Tree (N);
    function Left  (N : Tree_Node) return Tree_Node with
      Pre    => In_Tree (N),
@@ -52,7 +52,7 @@ is
    function Value (N : Tree_Node) return Value_Type with
      Pre    => In_Tree (N);
 
-   procedure Set_Level (N : in out Tree_Node; Node_Level : Natural) with
+   procedure Set_Level (N : in out Tree_Node; Node_Level : Node_Count) with
      Pre    => In_Tree (N),
      Post   => In_Tree (N) and Level (N) = Node_Level;
    procedure Set_Left  (N : in out Tree_Node; Branch : Tree_Node) with
@@ -67,7 +67,7 @@ is
    procedure Set_Value (N : in out Tree_Node; Node_Value : Value_Type) with
      Pre    => In_Tree (N),
      Post   => In_Tree (N) and Value (N) = Node_Value;
-   procedure Add_Node  (N : in out Tree_Node; The_Key : Key_Type) with
+   procedure Add_Node  (N : out Tree_Node; The_Key : Key_Type) with
      Post   => In_Tree (N) and Key (N) = The_Key;
 
    procedure Clear (N : in out Tree_Node) with

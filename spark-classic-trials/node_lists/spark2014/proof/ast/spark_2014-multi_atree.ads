@@ -41,7 +41,8 @@ is
 
    function In_A_Tree (N : Tree_Node; Tree : A_Tree) return Boolean;
 
-   function Populated (ATree : A_Tree) return Boolean;
+   function Populated (ATree : A_Tree) return Boolean with
+     Post => (if Populated'Result then (Count (ATree) > 0));
 
    function Building (ATree : A_Tree) return Boolean with
      Global => (Proof_In => Status),
@@ -92,7 +93,7 @@ is
    function Is_Present (ATree : A_Tree; Key : Key_Type) return Boolean with
      Pre  => Populated (ATree);
 
-   function Tree_Depth (ATree : A_Tree) return Natural with
+   function Tree_Depth (ATree : A_Tree) return Node_Count with
      Pre => Populated (ATree);
 
    type Enumerator is limited private;
@@ -100,7 +101,7 @@ is
    function New_Enumerator (ATree : A_Tree) return Enumerator with
      Pre => Populated (ATree);
 
-   procedure Next_Node (E : in out Enumerator; ATree : out A_Tree);
+   procedure Next_Node (E : in out Enumerator; The_Node : out Tree_Node);
 
 private
    type Tree_Node is new Node_Count;

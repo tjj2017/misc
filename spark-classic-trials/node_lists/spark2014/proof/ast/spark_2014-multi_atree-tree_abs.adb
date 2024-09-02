@@ -215,7 +215,7 @@ is
    -- Add_Node --
    --------------
 
-   procedure Add_Node (N : in out Tree_Node; The_Key : Key_Type) is
+   procedure Add_Node (N : out Tree_Node; The_Key : Key_Type) is
    begin
       Tree.Add_Node (N, The_Key);
 
