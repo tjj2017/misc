@@ -24,7 +24,8 @@ is
    --  Null_Key : constant Key_Type := Key_Type'First;
    --  Null_Value : constant Value_Type := 0;
    --
-   function Is_Empty (N : Tree_Node) return Boolean with Inline;
+   function Is_Empty (N : Tree_Node) return Boolean is (N = Empty_Node) with
+     Inline;
 
    --  function Key_Of_Node (N : Tree_Node; N : Tree_Node) return Key_Type with
    --    Pre => In_A_Tree (N, T);

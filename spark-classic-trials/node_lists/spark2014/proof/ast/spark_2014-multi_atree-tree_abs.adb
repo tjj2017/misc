@@ -9,10 +9,10 @@ package body SPARK_2014.Multi_Atree.Tree_Abs with
   SPARK_Mode => Off
 is
 
-   --------------
-   -- Is_Empty --
-   --------------
-   function Is_Empty (N : Tree_Node) return Boolean is (N = Empty_Node);
+   --  --------------
+   --  -- Is_Empty --
+   --  --------------
+   --  function Is_Empty (N : Tree_Node) return Boolean is (N = Empty_Node);
 
    --------------------
    --  Key_Of_Node  --

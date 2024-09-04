@@ -34,6 +34,7 @@ is
    --  K = Log2 (N + 1) - 1.
    Stack_Size : constant Positive := 32;
    type Tree_Node is private;
+   Empty_Node : constant Tree_Node;
 
    type A_Tree is private;
 
@@ -45,7 +46,7 @@ is
      Post => (if Populated'Result then (Count (ATree) > 0));
 
    function Building (ATree : A_Tree) return Boolean with
-     Global => (Proof_In => Status),
+     Global => Status,
      Post   => (if Building'Result then Is_Building);
 
    procedure New_A_Tree (ATree : out A_Tree) with
