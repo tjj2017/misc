@@ -112,7 +112,7 @@ private
    Empty_Node : constant Tree_Node := 0;
 
    package Bounded_Stacks is new
-     SPARK_2014.Bounded_Stacks (Tree_Node, Stack_Size);
+     SPARK_2014.Bounded_Stacks (Valid_Tree_Node, Stack_Size);
 
    type Key_Type is new Natural;
    subtype Valid_Key_Type is Key_Type range

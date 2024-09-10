@@ -145,6 +145,7 @@ is
       if New_Last /= Empty_Node then
          Gnat_Table.Set_Last (T, Valid_Tree_Node (New_Last));
       end if;
+      N := Empty_Node;
     end Clear_Tree_Below_Node;
 
    -------------

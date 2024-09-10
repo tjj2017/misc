@@ -3,10 +3,12 @@
 --  abstraction of the GNAT.Dynamic_Tables package.                         --
 --  The body of this package must be excluded from SPARK analysis as it has --
 --  Hidden state.                                                           --
---  Any package using this abstraction should make it a private child of    --
---  the package and ensure the abstracion is sound. Only one tree can exist.--
---  All references to the underlying state have been removed and the        --
---  and the state has been abstracted into the Tree_Nodes of the Tree.      --                                                --
+--  In this abstraction the hidden state containing the tree is represented --
+--  by the collection of all Tree_Node objects. Hence, this collection      --
+--  represents a single tree.  There is no type to enable a tree            --
+--  decaration.  If multiple trees are required then, either multiple       --
+--  instatnces of this package are required or multiple trees have to be    --
+--  accommodated within the single tree structure this package provides.    --
 ------------------------------------------------------------------------------
 package SPARK_2014.Multi_Atree.Tree_Abs with
   SPARK_Mode
