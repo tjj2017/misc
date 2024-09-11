@@ -2,11 +2,12 @@
 --  This package facilitates storing multiple A_Trees within an a single    --
 --  single tree structure.                                                  --
 --  The single tree structure which contains the mutiple A_Trees            --
---  is provided by the tree abstraction child package                       --
---  SPARK_2014.Multi_Atree.Tree_Abs which can only support 1 tree but       --
---  using this package multiple A_Trees can be stored within it.            --
+--  is provided by the generic package SPARK_2014.Tree_Abstraction          --
+--  which can only support 1 tree but using this package multiple A_Trees   --
+--  can be stored within it.                                                --
 ------------------------------------------------------------------------------
-with SPARK_2014.Bounded_Stacks;
+with SPARK_2014.Bounded_Stacks,
+     SPARK_2014.Tree_Abstraction;
 package SPARK_2014.Multi_Atree with
   SPARK_Mode,
   Abstract_State => Status,
@@ -35,8 +36,6 @@ is
    --  K = Log2 (N + 1) - 1.
    Stack_Size : constant Positive := 32;
    type Tree_Node is private;
-   Empty_Node : constant Tree_Node;
-   type Valid_Tree_Node is private;
 
    type A_Tree is private;
 
@@ -45,7 +44,7 @@ is
    function In_A_Tree (N : Tree_Node; Tree : A_Tree) return Boolean;
 
    function Populated (ATree : A_Tree) return Boolean with
-     Post => (if Populated'Result then (Count (ATree) > 0));
+     Post => (if Populated'Result then Count (ATree) > 0);
 
    function Building (ATree : A_Tree) return Boolean with
      Global => Status,
@@ -108,18 +107,26 @@ is
 
 private
    type Tree_Node is new Node_Count;
-   type Valid_Tree_Node is new Tree_Node range 1 .. Tree_Node'Last;
-   Empty_Node : constant Tree_Node := 0;
+   subtype Valid_Tree_Node is Tree_Node range 1 .. Tree_Node'Last;
+   Empty_Node : constant Tree_Node := Tree_Node'First;
 
    package Bounded_Stacks is new
      SPARK_2014.Bounded_Stacks (Valid_Tree_Node, Stack_Size);
 
    type Key_Type is new Natural;
+   type Value_Type is new Integer;
    subtype Valid_Key_Type is Key_Type range
      Key_Type'Succ (Key_Type'First) .. Key_Type'Last;
-   type Value_Type is new Integer;
    Null_Key : constant Key_Type := Key_Type'First;
    Null_Value : constant Value_Type := 0;
+
+   package Tree_Abs is new SPARK_2014.Tree_Abstraction
+     (Tree_Node  => Tree_Node,
+      Level_Type => Node_Count,
+      Key_Type   => Key_Type,
+      Value_Type => Value_Type,
+      Null_Key   => 0,
+      Null_Value => 0);
 
   type Enumerator is
       record
