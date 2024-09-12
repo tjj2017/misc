@@ -62,8 +62,8 @@ is
                      Key        : Key_Type;
                      Inserted   : out Boolean) with
      Pre    => Building (ATree) and Count (ATree) < Node_Count'Last,
-     Post   => Building (ATree) and
-              (if not Populated (ATree'Old) then
+     Post   => Building (ATree) and Populated (ATree) and
+              (if not Populated (ATree'Old) and Inserted then
                 Count (ATree) = 1
                   elsif Inserted then
                      Count (ATree) = Count (ATree'Old) + 1

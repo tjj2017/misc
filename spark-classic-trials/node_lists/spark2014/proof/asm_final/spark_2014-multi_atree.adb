@@ -31,7 +31,8 @@ is
           ATree.Count > 0) with
    Refined_Post => (if Populated'Result then
                        Tree_Abs.In_Tree (ATree.Root) and
-                      In_A_Tree (ATree.Root, ATree) and
+                        In_A_Tree (ATree.Root, ATree) and
+                        ATree.Root in Valid_Tree_Node and
                         (ATree.Count > 0));
 
     function In_A_Tree (N : Tree_Node; Tree : A_Tree) return Boolean is
@@ -67,9 +68,10 @@ is
     --  Pushing exclusively using Push_In_Tree_Node ensures that
    --  every Node on the stack is in the A_Tree.
    function Top_In_A_Tree_Node (S : Bounded_Stacks.Stack; Tree : A_Tree)
-                                return Tree_Node with
+                                return Valid_Tree_Node with
      Pre  => not Bounded_Stacks.Is_Empty (S),
-     Post => In_A_Tree (Top_In_A_Tree_Node'Result, Tree)
+     Post => In_A_Tree (Top_In_A_Tree_Node'Result, Tree) and
+             Tree_Abs.In_Tree (Top_In_A_Tree_Node'Result)
    is
       Result : Tree_Node;
    begin
@@ -109,7 +111,7 @@ is
    --  Pushing exclusively using Push_In_Tree_Node ensures that
    --  every Node on the stack is in the Tree.
    procedure Pop_In_A_Tree_Node (S    : in out Bounded_Stacks.Stack;
-                                 Node : out Tree_Node;
+                                 Node : out Valid_Tree_Node;
                                  Tree  : A_Tree)
    with Pre  => not Bounded_Stacks.Is_Empty (S),
         Post => In_A_Tree (Node, Tree) and
@@ -145,7 +147,7 @@ is
    procedure Set_Branch (Is_Right   : Boolean;
                          Node       : in out Valid_Tree_Node;
                          Branch     : Tree_Node) with
-     Pre  => Tree_Abs.In_Tree (Node) and Tree_Abs.In_Tree (Branch),
+     Pre  => Tree_Abs.In_Tree (Node),
      Post => Tree_Abs.In_Tree (Node) and Get_Child (Is_Right, Node) = Branch
    is
    begin
@@ -243,11 +245,11 @@ is
 
    procedure Skew (Tree : in out A_Tree) with
      --  Tree.Target_Node must be set to the subtree root to be skewed.
-     Pre  => Building (Tree) and In_A_Tree (Tree.Target_Node, Tree),
+     Pre  => Building (Tree) and In_A_Tree (Tree.Target_Node, Tree) and
+            Tree.Target_Node in Valid_Tree_Node,
      Post => Building (Tree) and Maintains (Tree'Old, Tree) and
              In_A_Tree (Tree.Target_Node, Tree)
    is
-      pragma Assert (Tree.Target_Node in Valid_Tree_Node);
       Left_Child : Tree_Node := Tree_Abs.Left (Tree.Target_Node);
    begin
       --  No action is performed if the levels of the root and left nodes
@@ -276,7 +278,8 @@ is
 
    procedure Split (Tree : in out A_Tree) with
      --  Tree.Target_Node must be set to the subtree root to be split.
-        Pre  => Building (Tree) and In_A_Tree (Tree.Target_Node, Tree),
+        Pre  => Building (Tree) and In_A_Tree (Tree.Target_Node, Tree) and
+        Tree.Target_Node in Valid_Tree_Node,
         Post => Building (Tree) and Maintains (Tree'Old, Tree) and
                 In_A_Tree (Tree.Target_Node, Tree)
    is
@@ -412,7 +415,7 @@ is
 
    procedure Init_Enumerator (ATree      : A_Tree;
                               Enum       : out Enumerator) with
-     Pre => Populated (ATree)
+     Pre => Populated (ATree) and ATree.Root in Valid_Tree_Node
    is
    begin
       Enum.ATree := ATree;
@@ -478,8 +481,10 @@ is
            (N       => Inserted_Node,
             The_Key => Key);
          --  The new node is the root of the new tree
-            ATree.Root := Inserted_Node;
-            ATree.Target_Node := Inserted_Node;
+         ATree.Root := Inserted_Node;
+         ATree.Target_Node := Inserted_Node;
+         pragma Assert (Count (Atree) = Node_Count'(1));
+         pragma Assert (Populated (ATree));
       else
          --  Make sure that the tree does not already include the key.
          Find (ATree, Key, Key_Found, Visited);
@@ -492,18 +497,21 @@ is
             --  Inc_Count (ATree);
             ATree.Count := ATree.Count + 1;
             ATree.Target_Node := Top_In_A_Tree_Node (Visited, ATree);
+            pragma Assert (Tree_Abs.In_Tree (ATree.Target_Node));
             --  Get the Key of the top node of the stack (the new Target_Node.
             --  A right branch if the value of Key is greater (or equal)
             --  to the Top Value, otherwise take the left branch.
             Is_Right := Tree_Abs.Key (ATree.Target_Node) < Key;
+            pragma Assert (Tree_Abs.In_Tree (ATree.Target_Node));
 
             --  Add a new node to extend the tree.
-            --  The new node is placed in the Target_Node -
-            --  The ATree is updated.
             Tree_Abs.Add_Node
               (N       => Inserted_Node,
                The_Key => Key);
 
+            pragma Assume (Tree_Abs.In_Tree (ATree.Target_Node),
+                           "Adding a node to the tree does not " &
+                             "affect the ATree.Target_Node.");
             Set_Branch
               (Is_Right => Is_Right,
                Node     => ATree.Target_Node,
@@ -521,6 +529,7 @@ is
             Rebalance (ATree, Visited);
             --  Set the Target_Node to the newly inserted node.
             ATree.Target_Node := Inserted_Node;
+            pragma Assert (Populated (ATree));
             pragma Warnings (On, """Visited""");
          end if;
       end if;
@@ -602,6 +611,9 @@ is
               (N       => Inserted_Node,
                The_Key => Key);
 
+            pragma Assume (Tree_Abs.In_Tree (ATree.Target_Node),
+                           "Adding a node to the tree does not " &
+                             "affect the ATree.Target_Node.");
             Set_Branch
               (Is_Right => Is_Right,
                Node     => ATree.Target_Node,
@@ -681,6 +693,9 @@ is
       Both_Present : Boolean;
       Equal     : Boolean;
    begin
+      pragma Assume (ATree_1.Root in Valid_Tree_Node and
+                       ATree_2.Root in Valid_Tree_Node,
+                     "Both ATree_1 and ATree_2 are Populated.");
       Equal := ATree_1.Count = ATree_2.Count;
       if Equal then
          Init_Enumerator (ATree_1, Enum_1);
@@ -717,6 +732,8 @@ is
       Visited : Bounded_Stacks.Stack;
       Found   : Boolean;
    begin
+      pragma Assume (ATree.Root in Valid_Tree_Node,
+                     "ATree is Populated");
       pragma Warnings (Off, """Visited""",
                       Reason => "Visited must be an in out paramter " &
                                  "as it is updated by Find" &
@@ -757,6 +774,8 @@ is
    is
       Result : Enumerator;
    begin
+      pragma Assume (ATree.Root in Valid_Tree_Node,
+                     "ATree is Populated");
       Result.ATree := ATree;
       Bounded_Stacks.New_Stack (Result.Visited);
       Push_In_A_Tree_Node (Result.Visited, ATree.Root, ATree);
