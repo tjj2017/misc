@@ -35,6 +35,11 @@ is
                         ATree.Root in Valid_Tree_Node and
                         (ATree.Count > 0));
 
+   function Refined_Populated (ATree : A_Tree) return Boolean is
+     (Tree_Abs.In_Tree (ATree.Root) and In_A_Tree (ATree.Root, ATree) and
+          ATree.Count > 0) with
+         Post => (if Refined_Populated'Result then Populated (ATree));
+
     function In_A_Tree (N : Tree_Node; Tree : A_Tree) return Boolean is
      (Tree_Abs.In_Tree (N) and Tree_Abs.In_Tree (Tree.Root) and
           N >= Tree.Root and N - Tree.Root + 1 = Tree_Node (Tree.Count)) with
@@ -495,8 +500,10 @@ is
             Inserted := True;
             --# check Trees.in_Tree (ATree.Container, ATree.Root);
             --  Inc_Count (ATree);
-            ATree.Count := ATree.Count + 1;
+           pragma Assert (Refined_Populated (ATree));
+           ATree.Count := ATree.Count + 1;
             ATree.Target_Node := Top_In_A_Tree_Node (Visited, ATree);
+           pragma Assert (Refined_Populated (ATree));
             pragma Assert (Tree_Abs.In_Tree (ATree.Target_Node));
             --  Get the Key of the top node of the stack (the new Target_Node.
             --  A right branch if the value of Key is greater (or equal)
@@ -529,7 +536,7 @@ is
             Rebalance (ATree, Visited);
             --  Set the Target_Node to the newly inserted node.
             ATree.Target_Node := Inserted_Node;
-            pragma Assert (Populated (ATree));
+            pragma Assert (Refined_Populated (ATree));
             pragma Warnings (On, """Visited""");
          end if;
       end if;
