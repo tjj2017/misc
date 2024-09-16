@@ -44,7 +44,7 @@ is
    function In_A_Tree (N : Tree_Node; Tree : A_Tree) return Boolean;
 
    function Populated (ATree : A_Tree) return Boolean with
-     Post => (if Populated'Result then Count (ATree) > 0);
+     Post => (if Populated'Result then Count (ATree) /= 0);
 
    function Building (ATree : A_Tree) return Boolean with
      Global => Status,
@@ -65,7 +65,7 @@ is
      Post   => Building (ATree) and Populated (ATree) and
               (if not Populated (ATree'Old) and Inserted then
                 Count (ATree) = 1
-                  elsif Inserted then
+                  elsif Populated (ATree'Old) and Inserted then
                      Count (ATree) = Count (ATree'Old) + 1
                    else
                      Count (ATree) = Count (ATree'Old));
@@ -76,10 +76,10 @@ is
                                 Inserted      : out Boolean;
                                 Value_At_Node : out Value_Type) with
      Pre  => Building (ATree) and Count (ATree) < Node_Count'Last,
-     Post => Building (ATree) and
-             (if not Populated (ATree'Old) then
+     Post => Building (ATree) and Populated (ATree) and
+             (if not Populated (ATree'Old) and Inserted then
                 Count (ATree) = 1
-                  elsif Inserted then
+                  elsif Populated (ATree'Old) and Inserted then
                      Count (ATree) = Count (ATree'Old) + 1
                    else
                      Count (ATree) = Count (ATree'Old));

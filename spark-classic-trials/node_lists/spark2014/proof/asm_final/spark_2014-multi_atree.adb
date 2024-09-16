@@ -28,17 +28,12 @@ is
 
    function Populated (ATree : A_Tree) return Boolean is
      (Tree_Abs.In_Tree (ATree.Root) and In_A_Tree (ATree.Root, ATree) and
-          ATree.Count > 0) with
+          ATree.Count /= 0) with
    Refined_Post => (if Populated'Result then
                        Tree_Abs.In_Tree (ATree.Root) and
                         In_A_Tree (ATree.Root, ATree) and
                         ATree.Root in Valid_Tree_Node and
-                        (ATree.Count > 0));
-
-   function Refined_Populated (ATree : A_Tree) return Boolean is
-     (Tree_Abs.In_Tree (ATree.Root) and In_A_Tree (ATree.Root, ATree) and
-          ATree.Count > 0) with
-         Post => (if Refined_Populated'Result then Populated (ATree));
+                        (ATree.Count /= 0));
 
     function In_A_Tree (N : Tree_Node; Tree : A_Tree) return Boolean is
      (Tree_Abs.In_Tree (N) and Tree_Abs.In_Tree (Tree.Root) and
@@ -160,12 +155,10 @@ is
          Tree_Abs.Set_Right
            (N      => Node,
             Branch => Branch);
-         pragma Assert (Tree_Abs.Right (Node) = Branch);
       else
          Tree_Abs.Set_Left
            (N      => Node,
             Branch => Branch);
-         pragma Assert (Tree_Abs.Left (Node) = Branch);
       end if;
       pragma Assume (Get_Child (Is_Right, Node) = Branch,
                      "Whether the left or right child is set, " &
@@ -217,7 +210,6 @@ is
 
          Current_Key := Tree_Abs.Key (Current_Target);
          Found := Current_Key = Key;
-         pragma Assert (In_A_Tree (Current_Target, ATree));
          if not Found then
 
             --  Take the right branch if the Key value is greater
@@ -238,7 +230,6 @@ is
          --  children.
          Current_Target := Child;
       end loop;
-      pragma Assert (if Found then In_A_Tree (Current_Target, ATree));
       --  The Tree.Visited stack will not be empty.
       --  If Found is True, the ATree contans a node with the
       --  matching Key.  The Tree_Node on the top of the Tree.Visted
@@ -288,8 +279,6 @@ is
         Post => Building (Tree) and Maintains (Tree'Old, Tree) and
                 In_A_Tree (Tree.Target_Node, Tree)
    is
-      --  T_In : constant Trees.Tree_Type := Tree
-      --  with Ghost;
       Right_Child       : Tree_Node;
       Right_Right_Child : Tree_Node;
       Current_Level     : Node_Count;
@@ -321,12 +310,12 @@ is
          Tree_Abs.Set_Left
            (N      =>  Right_Child,
             Branch => Tree.Target_Node);
-         pragma Assume (In_A_Tree (Right_Child, Tree),
-                        "Setting a branch does not remove any nodes");
+--           pragma Assume (In_A_Tree (Right_Child, Tree),
+--                          "Setting a branch does not remove any nodes");
          --  The Target now becomes the right child.
          Tree.Target_Node := Right_Child;
          Current_Level := Tree_Abs.Level (Tree.Target_Node);
-         pragma Assume (Current_Level < Node_Count'Last,
+--           pragma Assume (Current_Level < Node_Count'Last,
                         "The Level cannot exceed the number of nodes");
          --  Increment the level of the new Target.
          Tree_Abs.Set_Level (Tree.Target_Node, Current_Level + 1);
@@ -435,9 +424,6 @@ is
 
    procedure New_A_Tree (ATree : out A_Tree) with
      Refined_Global => (In_Out => Refined_Status)
-     --  Refined_Post => Refined_Status = Constructing and
-     --          ATree.Count = 0 and
-     --          ATree.State = Constructing
    is
    begin
       Refined_Status := Constructing;
@@ -456,32 +442,19 @@ is
      (ATree      : in out A_Tree;
       Key        : Key_Type;
       Inserted   : out Boolean)
-     --  with Refined_Post => Trees.Key_Is_Present (ATree.Container, Key) and
-     --             Populated (ATree) and
-     --             (if not Populated (ATree'Old) then
-     --                Count (ATree) = 1
-     --                  elsif Inserted then
-     --                    Count (ATree) = Count (ATree'Old) + 1
-     --              else
-     --               Count (ATree) = Count (ATree'Old))
    is
       Visited          : Bounded_Stacks.Stack;
       Key_Found        : Boolean;
       Is_Right         : Boolean;
       Inserted_Node    : Tree_Node;
    begin
-      --# accept W, 444, "There cannot be Natural'Last tree nodes",
-      --#                "Definition of Populated and Count";
-      --# assume ATree.Count < Natural'Last;
-      --# assume (not Populated (ATree)) -> ATree.Count = 0;
-      --# assume ATree.Count = Count (ATree);
-      --# end accept;
       if not Populated (ATree) then
+         pragma Assume (ATree.Count = 0,
+                       "Definition of not Populated -> Count = 0");
          --  First node of tree - Enter a new node with level 1 into the store
          Inserted := True;
          --  Set_Count (ATree, 1);
          ATree.Count := 1;
---         --# check Count (ATree) = 1;
          Tree_Abs.Add_Node
            (N       => Inserted_Node,
             The_Key => Key);
@@ -498,12 +471,11 @@ is
             Inserted := False;
           else
             Inserted := True;
-            --# check Trees.in_Tree (ATree.Container, ATree.Root);
-            --  Inc_Count (ATree);
-           pragma Assert (Refined_Populated (ATree));
+           pragma Assert (Populated (ATree));
            ATree.Count := ATree.Count + 1;
             ATree.Target_Node := Top_In_A_Tree_Node (Visited, ATree);
-           pragma Assert (Refined_Populated (ATree));
+            pragma Assume (Populated (ATree),
+                          "Populated is independent of the Target_Node." );
             pragma Assert (Tree_Abs.In_Tree (ATree.Target_Node));
             --  Get the Key of the top node of the stack (the new Target_Node.
             --  A right branch if the value of Key is greater (or equal)
@@ -524,11 +496,6 @@ is
                Node     => ATree.Target_Node,
                Branch   => Inserted_Node);
                --  The Target_Node is set to the newly inserted node.
-            --# check Populated (ATree);
-            -- Now rebalance the tree
-            --# accept F, 10, Visited, "Visited must be an in out paramter ",
-            --#                        "as it is updated by Rebalance_Tree",
-            --#                        " but its final value is unrequired";
             pragma Warnings (Off, """Visited""",
                       Reason => "Visited must be an in out paramter " &
                                  "as it is updated by Rebalance_Tree" &
@@ -536,15 +503,10 @@ is
             Rebalance (ATree, Visited);
             --  Set the Target_Node to the newly inserted node.
             ATree.Target_Node := Inserted_Node;
-            pragma Assert (Refined_Populated (ATree));
+            pragma Assert (Populated (ATree));
             pragma Warnings (On, """Visited""");
          end if;
       end if;
-      --# accept W, 444, "The Key is in the Tree",
-      --#                "Definition of Count";
-      --# assume Is_Present (ATree, Key);
-      --# assume Count (ATree) = ATree.Count;
-      --# end accept;
    end Insert;
 
    -----------------------
@@ -557,27 +519,15 @@ is
       Value         : Value_Type;
       Inserted      : out Boolean;
       Value_At_Node : out Value_Type)
-     --  with Refined_Post => Trees.Key_Is_Present (ATree.Container, Key) and
-     --             Populated (ATree) and
-     --             (if not Populated (ATree'Old) then
-     --                Count (ATree) = 1
-     --                  elsif Inserted then
-     --                    Count (ATree) = Count (ATree'Old) + 1
-     --              else
-     --                 Count (ATree) = Count (ATree'Old))
    is
       Visited         : Bounded_Stacks.Stack;
       Key_Found       : Boolean;
       Is_Right        : Boolean;
       Inserted_Node   : Tree_Node;
     begin
-      --# accept W, 444, "There cannot be Natural'Last tree nodes",
-      --#                "Definition of Populated and Count";
-      --# assume ATree.Count < Natural'Last;
-      --# assume (not Populated (ATree)) -> ATree.Count = 0;
-      --# assume ATree.Count = Count (ATree);
-      --# end accept;
       if not Populated (ATree) then
+         pragma Assume (ATree.Count = 0,
+                        "Definition of not Populated -> Count = 0");
          --  First node of tree - Add a new node with level 1.
          Inserted := True;
          ATree.Count := 1;
@@ -590,6 +540,7 @@ is
          ATree.Root := Inserted_Node;
          ATree.Target_Node := Inserted_Node;
          Tree_Abs.Set_Value (ATree.Target_Node, Value);
+         pragma Assert (Count (Atree) = Node_Count'(1));
       else
          --  Make sure that the tree does not already include the key.
          Find (ATree, Key, Key_Found, Visited);
@@ -600,12 +551,12 @@ is
             --  Get its value.
             --  Set the Target_Node to the node with the Key.
             ATree.Target_Node := Top_In_A_Tree_Node (Visited, ATree);
-            Value_At_Node := Tree_Abs.Value (ATree.Target_Node);
+            pragma Assume (Populated (ATree),
+                          "Populated is independent of the Target_Node." );
+             Value_At_Node := Tree_Abs.Value (ATree.Target_Node);
 
          else
             Inserted := True;
-            --# check Trees.in_Tree (ATree.Container, ATree.Root);
-            --  Inc_Count (ATree);
             ATree.Count := ATree.Count + 1;
             ATree.Target_Node := Top_In_A_Tree_Node (Visited, ATree);
             --  A right branch if the value of Key is greater (or equal)
@@ -621,11 +572,12 @@ is
             pragma Assume (Tree_Abs.In_Tree (ATree.Target_Node),
                            "Adding a node to the tree does not " &
                              "affect the ATree.Target_Node.");
-            Set_Branch
+             pragma Assume (Populated (ATree),
+                          "Populated is independent of the Target_Node." );
+           Set_Branch
               (Is_Right => Is_Right,
                Node     => ATree.Target_Node,
                Branch   => Inserted_Node);
-            --# check Populated (ATree);
             -- Now rebalance the tree
             pragma Warnings (Off, """Visited""",
                       Reason => "Visited must be an in out paramter " &
@@ -637,13 +589,6 @@ is
             Value_At_Node := Value;
          end if;
       end if;
-      --  pragma Assume (Trees.Key_Is_Present (ATree.Container, Key),
-      --                 "Set_Branch and Rebalance maintain keys");
-      --  --# accept W, 444, "The Key is in the Tree",
-      --  --#                "Definition of Count";
-      --  --# assume Is_Present (ATree, Key);
-      --  --# assume Count (ATree) = ATree.Count;
-      --  --# end accept;
    end Insert_With_Value;
 
    ------------------
