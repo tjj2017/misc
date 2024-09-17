@@ -1,6 +1,6 @@
-package body SPARK_2014.Multi_Atree with
-   SPARK_Mode,
-   Refined_State => (Status => Refined_Status)
+with SPARK_Classic.Multi_ATree.Tree_Abs;
+package body SPARK_Classic.Multi_Atree
+--# own Status is Refined_Status;
 is
    Refined_Status : Pack_Status;
 
@@ -8,11 +8,8 @@ is
    -- A_Tree_Init  --
    ------------------
 
-   procedure A_Tree_Init with
-     Refined_Global => (Output => Refined_Status),
-     SPARK_Mode => Off
-    --  SPARK_Mode is Off because A_Tree_Init references
-   --  the hidden Tree structure storage.
+   procedure A_Tree_Init
+   --# global out Refined_Status;
   is
    begin
       Refined_Status := Free;

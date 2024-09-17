@@ -43,7 +43,7 @@ private
    subtype Stack_Index is Stack_Count range 1 .. Stack_Count'Last;
    type Stack_Contents is array (Stack_Index) of Element_Type;
 
-   type Stack is tagged
+   type Stack is
       record
          Count    : Stack_Count;
          Contents : Stack_Contents;

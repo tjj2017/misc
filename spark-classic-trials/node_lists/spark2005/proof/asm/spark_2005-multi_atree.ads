@@ -6,20 +6,18 @@
 --  which can only support 1 tree but using this package multiple A_Trees   --
 --  can be stored within it.                                                --
 ------------------------------------------------------------------------------
-with SPARK_2014.Bounded_Stacks,
-     SPARK_2014.Tree_Abstraction;
-package SPARK_2014.Multi_Atree with
-  SPARK_Mode,
-  Abstract_State => Status
+with SPARK_CLassic.Bounded_Stacks;
+package SPARK_Classic.Multi_Atree
+--# own Status;
 is
-   function Is_Building return Boolean with
-     Global => Status;
+   function Is_Building return Boolean;
+   --# global Status;
 
    --  Call A_Tree_Init to initialise the A_Tree subsystem prior to use.
    --  Deletes all A_Trees - only use as an initialisation.
-   procedure A_Tree_Init with
-     Global => (Output => Status),
-     Post   => not Is_Building;
+   procedure A_Tree_Init;
+   --# global out Status;
+   --# post not Is_Building;
 
    -- Notional maximum nodes in a tree.
    type Node_Count is range 0 .. Natural'Last - 1;
@@ -152,4 +150,4 @@ private
 
    type Direction is (Left, Right);
 
-end SPARK_2014.Multi_Atree;
+end SPARK_Classic.Multi_Atree;
