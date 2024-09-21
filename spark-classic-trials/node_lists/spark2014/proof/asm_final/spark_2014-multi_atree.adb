@@ -454,12 +454,12 @@ is
    procedure Insert
      (ATree      : in out A_Tree;
       Key        : Key_Type;
-      Inserted   : out Boolean)
+      Inserted   : out Boolean;
+      Key_Node   : out Tree_Node)
    is
       Visited          : Bounded_Stacks.Stack;
       Key_Found        : Boolean;
       Is_Right         : Boolean;
-      Inserted_Node    : Tree_Node;
    begin
       if not Populated (ATree) then
          pragma Assume (ATree.Count = 0,
@@ -469,17 +469,18 @@ is
          --  Set_Count (ATree, 1);
          ATree.Count := 1;
          Tree_Abs.Add_Node
-           (N       => Inserted_Node,
+           (N       => Key_Node,
             The_Key => Key);
          --  The new node is the root of the new tree
-         ATree.Root := Inserted_Node;
-         ATree.Target_Node := Inserted_Node;
+         ATree.Root := Key_Node;
+         ATree.Target_Node := Key_Node;
       else
          --  Make sure that the tree does not already include the key.
          Find (ATree, Key, Key_Found, Visited);
          if Key_Found then
             --  The Key is already in the tree, do not add it again.
             Inserted := False;
+            Key_Node := Top_In_A_Tree_Node (Visited, ATree);
           else
             Inserted := True;
             ATree.Count := ATree.Count + 1;
@@ -493,101 +494,27 @@ is
 
             --  Add a new node to extend the tree.
             Tree_Abs.Add_Node
-              (N       => Inserted_Node,
+              (N       => Key_Node,
                The_Key => Key);
 
             Set_Branch
               (Is_Right => Is_Right,
                Node     => ATree.Target_Node,
-               Branch   => Inserted_Node);
-               --  The Target_Node is set to the newly inserted node.
+               Branch   => Key_Node);
+            --  The Target_Node is set to the newly inserted node.
             pragma Warnings (Off, """Visited""",
                       Reason => "Visited must be an in out paramter " &
                                  "as it is updated by Rebalance_Tree" &
                                  " but its final value is unrequired");
             Rebalance (ATree, Visited);
             --  Set the Target_Node to the newly inserted node.
-            ATree.Target_Node := Inserted_Node;
+            ATree.Target_Node := Key_Node;
             pragma Warnings (On, """Visited""");
          end if;
       end if;
+      pragma Assume (Tree_Abs.Key (Key_Node) = Node_Key (Key_Node, ATree),
+                    "Both functions access the Key of the given node.");
    end Insert;
-
-   -----------------------
-   -- Insert_With_Value --
-   -----------------------
-
-   procedure Insert_With_Value
-     (ATree         : in out A_Tree;
-      Key           : Key_Type;
-      Value         : Value_Type;
-      Inserted      : out Boolean;
-      Value_At_Node : out Value_Type)
-   is
-      Visited         : Bounded_Stacks.Stack;
-      Key_Found       : Boolean;
-      Is_Right        : Boolean;
-      Inserted_Node   : Tree_Node;
-    begin
-      if not Populated (ATree) then
-         pragma Assume (ATree.Count = 0,
-                        "Definition of not Populated -> Count = 0");
-         --  First node of tree - Add a new node with level 1.
-         Inserted := True;
-         ATree.Count := 1;
-         Tree_Abs.Add_Node
-           (N       => Inserted_Node,
-            The_Key => Key);
-         Value_At_Node := Value;
-         --  The new node is the root of the new tree.
-         --  Set its Value.
-         ATree.Root := Inserted_Node;
-         ATree.Target_Node := Inserted_Node;
-         Tree_Abs.Set_Value (ATree.Target_Node, Value);
-      else
-         --  Make sure that the tree does not already include the key.
-         Find (ATree, Key, Key_Found, Visited);
-         if Key_Found then
-            --  The Key is already in the tree, do not add it again.
-            Inserted := False;
-            --  The node with the key is on the top of the visited stack.
-            --  Get its value.
-            --  Set the Target_Node to the node with the Key.
-            ATree.Target_Node := Top_In_A_Tree_Node (Visited, ATree);
-             Value_At_Node := Tree_Abs.Value (ATree.Target_Node);
-
-         else
-            Inserted := True;
-            ATree.Count := ATree.Count + 1;
-            ATree.Target_Node := Top_In_A_Tree_Node (Visited, ATree);
-            --  A right branch if the value of Key is greater (or equal)
-            --  to the Top Value, otherwise take the left branch.
-            Is_Right := Tree_Abs.Key (ATree.Target_Node) < Key;
-
-            --  Add a new node to extend the tree.
-            --  The new node is placed in ATree.Target_Node.
-            Tree_Abs.Add_Node
-              (N       => Inserted_Node,
-               The_Key => Key);
-
-            pragma Assume (Populated (ATree),
-                          "Populated is independent of the Target_Node." );
-           Set_Branch
-              (Is_Right => Is_Right,
-               Node     => ATree.Target_Node,
-               Branch   => Inserted_Node);
-            -- Now rebalance the tree
-            pragma Warnings (Off, """Visited""",
-                      Reason => "Visited must be an in out paramter " &
-                                 "as it is updated by Rebalance_Tree" &
-                                 " but its final value is unrequired");
-            Rebalance (ATree, Visited);
-            pragma Warnings (On, """Visited""");
-            ATree.Target_Node := Inserted_Node;
-            Value_At_Node := Value;
-         end if;
-      end if;
-   end Insert_With_Value;
 
    ------------------
    -- Clear_A_Tree --
@@ -668,15 +595,15 @@ is
       return Equal;
    end Is_Equal;
 
-   ----------------
-   -- Is_Present --
-   ----------------
+   -------------
+   -- Look_Up --
+   -------------
 
-   function Is_Present
-     (ATree : A_Tree; Key : Key_Type) return Boolean
+   function Look_Up (ATree : A_Tree; Key : Key_Type) return Tree_Node
    is
       Visited : Bounded_Stacks.Stack;
       Found   : Boolean;
+      Result  : Tree_Node;
    begin
       pragma Assume (ATree.Root in Valid_Tree_Node,
                      "ATree is Populated");
@@ -686,8 +613,23 @@ is
                                  " but its final value is unrequired");
       Find (ATree, Key, Found, Visited);
       pragma Warnings (On, """Visited""");
-      return Found;
-   end Is_Present;
+      if Found then
+         Result := Top_In_A_Tree_Node (Visited, ATree);
+         pragma Assert (In_A_Tree (Result, ATree));
+         pragma Assume (Tree_Abs.Key (Result) = Node_Key (Result, ATree),
+                        "Both functions access the Key of the given node.");
+      else
+         Result := Empty_Node;
+      end if;
+      return Result;
+   end Look_Up;
+
+    ----------------
+   -- Is_Present --
+   ----------------
+
+   function Is_Present (ATree : A_Tree; Key : Key_Type) return Boolean is
+      (Look_Up (ATree, Key) /= Empty_Node);
 
    ----------------
    -- Tree_Depth --
@@ -712,21 +654,43 @@ is
 
    function Count (ATree : A_Tree) return Node_Count is (ATree.Count);
 
+   ----------------
+   -- Node_Value --
+   ----------------
+
+   function Node_Value (Node : Tree_Node; ATree : A_Tree) return Value_Type
+   is
+   begin
+      pragma Assume (Node in Valid_Tree_Node,
+                     "In_A_Tree (Node) is a precondition.");
+      return Tree_Abs.Value (Node);
+   end Node_Value;
+
+   --------------
+   -- Node_Key --
+   --------------
+
+   function Node_Key (Node : Tree_Node; ATree : A_Tree) return Key_Type
+   is
+   begin
+      pragma Assume (Node in Valid_Tree_Node,
+                     "In_A_Tree (Node) is a precondition.");
+      return Tree_Abs.Key (Node);
+   end Node_Key;
+
    --------------------
    -- New_Enumerator --
    --------------------
 
-   function New_Enumerator (ATree : A_Tree) return Enumerator
+   procedure New_Enumerator (ATree : A_Tree; New_Enum : out Enumerator)
    is
-      Result : Enumerator;
    begin
       pragma Assume (ATree.Root in Valid_Tree_Node,
                      "ATree is Populated");
-      Result.ATree := ATree;
-      Bounded_Stacks.New_Stack (Result.Visited);
-      Push_In_A_Tree_Node (Result.Visited, ATree.Root, ATree);
-      Trace_To_Left_Leaf (Result);
-      return Result;
+      New_Enum.ATree := ATree;
+      Bounded_Stacks.New_Stack (New_Enum.Visited);
+      Push_In_A_Tree_Node (New_Enum.Visited, ATree.Root, ATree);
+      Trace_To_Left_Leaf (New_Enum);
    end New_Enumerator;
 
 end SPARK_2014.Multi_Atree;

@@ -58,9 +58,18 @@ is
 
    function Count (ATree : A_Tree) return Node_Count;
 
+   function Node_Value (Node : Tree_Node; ATree : A_Tree)
+                        return Value_Type with
+     Pre => In_A_Tree (Node, ATree);
+
+   function Node_Key (Node : Tree_Node; ATree : A_Tree) return Key_Type with
+     Pre => In_A_Tree (Node, ATree);
+
    procedure Insert (ATree      : in out A_Tree;
                      Key        : Key_Type;
-                     Inserted   : out Boolean) with
+                     Inserted   : out Boolean;
+                     Key_Node   : out Tree_Node) with
+     --  Global => Status,  --  Gives errors regarding hidden state??
      Pre    => Building (ATree) and Count (ATree) < Node_Count'Last,
      Post   => Building (ATree) and Populated (ATree) and
               (if not Populated (ATree'Old) and Inserted then
@@ -68,21 +77,9 @@ is
                   elsif Populated (ATree'Old) and Inserted then
                      Count (ATree) = Count (ATree'Old) + 1
                    else
-                     Count (ATree) = Count (ATree'Old));
-
-   procedure Insert_With_Value (ATree         : in out A_Tree;
-                                Key           : Key_Type;
-                                Value         : Value_Type;
-                                Inserted      : out Boolean;
-                                Value_At_Node : out Value_Type) with
-     Pre  => Building (ATree) and Count (ATree) < Node_Count'Last,
-     Post => Building (ATree) and Populated (ATree) and
-             (if not Populated (ATree'Old) and Inserted then
-                Count (ATree) = 1
-                  elsif Populated (ATree'Old) and Inserted then
-                     Count (ATree) = Count (ATree'Old) + 1
-                   else
-                     Count (ATree) = Count (ATree'Old));
+                     Count (ATree) = Count (ATree'Old)) and
+               In_A_Tree (Key_Node, ATree) and
+                  Node_Key (Key_Node, ATree) = Key;
 
    --  This procedure Clear_A_Tree may be used to clear the A_Tree
    --  currently under construction.  An A_Tree whose construction has been
@@ -96,6 +93,11 @@ is
    function Is_Equal (ATree_1, ATree_2 : A_Tree) return Boolean with
      Pre => Populated (ATree_1) and Populated (ATree_2);
 
+   function Look_Up (ATree : A_Tree; Key : Key_Type) return Tree_Node with
+     Pre => Populated (ATree),
+     Post => (if In_A_Tree (Look_Up'Result, ATree) then
+                Node_Key (Look_Up'Result, ATree) = Key);
+
    function Is_Present (ATree : A_Tree; Key : Key_Type) return Boolean with
      Pre  => Populated (ATree);
 
@@ -104,7 +106,7 @@ is
 
    type Enumerator is limited private;
 
-   function New_Enumerator (ATree : A_Tree) return Enumerator with
+   procedure New_Enumerator (ATree : A_Tree; New_Enum : out Enumerator) with
      Pre => Populated (ATree);
 
    procedure Next_Node (E : in out Enumerator; The_Node : out Tree_Node);

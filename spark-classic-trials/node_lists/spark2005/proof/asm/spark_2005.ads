@@ -1,3 +1,3 @@
-package SPARK_Classic is
+package SPARK_2005 is
 
-end SPARK_Classic;
+end SPARK_2005;
