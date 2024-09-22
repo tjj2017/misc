@@ -6,6 +6,7 @@
 --  which can only support 1 tree but using this package multiple A_Trees   --
 --  can be stored within it.                                                --
 ------------------------------------------------------------------------------
+--# inherit SPARK_2005;
 package SPARK_2005.Multi_Atree
 --# own Status;
 is
@@ -123,12 +124,13 @@ private
    --  private to child Stack_Ops -----------------------------------
    --  Only the subprograms declared in the visible part of        --
    --  should directly manipulate these declarations.              --
-   subtype Stack_Index is Node_Count range 1 .. Stack_Size;   --
+   subtype Stack_Count is Node_Count range 0 .. Stack_Size;        --
+   subtype Stack_Index is Stack_Count range 1 .. Stack_Count'Last; --
    type Stack_Contents is array (Stack_Index) of Valid_Tree_Node;  --
                                                                    --
    type Stack is  -- private                                       --
       record                                                       --
-         Count    : Node_Count;                                    --
+         Count    : Stack_Count;                                    --
          Contents : Stack_Contents;                                --
       end record;                                                  --
    ------------------------------------------------------------------
