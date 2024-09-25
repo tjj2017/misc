@@ -24,7 +24,7 @@ private package SPARK_2005.Multi_ATree.Stack_Ops is
    --# post Count (S) = Count (S~) - 1;
 
    function Predecessor (S : Multi_ATree.Stack;
-                         Pred_Num : Multi_Atree.Stack_Count)
+                         Pred_Num : Multi_Atree.Stack_Index)
                          return Multi_ATree.Valid_Tree_Node;
    --# pre Pred_Num < Count (S);
 
