@@ -1,11 +1,10 @@
 --------------------  SPARK_2014.Tree_Abstraction  ---------------------------
 --  This package body has to be excluded from SPARK analysis as the body    --
---  has state but its specification does not declare an abstract state      --
+--  has state but its specification does not declare an own variable.       --
 ------------------------------------------------------------------------------
 with GNAT.Dynamic_Tables;
-package body SPARK_2014.Tree_Abstraction with
-  SPARK_Mode => Off
-is
+package body SPARK_2005.Multi_ATree.Tree_Abstraction is
+--# hide SPARK_2005.Multi_ATree.Tree_Abstraction;
 
   package Gnat_Table is new GNAT.Dynamic_Tables
      (Table_Component_Type => Actual_Node,
@@ -27,18 +26,26 @@ is
    --------------------------
 
    function Is_A_Valid_Tree_Node (N : Tree_Node) return Boolean is
-      (N in Valid_Tree_Node and N <= Gnat_Table.Last (T));
+   begin
+      return (N in Valid_Tree_Node and N <= Gnat_Table.Last (T));
+   end Is_A_Valid_Tree_Node;
 
-   ------------
+   --------------
+   -- Is_Empty --
+   --------------
+
+   function Is_Empty (N :  Multi_ATree.Tree_Node) return Boolean is
+   begin
+      return N = Multi_Atree.Empty_Node;
+   end Is_Empty;
+
+    ------------
    -- In_Tree --
    -------------
 
-
    function In_Tree (N : Tree_Node) return Boolean is
-      Result : Boolean;
    begin
-      Result := Is_A_Valid_Tree_Node (N);
-      return Result;
+      return Is_A_Valid_Tree_Node (N);
    end In_Tree;
 
     -----------
@@ -46,35 +53,38 @@ is
    -----------
 
    function Level (N : Valid_Tree_Node) return Level_Type is
-     (T.Table (N).Level);
+   begin
+      return (T.Table (N).Level);
+   end Level;
 
    ----------
    -- Left --
    ----------
 
-   function Left (N : Valid_Tree_Node) return Tree_Node is (T.Table (N).Left);
+   function Left (N : Valid_Tree_Node) return Tree_Node is
+   begin
+      return (T.Table (N).Left);
+   end Left;
 
    -----------
    -- Right --
    -----------
 
    function Right (N : Valid_Tree_Node) return Tree_Node is
-     (T.Table (N).Right);
+   begin
+      return (T.Table (N).Right);
+   end Right;
 
    ---------
    -- Key --
    ---------
 
-   function Key (N : Valid_Tree_Node) return Key_Type is (T.Table (N).Key);
+   function Key (N : Valid_Tree_Node) return Key_Type is
+   begin
+      return (T.Table (N).Key);
+   end Key;
 
-   -----------
-   -- Value --
-   -----------
-
-   function Value (N : Valid_Tree_Node) return Value_Type is
-     (T.Table (N).Value);
-
-   ---------------
+    ---------------
    -- Set_Level --
    ---------------
 
@@ -110,16 +120,6 @@ is
       T.Table (N).Key := The_Key;
    end Set_Key;
 
-   ---------------
-   -- Set_Value --
-   ---------------
-
-   procedure Set_Value (N : in out Valid_Tree_Node;
-                        Node_Value : Value_Type) is
-   begin
-      T.Table (N).Value := Node_Value;
-   end Set_Value;
-
    --------------
    -- Add_Node --
    --------------
@@ -144,4 +144,4 @@ is
       N := Empty_Node;
     end Clear_Tree_Below_Node;
 
-end SPARK_2014.Tree_Abstraction;
+end SPARK_2005.Multi_ATree.Tree_Abstraction;

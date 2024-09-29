@@ -1,5 +1,4 @@
-with SPARK_Classic.Multi_ATree.Tree_Abs;
-package body SPARK_Classic.Multi_Atree
+package body SPARK_2005.Multi_Atree
 --# own Status is Refined_Status;
 is
    Refined_Status : Pack_Status;
@@ -22,58 +21,64 @@ is
    -- Is_Building  --
    ------------------
 
-   function Is_Building return Boolean is (Refined_Status = Constructing) with
-     Refined_Global => Refined_Status;
+   function Is_Building return Boolean
+   --# global Refined_Status;
+   is
+   begin
+      return (Refined_Status = Constructing);
+   end Is_Building;
 
    ----------------
    --  Building  --
    ----------------
 
-   function Building (ATree : A_Tree) return Boolean is
-     (Is_Building and ATree.State = Constructing);
+   function Building (ATree : A_Tree) return Boolean
+   --# global Refined_Status;
+   is
+   begin
+      return (Is_Building and ATree.State = Constructing);
+   end Building;
 
    ----------------
    -- Empty_Tree --
    ----------------
 
    function Empty_Tree (ATree : A_Tree) return Boolean is
-      (ATree.Root = Empty_Node);
+   begin
+      return  (ATree.Root = Empty_Node);
+   end Empty_Tree;
 
-   function Populated (ATree : A_Tree) return Boolean is
-     (Tree_Abs.In_Tree (ATree.Root) and In_A_Tree (ATree.Root, ATree) and
-          ATree.Count /= 0) with
-   Refined_Post => (if Populated'Result then
-                       Tree_Abs.In_Tree (ATree.Root) and
-                        In_A_Tree (ATree.Root, ATree) and
-                        ATree.Root in Valid_Tree_Node and
-                        (ATree.Count /= 0));
+   --# function Populated (ATree : A_Tree) return Boolean
+   --# return P => P -> (Tree_Abs.In_Tree (ATree.Root) and
+   --#                      In_A_Tree (ATree.Root, ATree) and
+   --#                      ATree.Root in Valid_Tree_Node and
+   --#                      (ATree.Count /= 0));
 
-    function In_A_Tree (N : Tree_Node; Tree : A_Tree) return Boolean is
-     (Tree_Abs.In_Tree (N) and Tree_Abs.In_Tree (Tree.Root) and
-          N >= Tree.Root and N - Tree.Root + 1 = Tree_Node (Tree.Count)) with
-       Refined_Post => (if In_A_Tree'Result then
-                          N in Valid_Tree_Node and
-                            Tree_Abs.In_Tree (N));
+   function In_A_Tree (N : Tree_Node; Tree : A_Tree) return Boolean
+   --# return IAT => IAT -> (N in Valid_Tree_Node and
+   --#                          Tree_Abs.In_Tree (N));
+   is
+   begin
+      return (Tree_Abs.In_Tree (N) and Tree_Abs.In_Tree (Tree.Root) and
+                N >= Tree.Root and N - Tree.Root + 1 = Tree_Node (Tree.Count));
+   end In_A_Tree;
 
    --  Proof helper subprograms
 
    --  The contents of the tree are the same but the tree structure may change.
    --  The root of the tree may be reassigned.
-   function Retains (AT_Pre, AT_Post : A_Tree) return Boolean is
-     (AT_Post.Count >= AT_Pre.Count and
-          (for all N in Tree_Node => (if In_A_Tree (N, AT_Pre) then
-                                          In_A_Tree (N, AT_Post))))
-       with Ghost;
+   --# function Retains (AT_Pre, AT_Post : A_Tree) return Boolean;
+   --# return (AT_Post.Count >= AT_Pre.Count and
+   --#        (for all N in Tree_Node =>
+   --#            (In_A_Tree (N, AT_Pre) -> In_A_Tree (N, AT_Post))))
 
    --  The Trees may have a different structure but contains the same nodes.
-   function Maintains (AT_1, AT_2 : A_Tree) return Boolean is
-     (Retains (AT_1, AT_2) and Retains (AT_2, AT_1))
-      with Ghost;
+   --# function Maintains (AT_1, AT_2 : A_Tree) return Boolean;
+   --# return  (Retains (AT_1, AT_2) and Retains (AT_2, AT_1));
 
    --  The Tree is retained, in addition the root of the tree is unchanged.
-   function Persists (AT_Pre, AT_Post : A_Tree) return Boolean is
-     (Retains (AT_Pre, AT_Post) and AT_Pre.Root = AT_Post.Root)
-   with Ghost;
+   --# function Persists (AT_Pre, AT_Post : A_Tree) return Boolean;
+   --# return (Retains (AT_Pre, AT_Post) and AT_Pre.Root = AT_Post.Root);
 
    ---------------------------------------------------------------------------
   --  Local functions and procedures
@@ -81,10 +86,10 @@ is
     --  Pushing exclusively using Push_In_Tree_Node ensures that
    --  every Node on the stack is in the A_Tree.
    function Top_In_A_Tree_Node (S : Bounded_Stacks.Stack; Tree : A_Tree)
-                                return Valid_Tree_Node with
-     Pre  => not Bounded_Stacks.Is_Empty (S),
-     Post => In_A_Tree (Top_In_A_Tree_Node'Result, Tree) and
-             Tree_Abs.In_Tree (Top_In_A_Tree_Node'Result)
+                                return Valid_Tree_Node
+   --# pre  not Bounded_Stacks.Is_Empty (S);
+   --# return => Top In_A_Tree (Top, Tree) and
+   --#           Tree_Abs.In_Tree (Top);
    is
       Result : Tree_Node;
    begin
@@ -93,7 +98,6 @@ is
                      "The exclusive use of Push_In_A_Tree ensures all " &
                      "pushed nodes are In_A_Tree, so, " &
                      "all nodes the stack including the top will also be.");
-
       return Result;
    end Top_In_A_Tree_Node;
    pragma Inline (Top_In_A_Tree_Node);
@@ -104,9 +108,9 @@ is
    procedure Push_In_A_Tree_Node (S    : in out Bounded_Stacks.Stack;
                                 Node : Valid_Tree_Node;
                                 Tree : A_Tree)
-     with Pre  => In_A_Tree (Node, Tree),
-          Post => not Bounded_Stacks.Is_Empty (S) and
-                  Top_In_A_Tree_Node (S, Tree) = Node
+   --# pre In_A_Tree (Node, Tree);
+   --# post not Bounded_Stacks.Is_Empty (S) and
+   --#            Top_In_A_Tree_Node (S, Tree) = Node;
    is
    begin
       --  The precondition ensures all nodes pushed on the stack are in the
@@ -126,9 +130,9 @@ is
    procedure Pop_In_A_Tree_Node (S    : in out Bounded_Stacks.Stack;
                                  Node : out Valid_Tree_Node;
                                  Tree  : A_Tree)
-   with Pre  => not Bounded_Stacks.Is_Empty (S),
-        Post => In_A_Tree (Node, Tree) and
-                Bounded_Stacks.Count (S) = Bounded_Stacks.Count (S'Old) - 1
+   --# pre  not Bounded_Stacks.Is_Empty (S),
+   --# post In_A_Tree (Node, Tree) and
+   --#        Bounded_Stacks.Count (S) = Bounded_Stacks.Count (S'Old) - 1;
    is
    begin
       Bounded_Stacks.Pop (S, Node);
@@ -510,82 +514,6 @@ is
       end if;
    end Insert;
 
-   -----------------------
-   -- Insert_With_Value --
-   -----------------------
-
-   procedure Insert_With_Value
-     (ATree         : in out A_Tree;
-      Key           : Key_Type;
-      Value         : Value_Type;
-      Inserted      : out Boolean;
-      Value_At_Node : out Value_Type)
-   is
-      Visited         : Bounded_Stacks.Stack;
-      Key_Found       : Boolean;
-      Is_Right        : Boolean;
-      Inserted_Node   : Tree_Node;
-    begin
-      if not Populated (ATree) then
-         pragma Assume (ATree.Count = 0,
-                        "Definition of not Populated -> Count = 0");
-         --  First node of tree - Add a new node with level 1.
-         Inserted := True;
-         ATree.Count := 1;
-         Tree_Abs.Add_Node
-           (N       => Inserted_Node,
-            The_Key => Key);
-         Value_At_Node := Value;
-         --  The new node is the root of the new tree.
-         --  Set its Value.
-         ATree.Root := Inserted_Node;
-         ATree.Target_Node := Inserted_Node;
-         Tree_Abs.Set_Value (ATree.Target_Node, Value);
-      else
-         --  Make sure that the tree does not already include the key.
-         Find (ATree, Key, Key_Found, Visited);
-         if Key_Found then
-            --  The Key is already in the tree, do not add it again.
-            Inserted := False;
-            --  The node with the key is on the top of the visited stack.
-            --  Get its value.
-            --  Set the Target_Node to the node with the Key.
-            ATree.Target_Node := Top_In_A_Tree_Node (Visited, ATree);
-             Value_At_Node := Tree_Abs.Value (ATree.Target_Node);
-
-         else
-            Inserted := True;
-            ATree.Count := ATree.Count + 1;
-            ATree.Target_Node := Top_In_A_Tree_Node (Visited, ATree);
-            --  A right branch if the value of Key is greater (or equal)
-            --  to the Top Value, otherwise take the left branch.
-            Is_Right := Tree_Abs.Key (ATree.Target_Node) < Key;
-
-            --  Add a new node to extend the tree.
-            --  The new node is placed in ATree.Target_Node.
-            Tree_Abs.Add_Node
-              (N       => Inserted_Node,
-               The_Key => Key);
-
-            pragma Assume (Populated (ATree),
-                          "Populated is independent of the Target_Node." );
-           Set_Branch
-              (Is_Right => Is_Right,
-               Node     => ATree.Target_Node,
-               Branch   => Inserted_Node);
-            -- Now rebalance the tree
-            pragma Warnings (Off, """Visited""",
-                      Reason => "Visited must be an in out paramter " &
-                                 "as it is updated by Rebalance_Tree" &
-                                 " but its final value is unrequired");
-            Rebalance (ATree, Visited);
-            pragma Warnings (On, """Visited""");
-            ATree.Target_Node := Inserted_Node;
-            Value_At_Node := Value;
-         end if;
-      end if;
-   end Insert_With_Value;
-
    ------------------
    -- Clear_A_Tree --
    ------------------
@@ -726,4 +654,4 @@ is
       return Result;
    end New_Enumerator;
 
-end SPARK_2014.Multi_Atree;
+end SPARK_2005.Multi_Atree;

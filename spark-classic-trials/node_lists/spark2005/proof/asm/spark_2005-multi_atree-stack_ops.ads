@@ -2,6 +2,7 @@
 private package SPARK_2005.Multi_ATree.Stack_Ops is
 
    function Count    (S : Multi_ATree.Stack) return Multi_Atree.Stack_Count;
+
    function Is_Empty (S : Multi_ATree.Stack) return Boolean;
    --# return Count (S) = 0;
    pragma Inline (Is_Empty);

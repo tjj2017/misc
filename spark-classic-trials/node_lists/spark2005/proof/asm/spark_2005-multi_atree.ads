@@ -34,12 +34,16 @@ is
 
    function In_A_Tree (N : Tree_Node; Tree : A_Tree) return Boolean;
 
-   function Populated (ATree : A_Tree) return Boolean;
+   --# function Populated (ATree : A_Tree) return Boolean;
    --# return Populated (ATree) -> Count (ATree) /= 0;
 
    function Building (ATree : A_Tree) return Boolean;
    --# global Status;
    --# return B => B -> Is_Building (Status);
+
+   function Node_Key (Node : Tree_Node; ATree : A_Tree)
+                      return Key_Type;
+   --# pre In_A_Tree (Node, ATree);
 
    procedure New_A_Tree (ATree : out A_Tree);
    --# global in out Status;
@@ -47,12 +51,6 @@ is
    --# post Empty_Tree (ATree) and Is_Building (Status) and
    --#      Building (ATree, Status) and
    --#      Count (ATree) = 0;
-
-   function Node_Value (Node : Tree_Node; ATree : A_Tree) return Value_Type;
-   --# pre In_A_Tree (Node, ATree);
-
-   function Node_Key (Node : Tree_Node; ATree : A_Tree) return Key_Type;
-   --# pre In_A_Tree (Node, ATree);
 
    procedure Insert (ATree      : in out A_Tree;
                      Key        : Key_Type;
@@ -80,11 +78,6 @@ is
 
    function Is_Equal (ATree_1, ATree_2 : A_Tree) return Boolean;
    --# pre Populated (ATree_1) and Populated (ATree_2);
-
-   function Look_Up (ATree : A_Tree; Key : Key_Type) return Tree_Node;
-   --# pre  Populated (ATree);
-   --# return N => In_A_Tree (N, ATree) ->
-   --#             Node_Key (N, ATree) = Key;
 
    function Is_Present (ATree : A_Tree; Key : Key_Type) return Boolean;
    --# pre  Populated (ATree);
