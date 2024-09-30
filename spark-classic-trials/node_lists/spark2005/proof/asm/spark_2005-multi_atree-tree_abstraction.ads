@@ -20,7 +20,7 @@
 ------------------------------------------------------------------------------
 --# inherit SPARK_2005.Multi_ATree;
 private package SPARK_2005.Multi_ATree.Tree_Abstraction is
-   subtype Level_Type is Natural;
+   subtype Level_Type is Multi_Atree.Node_Count;
 
    procedure Init;
 
@@ -54,11 +54,11 @@ private package SPARK_2005.Multi_ATree.Tree_Abstraction is
 
    procedure Set_Left  (N : in out Multi_ATree.Valid_Tree_Node;
                         Branch :  Multi_ATree.Tree_Node);
-   --# post  Left (N) = Branch and In_Tree (N);
+   --# post  In_Tree (N) and Left (N) = Branch;
 
    procedure Set_Right (N : in out Multi_ATree.Valid_Tree_Node;
                         Branch :  Multi_ATree.Tree_Node);
-   --# post Right (N) = Branch and In_Tree (N);
+   --# post In_Tree (N) and Right (N) = Branch;
 
    procedure Set_Key (N : in out Multi_ATree.Valid_Tree_Node;
                       The_Key : Multi_ATree.Key_Type);

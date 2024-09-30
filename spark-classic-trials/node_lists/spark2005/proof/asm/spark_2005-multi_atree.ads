@@ -34,15 +34,14 @@ is
 
    function In_A_Tree (N : Tree_Node; Tree : A_Tree) return Boolean;
 
-   --# function Populated (ATree : A_Tree) return Boolean;
+   function Populated (ATree : A_Tree) return Boolean;
    --# return Populated (ATree) -> Count (ATree) /= 0;
 
    function Building (ATree : A_Tree) return Boolean;
    --# global Status;
    --# return B => B -> Is_Building (Status);
 
-   function Node_Key (Node : Tree_Node; ATree : A_Tree)
-                      return Key_Type;
+    --# function Node_Key (Node : Tree_Node; ATree : A_Tree) return Key_Type;
    --# pre In_A_Tree (Node, ATree);
 
    procedure New_A_Tree (ATree : out A_Tree);
@@ -55,7 +54,7 @@ is
    procedure Insert (ATree      : in out A_Tree;
                      Key        : Key_Type;
                      Inserted   : out Boolean;
-                     Key_Node   : Tree_Node);
+                     Key_Node   : out Tree_Node);
    --# global in Status;
    --# pre  Building (ATree, Status) and Count (ATree) < Node_Count'Last;
    --# post Building (ATree, Status) and Populated (ATree) and
@@ -87,7 +86,7 @@ is
 
    type Enumerator is limited private;
 
-   procedure New_Enumerator (ATree : A_Tree; New_Enom : out Enumerator);
+   procedure New_Enumerator (ATree : A_Tree; New_Enum : out Enumerator);
    --# pre Populated (ATree);
 
    procedure Next_Node (E : in out Enumerator; The_Node : out Tree_Node);

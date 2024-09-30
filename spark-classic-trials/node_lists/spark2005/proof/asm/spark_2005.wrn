@@ -1,1 +1,4 @@
 pragma inline
+pragma assert
+pragma warnings
+pragma loop_invariant
