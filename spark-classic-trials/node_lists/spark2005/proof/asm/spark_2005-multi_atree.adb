@@ -375,6 +375,7 @@ is
       Is_Right       : Boolean := False;
       Stack_Counter  : Stack_Count;
    begin
+      --# check Building (Tree, Refined_Status);
       --  Rebalance the tree by working back up through the visited
       --  node indices on the Tree.Visited stack.
       Stack_Counter := Stack_Ops.Count (Visited);

@@ -29,18 +29,16 @@ private package SPARK_2005.Multi_ATree.Tree_Abstraction is
    function Is_Empty (N :  Multi_ATree.Tree_Node) return Boolean;
 
    function In_Tree  (N :  Multi_ATree.Tree_Node) return Boolean;
-   --# return IT => IT -> (not Is_Empty (N) and Is_A_Valid_Tree_Node (N) and
-   --#                     N in Multi_ATree.Valid_Tree_Node);
 
    function Level (N : Multi_ATree.Valid_Tree_Node) return Level_Type;
 
    function Left  (N : Multi_ATree.Valid_Tree_Node)
                    return  Multi_ATree.Tree_Node;
-   --# return L => (not Is_Empty (L)) -> In_Tree (L);
+   --# return L => In_Tree (L) -> Is_A_Valid_Tree_Node (L);
 
    function Right (N : Multi_ATree.Valid_Tree_Node)
                    return  Multi_ATree.Tree_Node;
-   --# return R => (not Is_Empty (R)) -> In_Tree (R);
+   --# return R => In_Tree (R) -> Is_A_Valid_Tree_Node (R);
 
    function Key (N : Multi_ATree.Valid_Tree_Node) return Multi_ATree.Key_Type;
 
@@ -50,7 +48,7 @@ private package SPARK_2005.Multi_ATree.Tree_Abstraction is
    -- package body is represented in this abstraction.
    procedure Set_Level (N : in out Multi_ATree.Valid_Tree_Node;
                         Node_Level : Level_Type);
-   --# post Level (N) = Node_Level and In_Tree (N);
+   --# post In_Tree (N) and Level (N) = Node_Level;
 
    procedure Set_Left  (N : in out Multi_ATree.Valid_Tree_Node;
                         Branch :  Multi_ATree.Tree_Node);

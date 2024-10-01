@@ -39,7 +39,7 @@ is
 
    function Building (ATree : A_Tree) return Boolean;
    --# global Status;
-   --# return B => B -> Is_Building (Status);
+   --  --# return B => B -> Is_Building (Status);
 
     --# function Node_Key (Node : Tree_Node; ATree : A_Tree) return Key_Type;
    --# pre In_A_Tree (Node, ATree);
