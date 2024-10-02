@@ -5,6 +5,11 @@ package body SPARK_2005.Multi_Atree
 is
    Refined_Status : Pack_Status;
 
+   --# function Refined_Building (ATree : A_Tree;
+   --#                            Refined_Status : Pack_Status)
+   --#                            return Boolean;
+   --# return Refined_Status = Constructing and ATree.State = Constructing;
+
    ------------------
    -- A_Tree_Init  --
    ------------------
@@ -25,6 +30,7 @@ is
 
    function Is_Building return Boolean
    --# global Refined_Status;
+   --# return Refined_Status = Constructing;
    is
    begin
       return (Refined_Status = Constructing);
@@ -36,16 +42,19 @@ is
 
    function Building (ATree : A_Tree) return Boolean
    --# global Refined_Status;
+   --# return Refined_Building (ATree, Refined_Status);
    is
    begin
-      return (Is_Building and ATree.State = Constructing);
+      return (Refined_Status = Constructing and ATree.State = Constructing);
    end Building;
 
    ----------------
    -- Empty_Tree --
    ----------------
 
-   function Empty_Tree (ATree : A_Tree) return Boolean is
+   function Empty_Tree (ATree : A_Tree) return Boolean
+   --# return ATree.Root = Empty_Node;
+   is
    begin
       return  (ATree.Root = Empty_Node);
    end Empty_Tree;
@@ -176,7 +185,7 @@ is
                          Node       : in out Valid_Tree_Node;
                          Branch     : Tree_Node)
    --# pre  Tree_Abstraction.In_Tree (Node);
-   --# post Tree_Abstraction.In_Tree (Node) and
+   --# post Tree_Abstraction.In_Tree (Node) ->
    --#         Get_Child (Is_Right, Node) = Branch;
    is
    begin
@@ -272,10 +281,10 @@ is
    procedure Skew (Tree : in out A_Tree)
      --  Tree.Target_Node must be set to the subtree root to be skewed.
    --# global in Refined_Status;
-   --# pre  Building (Tree, Refined_Status) and
+   --# pre  Refined_Building (Tree, Refined_Status) and
    --#  In_A_Tree (Tree.Target_Node, Tree) and
    --#              Tree.Target_Node in Valid_Tree_Node;
-   --# post Building (Tree, Refined_Status) and Maintains (Tree~, Tree) and
+   --# post Refined_Building (Tree, Refined_Status) and Maintains (Tree~, Tree) and
    --#        In_A_Tree (Tree.Target_Node, Tree);
    is
       Left_Child : Tree_Node;
@@ -310,10 +319,10 @@ is
    procedure Split (Tree : in out A_Tree)
      --  Tree.Target_Node must be set to the subtree root to be split.
      --# global in Refined_Status;
-     --# pre  Building (Tree, Refined_Status) and
+     --# pre  Refined_Building (Tree, Refined_Status) and
      --#         In_A_Tree (Tree.Target_Node, Tree) and
      --#      Tree.Target_Node in Valid_Tree_Node;
-     --# post Building (Tree, Refined_Status) and Maintains (Tree~, Tree) and
+     --# post Refined_Building (Tree, Refined_Status) and Maintains (Tree~, Tree) and
      --#      In_A_Tree (Tree.Target_Node, Tree);
    is
       Right_Child       : Tree_Node;
@@ -365,8 +374,8 @@ is
                         Visited       : in out Stack)
    --  Tree.Target_Node must be set to the subtree root to be rebalanced.
    --# global in Refined_Status;
-   --# pre  Building (Tree, Refined_Status);
-   --# post Building (Tree, Refined_Status) and Maintains (Tree~, Tree);
+   --# pre  Refined_Building (Tree, Refined_Status);
+   --# post Refined_Building (Tree, Refined_Status) and Maintains (Tree~, Tree);
    is
       Top_Node       : Tree_Node;
       --  The parent and Child of the Target_Node
@@ -375,7 +384,7 @@ is
       Is_Right       : Boolean := False;
       Stack_Counter  : Stack_Count;
    begin
-      --# check Building (Tree, Refined_Status);
+      --# check Refined_Building (Tree, Refined_Status);
       --  Rebalance the tree by working back up through the visited
       --  node indices on the Tree.Visited stack.
       Stack_Counter := Stack_Ops.Count (Visited);
