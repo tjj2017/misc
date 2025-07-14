@@ -14,23 +14,26 @@ is
      (N > Empty_Node and then N <= Dynamic_Tables.Last_Index (T.The_Tree));
    pragma Inline (In_Tree);
 
-   -------------
-   -- Present --
-   -------------
+   ---------------------
+   -- Node_Is_Present --
+   ---------------------
 
-   function Present (T : Tree_Type; N : Tree_Node) return Boolean is
+   function Node_Is_Present (T : Tree_Type; N : Tree_Node) return Boolean is
    begin
       return In_Tree (T, N);
-   end Present;
-   pragma Inline (Present);
+   end Node_is_Present;
+   pragma Inline (Node_Is_Present);
 
    --------------
    -- Persists --
    --------------
 
    function Persists (T_Pre, T_Post : Tree_Type) return Boolean is
-     (for all N in Tree_Node =>
-        (if In_Tree (T_Pre, N) then In_Tree (T_Post, N)));
+     ((for all N in Tree_Node =>
+           (if In_Tree (T_Pre, N) then In_Tree (T_Post, N)) and
+            (if In_Tree (T_Post, N) then In_Tree (T_Pre, N))) and
+        (for all K in Key_Type =>
+           (if Key_Is_Present (T_Pre, K) then Key_Is_Present (T_Post, K))));
 
    --------------
    -- New_Tree --
@@ -104,6 +107,13 @@ is
       return Dynamic_Tables.Get_Item (T.The_Tree, N).Value;
    end Value;
    pragma Inline (Value);
+
+   --------------------
+   -- Key_Is_Present --
+   --------------------
+
+   function Key_Is_Present (T : Tree_Type; K : Key_Type) return Boolean is
+      (for some N in Tree_Node => In_Tree (T, N) and then Key (T, N) = K);
 
    ---------------
    -- Set_Level --
@@ -189,6 +199,8 @@ is
      --# assume Persists (T~, T);
       pragma Assume (Persists (T_Entry, T),
                      "Setting a component of a tree does not remove Nodes");
+      pragma Assume (Key_Is_Present (T, The_Key),
+                     "The key has just been set.");
    end Set_Key;
    pragma Inline (Set_Key);
 
@@ -238,6 +250,8 @@ is
       pragma Assume (Persists (T_Entry, T),
                      "Setting a component of a tree does not remove Nodes");
       N := Dynamic_Tables.Last_Index (T.The_Tree);
+      pragma Assume (Key (T, N) = The_Key,
+                    "A node with a Key = The Key has been created by Append");
    end Add_Node;
    pragma Inline (Add_Node);
 

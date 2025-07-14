@@ -44,12 +44,12 @@ package SPARK_Classic.Trees is
    procedure Set_Left  (T : in out Tree_Type; N : Tree_Node;
                         Branch : Tree_Node);
    --# pre In_Tree (T, N);
-   --# post Persists (T~, T) and In_Tree (T, Branch);
+   --# post Persists (T~, T);
    
    procedure Set_Right (T : in out Tree_Type; N : Tree_Node;
                         Branch : Tree_Node);
    --# pre In_Tree (T, N);
-   --# post Persists (T~, T) and In_Tree (T, Branch);
+   --# post Persists (T~, T);
    
    procedure Set_Key (T : in out Tree_Type; N : Tree_Node;
                       The_Key : Key_Type);

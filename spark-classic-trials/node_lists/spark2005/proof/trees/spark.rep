@@ -5,7 +5,7 @@
            *******************************************************
 
 
-                        DATE : 11-APR-2023 15:35:56.95
+                        DATE : 21-JUL-2023 12:55:50.21
 
 Options:
     index_file=spark_classic.idx
@@ -17,7 +17,6 @@ Options:
     nodictionary_file
     report_file=spark.rep
     nohtml
-    vcg
     nostatistics
     fdl_identifiers=accept
     flow_analysis=data
@@ -28,14 +27,14 @@ Options:
     error_explanations=off
     justification_option=full
     output_directory=.
-    output_directory (actual)=/home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/
+    output_directory (actual)=/home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/
 
 Selected files:
-   spark_classic-bounded_stacks.adb
+   spark_classic-trees.adb
 
 
 Index Filename(s) used were: 
-   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic.idx
+   /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic.idx
 
 
 No Meta Files used
@@ -94,18 +93,19 @@ No summarized warnings
 
 
 Source Filename(s) used were:
-   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-bounded_stacks.adb
-   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-bounded_stacks.sss
-   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-expose_nodes.ads
-   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/spark_classic.ads
-   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/types.ads
+   /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-trees.adb
+   /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-trees.sss
+   /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-dynamic_tables.sss
+   /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-expose_nodes.ads
+   /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/spark_classic.ads
+   /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/types.ads
 
 
 
-Source Filename:   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-bounded_stacks.sss
+Source Filename:   /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-trees.sss
 No Listing File
 
-   Unit name:  SPARK_Classic.Bounded_Stacks
+   Unit name:  SPARK_Classic.Trees
    Unit type:  package specification
    Unit has been analysed, any errors are listed below.
 
@@ -114,7 +114,25 @@ No errors found
 No summarized warnings
 
 
-Source Filename:   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-expose_nodes.ads
+Source Filename:   /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-dynamic_tables.sss
+No Listing File
+
+   Unit name:  SPARK_Classic.Dynamic_Tables
+   Unit type:  package specification
+   Unit has been analysed, any errors are listed below.
+
+1 error(s) or warning(s)
+
+Line
+  73  end SPARK_Classic.Dynamic_Tables;
+
+--- (  1)  Warning           : 10: The private part of package Dynamic_Tables is 
+           hidden - hidden text is ignored by the Examiner.
+
+No summarized warnings
+
+
+Source Filename:   /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-expose_nodes.ads
 No Listing File
 
    Unit name:  SPARK_Classic.Expose_Nodes
@@ -126,7 +144,7 @@ No errors found
 No summarized warnings
 
 
-Source Filename:   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/spark_classic.ads
+Source Filename:   /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/spark_classic.ads
 No Listing File
 
    Unit name:  SPARK_Classic
@@ -138,7 +156,7 @@ No errors found
 No summarized warnings
 
 
-Source Filename:   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/types.ads
+Source Filename:   /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/types.ads
 No Listing File
 
    Unit name:  Types
@@ -150,10 +168,10 @@ No errors found
 No summarized warnings
 
 
-Source Filename:   /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-bounded_stacks.adb
-Listing Filename:  /home/trevorj/asvat/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-bounded_stacks.lst
+Source Filename:   /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-trees.adb
+Listing Filename:  /home/spark/spark_classic/misc/spark-classic-trials/node_lists/spark2005/proof/trees/spark_classic-trees.lst
 
-   Unit name:  SPARK_Classic.Bounded_Stacks
+   Unit name:  SPARK_Classic.Trees
    Unit type:  package body
    Unit has been analysed, any errors are listed below.
 
@@ -163,19 +181,22 @@ No errors found
 Expected messages marked with the accept annotation
 Type Msg    Lines              Reason                    Match
      No.  From    To                                    No.  Line
-Warn   3     2   end  pragma Inline has no semantic ef    8   120
-Flow  32    38   end  Setting Count to zero means no c    1    43
-Flow  31    38   end  As above                            1    43
-Flow 602    38   end  As above                            1    43
-Warn 444    38   end  The definition of Count (S) and     1    42
-Warn 444    57   end  The definition of Count(S) and I    1    58
-Flow  31   114   end  Setting Count to zero means no c    1   119
-Flow  32   114   end  As above                            1   119
-Flow 602   114   end  As above                            1   119
-Warn 444   114   end  The definition of Count (S) and     1   118
+Warn 444    53   end  The left branch is either empty     1    54
+Warn 444    68   end  The right branch is either empty    1    69
+Warn 444   108   end  Setting a component of a tree do    1   109
+Warn 444   126   end  Setting a component of a tree do    1   127
+Warn 444   144   end  Setting a component of a tree do    1   145
+Warn 444   161   end  Setting a component of a tree do    1   162
+Warn 444   179   end  Setting a component of a tree do    1   180
+Warn 444   202   204  Appending a node adds it into th    1   203
+Warn 444   205   207  Adding a node does not remove an    1   206
+Warn 444   208   end  N is the position in the tree of    1   209
+Warn 444   236   end  If N = Empty_Node or N > New_Las    1   238
 
 
-No summarized warnings
+13 summarized warning(s), comprising:
+    13 pragma(s)*
+(*Note: the above warnings may affect the validity of the analysis.)
 
 Note: Data flow analysis mode selected
 

@@ -1,0 +1,10 @@
+spark_2005                       specification is in spark_2005.ads
+spark_2005                       components are      spark_2005.multi_atree
+spark_2005.multi_atree           specification is in spark_2005-multi_atree.ads
+spark_2005.multi_atree           components are      spark_2005.multi_atree.stack_ops,
+                                                     spark_2005.multi_atree.tree_abstraction
+spark_2005.multi_atree.stack_ops specification is in spark_2005-multi_atree-stack_ops.ads
+spark_2005.multi_atree.tree_abstraction specification is in 
+                                               spark_2005-multi_atree-tree_abstraction.ads
+
+

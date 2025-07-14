@@ -20,13 +20,13 @@ is
                    Value : Element_Type)
      with Pre => Count (S) < Stack_Size,
           Post => not Is_Empty (S) and
-                  Count (S) = Count (S'Old) + 1 and
+                  Count (S) = Count (S)'Old + 1 and
                   Top (S) = Value;
 
    procedure Pop  (S : in out Stack;
                    Value : out Element_Type)
      with Pre => not Is_Empty (S),
-     Post => Count (S) = Count (S'Old) - 1;
+     Post => Count (S) = Count (S)'Old - 1;
 
    function Top (S : Stack) return Element_Type
      with Pre => not Is_Empty (S);
@@ -43,7 +43,7 @@ private
    subtype Stack_Index is Stack_Count range 1 .. Stack_Count'Last;
    type Stack_Contents is array (Stack_Index) of Element_Type;
 
-   type Stack is tagged
+   type Stack is
       record
          Count    : Stack_Count;
          Contents : Stack_Contents;

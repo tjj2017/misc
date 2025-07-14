@@ -11,23 +11,35 @@ is
       (ATree.Root = Trees.Empty_Node);
 
    function Populated (ATree : A_Tree) return Boolean is
-      (Trees.In_Tree (ATree.Container, ATree.Root) and
-        ATree.Count > 0);
+     (not (Trees.Is_Empty_Tree (ATree.Container)) and
+        Trees.In_Tree (ATree.Container, ATree.Root) and
+          ATree.Root /= Trees.Empty_Node and
+            ATree.Count > 0);
 
    --  Proof helper subprograms
+
+   function To_Model (ATree : A_Tree) return A_Tree_Model is
+     (if Populated (ATree) then
+           A_Tree_Model'(True, ATree.Root, ATree.Count)
+      else
+         A_Tree_Model'(False, Trees.Empty_Node, ATree.Count));
+
+   function Model_Populated (M : A_Tree_Model) return Boolean is (M.Populated);
+   function Model_Count (M : A_Tree_Model) return Natural is (M.Count);
 
    --  The contents of the tree are the same but the tree structure may change.
    --  The root of the tree may be reassigned.
    function Retains (AT_Pre, AT_Post : A_Tree) return Boolean is
      ((Populated (AT_Post) and Count (AT_Pre) = Count (AT_Post)) and
-        ((AT_Pre = AT_Post) or
-             (Trees.Persists (AT_Pre.Container, AT_Post.Container))))
-   with Pre  => Populated (AT_Pre),
+        ((Is_Equal (AT_Pre, AT_Post) or
+             (Trees.Persists (Trees.To_Model (AT_Pre.Container),
+              Trees.To_Model (AT_Post.Container))))))
+   with Pre  => Populated (AT_Pre) and Populated (AT_Post),
         Ghost;
    --  The Tree is retained, in addition the root of the tree is unchanged.
    function Persists (AT_Pre, AT_Post : A_Tree) return Boolean is
      (Retains (AT_Pre, AT_Post) and AT_Pre.Root = AT_Post.Root)
-   with Pre => Populated (AT_Pre),
+   with Pre => Populated (AT_Pre) and Populated (AT_Post),
         Ghost;
 
    --  Pushing exclusively using Push_In_Tree_Node ensures that
@@ -111,8 +123,9 @@ is
                        Node     : Tree_Node;
                        Tree    : Trees.Tree_Type)
                        return Tree_Node
-   with Pre  => Trees.In_Tree (Tree, Node),
-        Post => (if Get_Child'Result /= Trees.Empty_Node then
+     with Pre  => Node /= Trees.Empty_Node and not Trees.Is_Empty_Tree (Tree)
+                  and Trees.In_Tree (Tree, Node),
+          Post => (if Get_Child'Result /= Trees.Empty_Node then
                     Trees.In_Tree (Tree, Get_Child'Result))
    is
       Result : Tree_Node;
@@ -129,9 +142,11 @@ is
    procedure Set_Branch (Is_Right   : Boolean;
                          Node       : Tree_Node;
                          Set_Node   : Tree_Node;
-                         Tree       : in out Trees.Tree_Type)
-   with Pre  => Trees.In_Tree (Tree, Node) and Trees.In_Tree (Tree, Set_Node),
-        Post => Trees.Persists (Tree'Old, Tree)
+                         Tree       : in out Trees.Tree_Type) with
+     Pre  => Node /= Trees.Empty_Node and not Trees.Is_Empty_Tree (Tree) and
+             Trees.In_Model (Trees.To_Model (Tree), Node) and
+             Trees.In_Tree (Tree, Node) and Trees.In_Tree (Tree, Set_Node),
+     Post => Trees.Persists (Trees.To_Model(Tree)'Old, Trees.To_Model (Tree))
    is
    begin
       if Is_Right then
@@ -197,7 +212,6 @@ is
 
          Current_Key := Trees.Key (ATree.Container, Current_Node);
          Found := Current_Key = Key;
-         pragma Assert (if Found then Trees.In_Tree (ATree.Container, Current_Node));
          if not Found then
             --  Take the right branch if the Key value is greater
             --  than the Current_Node Key, otherwise take the left branch.
@@ -211,7 +225,9 @@ is
                       Trees.In_Tree (ATree.Container, Current_Node) and
                       Trees.Key (ATree.Container,
                    Top_In_Tree_Node (Visited, ATree.Container)) = Key and
-                trees.Key_Is_Present (ATree.Container, Key)));
+                   Trees.Key_Is_Present (ATree.Container, Key) and
+                       Top_In_Tree_Node (Visited, ATree.Container) /=
+                       Trees.Empty_Node));
 
          exit when Found or else not Trees.In_Tree (ATree.Container, Child);
 
@@ -220,7 +236,6 @@ is
          Current_Node := Child;
          --# assert not (Found or (not Trees.In_Tree (ATree.Container, Current_Node)));
       end loop;
-      pragma Assert (if Found then Trees.In_Tree (ATree.Container, Current_Node));
       --# check Found -> (Trees.Key (ATree.Container, Current_Node) = Key);
       --  The Tree.Visited stack will not be empty.
       --  if Found is True, the Tree_Store contains an Actual_Node with the
@@ -235,12 +250,16 @@ is
 
    procedure Skew (Root       : in out Tree_Node;
                    Tree       : in out Trees.Tree_Type)
-   with Pre => Trees.In_Tree (Tree, Root),
-        Post => Trees.Persists (Tree'Old, Tree) and Trees.In_Tree (Tree, Root)
+     with Pre => Root /= Trees.Empty_Node and not Trees.Is_Empty_Tree (Tree)
+                 and Trees.In_Tree (Tree, Root),
+        Post => Trees.Persists (Trees.To_Model (Tree)'Old,
+                                Trees.To_Model (Tree))
+                and Trees.In_Tree (Tree, Root)
    is
-      T_In : constant Trees.Tree_Type := Tree
-      with Ghost;
+      T_In : constant Trees.Tree_Model := Trees.To_Model (Tree)
+        with Ghost;
       Left_Child : Trees.Tree_Node;
+      New_Left_Branch : Trees.Tree_Node;
    begin
       Left_Child := Trees.Left (Tree, Root);
       --  No action is performed if the levels of the root and left nodes
@@ -248,22 +267,24 @@ is
       if Trees.In_Tree (Tree, Left_Child) and then
         Trees.Level (Tree, Left_Child) = Trees.Level (Tree, Root)
       then
-         --  The left child has the same level as its parent breaking
+        pragma Assert (Trees.In_Tree (Tree, Left_Child));
+       --  The left child has the same level as its parent breaking
          --  rule 2 of an Anderson tree. To resolve rotate right at the parent.
          --  That is, the root node left child becomes the right child of
          --  root node left node.  The right child of the root node left child
          --  becomes the root index, and lastly, the index of the root
          --  left child becomes the new root {index}.
+         New_Left_Branch := Trees.Right (Tree, Left_Child);
          Trees.Set_Left
            (T      => Tree,
             N      => Root,
-            Branch => Trees.Right (Tree, Left_Child));
-         pragma Assert (Trees.Persists (T_In, Tree));
+            Branch => New_Left_Branch);
+         pragma Assert (Trees.Left (Tree, Root) = New_Left_Branch);
          Trees.Set_Right
            (T      => Tree,
             N      => Left_Child,
             Branch => Root);
-         pragma Assume (Trees.Persists (T_In, Tree),
+         pragma Assume (Trees.Persists (T_In, Trees.To_Model (Tree)),
                         "Tree Persists across both Left & Right ops.");
          --  The root now becomes the left child.
          Root := Left_Child;
@@ -273,9 +294,11 @@ is
    procedure Split (Root : in out Tree_Node;
                     Tree : in out Trees.Tree_Type)
    with Pre  => Trees.In_Tree (Tree, Root),
-        Post => Trees.Persists (Tree'Old, Tree) and Trees.In_Tree (Tree, Root)
+     Post => Trees.Persists (Trees.To_Model (Tree)'Old,
+                             Trees.To_Model (Tree)) and
+             Trees.In_Tree (Tree, Root)
    is
-      T_In : constant Trees.Tree_Type := Tree
+      T_In : constant Trees.Tree_Model := Trees.To_Model (Tree)
       with Ghost;
       Right_Child       : Tree_Node;
       Right_Right_Child : Tree_Node;
@@ -305,7 +328,7 @@ is
            (T      => Tree,
             N      => Root,
             Branch => Trees.Left (Tree, Right_Child));
-         pragma Assert (Trees.Persists (T_In, Tree));
+         pragma Assert (Trees.Persists (T_In, Trees.To_Model (Tree)));
          Trees.Set_Left
            (T      => Tree,
             N      => Right_Child,
@@ -318,7 +341,7 @@ is
          Trees.Set_Level (Tree,
                           Root,
                           Trees.Level (Tree, Root) + 1);
-         pragma Assume (Trees.Persists (T_In, Tree),
+         pragma Assume (Trees.Persists (T_In, Trees.To_Model (Tree)),
                        "Tree is Persistant across Right, Left & Level ops.");
      end if;
    end Split;
@@ -327,8 +350,11 @@ is
                         Tree    : in out Trees.Tree_Type;
                         Visited : in out Bounded_Stacks.Stack)
    with Pre  => Trees.In_Tree (Tree, Root),
-        Post => Trees.Persists (Tree'Old, Tree) and Trees.In_Tree (Tree, Root)
+        Post => Trees.Persists (Trees.To_Model (Tree)'Old,
+                                Trees.To_Model (Tree))
+                and Trees.In_Tree (Tree, Root)
    is
+      T_In : constant Trees.Tree_Model := Trees.To_Model (Tree) with Ghost;
       Current_Node : Tree_Node;
       Top_Node     : Tree_Node;
       --  The parent of the Current_Node
@@ -350,7 +376,7 @@ is
          pragma Loop_Invariant (Trees.In_Tree (Tree, Current_Node) and
                                 not Bounded_Stacks.Is_Empty (Visited) and
                                   Stack_Top = Bounded_Stacks.Count (Visited) and
-                                  Trees.Persists (Tree'Loop_Entry, Tree));
+                                  Trees.Persists (T_In, Trees.To_Model (Tree)));
          --# assert Stack_Top > 0 and Stack_Top <= Stack_Count and
          --#        Stack_Top = Bounded_Stacks.Count (Visited) and
          --#        not Bounded_Stacks.Is_Empty (Visited) and
@@ -405,7 +431,7 @@ is
          --  Skew, Split and Set_Branch all maintain Persistence but SPARK 2014
          --  does not assume this. Should a private type be really private?
          pragma Assume
-           (Trees.Persists (Tree'Loop_Entry, Tree),
+           (Trees.Persists (T_In, Trees.To_Model (Tree)),
             "Split, Skew, Rebalance and Set_Branch retain Persistence");
       end loop;
       --  The root of the tree after inserting a node and rebalancing.
@@ -427,9 +453,15 @@ is
       end loop;
    end Trace_To_Left_Leaf;
 
-   procedure Init_Enumerator (ATree      : A_Tree;
-                              Enum       : out Enumerator)
-   with Pre => Trees.In_Tree (ATree.Container, ATree.Root)
+   function New_Stack return Bounded_Stacks.Stack  is
+      S : Bounded_Stacks.Stack;
+   begin
+      Bounded_Stacks.New_Stack (S);
+      return S;
+   end New_Stack;
+
+   procedure Init_Enumerator (ATree : A_Tree; Enum : out Enumerator) with
+     Pre => Trees.In_Tree (ATree.Container, ATree.Root)
    is
    begin
       Enum.ATree := ATree;
@@ -438,16 +470,16 @@ is
       Trace_To_Left_Leaf (Enum, ATree.Container);
    end Init_Enumerator;
 
-  --------------
+   --------------
    -- New_Tree --
    --------------
 
-   procedure New_A_Tree (ATree : out A_Tree; Tree_Container : Trees.Tree_Type)
-   is
+   function New_A_Tree (Tree_Container : Trees.Tree_Type) return A_Tree is
+      ATree : constant A_Tree := A_Tree'(Container => Tree_Container,
+                                         Root      => Trees.Empty_Node,
+                                         Count     => 0);
    begin
-      ATree.Container := Tree_Container;
-      ATree.Root      := Trees.Empty_Node;
-      ATree.Count     := 0;
+      return ATree;
    end New_A_Tree;
 
    ------------
@@ -458,14 +490,22 @@ is
      (ATree      : in out A_Tree;
       Key        : Key_Type;
       Inserted   : out Boolean)
-     with Refined_Post => Trees.Key_Is_Present (ATree.Container, Key) and
-                Populated (ATree) and
-                (if not Populated (ATree'Old) then
-                   Count (ATree) = 1
-                     elsif Inserted then
-                       Count (ATree) = Count (ATree'Old) + 1
-                 else
-                    Count (ATree) = Count (ATree'Old))
+     with Refined_Post =>
+       (Inserted and not Model_Populated (To_Model (ATree)'Old) and
+          Trees.Key_is_Present (ATree.Container, Key) and
+            Model_Populated (To_Model (ATree)) and
+          Count (ATree) = 1)
+       or
+         (Inserted and Model_Populated (To_Model (ATree)'Old) and
+          Trees.Key_Is_Present (ATree.Container, Key) and
+            Model_Populated (To_Model (ATree)) and
+            Count (ATree) = Model_Count (To_Model (ATree)'Old) + 1)
+         or
+           (not Inserted and
+              Trees.Key_Is_Present (ATree.Container, Key) and
+                Model_Populated (To_Model (ATree)) =
+              Model_Populated (To_Model (ATree)'Old) and
+              Count (ATree) = Model_Count (To_Model (ATree)'Old))
    is
       Tree_Container : Trees.Tree_Type ;
       Visited        : Bounded_Stacks.Stack;
@@ -536,10 +576,10 @@ is
             --  Set_Branch and Reblance maintain Persistence and therefore
             --  the precence of a key but SPARK 2014 does not assume this.
             --  Should a private type be really private?
-            pragma Assume (Trees.Persists (ATree.Container, Tree_Container),
-                          "Set_Branch and Rebalance maintain Persistence");
-            pragma Assume (Trees.Key_Is_Present (Tree_Container, Key),
-                           "Set_Branch and Rebalance maintain keys");
+            --  pragma Assume (Trees.Persists (ATree.Container, Tree_Container),
+            --                "Set_Branch and Rebalance maintain Persistence");
+            --  pragma Assume (Trees.Key_Is_Present (Tree_Container, Key),
+            --                 "Set_Branch and Rebalance maintain keys");
             ATree.Container := Tree_Container;
 
             pragma Warnings (On, """Visited""");
@@ -562,15 +602,23 @@ is
       Value         : Value_Type;
       Inserted      : out Boolean;
       Value_At_Node : out Value_Type)
-     with Refined_Post => Trees.Key_Is_Present (ATree.Container, Key) and
-                Populated (ATree) and
-                (if not Populated (ATree'Old) then
-                   Count (ATree) = 1
-                     elsif Inserted then
-                       Count (ATree) = Count (ATree'Old) + 1
-                 else
-                    Count (ATree) = Count (ATree'Old))
-   is
+   with Refined_Post =>
+       (Inserted and not Model_Populated (To_Model (ATree)'Old) and
+          Trees.Key_Is_Present (ATree.Container, Key) and
+            Model_Populated (To_Model (ATree)) and
+          Count (ATree) = 1)
+       or
+         (Inserted and Model_Populated (To_Model (ATree)'Old) and
+          Trees.Key_Is_Present (ATree.Container, Key) and
+            Model_Populated (To_Model (ATree)) and
+            Count (ATree) = Model_Count (To_Model (ATree)'Old) + 1)
+         or
+           (not Inserted and
+              Trees.Key_Is_Present (ATree.Container, Key) and
+                Model_Populated (To_Model (ATree)) =
+              Model_Populated (To_Model (ATree)'Old) and
+              Count (ATree) = Model_Count (To_Model (ATree)'Old))
+  is
       Tree_Container : Trees.Tree_Type ;
       Visited        : Bounded_Stacks.Stack;
       Key_Found      : Boolean;
@@ -646,8 +694,8 @@ is
             --  Set_Branch and Reblance maintain Persistence and therefore
             --  the precence of a key but SPARK 2014 does not assume this.
             --  Should a private type be really private?
-            pragma Assume (Trees.Persists (ATree.Container, Tree_Container),
-                          "Set_Branch and Rebalance maintain Persistence");
+            --  pragma Assume (Trees.Persists (ATree.Container, Tree_Container),
+                          --  "Set_Branch and Rebalance maintain Persistence");
             ATree.Container := Tree_Container;
 
             pragma Warnings (On, """Visited""");

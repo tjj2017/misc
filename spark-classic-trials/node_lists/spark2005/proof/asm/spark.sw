@@ -1,0 +1,2 @@
+-config=spark_2005.cfg -index=spark_2005.idx -warn=spark_2005.wrn
+-flow_analysis=data

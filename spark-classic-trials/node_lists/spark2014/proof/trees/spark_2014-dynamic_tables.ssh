@@ -1,0 +1,76 @@
+pragma Ada_2012;
+package body SPARK_2014.Dynamic_Tables
+  with SPARK_Mode => Off
+is
+
+    ----------------
+   -- Last_Index --
+   ----------------
+
+   function Last_Index (T : Table_Type) return Table_Last_Type is
+   begin
+      return Table_Last_Type'Last;
+   end Last_Index;
+
+   --------------
+   -- Is_Empty --
+   --------------
+
+   function Is_Empty (T : Table_Type) return Boolean is
+   begin
+      return Last_Index (T) = 0;
+   end Is_Empty;
+
+   ----------
+   -- Init --
+   ----------
+
+   procedure Init (T : out Table_Type) is
+   begin
+      null;  --  Gnat_Table.Init (T.The_Table);
+   end Init;
+
+   ------------
+   -- Append --
+   ------------
+
+   procedure Append (T : in out Table_Type; New_Val : Table_Component_Type) is
+   begin
+      null; --  Gnat_Table.Append (T.The_Table, New_Val);
+   end Append;
+
+   --------------
+   -- Set_Item --
+   --------------
+
+   procedure Set_Item
+     (T    : in out Table_Type; Index : Valid_Table_Index_Type;
+      Item :        Table_Component_Type)
+   is
+   begin
+      null; --  T.The_Table.Table (Index) := Item;
+   end Set_Item;
+
+   --------------
+   -- Get_Item --
+   --------------
+
+   function Get_Item
+     (T : Table_Type; Index : Valid_Table_Index_Type)
+      return Table_Component_Type
+   is
+     Dummy : Table_Component_Type;
+   begin
+      return Dummy; --  T.The_Table.Table (Index);
+   end Get_Item;
+
+   --------------
+   -- Set_Last --
+   --------------
+
+   procedure Set_Last (T : in out Table_Type; New_Val : Table_Last_Type) is
+   begin
+      null; --  Gnat_Table.Set_Last (T.The_Table, New_Val);
+   end Set_Last;
+
+end SPARK_2014.Dynamic_Tables;
