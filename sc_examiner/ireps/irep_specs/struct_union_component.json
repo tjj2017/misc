@@ -1,0 +1,13 @@
+{
+  "parent": "expr",
+  "namedSub": {
+    "name": {"type": "string"},
+    "baseName": {"type": "string"},
+    "access": {"type": "string"},
+    "prettyName": {"type": "string"},
+    "anonymous": {"type": "bool"}
+  },
+  "comment": {
+    "is_padding": {"type": "bool"}
+  }
+}
