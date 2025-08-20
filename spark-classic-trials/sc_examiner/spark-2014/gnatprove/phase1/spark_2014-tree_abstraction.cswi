@@ -1,0 +1,9 @@
+20250818111952
+-c
+-x
+ada
+-gnatA
+-g
+-O2
+-gnatc
+-gnates=/home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/aa176a6a.tmp

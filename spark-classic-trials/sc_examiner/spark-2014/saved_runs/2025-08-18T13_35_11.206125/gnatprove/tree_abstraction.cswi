@@ -1,0 +1,9 @@
+              
+-c
+-x
+ada
+-gnatA
+-g
+-O2
+-gnatc
+-gnates=/home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/8710f78e.tmp

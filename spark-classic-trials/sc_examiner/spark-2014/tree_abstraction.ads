@@ -1,14 +1,20 @@
---------------------------  SPARK_2014.Tree_Abstraction  ---------------------
+----------------------------  Tree_Abstraction  ------------------------------
 --  This package is a stateless abstraction providing basic operations on   --
 --  an underlying tree.  The tree is represented by its collection of       --
 --  Tree_Nodes, which are also the embodiment of the state hidden within    --
 --  the package body. The body of this package must be excluded from SPARK  --
---  analysis because of the hidden state.                                   --                                                          --
+--  analysis because of the hidden state.  The stateless view of the        --
+--  package overcomes limitations of the 2021 SPARK-2012 examiner handling  --
+--  state_abstraction in generic packages.                                  --
 --  The collection of all Tree_Nodes represents a single tree.  There is    --
 --  no type to enable multiple tree decarations.  If multiple trees are     --
 --  required then, either multiple instatnces of this package are required  --
 --  or multiple sub-trees have to be accommodated within the single tree    --
 --  structure this package provides.                                        --
+--  The type Tree_Node, representing the nodes of the tree,                 --
+--  must have the range 0 .. Maximum_Number_Of_Nodes in the tree.           --
+--  The Maximum_Number_Of_Nodes_In_Tree < Tree_Node'Base'Last.              --
+--  Tree_Node'First represents the Empty_Node.                              --
 --  Each node of the Tree has 5 fields:                                     --
 --  Left, Right : Tree_Node;   --  the children of the node                 --
 --  Level       : Level_Type;  --  the level of the node in the Tree        --
@@ -20,9 +26,6 @@
 --  Procedure Init should be called prior to using the tree structure.      --
 ------------------------------------------------------------------------------
 generic
-   --  Tree_Node must have the range 0 .. Maximum_Number_Of_Nodes_In_Tree.
-   --  The Maximum_Number_Of_Nodes_In_Tree < Tree_Node'Base'Last.
-   --  Tree_Node'First represents the Empty_Node.
    type Tree_Node is range <>;
 
    type Level_Type is range <>;
@@ -31,7 +34,7 @@ generic
    Null_Key : Key_Type;
    Null_Value : Value_Type;
 
-package SPARK_2014.Tree_Abstraction with
+package Tree_Abstraction with
   SPARK_Mode
 is
    procedure Init;
@@ -112,4 +115,4 @@ private
       Left  => Empty_Node,
       Right => Empty_Node);
 
-end SPARK_2014.Tree_Abstraction;
+end Tree_Abstraction;

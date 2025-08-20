@@ -1,0 +1,2 @@
+spark_2014-tree_abstraction.adb:6:24: warning: generic compilation unit is not analyzed
+spark_2014-tree_abstraction.adb:6:24: warning: only instantiations of the generic will be analyzed
