@@ -1,0 +1,7 @@
+{
+  "namedSub": {
+    "value": {"type": "string"},
+    "identifier": {"type": "string"},
+    "baseName": {"type": "string"}
+  }
+}

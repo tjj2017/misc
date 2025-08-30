@@ -1,0 +1,29 @@
+with "sc_examiner_c";
+with "gnatcoll";
+
+project SC_Examiner is
+
+   for Object_Dir use "obj";
+   for Exec_Dir use "install/bin";
+
+   for Source_Dirs use ("driver", "ireps", "obj", "spark_frontend", "modified_gnat_src");
+
+   for Main use ("gnat1drv.adb");
+
+   Common_Switches := ("-gnatg", "-g", "-gnateE");
+
+   package Compiler is
+      --  for Local_Configuration_Pragmas use "gnat.adc";
+      for Switches ("Ada") use Common_Switches & ("-O0", "-gnata", "-gnatVa");
+   end Compiler;
+
+   package Builder is
+      for Executable ("gnat1drv.adb") use "sc";
+   end Builder;
+
+   package Binder is
+     -- this enables extended exception information (like backtraces)
+     for Switches ("Ada") use ("-g", "-E");
+   end Binder;
+
+end SC_Examiner;

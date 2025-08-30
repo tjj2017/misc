@@ -1,0 +1,5768 @@
+------------------------------------------------------------------------------
+--                                                                          --
+--                     SPARK_Classic_Examiner COMPONENTS                    --
+--                                                                          --
+--                                Tree_Walk                                 --
+--                                                                          --
+--                                 B o d y                                  --
+--                                                                          --
+--                    Copyright (C) 2025, Trevor Jennings                   --
+--                                                                          --
+-- SPARK_Classic_Examiner is free software;                                 --
+-- you can redistribute it and/or modify it under terms of the              --
+-- GNU General Public License as published by the Free Software  Foundation;--
+-- either version 3, or (at your option)  any later version.                --
+-- The SPARK_Classic_Examiner is distributed in the hope that it is useful, --
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of  MERCHAN- --
+-- TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public --
+-- License for  more details.  You should have  received  a copy of the GNU --
+-- General  Public License  distributed with gnat2goto;  see file COPYING3. --
+-- If not,  go to  http://www.gnu.org/licenses  for a complete  copy of the --
+-- license.                                                                 --
+--                                                                          --
+------------------------------------------------------------------------------
+with Namet;                 use Namet;
+with Nlists;                use Nlists;
+with Sem;
+with Sem_Eval;              use Sem_Eval;
+with Sem_Util;              use Sem_Util;
+with Snames;                use Snames;
+with Stringt;               use Stringt;
+with Treepr;                use Treepr;
+with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
+with Records;               use Records;
+with Follow;                use Follow;
+with GNAT_Utils;            use GNAT_Utils;
+with GOTO_Utils;            use GOTO_Utils;
+with Uint_To_Binary;        use Uint_To_Binary;
+with Stand;
+with Binary_To_Hex;         use Binary_To_Hex;
+with Ada.Text_IO;           use Ada.Text_IO;
+with Ada.Exceptions;
+with Einfo;                 use Einfo;
+
+with SPARK_Classic_Examiner.Options;
+
+with Range_Check; use Range_Check;
+with Arrays; use Arrays;
+with Gnat2goto_Itypes; use Gnat2goto_Itypes;
+with Ada.Strings;
+with Ada.Strings.Fixed;
+with Ada.Characters.Handling;
+with Sinput;
+with ASVAT.Address_Model;    use type
+  ASVAT.Address_Model.Address_To_Access_Functions;
+with ASVAT.Size_Model;
+with ASVAT.Modelling;
+with ASVAT.Pragma_Info;
+with Sem_Aux; use Sem_Aux;
+
+--  with SPARK_Classic.Pragmas;
+
+package body Tree_Walk is
+   procedure Do_Aggregate_Literal (N : Node_Id)
+   with Pre  => Nkind (N) = N_Aggregate;
+
+   procedure Do_Assignment_Statement (N : Node_Id)
+   with Pre  => Nkind (N) = N_Assignment_Statement;
+
+   procedure Do_Case_Expression (N : Node_Id)
+   with Pre => Nkind (N) = N_Case_Expression;
+
+   procedure Do_If_Expression (N : Node_Id)
+   with Pre => Nkind (N) = N_If_Expression;
+
+   procedure Do_Qualified_Expression (N : Node_Id)
+   with Pre => Nkind (N) = N_Qualified_Expression;
+
+   procedure Do_Modular_Type_Definition (N : Node_Id)
+   with Pre => Nkind (N) = N_Modular_Type_Definition;
+
+   procedure Do_Derived_Type_Definition (N : Node_Id)
+   with Pre  => Nkind (N) = N_Derived_Type_Definition;
+
+   procedure Do_Full_Type_Declaration (N : Node_Id)
+   with Pre => Nkind (N) = N_Full_Type_Declaration;
+
+   procedure Do_Handled_Sequence_Of_Statements (N : Node_Id)
+   with Pre  => Nkind (N) = N_Handled_Sequence_Of_Statements;
+
+   procedure Do_If_Statement (N : Node_Id)
+   with Pre  => Nkind (N) = N_If_Statement;
+
+   procedure Do_Incomplete_Type_Declaration (N : Node_Id)
+   with Pre => Nkind (N) = N_Incomplete_Type_Declaration;
+
+   procedure Do_Exit_Statement (N : Node_Id)
+   with Pre  => Nkind (N) = N_Exit_Statement;
+
+   procedure Do_Function_Call (N : Node_Id)
+   with Pre => Nkind (N) = N_Function_Call;
+
+   procedure  Do_In (N : Node_Id)
+   with Pre => Nkind (N) = N_In;
+
+   procedure Do_Loop_Statement (N : Node_Id)
+   with Pre  => Nkind (N) = N_Loop_Statement;
+
+   procedure Do_Case_Statement (N : Node_Id)
+   with Pre  => Nkind (N) = N_Case_Statement;
+
+   procedure Do_N_Block_Statement (N : Node_Id)
+   with Pre  => Nkind (N) = N_Block_Statement;
+
+   procedure Do_Object_Declaration (N : Node_Id)
+   with Pre => Nkind (N) = N_Object_Declaration;
+
+   procedure Do_Pragma (N : Node_Id)
+   with Pre => Nkind (N) = N_Pragma;
+
+   procedure Do_Post_Condition (N : Node_Id);
+
+   procedure Do_Pre_Condition (N : Node_Id);
+
+   procedure Do_Or_Else (N : Node_Id)
+   with Pre => Nkind (N) = N_Or_Else;
+
+   procedure Do_And_Then (N : Node_Id)
+     with Pre => (Nkind (N) = N_And_Then);
+
+   procedure Do_Package_Declaration (N : Node_Id)
+   with Pre => Nkind (N) = N_Package_Declaration;
+
+   procedure Do_Package_Specification (N : Node_Id)
+   with Pre => Nkind (N) = N_Package_Specification;
+
+   procedure Do_Exception_Declaration (N : Node_Id)
+   with Pre => Nkind (N) = N_Exception_Declaration;
+
+   procedure Do_Private_Type_Declaration (N : Node_Id)
+   with Pre => Nkind (N) = N_Private_Type_Declaration;
+
+   procedure Do_Procedure_Call_Statement (N : Node_Id)
+   with Pre  => Nkind (N) = N_Procedure_Call_Statement;
+
+   procedure Do_Signed_Integer_Definition (N : Node_Id)
+   with Pre  => Nkind (N) = N_Signed_Integer_Type_Definition;
+
+   procedure Do_Floating_Point_Definition (N : Node_Id)
+     with Pre  => (Nkind (N) = N_Floating_Point_Definition
+                   and then Is_Type (Defining_Entity (Parent (N))));
+
+   procedure Do_Simple_Return_Statement (N : Node_Id)
+   with Pre  => Nkind (N) = N_Simple_Return_Statement;
+
+   procedure Do_Raise_Statement (N : Node_Id)
+   with Pre  => Nkind (N) = N_Raise_Statement;
+
+   procedure Do_Subprogram_Declaration (N : Node_Id)
+   with Pre => Nkind (N) = N_Subprogram_Declaration;
+
+   procedure Do_Subprogram_Body (N : Node_Id)
+   with Pre => Nkind (N) = N_Subprogram_Body;
+
+   procedure Do_Subprogram_Body_Stub (N : Node_Id)
+   with Pre => Nkind (N) in N_Subprogram_Body_Stub;
+
+   procedure Do_Subprogram_Or_Block (N : Node_Id)
+   with Pre  => Nkind (N) in N_Subprogram_Body |
+                             N_Task_Body       |
+                             N_Block_Statement |
+                             N_Package_Body    |
+                             N_Entry_Body;
+
+   procedure Do_Subprogram_Renaming_Declaration (N : Node_Id)
+   with Pre => Nkind (N) = N_Subprogram_Renaming_Declaration;
+
+   procedure Do_Subprogram_Specification (N : Node_Id)
+   with Pre  => Nkind (N) in N_Subprogram_Specification |
+                               N_Access_Procedure_Definition |
+                               N_Access_Function_Definition;
+
+   procedure Do_Subtype_Declaration (N : Node_Id)
+   with Pre => Nkind (N) = N_Subtype_Declaration;
+
+   procedure Do_Type_Conversion (N : Node_Id)
+   with Pre  => Nkind (N) = N_Type_Conversion;
+
+   function Get_Import_Convention (N : Node_Id) return String;
+
+   procedure Process_Declaration (N : Node_Id);
+--     with Pre => Nkind (N) in N_Declaration or else
+--                 Nkind (N) in N_Number_Declaration or else
+--                 Nkind (N) in N_Later_Decl_Item or else
+--                 Nkind (N) in N_Pragma or else
+--                 Nkind (N) in N_Exception_Declaration or else
+--                 Nkind (N) in N_Freeze_Entity;
+   --  Handles both a basic declaration and a declarative item.
+
+   procedure Process_Pragma_Declaration (N : Node_Id)
+     with Pre => Nkind (N) in N_Pragma;
+
+   procedure Process_Statement (N : Node_Id)
+   with Pre => Nkind (N) in N_Statement_Other_Than_Procedure_Call or else
+               Nkind (N) in N_Procedure_Call_Statement;
+
+   procedure Do_Access_Function_Definition (N : Node_Id)
+   with Pre => Nkind (N) in N_Access_Function_Definition |
+                            N_Access_Procedure_Definition;
+
+   procedure Do_Access_To_Object_Definition (N : Node_Id)
+   with Pre => Nkind (N) = N_Access_To_Object_Definition;
+
+   procedure Report_Unhandled_Node_Empty (N : Node_Id;
+                                          Fun_Name : String;
+                                          Message : String) is
+   begin
+      Put_Line ("----------At: " & Fun_Name & "----------");
+      Put_Line ("----------" & Message & "----------");
+      pp (Union_Id (N));
+   end Report_Unhandled_Node_Empty;
+
+   procedure Report_Unhandled_Node_Kind (N : Node_Id;
+                                         Fun_Name : String;
+                                         Message : String)
+   is
+   begin
+      Report_Unhandled_Node_Empty (N, Fun_Name, Message);
+   end Report_Unhandled_Node_Kind;
+
+   procedure Report_Unhandled_Node_Type (N : Node_Id;
+                                         Fun_Name : String;
+                                         Message : String)
+   is begin
+      Report_Unhandled_Node_Empty (N, Fun_Name, Message);
+   end Report_Unhandled_Node_Type;
+
+   procedure Report_Unhandled_Node_Entity (N : Node_Id;
+                                           Fun_Name : String;
+                                           Message : String)
+   is begin
+      Report_Unhandled_Node_Empty (N, Fun_Name, Message);
+   end Report_Unhandled_Node_Entity;
+
+   procedure Report_Unhandled_Node (N : Node_Id;
+                                    Fun_Name : String;
+                                    Message : String)
+   is begin
+      Report_Unhandled_Node_Empty (N, Fun_Name, Message);
+   end Report_Unhandled_Node;
+
+   --------------------------
+   -- Do_Aggregate_Literal --
+   --------------------------
+
+   procedure Do_Aggregate_Literal (N : Node_Id) is
+      N_Type : constant Entity_Id :=  Underlying_Type (Etype (N));
+      --  TOCHECK: Parent type may be more than one step away?
+   begin
+      case Non_Private_Ekind (N_Type) is
+         when E_Array_Type =>
+            Put_Line ("Array aggregate");
+         when E_Array_Subtype =>
+            Put_Line ("Array aggregate");
+         when E_Record_Subtype =>
+            Put_Line ("Record aggregate");
+         when E_Record_Type =>
+            Put_Line ("Record aggregate");
+         when others =>
+            Report_Unhandled_Node
+              (N,
+               "Do_Aggregate_Literal",
+               "Unhandled aggregate kind: "
+               & Entity_Kind'Image (Ekind (N_Type)));
+      end case;
+   end Do_Aggregate_Literal;
+
+   -----------------------------
+   -- Do_Assignment_Statement --
+   -----------------------------
+
+   procedure Do_Assignment_Statement (N : Node_Id)
+   is
+   begin
+      if Ekind (Underlying_Type (Etype (Name (N)))) in Array_Kind then
+         Put_Line ("Array assignment");
+      else
+         Put_Line ("Non-array assignment");
+      end if;
+   end Do_Assignment_Statement;
+
+   ------------------------
+   -- Do_If_Expression --
+   ------------------------
+
+   procedure Do_If_Expression (N : Node_Id) is
+--      Expr : Node_Id := First (Expressions (N));
+   begin
+      if Nkind (N) = N_If_Expression then
+         Put_Line ("If expression");
+      else
+         Put_Line ("Illegal if expression");
+      end if;
+--        Next (Expr);
+--        Then_Expr := Do_Expression (Expr);
+--
+--        Next (Expr);
+--        Else_Expr := Do_Expression (Expr);
+   end Do_If_Expression;
+
+   ------------------------
+   -- Do_Case_Expression --
+   ------------------------
+
+   procedure Do_Case_Expression (N : Node_Id) is
+
+--        --  Appease the style police
+--        function Make_Case_Test (Alts : List_Id) return Irep;
+--
+--        Value : constant Irep := Do_Expression (Expression (N));
+--        Bound_Var : constant Irep :=
+--          Fresh_Var_Symbol_Expr (Get_Type (Value), "case_binder");
+--
+--        --------------------
+--        -- Make_Case_Test --
+--        --------------------
+--
+--        function Make_Case_Test (Alts : List_Id) return Irep is
+--           function Make_Single_Test (Alt : Node_Id) return Irep;
+--           function Make_Single_Test (Alt : Node_Id) return Irep is
+--           begin
+--              if Nkind (Alt) /= N_Range then
+--                 return Make_Op_Eq (Lhs => Bound_Var,
+--                                    Rhs => Do_Expression (Alt),
+--                                    I_Type => Make_Bool_Type,
+--                                    Source_Location =>
+--                                      Get_Source_Location (Alt));
+--              else
+--                 return Do_Range_In_Case (Alt, Bound_Var);
+--              end if;
+--           end Make_Single_Test;
+--           First_Alt_Test : constant Irep := Make_Single_Test (First (Alts));
+--           This_Alt : Node_Id := First (Alts);
+--        begin
+--           Next (This_Alt);
+--           if not Present (This_Alt) then
+--              return First_Alt_Test;
+--           end if;
+--           declare
+--              Big_Or : constant Irep := Make_Op_Or
+--                (Source_Location => (Get_Source_Location (N)),
+--                 I_Type => CProver_Bool_T);
+--           begin
+--              Append_Op (Big_Or, First_Alt_Test);
+--              while Present (This_Alt) loop
+--                 Append_Op (Big_Or, Make_Single_Test (This_Alt));
+--                 Next (This_Alt);
+--              end loop;
+--              return Big_Or;
+--           end;
+--        end Make_Case_Test;
+--
+--      function Make_Case_If_Expression (Alternatives : Node_Id) return Irep;
+--      function Make_Case_If_Expression (Alternatives : Node_Id) return Irep
+--        is
+--           This_Alt : constant Node_Id := Alternatives;
+--           Next_Alt : Node_Id := Alternatives;
+--         This_Expr : constant Irep := Do_Expression (Expression (This_Alt));
+--        begin
+--           Next (Next_Alt);
+--           if not Present (Next_Alt) then
+--              return This_Expr;
+--           else
+--              if not (Kind (Get_Type (This_Expr)) in Class_Type)
+--              then
+--                 return Report_Unhandled_Node_Irep (N, "Do_Case_Expression",
+--                "Case kind not in class expr or alt expr not in class type");
+--              end if;
+--              return Make_If_Expr
+--                (Cond => Make_Case_Test (Discrete_Choices (This_Alt)),
+--                 True_Case => This_Expr,
+--                 False_Case => Make_Case_If_Expression (Next_Alt),
+--                 I_Type => Get_Type (This_Expr),
+--                 Source_Location => Get_Source_Location (This_Expr));
+--           end if;
+--      end Make_Case_If_Expression;
+
+   begin
+      if Nkind (N) = N_Case_Expression then
+         Put_Line ("Case expression");
+      else
+         Put_Line ("Illegal case expression");
+      end if;
+   end Do_Case_Expression;
+
+   -------------------------
+   -- Do_Compilation_Unit --
+   -------------------------
+
+   procedure Do_Compilation_Unit (N : Node_Id;
+                                  Result : out Examiner_Result_Type)
+
+   is
+      U         : constant Node_Id := Unit (N);
+      Unit_Name : constant String := Unique_Name (Unique_Defining_Entity (U));
+   begin
+      Put_Line ("Do compilation_unit: " & Unit_Name);
+      case Nkind (U) is
+         when N_Subprogram_Body | N_Package_Body =>
+            Do_Subprogram_Or_Block (U);
+
+         when N_Subprogram_Declaration =>
+            Put_Line ("Subprogram declaration");
+            --  globals, dependencies and pre- and post-conditions
+            --  need to be considered here.
+
+         when N_Package_Declaration =>
+            Put_Line ("Package declaration");
+            --  Abstract states, own variables, initialization,
+            --  initialization expressions, inherit and aquire
+            --  need to be considered here.
+
+         when N_Generic_Subprogram_Declaration
+            | N_Generic_Package_Declaration =>
+            Put_Line ("Generic declaration");
+            --  These need to be considered.  The intention is to
+            --  analyse once and use many,
+            --  i.e., do not analyse every instantiation.
+         when others =>
+            Report_Unhandled_Node_Empty (N, "Do_Compilation_Unit",
+                                         "unsupported compilation unit sort");
+      end case;
+      Result := OK;
+   end Do_Compilation_Unit;
+
+   -----------------
+   -- Do_Constant --
+   -----------------
+
+   --------------------------------
+   -- Do_Derived_Type_Definition --
+   --------------------------------
+
+   procedure Do_Derived_Type_Definition (N : Node_Id) is
+   begin
+      if Nkind (N) = N_Derived_Type_Definition then
+         Put_Line ("Derived type definition");
+      else
+         Put_Line ("Illegal derived type definition");
+      end if;
+--        if Present (Record_Extension_Part (N)) then
+--         return Report_Unhandled_Node_Type (N, "Do_Derived_Type_Definition",
+--                                            "record extension unsupported");
+--        end if;
+--        if Abstract_Present (N)
+--          or else Null_Exclusion_Present (N)
+--          or else Present (Record_Extension_Part (N))
+--          or else Limited_Present (N)
+--          or else Task_Present (N)
+--          or else Protected_Present (N)
+--          or else Synchronized_Present (N)
+--          or else Present (Interface_List (N))
+--          or else Interface_Present (N)
+--        then
+--         return Report_Unhandled_Node_Type (N, "Do_Derived_Type_Definition",
+--                                "derived type definition unsupported here");
+--        end if;
+
+   end Do_Derived_Type_Definition;
+
+   -------------------------------
+   -- Do_Enumeration_Definition --
+   -------------------------------
+
+   procedure Do_Enumeration_Definition (N : Node_Id) is
+   begin
+      if Nkind (N) = N_Enumeration_Type_Definition then
+         Put_Line ("Enumeration definition");
+      else
+         Put_Line ("Illegal enumeration definition");
+      end if;
+   end Do_Enumeration_Definition;
+
+   -------------------
+   -- Do_Expression --
+   -------------------
+
+   procedure Do_Expression (N : Node_Id) is
+   begin
+      case Nkind (N) is
+         when others =>
+            Put_Line ("Do expression");
+
+--           when N_Identifier |
+--                N_Expanded_Name          => return Do_Identifier (N);
+--           when N_Selected_Component   => return Do_Selected_Component (N);
+--           when N_Op                   => return Do_Operator_General (N);
+--           when N_Integer_Literal      => return Do_Constant (N);
+--           when N_String_Literal       => return Do_String_Literal (N);
+--           when N_Character_Literal    => return Do_Character_Constant (N);
+--           when N_Type_Conversion      => return Do_Type_Conversion (N);
+--           when N_Function_Call        => return Do_Function_Call (N);
+--           when N_Or_Else              => return Do_Or_Else (N);
+--           when N_Attribute_Reference  =>
+--              case Get_Attribute_Id (Attribute_Name (N)) is
+--                 when Attribute_Access =>
+--                    declare
+--                       Pre_Prefix      : constant Node_Id := Prefix (N);
+--                       Resolved_Prefix : constant Node_Id :=
+--                         (if Nkind (Pre_Prefix) = N_Explicit_Dereference then
+--                               Prefix (Pre_Prefix)
+--                          else
+--                             Pre_Prefix);
+--                       N_Type : constant Entity_Id :=
+--                         Underlying_Type (Etype (Resolved_Prefix));
+--                    begin
+--                       if Is_Array_Type (N_Type) and then
+--                         not Is_Constrained (N_Type)
+--                       then
+--                          --  An access to an object of an unconstrained type
+--                          --  (the object itself must be constrained) is
+--                          --  represented by a pointer to an array structure
+--                     --  which contains the actual bounds of the object and
+--                          --  a pointer to the array object.
+--                          return Make_Address_Of
+--                        (Make_Unconstrained_Array_Result (Resolved_Prefix));
+--                       else
+--                          return Do_Address_Of (N);
+--                       end if;
+--                    end;
+--                 when Attribute_Address =>
+--                    --  Use the ASVAT.Address_Model to create the address.
+--                    return ASVAT.Address_Model.Do_ASVAT_Address_Of (N);
+--                 when Attribute_Length => return
+--                    Do_First_Last_Length (N, Attribute_Length);
+--                 when Attribute_Range  =>
+--                    return Report_Unhandled_Node_Irep (N, "Do_Expression",
+--                                                       "Range attribute");
+--                 when Attribute_First  => return
+--                      Do_First_Last_Length (N, Attribute_First);
+--                 when Attribute_Last   => return
+--                       Do_First_Last_Length (N, Attribute_Last);
+--                 when Attribute_Val =>
+--                    return Do_Attribute_Pos_Val (N);
+--                 when Attribute_Pos =>
+--                    return Do_Attribute_Pos_Val (N);
+--                 when Attribute_Pred =>
+--                    if Ekind (Etype (N)) in Discrete_Kind then
+--                       return Do_Attribute_Pred_Discrete (N);
+--                    else
+--                       return Report_Unhandled_Node_Irep
+--                         (N        => N,
+--                          Fun_Name => "Do_Expression",
+--                          Message  =>
+--                         "Pred and Succ of non-scalar subtypes unsupported");
+--                    end if;
+--                 when Attribute_Succ =>
+--                    if Ekind (Etype (N)) in Discrete_Kind then
+--                       return Do_Attribute_Succ_Discrete (N);
+--                    else
+--                       return Report_Unhandled_Node_Irep
+--                         (N        => N,
+--                          Fun_Name => "Do_Expression",
+--                          Message  =>
+--                         "Pred and Succ of non-scalar subtypes unsupported");
+--                    end if;
+--                 when Attribute_Size |
+--                      Attribute_Value_Size | Attribute_VADS_Size =>
+--                    --  S'Size and X'Size are optimised into a simple literal
+--                    --  by the gnat front-end when the size of the subtype or
+--                    --  object is known by the front-end.
+--                    --  In such cases this branch will not be entered.
+--                    return ASVAT.Size_Model.Do_Attribute_Size (N);
+--                 when Attribute_Component_Size  =>
+--                    --  The attribute component size isoptimised into a
+--                    --  simple literal by the gnat front-end when the size of
+--                    --  the component is known by the front-end.
+--                    --  In such cases this branch will not be entered.
+--
+--                    --  For the moment we report an unhandled node if
+--                    --  this branch is entered.
+--                    return Report_Unhandled_Node_Irep
+--                      (N, "Do_Expression",
+--                       "Component_Size unsupported");
+--                 when Attribute_Image =>
+--                    Report_Unhandled_Node_Empty
+--                      (N        => N,
+--                       Fun_Name => "Do_Expression",
+--                       Message  => "Attribute Image is unsupported");
+--                    return Make_String_Constant_Expr
+--                      (Text       => "Unsupported'Image",
+--                       Source_Loc => Get_Source_Location (N));
+--                 when Attribute_Value =>
+--                    Report_Unhandled_Node_Empty
+--                      (N        => N,
+--                       Fun_Name => "Do_Expression",
+--                       Message  => "Attribute_Value is unsupported");
+--                    --  return a dummy value
+--                    return Do_Expression (Type_Low_Bound (Etype (N)));
+--                 when Attribute_Result =>
+--                    declare
+--                       Item_Name : constant String :=
+--                         Unique_Name (Entity (Prefix (N))) & "___result";
+--                       Item : constant Symbol_Id :=
+--                         Intern (Item_Name);
+--                       pragma Assert (Global_Symbol_Table.Contains (Item),
+--                                      "return value not in symbol table " &
+--                                        Item_Name);
+--                       Return_Variable : constant Irep :=
+--                         Global_Symbol_Table (Item).Value;
+--                    begin
+--                       return Return_Variable;
+--                    end;
+--                 when Attribute_Old  =>
+--                    declare
+--                       The_Prefix        : constant Node_Id := Prefix (N);
+--                       Prefix_Etype      : constant Node_Id :=
+--                         Etype (The_Prefix);
+--                       Is_Implicit_Deref : constant Boolean :=
+--                         Is_Access_Type (Prefix_Etype);
+--                       Item_Name : constant String :=
+--                         Unique_Name (Entity (The_Prefix)) & "___old";
+--                       Item : constant Symbol_Id :=
+--                         Intern (Item_Name);
+--                       pragma Assert (Global_Symbol_Table.Contains (Item),
+--                                      "old value not in symbol table " &
+--                                        Item_Name);
+--                       Old_Variable : constant Irep :=
+--                         Global_Symbol_Table (Item).Value;
+--
+--                       Resolved_Type     : constant Irep :=
+--                         (if Is_Implicit_Deref then
+--                           Do_Type_Reference (Designated_Type (Prefix_Etype))
+--                          else
+--                             Do_Type_Reference (Prefix_Etype));
+--
+--                       Source_Loc : constant Irep := Get_Source_Location (N);
+--
+--                       Return_Expr : constant Irep :=
+--                         Make_Dereference_Expr
+--                           (Object          => Old_Variable,
+--                            Source_Location => Source_Loc,
+--                            I_Type          => Resolved_Type);
+--                    begin
+--                       if Is_Implicit_Deref then
+--                          return Return_Expr;
+--                       else
+--                          return Old_Variable;
+--                       end if;
+--                    end;
+--                 when Attribute_Max =>
+--                    return Do_Attribute_Max_Min (N      => N,
+--                                                 Is_Max => True);
+--                 when Attribute_Min =>
+--                    return Do_Attribute_Max_Min (N      => N,
+--                                                 Is_Max => False);
+--                 when Attribute_Valid =>
+--                    return Do_Attribute_Valid (Prefix (N));
+--                 when others           =>
+--                    return Report_Unhandled_Node_Irep
+--                      (N, "Do_Expression",
+--                       Attribute_Id'Image
+--                         (Get_Attribute_Id (Attribute_Name (N))) &
+--                         " unsupported");
+--              end case;
+--           when N_Explicit_Dereference => return Do_Dereference (N);
+--           when N_Case_Expression      => return Do_Case_Expression (N);
+--           when N_Aggregate            => return Do_Aggregate_Literal (N);
+--           when N_Indexed_Component    => return Do_Indexed_Component (N);
+--           when N_Slice                => return Do_Slice (N);
+--           when N_In                   => return Do_In (N);
+--           when N_Not_In               => return
+--                Make_Op_Not (Op0             => Do_In (N),
+--                             Source_Location => Get_Source_Location (N),
+--                             I_Type          => CProver_Bool_T,
+--                             Range_Check     => False);
+--           when N_Real_Literal => return Do_Real_Constant (N);
+--           when N_If_Expression => return Do_If_Expression (N);
+--           when N_And_Then => return Do_And_Then (N);
+--           when N_Qualified_Expression => return Do_Qualified_Expression (N);
+--           when N_Quantified_Expression =>
+--              return Report_Unhandled_Node_Irep (N, "Do_Expression",
+--                                                 "Quantified");
+--           when N_Null |
+--              --  gnat2goto does not process freeze nodes at present.
+--              --  Possibly of use when package initialisationis considered.
+--                N_Freeze_Entity | N_Freeze_Generic_Entity =>
+--              return Do_Null_Expression (N);
+--           when others                 =>
+--              return Report_Unhandled_Node_Irep (N, "Do_Expression",
+--                                                 "Unknown expression kind");
+      end case;
+   end Do_Expression;
+
+   procedure Do_In (N : Node_Id) is
+--        function Get_Range (N : Node_Id) return Node_Id;
+--        function Get_Range (N : Node_Id) return Node_Id is
+--        begin
+--           case Nkind (N) is
+--              when N_Range =>
+--                 return N;
+--              when N_Identifier | N_Expanded_Name =>
+--                 return Scalar_Range (Etype (N));
+--              when others =>
+--                 Report_Unhandled_Node_Empty
+--                   (N        => N,
+--                    Fun_Name => "Get_Range",
+--                    Message  => "Unexpected membership_choice");
+--                 return N;
+--           end case;
+--        end Get_Range;
+
+   begin
+      if Nkind (N) = N_In then
+         Put_Line ("In expression");
+      end if;
+   end Do_In;
+
+   -------------------
+   --  Do_And_Then  --
+   -------------------
+
+   procedure Do_And_Then (N : Node_Id) is
+--        L : constant Node_Id := Left_Opnd (N);
+--        R : constant Node_Id := Right_Opnd (N);
+--        Expr : constant Irep := Make_Op_And
+--          (I_Type => CProver_Bool_T,
+--           Source_Location => Get_Source_Location (N));
+   begin
+      if Nkind (N) = N_And_Then then
+         Put_Line ("And then expression");
+      end if;
+--        Append_Op (Expr, Do_Expression (L));
+--        Append_Op (Expr, Do_Expression (R));
+--        return Expr;
+   end Do_And_Then;
+
+   ------------------
+   --  Do_Or_Else  --
+   ------------------
+
+   procedure Do_Or_Else (N : Node_Id) is
+--        L : constant Node_Id := Left_Opnd (N);
+--        R : constant Node_Id := Right_Opnd (N);
+--        Expr : constant Irep := Make_Op_Or
+--          (I_Type => CProver_Bool_T,
+--           Source_Location => Get_Source_Location (N));
+   begin
+      if Nkind (N) = N_Or_Else then
+         Put_Line ("Or else expression");
+      end if;
+--        Append_Op (Expr, Do_Expression (L));
+--        Append_Op (Expr, Do_Expression (R));
+--        return Expr;
+   end Do_Or_Else;
+
+   ------------------------------
+   -- Do_Full_Type_Declaration --
+   ------------------------------
+
+   procedure Do_Full_Type_Declaration (N : Node_Id) is
+   begin
+      if Nkind (N) = N_Full_Type_Declaration then
+         Put_Line ("Full type declaration");
+      end if;
+      --  Do we need to do anyting for abstract iterpretation.
+      --  Possibly if it has a constraint but this should be in the tree.
+      --  Maybe if a predicate is associated with it or a SPARK annotation?
+
+   end Do_Full_Type_Declaration;
+
+   -----------------------------
+   -- Do_Qualified_Expression --
+   -----------------------------
+
+   procedure Do_Qualified_Expression (N : Node_Id) is
+   begin
+      if Nkind (N) = N_Qualified_Expression then
+         Put_Line ("Qualified expression");
+      end if;
+      --  What to do here?
+   end Do_Qualified_Expression;
+
+   ----------------------
+   -- Do_Function_Call --
+   ----------------------
+
+   procedure Do_Function_Call (N : Node_Id) is
+   begin
+      if Nkind (N) = N_Function_Call then
+         Put_Line ("Do function call");
+      end if;
+      --  It seems as though an N_Explicit_Drereference is placed in the tree
+      --  even when the function call is an implicit dereference.
+      --  Hence, implicit dereferences do not have to be seperately handled,
+      --  they are handled as explicit dereferences.
+--        if Nkind (Name (N)) = N_Explicit_Dereference then
+--           declare
+--              Fun_Type : constant Irep :=
+--                Get_Subtype (Do_Type_Reference (Etype (Prefix (Name (N)))));
+--              Return_Type : constant Irep := Get_Return_Type (Fun_Type);
+--              --  Note: the Object parameter is treated as an expression
+--              --  rather than an identifer as a subprogram pointer could be
+--              --  a component of a record or array.
+--              Deref_Function : constant Irep :=
+--                Make_Dereference_Expr
+--                (Object          => Do_Expression (Prefix (Name (N))),
+--                 Source_Location => Get_Source_Location (N),
+--                 I_Type          => Fun_Type,
+--                 Range_Check     => False);
+--           begin
+--              return Make_Side_Effect_Expr_Function_Call
+--                (Arguments       => Do_Call_Parameters (N),
+--                 I_Function      => Deref_Function,
+--                 Source_Location => Get_Source_Location (N),
+--                 I_Type          => Return_Type,
+--                 Range_Check     => False);
+--           end;
+--        end if;
+--
+--        if not (Nkind (Name (N)) in N_Has_Entity)
+--          and then Nkind (Name (N)) /= N_Aspect_Specification
+--          and then Nkind (Name (N)) /= N_Attribute_Definition_Clause
+--          and then Nkind (Name (N)) /= N_Freeze_Entity
+--          and then Nkind (Name (N)) /= N_Freeze_Generic_Entity
+--        then
+--           return Report_Unhandled_Node_Irep (N, "Do_Function_Call",
+--                                              "Wrong name nkind");
+--        end if;
+--
+--        declare
+--           Func_Ent      : constant Entity_Id := Entity (Name (N));
+--           Func_Name     : constant String := Unique_Name (Func_Ent);
+--           Func_Id       : constant Symbol_Id := Intern (Func_Name);
+--       --  Unless the function entity is an RTS call, it will have an entry
+--           --  in the symbol table even if it is a renamed function.  This
+--           --  is ensured by Do_Subprogram_Renaming_Declaration.
+--           Func_Declared : constant Boolean :=
+--             Global_Symbol_Table.Contains (Func_Id);
+--        begin
+--           if Nkind (Func_Ent) not in N_Defining_Identifier |
+--                                  N_Defining_Operator_Symbol
+--           then
+--              return Report_Unhandled_Node_Irep
+--                (Func_Ent, "Do_Function_Call",
+--              "function entity not defining identifier or operator symbol");
+--           end if;
+--
+--           if Func_Declared then
+--              declare
+--                 Func_Symbol   : constant Symbol :=
+--                   Global_Symbol_Table (Func_Id);
+--                 --  Use the name from the function symbol because the
+--                 --  function call may be to a renaming of a function and
+--                 --  goto requires the original function name.
+--                 --  The funtion symbol contains the original function
+--                 --  name as this was established by the processing of the
+--                 --  renaming declaration by
+--                 --  Do_Subprogram_Renaming_Declaration.
+--              begin
+--                 if Func_Symbol.SymType /= Ireps.Empty then
+--                    return Make_Side_Effect_Expr_Function_Call
+--                      (Source_Location => Get_Source_Location (N),
+--                       I_Function => Symbol_Expr (Func_Symbol),
+--                       Arguments => Do_Call_Parameters (N),
+--                       I_Type => Get_Return_Type (Func_Symbol.SymType));
+--                 else
+--                    --  The original function that has been renamed is not in
+--                    --  the symbol.
+--                    --  Could this happen with RTS functions?
+--                    --  Can they be renamed?
+--                    --  Do_Subprogram_Renaming_Declaration ensures the name
+--                    --  of the renamed missing subprogram is entered into
+--                    --  the function symbol.
+--                    return Report_Unhandled_Node_Irep
+--                      (N, "Do_Function_Call",
+--                       "Renamed function is not in symbol table");
+--                 end if;
+--              end;
+--           else
+--              --  This can happen for RTS functions (body not parsed by us)
+--              --  TODO: handle RTS functions in a sane way
+--              return Report_Unhandled_Node_Irep
+--                (N, "Do_Function_Call",
+--                 "Called function is not in symbol table");
+--           end if;
+--        end;
+   end Do_Function_Call;
+
+   ---------------------------------------
+   -- Do_Handled_Sequence_Of_Statements --
+   ---------------------------------------
+
+   procedure Do_Handled_Sequence_Of_Statements (N : Node_Id) is
+      Stmts : constant List_Id := Statements (N);
+      Stmnt : Node_Id := First (Stmts);
+   begin
+      while Present (Stmnt) loop
+         if Nkind (Stmnt) = N_Object_Declaration then
+            Process_Declaration (Stmnt);
+         else
+            Process_Statement (Stmnt);
+         end if;
+         Next (Stmnt);
+      end loop;
+   end Do_Handled_Sequence_Of_Statements;
+
+   -----------------------
+   -- Do_Exit_Statement --
+   -----------------------
+
+   procedure Do_Exit_Statement (N : Node_Id) is
+   begin
+      if Nkind (N) = N_Exit_Statement then
+         Put_Line ("Do Exit statement");
+      end if;
+      --  What do we do here?
+   end Do_Exit_Statement;
+
+   ---------------------
+   -- Do_If_Statement --
+   ---------------------
+
+   procedure Do_If_Statement (N : Node_Id) is
+
+--        function Do_If_Block (N : Node_Id) return Irep;
+--        procedure Do_Elsifs (Else_Ifs  : Node_Id;
+--                             Else_List : List_Id;
+--                             Ret       : Irep);
+--
+--        ---------------
+--        -- Do_Elsifs --
+--        ---------------
+--
+--        procedure Do_Elsifs (Else_Ifs  : Node_Id;
+--                             Else_List : List_Id;
+--                             Ret       : Irep)
+--        is
+--        begin
+--           if Present (Else_Ifs) then
+--              declare
+--                 Sub_If   : constant Irep := Do_If_Block (Else_Ifs);
+--                 Next_Eif : Node_Id := Else_Ifs;
+--              begin
+--                 Next (Next_Eif);
+--                 Do_Elsifs (Next_Eif, Else_List, Sub_If);
+--                 Set_Else_Case (Ret, Sub_If);
+--              end;
+--           else
+--              if Present (Else_List) then
+--                 Set_Else_Case (Ret, Process_Statements (Else_List));
+--              end if;
+--           end if;
+--        end Do_Elsifs;
+--
+--        -----------------
+--        -- Do_If_Block --
+--        -----------------
+--
+--        function Do_If_Block (N : Node_Id) return Irep is
+--           (Make_Code_Ifthenelse
+--             (Cond => Do_Expression (Condition (N)),
+--              Then_Case => Process_Statements (Then_Statements (N)),
+--              Else_Case => Ireps.Empty,
+--              Source_Location => Get_Source_Location (N)));
+--
+--        --  Local variables
+--
+--        Ret : constant Irep := Do_If_Block (N);
+--
+--     --  Start of processing for Do_If_Statement
+
+   begin
+      if Nkind (N) = N_If_Statement then
+         Put_Line ("Do if statement");
+      end if;
+      --  We have work to do here.
+--        Do_Elsifs (First (Elsif_Parts (N)), Else_Statements (N), Ret);
+--        return Ret;
+   end Do_If_Statement;
+
+   ------------------------------------
+   -- Do_Incomplete_Type_Declaration --
+   ------------------------------------
+
+   procedure Do_Incomplete_Type_Declaration (N : Node_Id) is
+   begin
+      if Nkind (N) = N_Incomplete_Type_Declaration then
+         Put_Line ("Do incomplete type declaration");
+      end if;
+         --  Not sure there will be anything to do here?
+   end Do_Incomplete_Type_Declaration;
+
+   -----------------------
+   -- Do_Case_Statement --
+   -----------------------
+
+   procedure Do_Case_Statement (N : Node_Id) is
+--        Value : constant Irep := Do_Expression (Expression (N));
+--
+--        function Make_Case_Test (Alts : List_Id) return Irep;
+--
+--        --  Auxiliary function to create a single test case
+--        --  to emplace in a condition from a list of alternative
+--        --  values.
+--        function Make_Case_Test (Alts : List_Id) return Irep is
+--           function Make_Single_Test (Alt : Node_Id) return Irep;
+--           function Make_Single_Test (Alt : Node_Id) return Irep is
+--           begin
+--              if Nkind (Alt) /= N_Range then
+--                 return Make_Op_Eq (Lhs => Value,
+--                                    Rhs => Do_Expression (Alt),
+--                                    I_Type => Make_Bool_Type,
+--                                    Source_Location =>
+--                                      Get_Source_Location (Alt));
+--              else
+--                 return Do_Range_In_Case (Alt, Value);
+--              end if;
+--           end Make_Single_Test;
+--           First_Alt_Test : constant Irep := Make_Single_Test (First (Alts));
+--           This_Alt : Node_Id := First (Alts);
+--        begin
+--           Next (This_Alt);
+--           if not Present (This_Alt) then
+--              return First_Alt_Test;
+--           end if;
+--           declare
+--              Big_Or : constant Irep := Make_Op_Or
+--                (Source_Location => Get_Source_Location (This_Alt),
+--                 I_Type => CProver_Bool_T);
+--           begin
+--              Append_Op (Big_Or, First_Alt_Test);
+--              while Present (This_Alt) loop
+--                 Append_Op (Big_Or, Make_Single_Test (This_Alt));
+--                 Next (This_Alt);
+--              end loop;
+--              return Big_Or;
+--           end;
+--        end Make_Case_Test;
+--
+--        function Make_Case_If_Then_Else_Statements (Alternatives : Node_Id)
+--                                                   return Irep;
+--        function Make_Case_If_Then_Else_Statements (Alternatives : Node_Id)
+--                                                   return Irep
+--        is
+--           This_Alternative : constant Node_Id := Alternatives;
+--           Remaining_Alternatives : Node_Id := This_Alternative;
+--           This_Block : constant Irep := Process_Statements
+--             (Statements (This_Alternative));
+--        begin
+--           Next (Remaining_Alternatives);
+--           --  check if this is the last case in the chain
+--           if not Present (Remaining_Alternatives) then
+--              --  no condition, because at least one case must be hit
+--              --  and if its not any of the previous ones it must be this one
+--              return This_Block;
+--           else
+--              return Make_Code_Ifthenelse
+--              (Cond => Make_Case_Test (Discrete_Choices (This_Alternative)),
+--                 Then_Case => This_Block,
+--                 Else_Case => Make_Case_If_Then_Else_Statements
+--                   (Remaining_Alternatives),
+--                 Source_Location => Get_Source_Location (This_Alternative));
+--           end if;
+--        end Make_Case_If_Then_Else_Statements;
+   begin
+      if Nkind (N) = N_Case_Statement then
+         Put_Line ("Do case statement");
+      end if;
+--        --  there must at least be one alternative
+--        pragma Assert (List_Length (Alternatives (N)) >= 1);
+--        return Ret : constant Irep :=
+--          Make_Code_Block (Get_Source_Location (N)) do
+--           Append_Op
+--             (Ret,
+--              Make_Case_If_Then_Else_Statements (First (Alternatives (N))));
+--        end return;
+   end Do_Case_Statement;
+
+   -----------------------
+   -- Do_Loop_Statement --
+   -----------------------
+
+   procedure Do_Loop_Statement (N : Node_Id) is
+--        Iter_Scheme  : constant Node_Id := Iteration_Scheme (N);
+--        Loop_Irep : Irep;
+--        Loop_Wrapper : constant Irep := Make_Code_Block
+--          (Get_Source_Location (N));
+   begin
+      if Nkind (N) = N_Loop_Statement then
+         Put_Line ("Do loop statement");
+      end if;
+--        if not Present (Iter_Scheme) or else Present (Condition (Iter_Scheme))
+--        then
+--           --  The statements of the loop can be processed.
+--           declare
+--              Body_Block : constant Irep :=
+--                Process_Statements (Statements (N));
+--              Loop_Cond  : constant Irep :=
+--                (if not Present (Iter_Scheme) then
+--                 --  It is a simple loop condition is True.
+--                    CProver_True
+--                 else
+--                 --  It is a WHILE loop get the loop condition.
+--                    Do_Expression (Condition (Iter_Scheme))
+--                );
+--           begin
+--                 Loop_Irep := Make_Code_While
+--                   (Loop_Body => Body_Block,
+--                    Cond => Loop_Cond,
+--                    Source_Location => Get_Source_Location (N));
+--           end;
+--        else
+--           --  It's a FOR loop.
+--           --  The statements in the body of the loop cannot be processed
+--           --  until the loop variable has been inserted into the symbol table.
+--           --
+--           --   Ada 1995: loop_parameter_specification
+--           --   Ada 2012: +iterator_specification
+--           if Present (Loop_Parameter_Specification (Iter_Scheme)) then
+--              declare
+--                 Spec : constant Node_Id :=
+--                   Loop_Parameter_Specification (Iter_Scheme);
+--                 Loopvar      : constant Entity_Id :=
+--                   Defining_Identifier (Spec);
+--                 Loopvar_Name : constant String :=
+--                   Unique_Name (Loopvar);
+--                 Loopvar_Type : constant Entity_Id := Etype (Loopvar);
+--
+--                 function Get_Range (Spec : Node_Id) return Node_Id;
+--
+--                 function Get_Range (Spec : Node_Id) return Node_Id
+--                 is
+--                    Dsd : Node_Id := Discrete_Subtype_Definition (Spec);
+--                 begin
+--                    if Nkind (Dsd) = N_Subtype_Indication then
+--                       Dsd := Range_Expression (Constraint (Dsd));
+--                    end if;
+--
+--                    return Dsd;
+--                 end Get_Range;
+--
+--                 Dsd : Node_Id;
+--
+--                 Type_Loopvar : constant Irep := Do_Type_Reference
+--                   (Etype (Etype (Defining_Identifier (Spec))));
+--
+--                 Sym_Loopvar : constant Irep :=
+--                   Make_Symbol_Expr
+--                     (Source_Location =>
+--                        Get_Source_Location (Defining_Identifier (Spec)),
+--                      I_Type          => Type_Loopvar,
+--                      Identifier      => Loopvar_Name);
+--
+--                 Init : Irep;
+--                 Cond : Irep;
+--                 Post : Irep;
+--
+--                 Bound_Low : Irep;
+--                 Bound_High : Irep;
+--                 Pre_Dsd : Node_Id := Discrete_Subtype_Definition (Spec);
+--              begin
+--                 --  Add the loop variable to the symbol table
+--                 New_Object_Symbol_Entry
+--                   (Object_Name       => Intern (Loopvar_Name),
+--                    Object_Type       => Do_Type_Reference (Loopvar_Type),
+--                    Object_Init_Value => Ireps.Empty,
+--                    A_Symbol_Table    => Global_Symbol_Table);
+--
+--                 --  Now the statements of the for loop can be processed.
+--                 declare
+--                    Body_Block : constant Irep :=
+--                      Process_Statements (Statements (N));
+--                    --  And, if the loop variable is an enumeration type,
+--                    --  the underlying numerical representation of the
+--                    --  enumeration can be obtained.
+--                    --  If the loop variable is a discrete numeric type,
+--                    --  the function Cast_Enum is an identity function.
+--                    Loopvar_Numeric_Rep : constant Irep :=
+--                      Cast_Enum (Sym_Loopvar, Global_Symbol_Table);
+--
+--                    --  A loop increment/decrement constant is required
+--                    --  for a FOR loop.
+--                    Loop_Inc_Dec : constant Irep :=
+--                      Make_Integer_Constant (1, Loopvar_Type);
+--                 begin
+--                    if Nkind (Pre_Dsd) = N_Subtype_Indication then
+--                       Pre_Dsd := Range_Expression (Constraint (Pre_Dsd));
+--                    end if;
+--                    if Nkind (Pre_Dsd) /= N_Signed_Integer_Type_Definition
+--                      and Nkind (Pre_Dsd) /= N_Range
+--                      and  Nkind (Pre_Dsd) /= N_Real_Range_Specification
+--                      and not (Present (Scalar_Range (Etype (Pre_Dsd))))
+--                    then
+--                       Report_Unhandled_Node_Empty
+--                         (Pre_Dsd,
+--                          "Do_Loop_Statement - FOR loop",
+--                          "Invalid Discrete_Subtype_Definition");
+--                       return Loop_Wrapper;
+--                    end if;
+--                    if Nkind (Pre_Dsd) = N_Identifier or
+--                      Nkind (Pre_Dsd) = N_Expanded_Name
+--                    then
+--                       Dsd := Scalar_Range (Etype (Pre_Dsd));
+--                    else
+--                       Dsd := Get_Range (Spec);
+--                    end if;
+--                    if not (Present (Low_Bound (Dsd))) then
+--                       Report_Unhandled_Node_Empty
+--                         (Dsd,
+--                          "Do_Loop_Statement  FOR loop",
+--                          "Mebership_choice subtype has unknown range");
+--                       return Loop_Wrapper;
+--                    end if;
+--                    Bound_Low := Do_Expression (Low_Bound (Dsd));
+--                    Bound_High := Do_Expression (High_Bound (Dsd));
+--
+--                    --  Loop var decl
+--                    Append_Op (Loop_Wrapper, Make_Code_Decl
+--                               (Symbol          => Sym_Loopvar,
+--                                Source_Location => Get_Source_Location
+--                                  (Defining_Identifier (Spec))));
+--
+--                    if Reverse_Present (Spec) then
+--                       declare
+--                          --  Arithmetic has to be performed on numeric types.
+--                          Dec : constant Irep := Make_Op_Sub
+--                            (Lhs => Loopvar_Numeric_Rep,
+--                             Rhs => Typecast_If_Necessary
+--                               (Loop_Inc_Dec,
+--                                Get_Type (Loopvar_Numeric_Rep),
+--                                Global_Symbol_Table),
+--                             I_Type => Get_Type (Loopvar_Numeric_Rep),
+--                            Source_Location => Internal_Source_Location);
+--                       begin
+--                          Init := Make_Code_Assign
+--                            (Lhs => Sym_Loopvar,
+--                             Rhs => Typecast_If_Necessary
+--                               (Bound_High,
+--                                Get_Type (Sym_Loopvar),
+--                                Global_Symbol_Table),
+--                             Source_Location => Get_Source_Location (Spec));
+--                          --  Here the numeric representation of the loop
+--                          --  variable must be used for the relational operator.
+--                          Cond := Make_Op_Geq
+--                            (Rhs             =>
+--                               Typecast_If_Necessary
+--                                 (Bound_Low,
+--                                  Get_Type (Loopvar_Numeric_Rep),
+--                                  Global_Symbol_Table),
+--                             Lhs             => Loopvar_Numeric_Rep,
+--                             Source_Location => Get_Source_Location (Spec),
+--                             Overflow_Check  => False,
+--                             I_Type          => Make_Bool_Type,
+--                             Range_Check     => False);
+--                          --  Assignment has the given type.
+--                          Post :=
+--                            Make_Side_Effect_Expr_Assign
+--                              (Lhs => Sym_Loopvar,
+--                               Rhs => Typecast_If_Necessary
+--                                 (Expr           => Dec,
+--                                  New_Type       => Get_Type (Sym_Loopvar),
+--                                  A_Symbol_Table => Global_Symbol_Table),
+--                               Source_Location => Internal_Source_Location,
+--                               I_Type => Get_Type (Sym_Loopvar));
+--                       end;
+--                    else
+--                       declare
+--                          --  Arithmetic has to be performed on numeric types.
+--                          Inc : constant Irep := Make_Op_Add
+--                            (Lhs => Loopvar_Numeric_Rep,
+--                             Rhs => Typecast_If_Necessary
+--                               (Loop_Inc_Dec,
+--                                Get_Type (Loopvar_Numeric_Rep),
+--                                Global_Symbol_Table),
+--                             I_Type => Get_Type (Loopvar_Numeric_Rep),
+--                            Source_Location => Internal_Source_Location);
+--                       begin
+--                          Init := Make_Code_Assign
+--                            (Lhs => Sym_Loopvar,
+--                             Rhs => Typecast_If_Necessary
+--                               (Bound_Low,
+--                                Get_Type (Sym_Loopvar),
+--                                Global_Symbol_Table),
+--                             Source_Location => Get_Source_Location (Spec));
+--                          --  Here the numeric representation of the loop
+--                          --  variable must be used for the relational operator.
+--                          Cond := Make_Op_Leq
+--                            (Rhs             =>
+--                               Typecast_If_Necessary
+--                                 (Bound_High,
+--                                  Get_Type (Loopvar_Numeric_Rep),
+--                                  Global_Symbol_Table),
+--                             Lhs             => Loopvar_Numeric_Rep,
+--                             Source_Location => Get_Source_Location (Spec),
+--                             Overflow_Check  => False,
+--                             I_Type          => Make_Bool_Type,
+--                             Range_Check     => False);
+--                          --  Assignment has the given type.
+--                          Post :=
+--                            Make_Side_Effect_Expr_Assign
+--                              (Lhs => Sym_Loopvar,
+--                               Rhs => Typecast_If_Necessary
+--                                 (Expr           => Inc,
+--                                  New_Type       => Get_Type (Sym_Loopvar),
+--                                  A_Symbol_Table => Global_Symbol_Table),
+--                               Source_Location => Internal_Source_Location,
+--                               I_Type => Get_Type (Sym_Loopvar));
+--                       end;
+--                    end if;
+--
+--                    Set_Source_Location (Post, Get_Source_Location (Spec));
+--                    Loop_Irep := Make_Code_For
+--                      (Loop_Body => Body_Block,
+--                       Cond => Cond,
+--                       Init => Init,
+--                       Iter => Post,
+--                       Source_Location => Get_Source_Location (N));
+--                 end;
+--              end;
+--           else
+--              if not Present (Iterator_Specification (Iter_Scheme)) then
+--                 Report_Unhandled_Node_Empty
+--                   (N, "Do_Loop_Statement",
+--                    "Scheme specification not present");
+--                 return Loop_Wrapper;
+--
+--              end if;
+--              Report_Unhandled_Node_Empty (N, "Do_Loop_Statement",
+--                                           "Loop iterators not implemented");
+--              return Loop_Wrapper;
+--           end if;
+--        end if;
+--
+--        Append_Op (Loop_Wrapper, Loop_Irep);
+--
+--        --  if GNAT has created the loop identifier, we do not
+--        --  need a label because the user cannot reference it
+--        if not Has_Created_Identifier (N) then
+--           pragma Assert (Nkind (Identifier (N)) in N_Has_Chars);
+--           Append_Op (Loop_Wrapper,
+--                      Make_Code_Label
+--                        (Code            => Make_Code_Skip
+--                           (Source_Location =>
+--                              Get_Source_Location (Identifier (N))),
+--                         Source_Location => Get_Source_Location (Identifier (N)),
+--                         Label           => Get_Name_String
+--                           (Chars (Identifier (N))) & "_exit"));
+--        end if;
+--        return Loop_Wrapper;
+   end Do_Loop_Statement;
+
+   -----------------------------------------
+   --  Do_N_Block_Statement (nested declares)
+   -----------------------------------------
+
+   function Do_N_Block_Statement (N : Node_Id) is
+   begin
+      Put_Line ("Do block statement");
+      Do_Subprogram_Or_Block (N);
+   end Do_N_Block_Statement;
+
+   ---------------
+   -- Do_Pragma --
+   ---------------
+
+   procedure Do_Pragma (N : Node_Id) is
+
+--        --------------------------------
+--        -- Do_Pragma_Assert_or_Assume --
+--        --------------------------------
+--
+--        --  Handle pragmas that result in a simple assert or assume statement in
+--        --  the resulting goto program
+--        procedure Do_Pragma_Assert_or_Assume
+--          (N_Orig : Node_Id; Block : Irep);
+--        --  Handle pragmas that suppress some checks by explicitly ignoring them
+--        procedure Do_Pragma_Suppress
+--          (N_Orig : Node_Id);
+--        procedure Do_Pragma_Refine
+--          (N_Orig : Node_Id);
+--
+--        procedure Do_Pragma_Assert_or_Assume
+--          (N_Orig : Node_Id; Block : Irep)
+--        is
+--           Which : constant Pragma_Id := Get_Pragma_Id (N_Orig);
+--
+--           --  I've tried pretty printing but this way seems to be easier and
+--           --  more accurate basically, just go to the source file, scan for
+--           --  opening paren to find the start of the condition, then scan for
+--           --  a closing paren or a comma to find the end of the condition,
+--           --  ignoring comments
+--           function Get_Assert_Condition_As_Ada_Source_Code return String;
+--           function Get_Assert_Condition_As_Ada_Source_Code return String is
+--              Source_File : Ada.Text_IO.File_Type;
+--              package SU renames Ada.Strings.Unbounded;
+--              Condition_Text_Buffer : SU.Unbounded_String;
+--
+--              --  Skip over whitespace and comments then return the next
+--              --  character that isn't either of those
+--              function Get_Next_Relevant_Char return Character;
+--              function Get_Next_Relevant_Char return Character is
+--                 Char : Character;
+--                 use Ada.Characters.Handling; --  Is_Space
+--                 --  We want to convert all consecutive whitespace
+--                 --  and/or comments into a single space,
+--                 --  but only if there's at least one of them
+--                 Have_Written_Space : Boolean := False;
+--              begin
+--                 loop
+--                    --  I don't bother checking for EOF in here because we know
+--                    --  that the source file is valid Ada (otherwise it wouldn't
+--                    --  have passed the parsing stage in the frontend), so this
+--                    --  will terminate before hitting EOF
+--                    Get (Source_File, Char);
+--                    if Char = '-' then
+--                       --  check if this is the start of a comment
+--                       declare
+--                          Next_Char : Character;
+--                          Is_End_Of_Line : Boolean;
+--                       begin
+--                          Look_Ahead (Source_File, Next_Char, Is_End_Of_Line);
+--                          if not Is_End_Of_Line and then Next_Char = '-' then
+--                             Skip_Line (Source_File);
+--                          else
+--                             return Char;
+--                          end if;
+--                       end;
+--                    elsif Is_Space (Char) then
+--                       --  just skip this
+--                       null;
+--                    else
+--                       --  not a comment, newline or whitespace character
+--                       return Char;
+--                    end if;
+--                    if not Have_Written_Space then
+--                       --  insert a whitespace character if we skipped over at
+--                       --  least one (or a comment, same difference)
+--                       SU.Append (Condition_Text_Buffer, ' ');
+--                       Have_Written_Space := True;
+--                    end if;
+--                 end loop;
+--              end Get_Next_Relevant_Char;
+--
+--              procedure Collect_Condition_Text;
+--              procedure Collect_Condition_Text is
+--                 Parentheses_Depth : Integer := 0;
+--              begin
+--                 --  find start of expression
+--                 while Get_Next_Relevant_Char /= '(' loop
+--                    null;
+--                 end loop;
+--                 Parentheses_Depth := 1;
+--                 --  record expression until end, which for a Pragma Assert is
+--                 --  either the last ')' if it's the form `Pragma Assert (Cond)`
+--                 --  or the top level ',' if it's the form
+--                 --  `Pragma Assert (Cond, Message)`
+--                 --  (fortunately it is guaranteed to come before the message)
+--                 loop
+--                    declare
+--                       Next_Char : constant Character := Get_Next_Relevant_Char;
+--                    begin
+--                       case Next_Char is
+--                          when '(' =>
+--                             Parentheses_Depth := Parentheses_Depth + 1;
+--                          when ')' =>
+--                             if Parentheses_Depth = 1 then
+--                                exit;
+--                             end if;
+--                             Parentheses_Depth := Parentheses_Depth - 1;
+--                          when ',' =>
+--                             if Parentheses_Depth = 1 then
+--                                exit;
+--                             end if;
+--                          when '=' =>
+--                             if Parentheses_Depth = 1 then
+--                                --  Check for =>, so we can strip the
+--                                --  optional "Check =>" prefix if it's there
+--                                declare
+--                                   Maybe_Gt_Char : Character;
+--                                   Is_End_Of_Line : Boolean;
+--                                begin
+--                                   Look_Ahead
+--                                     (Source_File,
+--                                      Maybe_Gt_Char,
+--                                      Is_End_Of_Line);
+--                                   if not Is_End_Of_Line
+--                                     and then Maybe_Gt_Char = '>'
+--                                   then
+--                                      Get (Source_File, Maybe_Gt_Char);
+--                                      Condition_Text_Buffer :=
+--                                        SU.Null_Unbounded_String;
+--                                      goto Skip_Append;
+--                                   end if;
+--                                end;
+--                             end if;
+--                          when others =>
+--                             null;
+--                       end case;
+--                       SU.Append (Condition_Text_Buffer, Next_Char);
+--                       <<Skip_Append>>
+--                    end;
+--                 end loop;
+--              end Collect_Condition_Text;
+--
+--              --  use Ada.Strings.Fixed;
+--              use Sinput;
+--              Assertion_Sloc : constant Source_Ptr := Sloc (N);
+--              Start_Line : constant Positive_Count :=
+--                Positive_Count (Get_Logical_Line_Number (Assertion_Sloc));
+--              Start_Column : constant Positive_Count :=
+--                Positive_Count (Get_Column_Number (Assertion_Sloc));
+--
+--              Source_File_Name : constant String :=
+--                Get_Name_String
+--                  (Full_File_Name
+--                     (Get_Source_File_Index
+--                        (Assertion_Sloc)));
+--           begin
+--              Open
+--                (File => Source_File,
+--                 Mode => In_File,
+--                 Name => Source_File_Name);
+--              Set_Line (Source_File, Start_Line);
+--              Set_Col (Source_File, Start_Column);
+--              Collect_Condition_Text;
+--              Close (Source_File);
+--              return Ada.Strings.Fixed.Trim
+--                (SU.To_String (Condition_Text_Buffer), Ada.Strings.Both);
+--           end Get_Assert_Condition_As_Ada_Source_Code;
+--
+--           function Make_Assert_Comment return Irep;
+--           function Make_Assert_Comment return Irep
+--           is
+--              Source_Loc : constant Irep := Get_Source_Location (N);
+--              Context_Name : constant String := Get_Context_Name (N);
+--              Comment_Prefix : constant String := "assertion ";
+--              Comment : constant String :=
+--                Get_Assert_Condition_As_Ada_Source_Code;
+--           begin
+--              Set_Property_Class (Source_Loc, "assertion");
+--              Set_Function (Source_Loc, Context_Name);
+--              Set_Comment (Source_Loc, Comment_Prefix & Comment);
+--              return Source_Loc;
+--           end Make_Assert_Comment;
+--
+--           function Make_Assert_Or_Assume (Condition : Irep) return Irep;
+--           function Make_Assert_Or_Assume (Condition : Irep) return Irep is
+--           begin
+--              if Which = Pragma_Assume then
+--                 return Make_Code_Assume
+--                   (Assumption => Condition,
+--                    Source_Location => Get_Source_Location (N));
+--              else
+--                 return Make_Code_Assert
+--                   (Assertion => Condition,
+--                    Source_Location => Make_Assert_Comment);
+--              end if;
+--           end Make_Assert_Or_Assume;
+--
+--           Check : Irep := Ireps.Empty;
+--
+--           ----------------
+--           -- Handle_Arg --
+--           ----------------
+--
+--           procedure Handle_Arg
+--             (Arg_Pos : Positive; Arg_Name : Name_Id; Expr : Node_Id);
+--
+--           --  Handle_Arg is called in a loop, Arg_Pos stores the loop iterations
+--           --  Arg_Name is the name of the parameter
+--           --  Expr is the Expression associated with the parameter
+--           procedure Handle_Arg
+--             (Arg_Pos : Positive; Arg_Name : Name_Id; Expr : Node_Id) is
+--           begin
+--
+--              if Arg_Name = Name_Check
+--                or else (Arg_Name = No_Name and then Arg_Pos = 1)
+--              then
+--                 Check := Do_Expression (Expr);
+--              elsif Arg_Name = Name_Message
+--                or else (Arg_Name = No_Name and then Arg_Pos = 2)
+--              then
+--                 null; -- ignore, since assert irep has no msg
+--              else
+--                 Report_Unhandled_Node_Empty (N, "Do_Pragma_Assert_or_Assume",
+--                                              "Unknown arg name");
+--              end if;
+--           end Handle_Arg;
+--
+--           procedure Iterate_Args is new
+--             --  Iteration is a generic function which takes Handle_Arg as a
+--             --  call-back.
+--             Iterate_Pragma_Parameters (Handle_Arg => Handle_Arg);
+--
+--        begin
+--           --  We iterate over the pragma parameters calling Handle_Arg on each
+--           --  parameter
+--           Iterate_Args (N_Orig);
+--           if Check = Ireps.Empty then
+--              Report_Unhandled_Node_Empty (N, "Do_Pragma_Assert_or_Assume",
+--                                           "Unassigned arg name");
+--           end if;
+--
+--           Append_Op
+--             (Block, Make_Assert_Or_Assume
+--                (Condition => Check));
+--        end Do_Pragma_Assert_or_Assume;
+--
+--        procedure Do_Pragma_Suppress
+--          (N_Orig : Node_Id)
+--        is
+--           --  To be set by iterator:
+--           Suppress_Scope : Name_Id;
+--
+--           ----------------
+--           -- Handle_Arg --
+--           ----------------
+--
+--           procedure Handle_Arg
+--             (Arg_Pos : Positive; Arg_Name : Name_Id; Expr : Node_Id);
+--
+--           procedure Handle_Arg
+--             (Arg_Pos : Positive; Arg_Name : Name_Id; Expr : Node_Id) is
+--           begin
+--
+--              --  Suppress pragma only takes one argument with no name
+--              --  The expression stores the scope in Chars
+--              if Arg_Name = No_Name and then
+--                Arg_Pos = 1 and then
+--                Nkind (Expr) = N_Identifier
+--              then
+--                 pragma Assert (Nkind (Expr) in N_Has_Chars);
+--                 Suppress_Scope := Chars (Expr);
+--              else
+--                 Report_Unhandled_Node_Empty (N, "Do_Pragma_Suppress",
+--                                              "Unknown arg name");
+--              end if;
+--           end Handle_Arg;
+--
+--           procedure Iterate_Args is new
+--             Iterate_Pragma_Parameters (Handle_Arg => Handle_Arg);
+--
+--        begin
+--           Iterate_Args (N_Orig);
+--           if Suppress_Scope = Name_All_Checks
+--           then
+--              null; -- Intentionally ignoring this request to suppress all checks
+--           else
+--              null; -- Intentionally ignoring supressing some checks
+--           end if;
+--
+--        end Do_Pragma_Suppress;
+--
+--        procedure Do_Pragma_Refine
+--          (N_Orig : Node_Id)
+--        is
+--           --  To be set by iterator:
+--           Components : List_Id;
+--           Component_Expression : Node_Id;
+--           CEE : List_Id;
+--           Scope_Size : Nat;
+--
+--           ----------------
+--           -- Handle_Arg --
+--           ----------------
+--
+--           procedure Handle_Arg
+--             (Arg_Pos : Positive; Arg_Name : Name_Id; Expr : Node_Id);
+--
+--           procedure Handle_Arg
+--             (Arg_Pos : Positive; Arg_Name : Name_Id; Expr : Node_Id) is
+--           begin
+--
+--              if Arg_Name = No_Name and then
+--                Arg_Pos = 1 and then
+--              --  Refine pragma takes parameters whose arguments are aggregates.
+--              --  The following code demonstrates how to access the refine
+--              --  arguments.
+--                Nkind (Expr) = N_Aggregate
+--              then
+--                 Components := Component_Associations (Expr);
+--                 Component_Expression := Expression (First (Components));
+--                 CEE := Expressions (Component_Expression);
+--                 Scope_Size := Scope_Size + List_Length (CEE);
+--              else
+--                 Report_Unhandled_Node_Empty (N, "Do_Pragma_Refine",
+--                                              "Unknown arg name");
+--              end if;
+--           end Handle_Arg;
+--
+--           procedure Iterate_Args is new
+--             Iterate_Pragma_Parameters (Handle_Arg => Handle_Arg);
+--
+--        begin
+--           Iterate_Args (N_Orig);
+--           if Scope_Size >= 1
+--           then
+--              Report_Unhandled_Node_Empty (N, "Do_Pragma Refine",
+--                                        "Refinement known but unsupported.");
+--           end if;
+--
+--        end Do_Pragma_Refine;
+--
+--        N_Orig : Node_Id;
+
+   begin
+      if not Present (Original_Node (N)) then
+         Report_Unhandled_Node_Empty (N, "Do_Pragma",
+                                      "Original node not present");
+      end if;
+      N_Orig := Original_Node (N);
+      case Pragma_Name (N_Orig) is
+         when SPARK_Classic_Annotation =>
+            Put_Line ("SPARK_Classic Pragma " &
+                        Get_Name_String (Pragma_Name (N_Orig)));
+--              SPARK_Classic.Pragmas.Process (N);
+         when Name_Assert |
+              Name_Assume |
+              Name_Assert_And_Cut |
+            --  Assert and introduce a cut point: the prover can safely forget
+            --  evaluations of local variables and only assume the asserted
+            --  condition. This could be used in symex (making it concolic)
+            --  but is only an optimization.
+            Name_Loop_Invariant =>
+            --  Equivalent to assert but also introduces a cut point wrt. the
+            --  variables local to the loop.
+            --  Do_Pragma_Assert_or_Assume (N_Orig, Block);
+            Put_Line ("Some form of assert pragma");
+         when Name_Precondition =>
+            --  Do_Pragma_Assert_or_Assume (N_Orig, Block);
+            Put_Line ("Pragma Pre");
+         when Name_Postcondition =>
+            Do_Pragma_Assert_or_Assume (N_Orig, Block);
+            Put_Line ("Pragma Post");
+         when Name_Refined_State |
+              Name_Refined_Global |
+              Name_Refined_Depends =>
+            --  We are not supporting refinement at this point
+            --  Using it would (probably) require modification to CBMC
+            --  Do_Pragma_Refine (N_Orig);
+            Put_Line ("Some form of refinement pragma");
+         when Name_Suppress =>
+            --  Suppressing is effectively also ignored (elaborated as example)
+            --  Do_Pragma_Suppress (N_Orig);
+            Put_Line ("Pragma Supress");
+         when Name_SPARK_Mode =>
+            Put_Line ("Pragma SPARK Mode");
+         when Name_Global =>
+            Put_Line ("Pragma Global");
+         when Name_Variant =>
+            --  Could as well be ignored but is another verification condition
+            --  that should be checked
+            Report_Unhandled_Node_Empty (N, "Do_Pragma",
+                                         "Unsupported pragma: Variant");
+         when Name_Asynchronous =>
+            --  Allows a remote subprogram call to return prior to completion
+            --  of the execution of the corresponding remote subprogram body.
+            --  It changes the semantics wrt to thread interleavings.
+            Report_Unhandled_Node_Empty (N, "Do_Pragma",
+                                         "Unsupported pragma: Asynchronous");
+         when Name_Atomic |
+              Name_Atomic_Components =>
+            --  For an atomic object all reads and updates of the object as a
+            --  whole are indivisible. It changes the semantics wrt to thread
+            --  interleavings.
+            Report_Unhandled_Node_Empty (N, "Do_Pragma",
+                                         "Unsupported pragma: Atomic");
+         when Name_Volatile |
+              Name_Volatile_Full_Access |
+              Name_Volatile_Components =>
+        --  For a volatile object all reads and updates of the object as a
+        --  whole are performed directly to memory. In sequential execution
+        --  they may be modified by the environment. Effectively, they need
+        --  to be modelled as non-deterministic input in every state. It
+        --  changes the semantics wrt to thread interleavings.
+            Report_Unhandled_Node_Empty (N, "Do_Pragma",
+                                         "Unsupported pragma in statements" &
+                                         ": Volatile");
+         when Name_Attach_Handler =>
+            --  The expression in the Attach_Handler pragma as evaluated at
+            --  object creation time specifies an interrupt. As part of the
+            --  initialization of that object, if the Attach_Handler pragma is
+            --  specified, the handler procedure is attached to the specified
+            --  interrupt. A check is made that the corresponding interrupt is
+            --  not reserved. We do not support that check yet.
+            Report_Unhandled_Node_Empty (N, "Do_Pragma",
+                                         "Unsupported pragma: Attach Handler");
+         when Name_Import =>
+            --  Used to import an entity defined in a foreign language into an
+            --  Ada program, thus allowing a foreign-language subprogram to
+            --  be called from Ada, or a foreign-language variable to be
+            --  accessed from Ada. This would (probably) require gnat2goto to
+            --  understand the foreign code, which we do not at the moment.
+            Report_Unhandled_Node_Empty (N, "Do_Pragma",
+                                         "Unsupported pragma: Import");
+         when Name_Convention =>
+            --  Used to specify that an Ada entity should use the conventions
+            --  of another language. It is intended primarily for types and
+            --  callback subprograms. Same reason for not supporting as above.
+            Report_Unhandled_Node_Empty (N, "Do_Pragma",
+                                         "Unsupported pragma: Convention");
+         when Name_Elaborate =>
+            --  Specifies that the body of the named library unit is elaborated
+            --  before the current library_item. We will support packages.
+            Report_Unhandled_Node_Empty (N, "Do_Pragma",
+                                         "Unsupported pragma: Elaborate");
+         when Name_Elaborate_All =>
+            --  Specifies that each library_item that is needed by the named
+            --  library unit declaration is elaborated before the current
+            --  library_item. Same reason for future support as above.
+            Report_Unhandled_Node_Empty (N, "Do_Pragma",
+                                         "Unsupported pragma: Elaborate All");
+         when Name_Elaborate_Body =>
+            --  Specifies that the body of the library unit is elaborated
+            --  immediately after its declaration. Same reason for future
+            --  support as above.
+            Report_Unhandled_Node_Empty (N, "Do_Pragma",
+                                         "Unsupported pragma: Elaborate Body");
+         when Name_Preelaborate =>
+            --  If a library unit is preelaborated, then its declaration, if
+            --  any, and body, if any, are elaborated prior to all
+            --  non-preelaborated library_item s of the partition. Same reason
+            --  for future support as above.
+            Report_Unhandled_Node_Empty (N, "Do_Pragma",
+                                 "Known but unsupported pragma: Preelaborate");
+         when Name_Locking_Policy =>
+            --  Specifies whether or not protected objects have priorities, and
+            --  the relationships between these priorities and task priorities.
+            --  This may change thread interleaving.
+            Report_Unhandled_Node_Empty (N, "Do_Pragma",
+                                         "Unsupported pragma: Locking Policy");
+         when Name_Normalize_Scalars =>
+            --  Ensures that an otherwise uninitialized scalar object is set to
+            --  a predictable value, but out of range if possible. This
+            --  obviously changes the behaviour.
+            Report_Unhandled_Node_Empty (N, "Do_Pragma",
+                                      "Unsupported pragma: Normalize Scalars");
+         when Name_Queuing_Policy =>
+            --  Governs the order in which tasks are queued for entry
+            --  service, and the order in which different entry queues are
+            --  considered for service. This may change the behaviour.
+            Report_Unhandled_Node_Empty (N, "Do_Pragma",
+                                         "Unsupported pragma: Queuing Policy");
+         when Name_Remote_Types =>
+            --  Defines types intended for use in communication between active
+            --  partitions. Concurrency may be supported in the future.
+            Report_Unhandled_Node_Empty (N, "Do_Pragma",
+                                         "Unsupported pragma: Remote Types");
+         when Name_Restrictions =>
+            --  Expresses the user's intent to abide by certain restrictions.
+            --  This could probably be implemented as an assertion eventually.
+            Report_Unhandled_Node_Empty (N, "Do_Pragma",
+                                         "Unsupported pragma: Restrictions");
+         when Name_Shared_Passive =>
+            --  Used for managing global data shared between active partitions.
+            --  Concurrency may be supported in the future.
+            Report_Unhandled_Node_Empty (N, "Do_Pragma",
+                                         "Unsupported pragma: Shared Passive");
+         when Name_Task_Dispatching_Policy =>
+            --  Specifies the details of task dispatching that are not covered
+            --  by the basic task dispatching model. Concurrency may be
+            --  supported in the future.
+            Report_Unhandled_Node_Empty (N, "Do_Pragma",
+                                "Unsupported pragma: Task Dispatching Policy");
+         when Name_Unreferenced =>
+            --  Control of front-end warnings. Not used by ASVAt -> Ignored
+            null;
+         when Name_All_Calls_Remote |
+              Name_Remote_Call_Interface =>
+            --  Library unit pragma; used by the distributed systems annex
+            --  Interface for remote function calls between active partitions
+            --  Should not alter the semantics, but we want to know about it.
+            Report_Unhandled_Node_Empty (N, "Do_Pragma",
+                                  "Known but unsupported pragma: Remote Call");
+         when Name_Interrupt_Handler =>
+            --  If the pragma appears in a protected_definition, then the
+            --  corresponding procedure can be attached dynamically, as a
+            --  handler, to interrupts. We want to detect interrupts early.
+            Report_Unhandled_Node_Empty (N, "Do_Pragma",
+                            "Known but unsupported pragma: Interrupt Handler");
+         when Name_Controlled =>
+            --  Used to prevent any automatic reclamation of storage (garbage
+            --  collection) for the objects created by allocators of a given
+            --  access type. Resource allocation problem must be detected.
+            Report_Unhandled_Node_Empty (N, "Do_Pragma",
+                                   "Known but unsupported pragma: Controlled");
+         when Name_Export =>
+            --  Used to export an Ada entity to a foreign language, thus
+            --  allowing an Ada subprogram to be called from a foreign
+            --  language, or an Ada object to be accessed from a foreign
+            --  language. Need to be detected.
+            Report_Unhandled_Node_Empty (N, "Do_Pragma",
+                                       "Known but unsupported pragma: Export");
+         when Name_Annotate |
+            --  Ignore here. Rather look for those when we process a node.
+              Name_Assertion_Policy | Name_Check_Policy |
+            --  Control the pragma Assert according to the policy identifier
+            --  which can be Check, Ignore, or implementation-defined.
+            --  Ignore means that assertions are ignored at run-time -> Ignored
+              Name_Compile_Time_Warning | Name_Compile_Time_Error |
+            --  Used to issue a compile time warning or error from the compiler
+            --  front-end.  The warning will be issued by the front-end but has
+            --  no affect on the AST.  It can be ignored safely by gnat2goto.
+              Name_Component_Alignment |
+            --  ASVAT does not model memory layout. -> Ignored
+              Name_Discard_Names |
+            --  Used to request a reduction in storage used for the names of
+            --  certain entities. -> Ignored
+              Name_Favor_Top_Level |
+            --  This pragma is an efficiency hint to the compiler.
+            --  Not used by ASVAT. -> Ignore
+              Name_Finalize_Storage_Only |
+            --  This pragma allows the compiler not to emit a Finalize
+            --  call for objects defined at the library level.
+            --  An optimisation not used by ASVAT. -> Ignore
+              Name_Inline |
+            --  Indicates that inline expansion is desired for all calls to
+            --  that entity. -> Ignored
+              Name_Inspection_Point |
+            --  Identifies a set of objects each of whose values is to be
+            --  available at the point(s) during program execution
+            --  corresponding to the position of the pragma in the compilation
+            --  unit. -> Ignored
+              Name_Linker_Options |
+            --  Used to specify the system linker parameters needed when a
+            --  given compilation unit is included in a partition. We want to
+            --  know that code manipulates the linking. The
+            --  goto functions produced by gnat2goto are linked by symtab2gb.
+            --  Currently there very few options for this linker and none that
+            --  apply to most linkers.  Currently  the pragma can ignored,
+            --  but in the future, if symtab2gb was to take more options
+            --  this pragma could be reinstated.
+              Name_List |
+            --  Takes one of the identifiers On or Off as the single
+            --  argument. It specifies that listing of the compilation is to be
+            --  continued or suspended until a List pragma with the opposite
+            --  argument is given within the same compilation. -> Ignored
+              Name_Page |
+            --  Specifies that the program text which follows the pragma should
+            --  start on a new page (if the compiler is currently producing a
+            --  listing). -> Ignored
+              Name_Obsolescent |
+            --  Documentation and warning control - not used by ASVAT.
+            --  -> Ignored
+              Name_Optimize |
+            --  Gives advice to the implementation as to whether time or space
+            --  is the primary optimization criterion. -> Ignored
+              Name_Ordered |
+            --  Used for documentation and with the option for the front-end
+            --  to print a warning if code depends on ordering of an
+            --  enumeration except if this pragma is associated with the
+            --  enumeration. -> Ignored
+              Name_Pack |
+            --  Specifies that storage minimization should be the main
+            --  criterion when selecting the representation of a composite
+            --  type. -> Ignored
+              Name_Pure |
+            --  Used to declare that a library unit is pure: does not contain
+            --  declaration of any variable or named access type. -> Ignored
+              Name_Reviewable |
+            --  Directs the implementation to provide information to facilitate
+            --  analysis and review of a program's object code. -> Ignored
+              Name_Storage_Size |
+            --  Specifies the amount of storage to be reserved for the
+            --  execution of a task. -> Ignored
+              Name_Stream_Convert |
+            --  This pragma provides an efficient way of providing
+            --  user-defined stream attributes.
+            --  Streams are modelled in ASVAT externally to gnat2goto.
+            --  -> Ignored
+              Name_Unsuppress |
+            --  enables or disables a set of compiler warnings based on
+            --  template
+            --  these come from the frontend, so they're not really relevant to
+            --  what we're doing here -> Ignored
+              Name_Warnings |
+            --  Voids the supressing request. -> Ignored
+              Name_Weak_External =>
+            --  Provides information to the linker.  Not used by ASVAT.
+            --  Ignored ->
+            null;
+         when others =>
+            declare
+               Name_Diagnostic : constant String :=
+                 (if  Pragma_Name (N) /= No_Name
+                  then Get_Name_String (Pragma_Name (N))
+                  else "<No Name>");
+            begin
+               Report_Unhandled_Node_Empty
+                 (N,
+                  "Do_Pragma",
+                  "Unknown pragma name: "
+                    & Name_Diagnostic);
+            end;
+      end case;
+   end Do_Pragma;
+
+   ---------------------------
+   -- Do_Post_Condition     --
+   ---------------------------
+
+   function Do_Post_Condition (N : Node_Id) return Irep is
+
+      Source_Loc : constant Irep := Get_Source_Location (N);
+
+      Cond_Block : constant Irep :=
+        Make_Code_Block (Source_Loc);
+
+      Current_Pragma : Node_Id := N;
+
+      Argument_Associations : List_Id :=
+        Pragma_Argument_Associations (Current_Pragma);
+
+      --  first is the identifier to be given the attribute
+      First_Argument : Node_Id := First (Argument_Associations);
+
+      --  second is the condition
+      Condition : Irep :=
+        Do_Expression (Expression (First_Argument));
+
+      function Make_Post_Condition (Expr : Irep) return Irep;
+
+      function Make_Post_Condition (Expr : Irep) return Irep
+      is
+         Post_Con_Args : constant Irep := Make_Argument_List;
+         Condition_Expr_As_Int : constant Irep :=
+           Typecast_If_Necessary (Expr           => Expr,
+                                  New_Type       => Int32_T,
+                                  A_Symbol_Table => Global_Symbol_Table);
+         Post_Con_Sym_Expr : constant Irep :=
+           Symbol_Expr (Get_Ada_Check_Symbol ("__CPROVER_Ada_Post_Condition",
+                        Global_Symbol_Table, Source_Loc));
+         Post_Con_Call : constant Irep :=
+           Make_Code_Function_Call (Arguments       => Post_Con_Args,
+                                    I_Function      => Post_Con_Sym_Expr,
+                                    Lhs             => Make_Nil (Source_Loc),
+                                    Source_Location => Source_Loc,
+                                    I_Type          => Make_Void_Type);
+      begin
+         Append_Argument (Post_Con_Args, Condition_Expr_As_Int);
+         return Post_Con_Call;
+      end Make_Post_Condition;
+
+   begin
+
+      Append_Op (Cond_Block,
+                 Make_Post_Condition (Expr => Condition));
+
+      while Next_Pragma (Current_Pragma) /= Types.Empty
+      loop
+
+         Current_Pragma := Next_Pragma (Current_Pragma);
+
+         if  Get_Name_String (Chars (Pragma_Identifier (Current_Pragma))) =
+           "postcondition"
+         then
+            Argument_Associations :=
+              Pragma_Argument_Associations (Current_Pragma);
+
+            --  first is the identifier to be given the attribute
+            First_Argument := First (Argument_Associations);
+
+            Condition := Do_Expression (Expression (First_Argument));
+
+            Append_Op (Cond_Block,
+                       Make_Post_Condition (Expr => Condition));
+
+         end if;
+      end loop;
+
+      --  Print_Irep (Condition);
+
+      return Cond_Block;
+   end Do_Post_Condition;
+
+   ---------------------------
+   -- Do_Pre_Condition      --
+   ---------------------------
+
+   function Do_Pre_Condition (N : Node_Id) return Irep is
+
+      Source_Loc : constant Irep := Get_Source_Location (N);
+
+      Cond_Block : constant Irep :=
+        Make_Code_Block (Source_Loc);
+
+      Current_Pragma : Node_Id := N;
+
+      Argument_Associations : List_Id :=
+        Pragma_Argument_Associations (Current_Pragma);
+
+      --  first is the identifier to be given the attribute
+      First_Argument : Node_Id := First (Argument_Associations);
+
+      --  second is the condition
+      Condition : Irep :=
+        Do_Expression (Expression (First_Argument));
+
+      function Make_Pre_Condition (Expr : Irep) return Irep;
+
+      function Make_Pre_Condition (Expr : Irep) return Irep
+      is
+         Pre_Con_Args : constant Irep := Make_Argument_List;
+         Condition_Expr_As_Int : constant Irep :=
+           Typecast_If_Necessary (Expr           => Expr,
+                                  New_Type       => Int32_T,
+                                  A_Symbol_Table => Global_Symbol_Table);
+         Pre_Con_Sym_Expr : constant Irep :=
+           Symbol_Expr (Get_Ada_Check_Symbol ("__CPROVER_Ada_Pre_Condition",
+                        Global_Symbol_Table, Source_Loc));
+         Pre_Con_Call : constant Irep :=
+           Make_Code_Function_Call (Arguments       => Pre_Con_Args,
+                                    I_Function      => Pre_Con_Sym_Expr,
+                                    Lhs             => Make_Nil (Source_Loc),
+                                    Source_Location => Source_Loc,
+                                    I_Type          => Make_Void_Type);
+      begin
+         Append_Argument (Pre_Con_Args, Condition_Expr_As_Int);
+         return Pre_Con_Call;
+      end Make_Pre_Condition;
+
+   begin
+
+      Append_Op (Cond_Block,
+                 Make_Pre_Condition (Expr => Condition));
+
+      while Next_Pragma (Current_Pragma) /= Types.Empty
+      loop
+
+         Current_Pragma := Next_Pragma (Current_Pragma);
+
+         if  Get_Name_String (Chars (Pragma_Identifier (Current_Pragma))) =
+           "precondition"
+         then
+            Argument_Associations :=
+              Pragma_Argument_Associations (Current_Pragma);
+
+            --  first is the identifier to be given the attribute
+            First_Argument := First (Argument_Associations);
+
+            Condition := Do_Expression (Expression (First_Argument));
+
+            Append_Op (Cond_Block,
+                       Make_Pre_Condition (Expr => Condition));
+
+            --  Print_Irep (Condition);
+         end if;
+      end loop;
+
+      return Cond_Block;
+   end Do_Pre_Condition;
+
+   ---------------------------
+   -- Do_Object_Declaration --
+   ---------------------------
+
+   procedure Do_Object_Declaration (N : Node_Id; Block : Irep) is
+      Obj_Id : constant Symbol_Id :=
+        Intern (Unique_Name (Defining_Identifier (N)));
+   begin
+      --  First check for object declarations which are not constants
+      if not Constant_Present (N) then
+         --  Not any sort of constant.
+         --  Process non-constant object_declaration.
+         Do_Object_Declaration_Full (N, Block);
+      elsif --  Check that this isn't a completion of a deferred constant.
+         not Global_Symbol_Table.Contains (Obj_Id)
+      then
+         --  The declaration is of constant which may be deferred.
+         declare
+            Entity : constant Entity_Id := Defining_Identifier (N);
+            --  The full view of a deferred constant is obtained
+            --  by calling the Full_View function.  As the gnat front-end
+            --  has completed semantic analysis before invoking the
+            --  gnat to goto translation all object_declarations that are
+            --  deferred constants should have a full view unless the
+            --  declaration has the pragma Import applied.
+            Full_View_Entity : constant Entity_Id := Full_View (Entity);
+
+         begin
+            if not Has_Init_Expression (N) and then
+              Present (Full_View_Entity)
+            then
+               --  The constant declaration has no initialisation expression
+               --  so it is a deferred constant declaration with a completion.
+               --  The completion must be a full constant declaration given
+               --  by the full view of the entity.
+               --  Process the declaration node of the full view and
+               --  register it in the symbol table so that it is not
+               --  processed again when the completion is encountered in
+               --  the tree.
+               New_Valueless_Object_Symbol_Entry (Intern (Unique_Name
+                                          (Defining_Identifier (N))),
+                                          Global_Symbol_Table);
+               --  Adds a dummy entry to the symbol table to register that a
+               --  constant has already been processed.
+
+               Do_Object_Declaration_Full
+                 (Declaration_Node (Full_View_Entity), Block);
+            else
+               --  The constant declaration is not deferred or has the
+               --  pragma Import applied and its value is defined externally.
+               Do_Object_Declaration_Full (N, Block);
+            end if;
+         end;
+      end if;
+
+      pragma Assert (Global_Symbol_Table.Contains (Obj_Id));
+   end Do_Object_Declaration;
+
+   --------------------------------
+   -- Do_Object_Declaration_Full --
+   --------------------------------
+
+   procedure Do_Object_Declaration_Full
+     (N : Node_Id; Block : Irep) is
+      Source_Loc : constant Irep := Get_Source_Location (N);
+      Defined  : constant Entity_Id := Defining_Identifier (N);
+      Defined_Type : constant Entity_Id := Etype (Defined);
+      Obj_Name : constant String := Unique_Name (Defined);
+      Obj_Type : constant Irep := Do_Type_Reference (Defined_Type);
+
+      --  Begin processing for Do_Object_Declaration_Full
+   begin
+      if Is_Array_Type (Defined_Type) then
+         Do_Array_Object_Declaration
+           (Block       => Block,
+            Dec_Node    => N,
+            Target_Type => Defined_Type,
+            Array_Name  => Obj_Name,
+            Init_Expr   => Expression (N));
+      elsif Is_Record_Type (Defined_Type) then
+         Do_Record_Object_Declaration
+           (Block       => Block,
+            Dec_Node    => N,
+            Target_Type => Defined_Type,
+            Record_Name => Obj_Name,
+            Init_Expr   => Expression (N));
+      else
+         declare
+            --  Check for if initialization is required.
+            Init_Expr_Pre : constant Irep :=
+              (if Has_Init_Expression (N) or Present (Expression (N)) then
+                  Do_Expression (Expression (N))
+               else
+                  Ireps.Empty);
+
+            --  Do_Defining-Identifier cannot be called here because
+            --  the object entity has not been entered into the symbol
+            --  table yet.
+            Id   : constant Irep :=
+              Make_Symbol_Expr
+                (Source_Location => Get_Source_Location (N),
+                 I_Type          => Obj_Type,
+                 Range_Check     => False,
+                 Identifier      => Obj_Name);
+
+            Needs_Range_Check  : constant Boolean :=
+              Init_Expr_Pre /= Ireps.Empty and then
+              Kind (Obj_Type) in
+              I_Bounded_Signedbv_Type | I_Bounded_Floatbv_Type | I_Symbol_Type
+                | I_Unsignedbv_Type | I_Signedbv_Type
+                  | I_Bounded_Unsignedbv_Type | I_Floatbv_Type
+                    | I_C_Enum_Type
+                    and then
+                      Nkind (Expression (N)) in N_Subexpr and then
+                      Do_Range_Check (Expression (N));
+
+            Expr_In_Type_Class : constant Boolean :=
+              Needs_Range_Check and then
+              Kind (Init_Expr_Pre) in Class_Expr and then
+              Kind (Get_Type (Init_Expr_Pre)) in Class_Type;
+
+            Init_Expr_Irep     : constant Irep :=
+              (if Needs_Range_Check and Expr_In_Type_Class then
+                  Make_Range_Assert_Expr (N, Init_Expr_Pre, Obj_Type)
+               else
+                  Init_Expr_Pre);
+         begin
+            Do_Plain_Object_Declaration
+              (Block       => Block,
+               Object_Sym  => Id,
+               Object_Name => Obj_Name,
+               Object_Def  => Defined,
+               Init_Expr_Irep => Init_Expr_Irep);
+
+            --  Assign the initialization, if any.
+            if Init_Expr_Irep /= Ireps.Empty then
+               --  First check that any required range check is valid.
+               if Needs_Range_Check and not Expr_In_Type_Class then
+                  Report_Unhandled_Node_Empty
+                    (Expression (N),
+                     "Do_Object_Declaration_Full",
+                     "Kind of Expression(N) not valid for Range_Check");
+               end if;
+
+               Append_Op (Block, Make_Code_Assign
+                          (Lhs => Id,
+                           Rhs =>
+                             Typecast_If_Necessary
+                               (Init_Expr_Irep, Get_Type (Id),
+                                Global_Symbol_Table),
+                           Source_Location => Source_Loc));
+            end if;
+         end;
+      end if;
+   end Do_Object_Declaration_Full;
+
+   ---------------------------------
+   -- Do_Plain_Object_Declaration --
+   ---------------------------------
+
+   procedure Do_Plain_Object_Declaration (Block          : Irep;
+                                          Object_Sym     : Irep;
+                                          Object_Name    : String;
+                                          Object_Def     : Entity_Id;
+                                          Init_Expr_Irep : Irep)
+   is
+      Object_Id   : constant Symbol_Id := Intern (Object_Name);
+      Object_Type : constant Entity_Id := Etype (Object_Def);
+      Decl      : constant Irep :=
+        Make_Code_Decl
+          (Symbol          => Object_Sym,
+           Source_Location => Get_Source_Location (Object_Sym));
+   begin
+      if not Global_Symbol_Table.Contains (Object_Id) then
+         Append_Op (Block, Decl);
+         New_Object_Symbol_Entry
+           (Object_Name       => Object_Id,
+            Object_Type       => Get_Type (Object_Sym),
+            Object_Init_Value => Init_Expr_Irep,
+            A_Symbol_Table    => Global_Symbol_Table);
+         --  The model size of the object has to be recorded if it has
+         --  not already been set by an array object declaration.
+         if not ASVAT.Size_Model.Has_Size (Object_Def) then
+            ASVAT.Size_Model.Set_Size_From_Entity (Object_Def, Object_Type);
+         end if;
+
+      elsif Init_Expr_Irep /= Ireps.Empty then
+         declare
+            Obj_Symbol : Symbol := Global_Symbol_Table (Object_Id);
+         begin
+            Obj_Symbol.Value := Init_Expr_Irep;
+            Global_Symbol_Table.Replace (Object_Id, Obj_Symbol);
+         end;
+      end if;
+   end Do_Plain_Object_Declaration;
+
+   -------------------------
+   --     Do_Op_Not       --
+   -------------------------
+
+   function Do_Op_Not (N : Node_Id) return Irep is
+      Value : constant Irep := Do_Expression (Right_Opnd (N));
+   begin
+      return Make_Op_Not (Value, Get_Source_Location (N), Make_Bool_Type);
+   end Do_Op_Not;
+
+   function Do_Op_Mod_Not (N : Node_Id; Ret_Type : Irep) return Irep is
+      Followed_Type : constant Irep :=
+              Follow_Symbol_Type (Ret_Type, Global_Symbol_Table);
+      Value : constant Irep := Do_Expression (Right_Opnd (N));
+      Source_Loc : constant Irep := Get_Source_Location (N);
+      --  In case the not-operator (not X) is called on a modular-type
+      --  (mod Y) variable the result should be: (Y-1)-X
+      Mod_Max_String : constant String :=
+        Get_Ada_Mod_Max (Followed_Type);
+      Mod_Max : constant Irep :=
+        Make_Constant_Expr (Source_Location => Source_Loc,
+                            I_Type          => Ret_Type,
+                            Range_Check     => False,
+                            Value           => Mod_Max_String);
+      One : constant Irep :=
+        Make_Constant_Expr (Source_Location => Source_Loc,
+                            I_Type          => Ret_Type,
+                            Range_Check     => False,
+                            Value           => "1");
+      Mod_Max_Value : constant Irep :=
+        Make_Op_Sub (Rhs             => One,
+                     Lhs             => Mod_Max,
+                     Source_Location => Source_Loc,
+                     Overflow_Check  => False,
+                     I_Type          => Ret_Type);
+   begin
+      pragma Assert (Kind (Followed_Type) = I_Ada_Mod_Type);
+      return Make_Op_Sub (Rhs             => Value,
+                          Lhs             => Mod_Max_Value,
+                          Source_Location => Source_Loc,
+                          Overflow_Check  => False,
+                          I_Type          => Ret_Type);
+   end Do_Op_Mod_Not;
+
+   function Do_Unsigned_Op_Not (N : Node_Id) return Irep is
+      Negated_Value : constant Irep := Do_Expression (Right_Opnd (N));
+      Followed_Type : constant Irep := Follow_Symbol_Type
+        (Do_Type_Reference (Etype (N)),
+         Global_Symbol_Table);
+   begin
+      pragma Assert (Kind (Followed_Type) = I_Unsignedbv_Type);
+      return Make_Op_Bitnot
+        (Op0 => Negated_Value,
+         Source_Location => Get_Source_Location (N),
+         I_Type => Followed_Type);
+   end Do_Unsigned_Op_Not;
+   -------------------------
+   --     Do_Op_Minus    --
+   -------------------------
+
+   function Do_Op_Minus (N : Node_Id) return Irep is
+      Original_Value : constant Irep := Do_Expression (Right_Opnd (N));
+      Original_Value_Type : constant Irep := Do_Type_Reference (Etype (N));
+      Unchecked_Result : constant Irep :=
+        Make_Op_Neg (Original_Value,
+                     Get_Source_Location (N),
+                     Original_Value_Type);
+   begin
+      return (if Do_Overflow_Check (N)
+              then Make_Overflow_Assert_Expr (N     => N,
+                                              Value => Unchecked_Result)
+              else Unchecked_Result);
+   end Do_Op_Minus;
+
+   -------------------------
+   --      Do_Bit_Op      --
+   -------------------------
+
+   --  We identified that the constructor for operator `or` and operator
+   --  `and` were pretty much the same, with the only difference being
+   --  the constructor being called. So to avoid needless duplication,
+   --  we simplified it to a single function that does the same thing,
+   --  and just calls the appropriate constructor via a function pointer.
+   --
+   --  This produces the following code in pseudocode (let A and B be True):
+   --    A or B
+   --  --
+   --    int intA = (int) A;       // 1
+   --    int intB = (int) B;       // 1
+   --    int intC = A bitop B      // bitop can be `or` or `and`
+   --    int R = (boolean) intC;
+   --    return R;
+   function Do_Bit_Op (N : Node_Id;
+                       Operator : Bit_Operand_Constructor)
+                       return Irep is
+      Source_Loc : constant Irep := Get_Source_Location (N);
+      LHS_Value : constant Irep := Do_Expression (Left_Opnd (N));
+      RHS_Value : constant Irep := Do_Expression (Right_Opnd (N));
+
+      Ret_Type : constant Irep := Do_Type_Reference (Etype (N));
+      Followed_Type : constant Irep :=
+        Follow_Symbol_Type (Ret_Type, Global_Symbol_Table);
+
+   begin
+      if Kind (Followed_Type) = I_Ada_Mod_Type then
+         declare
+            Mod_Max_String : constant String :=
+              Get_Ada_Mod_Max (Followed_Type);
+            Mod_Max : constant Irep :=
+              Make_Constant_Expr (Source_Location => Source_Loc,
+                                  I_Type          => Ret_Type,
+                                  Range_Check     => False,
+                                  Value           => Mod_Max_String);
+            Full_Result : constant Irep :=
+              Operator (Lhs => LHS_Value,
+                        Rhs => RHS_Value,
+                        Source_Location => Source_Loc,
+                        Overflow_Check => False,
+                        Range_Check => False,
+                        I_Type => Ret_Type);
+         begin
+            if Nkind (N) = N_Op_And then
+               return Full_Result;
+            else
+               return Make_Op_Mod (Rhs               => Mod_Max,
+                                   Lhs               => Full_Result,
+                                   Div_By_Zero_Check => False,
+                                   Source_Location   => Source_Loc,
+                                   Overflow_Check    => False,
+                                   I_Type            => Ret_Type);
+            end if;
+         end;
+      else
+         declare
+            Cast_LHS_To_Integer : constant Irep :=
+              Make_Op_Typecast (Op0 => LHS_Value,
+                                Source_Location => Source_Loc,
+                                I_Type => Int32_T);
+            Cast_RHS_To_Integer : constant Irep :=
+              Make_Op_Typecast (Op0 => RHS_Value,
+                                Source_Location => Source_Loc,
+                                I_Type => Int32_T);
+            R : constant Irep := Operator (Lhs => Cast_LHS_To_Integer,
+                                           Rhs => Cast_RHS_To_Integer,
+                                           Source_Location => Source_Loc,
+                                           Overflow_Check => False,
+                                           Range_Check => False,
+                                           I_Type =>
+                                             Get_Type (Cast_LHS_To_Integer));
+         begin
+            return Make_Op_Typecast (Op0 => R,
+                                     Source_Location => Source_Loc,
+                                     I_Type => Make_Bool_Type);
+         end;
+      end if;
+   end Do_Bit_Op;
+
+   function Do_Op_Abs (N : Node_Id) return Irep
+     with Pre => (Nkind (N) = N_Op_Abs);
+
+   function Do_Op_Abs (N : Node_Id) return Irep is
+      Operand : constant Irep := Do_Expression (Right_Opnd (N));
+   begin
+      return Make_Op_Abs
+        (Op0 => Operand,
+         Source_Location => Get_Source_Location (N),
+         I_Type => Do_Type_Reference (Etype (N)));
+   end Do_Op_Abs;
+
+   function Make_Mod_Expon_Function
+     (Mod_Type : Irep;
+      Exponent_Type : Irep;
+      Source_Location : Irep)
+   return Irep;
+
+--  'fast' exponentiation, using the fact that
+--  if e is divisible by two, then
+--  b^e == b^(2 * (e/2)) == (b*b)^(e/2)
+--  and otherwise if e == 2p + 1
+--  then b^e = b * b^(2p)
+--  so we only have to do log2(e) multiplications
+--  rather than e
+--
+--  generates a function like this:
+--  modN exp_by_squaring(modN base, unsigned exponent) {
+--    modN exp_result = 1;
+--    while(exponent > 0) {
+--      if(exponent % 2 == 0) {
+--        base *= base;
+--        exponent /= 2;
+--      } else {
+--        exp_result *= exp_base;
+--        --exponent;
+--      }
+--    }
+--    return exp_result;
+--  }
+   function Make_Mod_Expon_Function
+     (Mod_Type : Irep;
+      Exponent_Type : Irep;
+      Source_Location : Irep)
+   return Irep is
+      Function_Name : constant String := Fresh_Var_Name ("mod_op_expon");
+      Function_Body : constant Irep := Make_Code_Block (Source_Location);
+      Function_Params : constant Irep := Make_Parameter_List;
+      Base_Arg : constant Irep := Create_Fun_Parameter
+        (Fun_Name => Function_Name,
+         Param_Name => "base",
+         Param_Type => Mod_Type,
+         Param_List => Function_Params,
+         A_Symbol_Table => Global_Symbol_Table,
+         Source_Location => Source_Location);
+      Exponent_Arg : constant Irep := Create_Fun_Parameter
+        (Fun_Name => Function_Name,
+         Param_Name => "exponent",
+         Param_Type => Exponent_Type,
+         Param_List => Function_Params,
+         A_Symbol_Table => Global_Symbol_Table,
+         Source_Location => Source_Location);
+
+      Function_Type : constant Irep := Make_Code_Type
+        (Parameters => Function_Params,
+         Ellipsis => False,
+         Return_Type => Mod_Type,
+         Inlined => False,
+         Knr => False);
+
+      Base_Sym : constant Irep := Param_Symbol (Base_Arg);
+      Exponent_Sym : constant Irep := Param_Symbol (Exponent_Arg);
+
+      Expon_Result : constant Irep := Fresh_Var_Symbol_Expr
+        (Ty => Mod_Type,
+         Infix => "mod_expon_result");
+      Declare_Expon_Result : constant Irep := Make_Code_Decl
+        (Symbol => Expon_Result,
+         Source_Location => Source_Location);
+      Expon_Divisible_By_Two : constant Irep := Make_Op_Eq
+        (Lhs => Make_Op_Mod
+           (Lhs => Exponent_Sym,
+            Rhs => Integer_Constant_To_Expr
+              (Value => Uint_2,
+               Expr_Type => Exponent_Type,
+               Source_Location => Source_Location),
+            Source_Location => Source_Location,
+            Div_By_Zero_Check => False,
+            I_Type => Exponent_Type),
+         Rhs => Integer_Constant_To_Expr
+           (Value => Uint_0,
+            Expr_Type => Exponent_Type,
+            Source_Location => Source_Location),
+         I_Type => Make_Bool_Type,
+         Source_Location => Source_Location);
+      Expon_Greater_Zero : constant Irep := Make_Op_Gt
+        (Lhs => Exponent_Sym,
+         Rhs => Integer_Constant_To_Expr
+           (Value => Uint_0,
+            Expr_Type => Exponent_Type,
+            Source_Location => Source_Location),
+         Source_Location => Source_Location,
+         I_Type => Make_Bool_Type);
+      Set_Expon_Result_To_One : constant Irep := Make_Code_Assign
+        (Lhs => Expon_Result,
+         Rhs => Integer_Constant_To_Expr
+           (Value => Uint_1,
+            Expr_Type => Mod_Type,
+            Source_Location => Source_Location),
+         Source_Location => Source_Location);
+      Square_Base : constant Irep := Make_Code_Assign
+        (Lhs => Base_Sym,
+         Rhs => Do_Operator_Mod
+           (LHS => Base_Sym,
+            Op_Kind => I_Op_Mul,
+            RHS => Base_Sym,
+            Ret_Type => Mod_Type),
+         Source_Location => Source_Location);
+      Halve_Exponent : constant Irep := Make_Code_Assign
+        (Lhs => Exponent_Sym,
+         Rhs => Make_Op_Div
+           (Lhs => Exponent_Sym,
+            Rhs => Integer_Constant_To_Expr
+              (Value => Uint_2,
+               Expr_Type => Exponent_Type,
+               Source_Location => Source_Location),
+            I_Type => Exponent_Type,
+            Source_Location => Source_Location,
+            Div_By_Zero_Check => False),
+         Source_Location => Source_Location);
+      Multiply_Result_With_Base : constant Irep := Make_Code_Assign
+        (Lhs => Expon_Result,
+         Rhs => Do_Operator_Mod
+           (LHS => Expon_Result,
+            Op_Kind => I_Op_Mul,
+            RHS => Base_Sym,
+            Ret_Type => Mod_Type),
+         Source_Location => Source_Location);
+      Decrement_Exponent : constant Irep := Make_Code_Assign
+        (Lhs => Exponent_Sym,
+         Rhs => Make_Op_Sub
+           (Lhs => Exponent_Sym,
+            Rhs => Integer_Constant_To_Expr
+              (Value => Uint_1,
+               Expr_Type => Exponent_Type,
+               Source_Location => Source_Location),
+            I_Type => Exponent_Type,
+            Source_Location => Source_Location),
+         Source_Location => Source_Location);
+      Multiply_Loop_Body : constant Irep := Make_Code_Block
+        (Source_Location => Source_Location);
+      If_Even_Body : constant Irep := Make_Code_Block
+        (Source_Location => Source_Location);
+      If_Odd_Body : constant Irep := Make_Code_Block
+        (Source_Location => Source_Location);
+      Multiply_Loop : constant Irep := Make_Code_While
+        (Loop_Body => Multiply_Loop_Body,
+         Cond => Expon_Greater_Zero,
+         Source_Location => Source_Location);
+      If_Even_Or_Odd_Exponent : constant Irep := Make_Code_Ifthenelse
+        (Cond => Expon_Divisible_By_Two,
+         Then_Case => If_Even_Body,
+         Else_Case => If_Odd_Body,
+         Source_Location => Source_Location);
+   begin
+      Append_Op (Function_Body, Declare_Expon_Result);
+      Append_Op (Function_Body, Set_Expon_Result_To_One);
+      Append_Op (Function_Body, Multiply_Loop);
+      Append_Op (Function_Body, Make_Code_Return
+        (Return_Value => Expon_Result,
+         Source_Location => Source_Location));
+
+      Append_Op (Multiply_Loop_Body, If_Even_Or_Odd_Exponent);
+
+      Append_Op (If_Even_Body, Square_Base);
+      Append_Op (If_Even_Body, Halve_Exponent);
+
+      Append_Op (If_Odd_Body, Multiply_Result_With_Base);
+      Append_Op (If_Odd_Body, Decrement_Exponent);
+
+      return Symbol_Expr (New_Function_Symbol_Entry
+        (Name => Function_Name,
+         Symbol_Type => Function_Type,
+         Value => Function_Body,
+         A_Symbol_Table => Global_Symbol_Table));
+   end Make_Mod_Expon_Function;
+
+   function Do_Op_Expon (N : Node_Id) return Irep is
+      LHS : constant Irep := Do_Expression (Left_Opnd (N));
+      RHS : constant Irep := Do_Expression (Right_Opnd (N));
+      LHS_Resolved_Type : constant Irep := Follow_Symbol_Type
+        (Get_Type (LHS), Global_Symbol_Table);
+      RHS_Resolved_Type : constant Irep :=
+        Follow_Symbol_Type (Get_Type (RHS), Global_Symbol_Table);
+   begin
+      if Kind (LHS_Resolved_Type) = I_Ada_Mod_Type then
+         declare
+            Expon_Function : constant Irep := Make_Mod_Expon_Function
+              (LHS_Resolved_Type, RHS_Resolved_Type, Get_Source_Location (N));
+         begin
+            return Make_Simple_Side_Effect_Expr_Function_Call
+              (Arguments => (LHS, RHS),
+               Function_Expr => Expon_Function,
+               Source_Location => Get_Source_Location (N));
+         end;
+      end if;
+      return Report_Unhandled_Node_Irep (N, "Do_Op_Expon",
+        "Exponentiation unhandled for non mod types at the moment");
+   end Do_Op_Expon;
+
+   -------------------------
+   -- Do_Operator_General --
+   -------------------------
+
+   function Do_Operator_General (N : Node_Id) return Irep is
+   begin
+      if Nkind (N) = N_Op_Abs then
+         return Do_Op_Abs (N);
+      elsif Nkind (N) = N_Op_Concat then
+         return Do_Array_Concatination (N);
+      elsif Nkind (N) = N_Op_Not then
+         declare
+            Ret_Type : constant Irep := Do_Type_Reference (Etype (N));
+            Followed_Type : constant Irep :=
+              Follow_Symbol_Type (Ret_Type, Global_Symbol_Table);
+         begin
+            case Kind (Followed_Type) is
+               when I_Bool_Type => return Do_Op_Not (N);
+               when I_Ada_Mod_Type => return Do_Op_Mod_Not (N, Ret_Type);
+               when I_Unsignedbv_Type =>
+                  return Do_Unsigned_Op_Not (N);
+               when others =>
+                  return Report_Unhandled_Node_Irep (N,
+                                                     "Do_Operator_General",
+                                                    "Mod of unsupported type");
+            end case;
+         end;
+      elsif Nkind (N) = N_Op_Minus then
+         return Do_Op_Minus (N);
+      elsif Nkind (N) = N_Op_Or then
+         return Do_Bit_Op (N, Make_Op_Bitor'Access);
+      elsif Nkind (N) = N_Op_And then
+         return Do_Bit_Op (N, Make_Op_Bitand'Access);
+      elsif Nkind (N) = N_Op_Xor then
+         return Do_Bit_Op (N, Make_Op_Bitxor'Access);
+      elsif Nkind (N) = N_Op_Expon then
+         return Do_Op_Expon (N);
+      else
+         if Nkind (N) /= N_And_Then
+           and then Nkind (N) /= N_In
+           and then Nkind (N) /= N_Not_In
+           and then Nkind (N) /= N_Or_Else
+           and then not (Nkind (N) in N_Binary_Op)
+         then
+            return Report_Unhandled_Node_Irep (N, "Do_Operator_General",
+                                               "Wrong node kind");
+         end if;
+         if Nkind (N) in N_Op_Eq | N_Op_Ne and then
+           Is_Array_Type (Underlying_Type (Etype (N)))
+         then
+            --  Array equality probably has to be handled by a goto
+            --  function call similar to that used for aggregate expressions.
+            Report_Unhandled_Node_Empty
+              (N        => N,
+               Fun_Name => "Do_Operator_General",
+               Message  => "Array equality currently unsupported");
+         end if;
+         return Do_Operator_Simple (N);
+      end if;
+   end Do_Operator_General;
+
+   ------------------------
+   -- Do_Operator_Simple --
+   ------------------------
+
+   function Do_Operator_Simple (N : Node_Id) return Irep is
+      Ret_Type : constant Irep := Do_Type_Reference (Etype (N));
+      Followed_Type : constant Irep :=
+        Follow_Symbol_Type (Ret_Type, Global_Symbol_Table);
+
+   begin
+      if Kind (Followed_Type) = I_Ada_Mod_Type
+      then
+         case N_Op (Nkind (N)) is
+            when N_Op_Add | N_Op_Multiply =>
+               return Do_Operator_Mod (N);
+            when N_Op_Subtract =>
+               return Do_Operator_Sub_Mod (N);
+            when others =>
+               null; --  proceed as with non-mod types
+         end case;
+      end if;
+      declare
+         type Make_Binary_Operation_T is
+           access function
+             (Rhs : Irep;
+              Lhs : Irep;
+              Source_Location : Irep;
+              Overflow_Check : Boolean := False;
+              I_Type : Irep;
+              Range_Check : Boolean := False)
+            return Irep;
+
+         --  Small helper to set additional parameter Div_By_Zero_Check
+         --  to true, so the interface of Div, Rem and Mod fits
+         --  with Make_Binary_Operation_T
+         generic
+           with function Make
+             (Rhs : Irep;
+              Lhs : Irep;
+              Div_By_Zero_Check : Boolean;
+              Source_Location : Irep;
+              Overflow_Check : Boolean := False;
+              I_Type : Irep := Ireps.Empty;
+              Range_Check : Boolean := False)
+           return Irep;
+         function Make_With_Div_By_Zero_Check
+           (Rhs : Irep;
+            Lhs : Irep;
+            Source_Location : Irep;
+            Overflow_Check : Boolean := False;
+            I_Type : Irep;
+            Range_Check : Boolean := False)
+           return Irep;
+
+         function Make_With_Div_By_Zero_Check
+           (Rhs : Irep;
+            Lhs : Irep;
+            Source_Location : Irep;
+            Overflow_Check : Boolean := False;
+            I_Type : Irep;
+            Range_Check : Boolean := False)
+           return Irep is
+            (Make
+              (Rhs => Rhs,
+               Lhs => Lhs,
+               Div_By_Zero_Check => Do_Division_Check (N),
+               Source_Location => Source_Location,
+               Overflow_Check => Overflow_Check,
+               I_Type => I_Type,
+               Range_Check => Range_Check));
+
+         function Make_Div_Operation is new
+           Make_With_Div_By_Zero_Check (Make => Make_Op_Div);
+         function Make_Rem_Operation is new
+           Make_With_Div_By_Zero_Check (Make => Make_Op_Rem);
+         function Make_Mod_Operation is new
+           Make_With_Div_By_Zero_Check (Make => Make_Op_Mod);
+
+         function Make_Unsupported_Op
+           (Rhs : Irep;
+              Lhs : Irep;
+              Source_Location : Irep;
+              Overflow_Check : Boolean := False;
+              I_Type : Irep;
+              Range_Check : Boolean := False)
+           return Irep;
+
+         function Make_Unsupported_Op
+           (Rhs : Irep;
+            Lhs : Irep;
+            Source_Location : Irep;
+            Overflow_Check : Boolean := False;
+            I_Type : Irep;
+            Range_Check : Boolean := False)
+          return Irep is
+          (Report_Unhandled_Node_Irep
+             (N,
+              "Do_Operator_Simple",
+              "Unsupported operand"));
+
+         Make_Binary_Operation : constant Make_Binary_Operation_T :=
+           (case N_Op (Nkind (N)) is
+              when N_Op_Divide => Make_Div_Operation'Access,
+              when N_Op_Add => Make_Op_Add'Access,
+              when N_Op_Subtract => Make_Op_Sub'Access,
+              when N_Op_Multiply => Make_Op_Mul'Access,
+              when N_Op_Rem => Make_Rem_Operation'Access,
+              when N_Op_Mod => Make_Mod_Operation'Access,
+              when N_Op_Eq => Make_Op_Eq'Access,
+              when N_Op_Ne => Make_Op_Notequal'Access,
+              when N_Op_Ge => Make_Op_Geq'Access,
+              when N_Op_Gt => Make_Op_Gt'Access,
+              when N_Op_Le => Make_Op_Leq'Access,
+              when N_Op_Lt => Make_Op_Lt'Access,
+              when others => Make_Unsupported_Op'Access);
+
+         LHS_Raw : constant Irep := Cast_Enum (Do_Expression (Left_Opnd (N)),
+                                               Global_Symbol_Table);
+         RHS_Raw : constant Irep := Cast_Enum (Do_Expression (Right_Opnd (N)),
+                                               Global_Symbol_Table);
+
+         --  For All basic operators the LHS and RHS I_Types
+         --  should be the same.
+         --  An Irep operand may be a pointer type, e.g., if it is
+         --  an indexed component, so the I_Type should be obtained
+         --  from the Ada type
+         LHS_Type_Pre_1 : constant Irep :=
+           Do_Type_Reference (Etype (Left_Opnd (N)));
+         RHS_Type_Pre_1 : constant Irep :=
+           Do_Type_Reference (Etype (Right_Opnd (N)));
+
+         LHS_Type_Pre_2 : constant Irep :=
+           (if Kind (Follow_Symbol_Type (LHS_Type_Pre_1, Global_Symbol_Table))
+            = I_C_Enum_Type
+            then
+                 Uint32_T
+            else
+               LHS_Type_Pre_1);
+
+         RHS_Type_Pre_2 : constant Irep :=
+           (if Kind (Follow_Symbol_Type (RHS_Type_Pre_1, Global_Symbol_Table))
+            = I_C_Enum_Type then
+                 Uint32_T
+            else
+               RHS_Type_Pre_1);
+
+         --  If one of the operands is a literal the I_Types might
+         --  not be the same
+         LHS_Type_Unbounded : constant Irep :=
+           Make_Corresponding_Unbounded_Type (LHS_Type_Pre_2);
+         RHS_Type_Unbounded : constant Irep :=
+           Make_Corresponding_Unbounded_Type (RHS_Type_Pre_2);
+
+         --  The width may not be the same.
+         Tgt_Type           : constant Irep :=
+           (if Kind (LHS_Type_Unbounded) in Class_Bitvector_Type and then
+            Kind (RHS_Type_Unbounded) in Class_Bitvector_Type and then
+            Get_Width (RHS_Type_Unbounded) > Get_Width (LHS_Type_Unbounded)
+            then
+               RHS_Type_Unbounded
+            else
+               LHS_Type_Unbounded);
+
+         LHS                : constant Irep :=
+           Typecast_If_Necessary
+             (LHS_Raw, Tgt_Type, Global_Symbol_Table);
+         RHS                : constant Irep :=
+           Typecast_If_Necessary
+             (RHS_Raw, Tgt_Type, Global_Symbol_Table);
+
+         --  Start of processing for Do_Operator_Simple
+
+         Unchecked_Result : constant Irep := Make_Binary_Operation
+              (Lhs => LHS,
+               Rhs => RHS,
+               I_Type => Ret_Type,
+               Overflow_Check => Do_Overflow_Check (N),
+               Source_Location => Get_Source_Location (N));
+
+         Maybe_Overflow_Check : Irep := Unchecked_Result;
+         Maybe_Division_Check : Irep := Unchecked_Result;
+
+      begin
+         if Do_Overflow_Check (N) then
+            Maybe_Overflow_Check := Make_Overflow_Assert_Expr
+              (N     => N,
+               Value => Unchecked_Result);
+         end if;
+
+         if Nkind (N) in N_Op_Divide | N_Op_Mod | N_Op_Rem
+           and then Do_Division_Check (N)
+         then
+            Maybe_Division_Check := Make_Div_Zero_Assert_Expr
+              (N       => N,
+               Value   => Maybe_Overflow_Check,
+               Divisor => Get_Rhs (Unchecked_Result));
+         else
+            Maybe_Division_Check := Maybe_Overflow_Check;
+         end if;
+
+         return Maybe_Division_Check;
+      end;
+   end Do_Operator_Simple;
+
+   --  In case the type of operands in modular we attach a I_Op_Mod to the
+   --  result.
+   --  Note that we do not set the overflow check it should not be necessary
+   --  for modular types.
+   function Do_Operator_Mod (LHS : Irep; Op_Kind : Irep_Kind;
+                                    RHS : Irep; Ret_Type : Irep)
+                                    return Irep is
+      Followed_Ret_Type : constant Irep :=
+        Follow_Symbol_Type (Ret_Type, Global_Symbol_Table);
+
+      --  Multiplication can result in intermediate results larger than what
+      --  could be stored in Ret_Type: we cast to a wider type
+      Large_Enough_Type : constant Irep :=
+        Maybe_Double_Type_Width (Followed_Ret_Type);
+
+      Lhs_Cast : constant Irep :=
+        Typecast_If_Necessary (LHS, Large_Enough_Type, Global_Symbol_Table);
+      Rhs_Cast : constant Irep :=
+        Typecast_If_Necessary (RHS, Large_Enough_Type, Global_Symbol_Table);
+
+      --  XXX this should be from the parent node, not from the LHS
+      Source_Loc : constant Irep := Get_Source_Location (LHS);
+
+      --  Impossible because of the precondition
+      Impossible : exception;
+      Full_Result : constant Irep :=
+        (case Op_Kind is
+           when I_Op_Add => Make_Op_Add
+            (Lhs => Lhs_Cast,
+             Rhs => Rhs_Cast,
+             Source_Location => Source_Loc,
+             I_Type => Large_Enough_Type),
+           when I_Op_Mul => Make_Op_Mul
+            (Lhs => Lhs_Cast,
+             Rhs => Rhs_Cast,
+             Source_Location => Source_Loc,
+             I_Type => Large_Enough_Type),
+           when others => raise Impossible);
+
+      Mod_Max_String : constant String :=
+        Get_Ada_Mod_Max (Followed_Ret_Type);
+
+      --  Extract the modulus from Ret_Type
+      Mod_Max : constant Irep :=
+        Make_Constant_Expr (Source_Location => Source_Loc,
+                            I_Type          => Large_Enough_Type,
+                            Range_Check     => False,
+                            Value           => Mod_Max_String);
+      Mod_Ret : constant Irep := Make_Op_Mod
+        (Lhs => Full_Result,
+         Rhs => Mod_Max,
+         Source_Location => Source_Loc,
+         Div_By_Zero_Check => False,
+         I_Type => Large_Enough_Type);
+   begin
+      return Make_Op_Typecast
+        (Op0 => Mod_Ret,
+         Source_Location => Source_Loc,
+         I_Type => Ret_Type);
+   end Do_Operator_Mod;
+
+   function Do_Operator_Mod (N : Node_Id) return Irep is
+      Impossible_Exception : exception;
+      Op_Kind : constant Irep_Kind :=
+        (case N_Op (Nkind (N)) is
+           when N_Op_Add => I_Op_Add,
+           when N_Op_Multiply => I_Op_Mul,
+           when others => raise Impossible_Exception
+                          with "this case is excluded by the precondition");
+      Lhs : constant Irep := Do_Expression (Left_Opnd (N));
+      Rhs : constant Irep := Do_Expression (Right_Opnd (N));
+      Expr_Type : constant Irep := Do_Type_Reference (Etype (N));
+   begin
+      return Do_Operator_Mod (Lhs, Op_Kind, Rhs, Expr_Type);
+   end Do_Operator_Mod;
+
+   --  Modular minus gets special treatment, effectively x - y =>
+   --  x + (Mod_Max (T) - y)
+   --  this expression never over/under-flows so no type widening is necessary
+   function Do_Operator_Sub_Mod (LHS : Irep; RHS : Irep; Ret_Type : Irep)
+                                 return Irep is
+      Followed_Ret_Type : constant Irep :=
+        Follow_Symbol_Type (Ret_Type, Global_Symbol_Table);
+
+      Mod_Max_String : constant String :=
+        Get_Ada_Mod_Max (Followed_Ret_Type);
+      Source_Loc : constant Irep := Get_Source_Location (LHS);
+
+      --  Extract the modulus from Ret_Type
+      Mod_Max : constant Irep :=
+        Make_Constant_Expr (Source_Location => Source_Loc,
+                            I_Type          => Ret_Type,
+                            Range_Check     => False,
+                            Value           => Mod_Max_String);
+      Mod_Rhs : constant Irep :=
+        Make_Op_Sub (Rhs             => RHS,
+                     Lhs             => Mod_Max,
+                     Source_Location => Source_Loc,
+                     Overflow_Check  => False,
+                     I_Type          => Ret_Type);
+
+   begin
+      return
+        Make_Op_Add (Rhs             => Mod_Rhs,
+                     Lhs             => LHS,
+                     Source_Location => Source_Loc,
+                     Overflow_Check  => False,
+                     I_Type          => Ret_Type);
+   end Do_Operator_Sub_Mod;
+
+   function Do_Operator_Sub_Mod (N : Node_Id) return Irep is
+      Lhs : constant Irep := Do_Expression (Left_Opnd (N));
+      Rhs : constant Irep := Do_Expression (Right_Opnd (N));
+      Expr_Type : constant Irep := Do_Type_Reference (Etype (N));
+   begin
+      return Do_Operator_Sub_Mod (Lhs, Rhs, Expr_Type);
+   end Do_Operator_Sub_Mod;
+
+   ----------------------------
+   -- Do_Package_Declaration --
+   ----------------------------
+
+   procedure Do_Package_Declaration (N : Node_Id) is
+   begin
+      Do_Package_Specification (Specification (N));
+   end Do_Package_Declaration;
+
+   ----------------------------
+   -- Do_Package_Specification --
+   ----------------------------
+
+   procedure Do_Package_Specification (N : Node_Id) is
+      Package_Decs : constant Irep := Make_Code_Block
+        (Source_Location => Get_Source_Location (N));
+      Package_Name : Symbol_Id;
+      Package_Symbol : Symbol;
+      Def_Unit_Name : Node_Id;
+      Entity_Node : Node_Id;
+
+   begin
+      Def_Unit_Name := Defining_Unit_Name (N);
+
+      --  Defining_Unit_Name will return a N_Defining_Identifier
+      --  for non-child package but a N_Package_Specification when it is a
+      --  child package.
+      --  To obtain the Entity N_Defining_Identifier is required.
+      --  The actual parameter for Unique_Name must be an Entity node.
+      if Nkind (Def_Unit_Name) = N_Defining_Identifier then
+         Entity_Node := Def_Unit_Name;
+      else
+         Entity_Node := Defining_Identifier (Def_Unit_Name);
+      end if;
+
+      Package_Name := Intern (Unique_Name (Entity_Node));
+      Package_Symbol.Name       := Package_Name;
+      Package_Symbol.BaseName   := Package_Name;
+      Package_Symbol.PrettyName := Package_Name;
+      Package_Symbol.SymType    := CProver_Void_T;
+      Package_Symbol.Mode       := Intern ("C");
+      Package_Symbol.Value      := Make_Nil (Get_Source_Location (N));
+
+      pragma Assert (not Global_Symbol_Table.Contains (Package_Name));
+      Global_Symbol_Table.Insert (Package_Name, Package_Symbol);
+
+      if Present (Visible_Declarations (N)) then
+         Process_Declarations (Visible_Declarations (N), Package_Decs);
+      end if;
+      if Present (Private_Declarations (N)) then
+         Process_Declarations (Private_Declarations (N), Package_Decs);
+      end if;
+   end Do_Package_Specification;
+
+   procedure Do_Exception_Declaration (N : Node_Id) is
+   begin
+      null;
+      --  Ignored for now
+   end Do_Exception_Declaration;
+
+   ---------------------------------
+   -- Do_Private_Type_Declaration --
+   ---------------------------------
+
+   procedure Do_Private_Type_Declaration (N : Node_Id) is
+      Entity : constant Entity_Id := Defining_Identifier (N);
+      --  A partial view of a type declaration must not be inserted into
+      --  the symbol table.
+      --
+      --  The full view of a private_type_declaration is obtained
+      --  by calling the Full_View function.  As the compiler has completed
+      --  semantic analysis before invoking the gnat to goto translation
+      --  all private_type_declarations should have a full view.
+      Full_View_Entity : constant Entity_Id := Full_View (Entity);
+   begin
+      if Global_Symbol_Table.Contains (Intern (Unique_Name (Entity))) then
+         --  The type declaration has already been processed by looking
+         --  ahead from a previous private or incomplete type declaration.
+         return;
+      end if;
+      if Is_Private_Type (Entity) then
+         --  Limited types should be ok as limiting a type only applies
+         --  constraints on its use within an Ada program.  The gnat
+         --  front-end checks that these constraints are maintained by
+         --  the code being analysed.
+         --  Abstract types should be processed especially if it is tagged
+         --  because concrete types can be derived from them and gnat2goto
+         --  needs the abstract type in its symbol table.
+         --  A tagged type declaration is acceptable to gnat2goto.
+         --  The private_type_declaration is not abstract.
+         --  The Full_View of the declaratin will have been processed by the
+         --  gnat front-end and will be Full_View_Entity.
+
+         --  A private_type_declaration may be the completion of an
+         --  incomplete_type_declaration.  The processing of the
+         --  incomplete_type_declaration will have inserted (registered) the
+         --  full view of the private_type_declartion into the table already.
+         --  It is not obvious how to check that the private_type_declaration
+         --  is a completion of an incomplete_type_declaration from the tree
+         --  but it does not matter because its prior existence in the symbol
+         --  will prevent it being re-inserted through a second registration.
+
+         if Nkind (Declaration_Node (Full_View_Entity)) =
+           N_Full_Type_Declaration
+         then
+            --  The full_type_declaration corresponding to the
+            --  private_type_declaration is Full_View_Entity
+            --  register the full view in the symbol table.
+            Register_Type_Declaration
+              (Declaration_Node (Full_View_Entity), Full_View_Entity);
+         else
+            Report_Unhandled_Node_Empty
+              (Declaration_Node (Full_View_Entity),
+               "Do_Private_Type_Declaration",
+               "Full view of private_type_declaration " &
+               "Does not yield a full_type_declaration node");
+         end if;
+
+      else
+         Report_Unhandled_Node_Empty
+              (N,
+               "Do_Private_Type_Declaration",
+               "The node is not a private entity");
+      end if;
+
+   end Do_Private_Type_Declaration;
+
+   ---------------------------------
+   -- Do_Procedure_Call_Statement --
+   ---------------------------------
+
+   function Do_Procedure_Call_Statement (N : Node_Id) return Irep
+   is
+   begin
+      --  It seems as though an N_Explicit_Drereference is placed in the tree
+      --  even when the procedure call is an implicit dereference.
+      --  Hence, implicit dereferences do not have to be seperately handled,
+      --  they are handled as explicit dereferences.
+      if Nkind (Name (N)) = N_Explicit_Dereference then
+         declare
+            --  Note: the Object parameter is treated as an expression
+            --  rather than an identifer as a subprogram pointer could be
+            --  a component of a record or array.
+            Fun_Type : constant Irep :=
+              Get_Subtype (Do_Type_Reference (Etype (Prefix (Name (N)))));
+            Deref_Function : constant Irep := Make_Dereference_Expr
+              (Object          => Do_Expression (Prefix (Name (N))),
+               Source_Location => Get_Source_Location (N),
+               I_Type          => Fun_Type,
+               Range_Check     => False);
+         begin
+            return Make_Code_Function_Call
+              (Arguments       => Do_Call_Parameters (N),
+               I_Function      => Deref_Function,
+               Lhs             => CProver_Nil,
+               Source_Location => Get_Source_Location (N),
+               I_Type          => CProver_Void_T,
+               Range_Check     => False);
+         end;
+      end if;
+
+      if not (Nkind (Name (N)) in N_Has_Entity)
+        and then Nkind (Name (N)) /= N_Aspect_Specification
+        and then Nkind (Name (N)) /= N_Attribute_Definition_Clause
+        and then Nkind (Name (N)) /= N_Freeze_Entity
+        and then Nkind (Name (N)) /= N_Freeze_Generic_Entity
+      then
+         return Report_Unhandled_Node_Irep
+           (N,
+            "Do_Procedure_Call_Statement",
+            "Wrong nkind of name");
+      end if;
+
+      declare
+         Callee : constant String := Unique_Name (Entity (Name (N)));
+         Sym_Id : constant Symbol_Id := Intern (Callee);
+      begin
+         if not Global_Symbol_Table.Contains (Sym_Id) then
+            return Report_Unhandled_Node_Irep
+              (N,
+               "Do_Procedure_Call_Statement",
+               "sym id not in symbol table");
+         end if;
+         declare
+            --  ??? use Get_Entity_Name from gnat2why to handle entries and
+            --  entry families (and most likely extend it for accesses to
+            --  subprograms).
+            Function_Symbol : constant Symbol := Global_Symbol_Table (Sym_Id);
+            Function_Type   : constant Irep := Function_Symbol.SymType;
+            --  The function name is obtained from the function symbol
+            --  because this will give the name of the actual function called
+            --  even if it has been renamed.
+            Function_Name   : constant String :=
+              Unintern (Function_Symbol.Name);
+         begin
+            if Function_Symbol.SymType /= Ireps.Empty then
+               return Make_Code_Function_Call
+                 (I_Function => Make_Symbol_Expr
+                    (Identifier => Function_Name,
+                     I_Type => Function_Type,
+                     Source_Location => Get_Source_Location (N)),
+                  Arguments => Do_Call_Parameters (N),
+                  Lhs => CProver_Nil,
+                  Source_Location => Get_Source_Location (N));
+            else
+               return Report_Unhandled_Node_Irep
+                 (N        => N,
+                  Fun_Name => "Do_Procedure_Call_Statement",
+                  Message  => "Renamed procedure" &
+                    " is not in the symbol table");
+            end if;
+         end;
+      end;
+   end Do_Procedure_Call_Statement;
+
+   -------------------------
+   -- Do_Range_Constraint --
+   -------------------------
+
+   function Do_Range_Constraint (N : Node_Id; Underlying : Irep)
+                                     return Irep
+   is
+      Range_Expr : constant Node_Id := Range_Expression (N);
+      Resolved_Underlying : constant Irep :=
+        Follow_Symbol_Type (Underlying, Global_Symbol_Table);
+      --  ??? why not get this from the entity
+
+      function Get_Array_Attr_Bound_Symbol (Bound_Node : Node_Id)
+                                            return Bound_Type_Symbol
+        with Pre => Get_Attribute_Id (Attribute_Name (Bound_Node))
+          in Attribute_First | Attribute_Last;
+      function Get_Array_Attr_Bound_Symbol (Bound_Node : Node_Id)
+                                            return Bound_Type_Symbol
+      is
+      begin
+         if Get_Attribute_Id (Attribute_Name (Bound_Node)) =  Attribute_First
+         then
+            return Bound_Type_Symbol
+              (Do_Array_First_Last_Length (Bound_Node, Attribute_First));
+         else
+            return Bound_Type_Symbol
+              (Do_Array_First_Last_Length (Bound_Node, Attribute_Last));
+         end if;
+      end Get_Array_Attr_Bound_Symbol;
+
+      procedure Set_Bound_Value (Bound : Node_Id;
+                                 Bound_Value : out Integer;
+                                 Ok : out Boolean)
+      with Pre => Is_OK_Static_Expression (Bound);
+      --  For static expressions, the gnat front end replaces all attribute
+      --  references by the lower and upper bounds of the attributed prefix.
+      --  If the type of the range is an integer type, it folds the lower and
+      --  upper bounds expressions into their intege value. If the range is
+      --  an enumeration type it sets the lower and upper bounds to the
+      --  enumeration literal identifiers of the bounds.
+
+      procedure Set_Bound_Value (Bound : Node_Id;
+                                 Bound_Value : out Integer;
+                                 Ok : out Boolean) is
+      begin
+         Ok := False;
+         Bound_Value := 0;
+         case Nkind (Bound) is
+         when N_Integer_Literal =>
+            Bound_Value :=
+              Store_Nat_Bound (Bound_Type_Nat (Intval (Bound)));
+            Ok := True;
+         when N_Character_Literal =>
+            Bound_Value :=
+              Store_Symbol_Bound (Bound_Type_Symbol (Bound));
+            Ok := True;
+         when N_Identifier | N_Expanded_Name =>
+            Bound_Value :=
+                 Store_Symbol_Bound (Bound_Type_Symbol (
+                                     Do_Identifier (Bound)));
+            Ok := True;
+            when others =>
+               null;
+         end case;
+      end Set_Bound_Value;
+
+      Lower_Bound : constant Node_Id := Low_Bound (Range_Expr);
+      Upper_Bound : constant Node_Id := High_Bound (Range_Expr);
+
+      Lower_Bound_Value : Integer;
+      Upper_Bound_Value : Integer;
+
+      Ok : Boolean;
+   begin
+      if not (Kind (Resolved_Underlying) in Class_Bitvector_Type or
+              Kind (Resolved_Underlying) = I_C_Enum_Type)
+      then
+         return Report_Unhandled_Node_Type (Range_Expr,
+                                            "Do_Base_Range_Constraint",
+                                        "range expression not bitvector type");
+      end if;
+
+      if Is_OK_Static_Range (Range_Expr) then
+         Set_Bound_Value (Lower_Bound, Lower_Bound_Value, Ok);
+         if not Ok then
+            return Report_Unhandled_Node_Type
+              (Lower_Bound,
+               "Do_Base_Range_Constraint",
+               "unsupported lower range kind");
+         end if;
+         Set_Bound_Value (Upper_Bound, Upper_Bound_Value, Ok);
+         if not Ok then
+            return Report_Unhandled_Node_Type
+              (Upper_Bound,
+               "Do_Range_Constraint",
+               "unsupported upper range kind");
+         end if;
+
+      elsif Nkind (Lower_Bound) = N_Attribute_Reference and then
+        (Get_Attribute_Id (Attribute_Name (Lower_Bound)) =
+           Attribute_First and
+             (Get_Attribute_Id (Attribute_Name (Upper_Bound))) =
+             Attribute_Last)
+      then
+         Lower_Bound_Value :=
+           Store_Symbol_Bound
+             (Get_Array_Attr_Bound_Symbol (Lower_Bound));
+         Upper_Bound_Value :=
+           Store_Symbol_Bound (Get_Array_Attr_Bound_Symbol (Upper_Bound));
+      else
+         Report_Unhandled_Node_Empty
+           (Lower_Bound,
+            "Do_Range_Constraint",
+            "only static ranges are supported");
+         return Make_Signedbv_Type (32);
+      end if;
+
+      declare
+         Width : constant Integer :=
+           (if Kind (Resolved_Underlying) = I_C_Enum_Type
+             then Get_Width (Get_Subtype (Resolved_Underlying))
+             else Get_Width (Resolved_Underlying));
+      begin
+         return
+           (if Kind (Resolved_Underlying) in I_Ada_Mod_Type | I_Unsignedbv_Type
+            then Make_Bounded_Unsignedbv_Type
+              (Width => Width,
+               Lower_Bound => Lower_Bound_Value,
+               Upper_Bound => Upper_Bound_Value)
+            else Make_Bounded_Signedbv_Type
+              (Width => Width,
+               Lower_Bound => Lower_Bound_Value,
+               Upper_Bound => Upper_Bound_Value));
+      end;
+   end Do_Range_Constraint;
+
+   ----------------------------------
+   -- Do_Signed_Integer_Definition --
+   ----------------------------------
+
+   function Do_Signed_Integer_Definition (N : Node_Id) return Irep is
+      E : constant Entity_Id := Defining_Entity (Parent (N));
+      pragma Assert (Is_Type (E));
+      Model_Size : constant Positive := Positive (UI_To_Int (Esize (E)));
+   begin
+      ASVAT.Size_Model.Set_Static_Size (E          => E,
+                                 Model_Size => Model_Size);
+      return Make_Bounded_Signedbv_Type
+        (Lower_Bound =>
+           Store_Nat_Bound (Bound_Type_Nat (Intval (Low_Bound (N)))),
+         Upper_Bound =>
+           Store_Nat_Bound (Bound_Type_Nat (Intval (High_Bound (N)))),
+         Width => Model_Size);
+   end Do_Signed_Integer_Definition;
+
+   ----------------------------------
+   -- Do_Floating_Point_Definition --
+   ----------------------------------
+
+   function Do_Floating_Point_Definition (N : Node_Id) return Irep is
+      E : constant Entity_Id := Defining_Entity (Parent (N));
+
+      --  This determines if ranges were specified or not
+      Scalar_Range_Ent : constant Node_Id := Scalar_Range (E);
+      Width : constant Integer := Integer (UI_To_Int (Esize (E)));
+      Mantissa : constant Integer := Float_Mantissa_Size (Width);
+   begin
+      ASVAT.Size_Model.Set_Static_Size (E          => E,
+                                        Model_Size => Width);
+      if Nkind (Scalar_Range_Ent) = N_Real_Range_Specification then
+         --  If user specified range bounds we store them
+         declare
+            Range_Spec : constant Node_Id := Real_Range_Specification (N);
+            Lower_Bound : constant Integer :=
+              Store_Real_Bound
+              (Bound_Type_Real (Realval (Low_Bound (Range_Spec))));
+            Upper_Bound : constant Integer :=
+              Store_Real_Bound
+              (Bound_Type_Real (Realval (High_Bound (Range_Spec))));
+         begin
+            return Make_Bounded_Floatbv_Type
+              (Width => Width,
+               F => Mantissa,
+               Lower_Bound => Lower_Bound,
+               Upper_Bound => Upper_Bound);
+         end;
+      else
+         return Make_Floatbv_Type
+           (Width => Width,
+            F => Mantissa);
+      end if;
+   end Do_Floating_Point_Definition;
+
+   --------------------------------
+   -- Do_Simple_Return_Statement --
+   --------------------------------
+
+   procedure Do_Simple_Return_Statement (Block : Irep; N : Node_Id)
+   is
+      Location     : constant Irep := Get_Source_Location (N);
+      Return_Expr  : constant Node_Id := Expression (N);
+      Return_Value : Irep := CProver_Nil;
+      Spec         : constant Node_Id :=
+        Return_Applies_To (Return_Statement_Entity (N));
+   begin
+      if Present (Return_Expr) then
+         --  It is a function return.
+         --  Set the return variable.
+         declare
+            Return_Entity : constant Entity_Id := Return_Statement_Entity (N);
+            Applies_To    : constant Node_Id :=
+              Return_Applies_To (Return_Entity);
+            Return_Type   : constant Entity_Id :=
+              Underlying_Type (Etype (Applies_To));
+            Return_I_Type : constant Irep := Do_Type_Reference (Return_Type);
+            pragma Assert (Nkind (Applies_To) in N_Defining_Identifier |
+                                                 N_Defining_Operator_Symbol,
+                           "Simple return statement " &
+                             Node_Kind'Image (Nkind (Applies_To)));
+            Fun_Name      : constant String := Unique_Name (Applies_To);
+            Result_Name   : constant String := Fun_Name & "___result";
+            Result_Var    : constant Irep :=
+              Make_Symbol_Expr
+                (Source_Location => Location,
+                 I_Type          => Return_I_Type,
+                 Range_Check     => False,
+                 Identifier      => Result_Name);
+         begin
+            --  The result variable is declared when the subprogram
+            --  specification is processed
+            if Is_Array_Type (Return_Type) and then
+              Kind (Return_I_Type) = I_Struct_Tag_Type and then
+              not Is_Bounded_Array (Do_Expression (Return_Expr))
+            then
+               --  It is an unconstrained array result type
+               Build_Unconstrained_Array_Result
+                 (Block       => Block,
+                  Result_Var  => Result_Var,
+                  Return_Expr => Return_Expr);
+               Return_Value := Result_Var;
+            else
+               Do_Assignment_Op
+                 (Block       => Block,
+                  Destination => Result_Var,
+                  Dest_Type   => Return_Type,
+                  Source_Expr => Return_Expr);
+               Return_Value  := Typecast_If_Necessary
+                 (Expr           => Result_Var,
+                  New_Type       => Return_I_Type,
+                  A_Symbol_Table => Global_Symbol_Table);
+            end if;
+            Global_Symbol_Table (Intern (Result_Name)).Value := Return_Value;
+         end;
+      end if;
+      if ASVAT.Pragma_Info.Has_Post_Condition (Spec) then
+         Append_Op (Block, Do_Post_Condition
+                    (ASVAT.Pragma_Info.Get_Post_Condition (Spec)));
+      end if;
+
+      Append_Op (Block,
+                 Make_Code_Return
+                   (Return_Value => Return_Value,
+                    Source_Location => Get_Source_Location (N)));
+   end Do_Simple_Return_Statement;
+
+   function Do_Raise_Statement (N : Node_Id) return Irep is
+      Source_Loc : constant Irep := Get_Source_Location (N);
+
+      Func_Params : constant Irep := Make_Parameter_List;
+      Func_Type : constant Irep :=
+           Make_Code_Type (Parameters  => Func_Params,
+                           Ellipsis    => False,
+                           Return_Type => CProver_Void_T,
+                           Inlined     => False,
+                           Knr         => False);
+      Function_Name : constant String := "__CPROVER_Ada_Raise_Exception";
+
+      Exception_Id_String : constant Irep :=
+        (if Present (Name (N)) then
+            Make_String_Constant_Expr
+           (Text       => Unique_Name (Entity (Name (N))),
+            Source_Loc => Source_Loc)
+         else
+            Make_String_Constant_Expr
+           (Text       => "_no_name__",
+            Source_Loc => Source_Loc));
+      Exception_Comment : constant Irep :=
+        (if Present (Expression (N)) then
+           (if Nkind (Expression (N)) = N_String_Literal then
+                 Do_String_Constant (Expression (N))
+            else
+               Make_String_Constant_Expr
+              (Text       => "_unsupported_text_expression__",
+               Source_Loc => Source_Loc))
+         else Make_String_Constant_Expr (Text       => "",
+                                         Source_Loc => Source_Loc));
+      Exception_Call_Arguments : constant Irep := Make_Argument_List;
+      Body_Block : constant Irep := Make_Code_Block (Source_Loc);
+      Function_Symbol : constant Symbol :=
+        New_Function_Symbol_Entry (Name           => Function_Name,
+                                   Symbol_Type    => Func_Type,
+                                   Value          => Body_Block,
+                                   A_Symbol_Table => Global_Symbol_Table);
+      Assert_Comment : constant Irep :=
+        Make_String_Constant_Expr (Text       => "Ada Exception",
+                                   Source_Loc => Source_Loc);
+      Assert_False : constant Irep :=
+        Make_Assert_Call (Assertion   => Get_Int32_T_Zero,
+                          Description => Assert_Comment,
+                          Source_Loc  => Source_Loc,
+                          A_Symbol_Table => Global_Symbol_Table);
+      Assume_False : constant Irep :=
+        Make_Assume_Call (Assumption   => Get_Int32_T_Zero,
+                          Source_Loc   => Source_Loc,
+                          A_Symbol_Table => Global_Symbol_Table);
+      Char_Pointer_Type : constant Irep := Make_Pointer_Type (Int8_T);
+   begin
+      Create_Fun_Parameter (Fun_Name        => Function_Name,
+                            Param_Name      => "name",
+                            Param_Type      => Char_Pointer_Type,
+                            Param_List      => Func_Params,
+                            A_Symbol_Table  => Global_Symbol_Table,
+                            Source_Location => Source_Loc);
+      Create_Fun_Parameter (Fun_Name        => Function_Name,
+                            Param_Name      => "comment",
+                            Param_Type      => Char_Pointer_Type,
+                            Param_List      => Func_Params,
+                            A_Symbol_Table  => Global_Symbol_Table,
+                            Source_Location => Source_Loc);
+
+      Append_Op (Body_Block, Assert_False);
+      Append_Op (Body_Block, Assume_False);
+
+      Append_Argument
+        (Exception_Call_Arguments,
+         String_To_Char_Pointer (String_Irep    => Exception_Id_String,
+                                 A_Symbol_Table => Global_Symbol_Table));
+      Append_Argument
+        (Exception_Call_Arguments,
+         String_To_Char_Pointer (String_Irep    => Exception_Comment,
+                                 A_Symbol_Table => Global_Symbol_Table));
+
+      return Make_Code_Function_Call
+        (Arguments       => Exception_Call_Arguments,
+         I_Function      => Symbol_Expr (Function_Symbol),
+         Lhs             => Make_Nil (Source_Loc),
+         Source_Location => Source_Loc,
+         I_Type          => CProver_Void_T);
+   end Do_Raise_Statement;
+
+   ------------------------
+   -- Do_Subprogram_Body --
+   ------------------------
+
+   procedure Do_Subprogram_Body (N : Node_Id) is
+      Proc_Name   : constant Symbol_Id :=
+        Intern (Unique_Name (Defining_Entity (N)));
+
+      --  ASVAT models have a modelling body inserted rather than
+      --  the body declared in the program text.
+      --  The model body is inserted when the subprogram specification
+      --  is processed, either from the declaration or the subprogram body
+      --  if the subprogram does not have a declaration.
+      E : constant Node_Id := Defining_Unit_Name (Specification (N));
+
+      ASVAT_Model : constant ASVAT.Modelling.Model_Sorts :=
+        ASVAT.Modelling.Get_Model_Sort (E);
+      Is_ASVAT_Model : constant Boolean :=
+      ASVAT.Modelling.Is_Model (ASVAT_Model);
+
+      Proc_Symbol : Symbol;
+   begin
+      --  Corresponding_Spec is optional for subprograms
+      --  but it should always be present for generic subprograms,
+      --  so this check should be sufficient
+      if Present (Corresponding_Spec (N)) and then
+        Ekind (Corresponding_Spec (N))
+        in E_Generic_Function | E_Generic_Procedure
+      then
+         return;
+      end if;
+      if not Global_Symbol_Table.Contains (Proc_Name) then
+         --  A subprogram body does not have to have a separate declaration
+         --  so it may not be in the symbol table.
+         --  The subprogram specification of the subprogram body is used to
+         --  populate the symbol table instead.
+         Register_Subprogram_Specification (Specification (N));
+
+         if Is_ASVAT_Model then
+            --  Generate the model body.
+            ASVAT.Modelling.Make_Model (E, ASVAT_Model);
+         end if;
+      end if;
+      --  Todo aspect_specification, i.e. pre/post-conditions
+      --  Now the subprogram should registered in the symbol table
+      --  whether a separate declaration was provided or not.
+      if not Global_Symbol_Table.Contains (Proc_Name) then
+         Report_Unhandled_Node_Empty (N, "Do_Subprogram_Body",
+                                      "Proc name not in symbol table");
+      end if;
+      if not Is_ASVAT_Model then
+         --  The actual body has to be processed from the program text
+         Proc_Symbol := Global_Symbol_Table (Proc_Name);
+
+         --  Compile the subprogram body and
+         --  update its entry in the symbol table.
+         Proc_Symbol.Value := Do_Subprogram_Or_Block (N);
+         Global_Symbol_Table.Replace (Proc_Name, Proc_Symbol);
+      end if;
+   end Do_Subprogram_Body;
+
+   -----------------------------
+   -- Do_Subprogram_Body_Stub --
+   -----------------------------
+
+   procedure Do_Subprogram_Body_Stub (N : Node_Id) is
+   begin
+      --  The Gnat compilation model requires that a file
+      --  containing the separate subprogram body is present
+      --  otherwise a compilation error is generated.
+      --  Therefore, the subunit will always be present when gnat2goto
+      --  encounters a Subprogram_Body_Stub.
+      Do_Subprogram_Body (Proper_Body (Unit ((Library_Unit (N)))));
+   end Do_Subprogram_Body_Stub;
+
+   -------------------------------
+   -- Do_Subprogram_Declaration --
+   -------------------------------
+
+   procedure Do_Subprogram_Declaration (N : Node_Id) is
+      E : constant Node_Id := Defining_Unit_Name (Specification (N));
+      ASVAT_Model : constant ASVAT.Modelling.Model_Sorts :=
+        ASVAT.Modelling.Get_Model_Sort (E);
+   begin
+      pragma Assert (Nkind (E) in N_Entity);
+      pragma Assert (Ekind (E) in Subprogram_Kind);
+      Register_Subprogram_Specification (Specification (N));
+
+      if ASVAT.Modelling.Is_Model (ASVAT_Model) then
+         ASVAT.Modelling.Make_Model (E, ASVAT_Model);
+      elsif Is_Intrinsic_Subprogram (E)
+        and Nkind (Specification (N)) = N_Function_Specification
+      then
+         Check_For_Intrinsic_Address_Functions :
+         declare
+            Fun_Sort : constant
+              ASVAT.Address_Model.Address_To_Access_Functions :=
+                ASVAT.Address_Model.Get_Intrinsic_Address_Function (E);
+         begin
+            if Fun_Sort = ASVAT.Address_Model.To_Pointer_Function then
+               --  Make a body for
+               --  function To_Pointer (System.Address) return access T.
+               ASVAT.Address_Model.Make_To_Pointer (E);
+            elsif Fun_Sort = ASVAT.Address_Model.To_Address_Function then
+              --  Make a body for
+              --  function To_Pointer (V : T) return Systen.Address.
+               ASVAT.Address_Model.Make_To_Address (E);
+            else
+               --  If the intrinsic funtion is not from an instatiation of
+               --  the System.Address_To_Access package nothing is done.
+               null;
+            end if;
+         end Check_For_Intrinsic_Address_Functions;
+      elsif not Has_Completion (E) then
+         --  Here it would be possible to nondet outputs specified
+         --  in subprogram specification but at present nothing is done.
+         --  A missing body will be reported when it is "linked".
+         null;
+
+      else
+         --  It is a normal Ada subprogram.
+         --  Nothing more to be done;
+         null;
+
+      end if;
+
+   end Do_Subprogram_Declaration;
+
+   ----------------------------
+   -- Do_Subprogram_Or_Block --
+   ----------------------------
+
+   function Do_Subprogram_Or_Block (N : Node_Id) return Irep is
+      Loc   : constant Irep := Get_Source_Location (N);
+      Decls : constant List_Id := Declarations (N);
+      HSS   : constant Node_Id := Handled_Statement_Sequence (N);
+      Reps  : constant Irep := Make_Code_Block (Source_Location => Loc);
+      All_Handlers : constant Irep :=
+        Make_Code_Block (Source_Location => Loc);
+      Spec : Node_Id;
+   begin
+      if Nkind (N) = N_Subprogram_Body then
+         Spec := Corresponding_Spec (N);
+      end if;
+      if Nkind (N) = N_Subprogram_Body and then
+        not Acts_As_Spec (N) and then
+        ASVAT.Pragma_Info.Has_Post_Condition (Spec)
+      then
+         --  create variables for any in or in/out parameters
+         --  get list of parameters from Spec and create local vars
+         declare
+            Param_Id : Symbol_Id;
+            Param_Entity : Node_Id :=
+              First_Entity (Defining_Unit_Name (Specification (N)));
+         begin
+            loop
+               --  only interested in in/out and in parameters
+               if Ekind (Param_Entity) in
+                 E_In_Out_Parameter .. E_In_Parameter
+               then
+                  Param_Id := Intern
+                    (Unique_Name (Param_Entity) & "___old");
+                  --  add parameter to global symbol table
+                  New_Object_Symbol_Entry
+                    (Object_Name       => Param_Id,
+                     Object_Type       =>
+                       Do_Type_Reference (Etype (Param_Entity)),
+                     Object_Init_Value => Ireps.Empty,
+                     A_Symbol_Table    => Global_Symbol_Table);
+
+                  --  declare a variable and initialise
+                  declare
+                     Param_Var  : constant Irep :=
+                       Make_Symbol_Expr
+                         (Source_Location => Loc,
+                          I_Type          => Do_Type_Reference
+                            (Etype (Param_Entity)),
+                          Range_Check     => False,
+                          Identifier      => Unintern (Param_Id));
+                     Param_Dec  : constant Irep :=
+                       Make_Code_Decl
+                         (Symbol          => Param_Var,
+                          Source_Location => Loc,
+                          I_Type          => Do_Type_Reference
+                            (Etype (Param_Entity)),
+                          Range_Check     => False);
+                     Param_In    : constant Irep :=
+                       Make_Symbol_Expr
+                         (Source_Location => Loc,
+                          I_Type          => Do_Type_Reference
+                            (Etype (Param_Entity)),
+                          Range_Check     => False,
+                          Identifier      => Unique_Name (Param_Entity));
+
+                     Param_Init : constant Irep :=
+                       (if Ekind (Param_Entity) = E_In_Out_Parameter then
+                            (Make_Code_Assign
+                             (Rhs             =>
+                                    Make_Dereference_Expr
+                                (Object          => Param_In,
+                                 Source_Location => Loc,
+                                 I_Type          => Do_Type_Reference
+                                   (Etype (Param_Entity))),
+                              Lhs             => Param_Var,
+                              Source_Location => Loc,
+                              I_Type          => Do_Type_Reference
+                                (Etype (Param_Entity)),
+                              Range_Check     => False))
+                        else
+                           Make_Code_Assign
+                          (Rhs             => Param_In,
+                           Lhs             => Param_Var,
+                           Source_Location => Loc,
+                           I_Type          => Do_Type_Reference
+                             (Etype (Param_Entity)),
+                           Range_Check     => False));
+
+                  begin
+                     Global_Symbol_Table (Param_Id).Value :=
+                       Param_Var;
+                     Append_Op (Reps, Param_Dec);
+                     Append_Op (Reps, Param_Init);
+                  end;
+               end if;
+               --  get the next parameter
+               Param_Entity := Next_Entity (Param_Entity);
+               --  exit when last parameter processed
+               exit when Param_Entity = Types.Empty;
+            end loop;
+         end;
+      end if;
+
+      if Nkind (N) = N_Subprogram_Body and then
+        not Acts_As_Spec (N) and then
+        ASVAT.Pragma_Info.Has_Pre_Condition (Spec)
+      then
+         Append_Op (Reps, Do_Pre_Condition
+                    (ASVAT.Pragma_Info.Get_Pre_Condition (Spec)));
+      end if;
+
+      if Nkind (N) = N_Subprogram_Body then
+         declare
+            Subprog_Spec   : constant Node_Id := Specification (N);
+         begin
+            if Nkind (Subprog_Spec) = N_Function_Specification then
+               --  Create and declare a goto result variable.
+               declare
+                  Subprog_Name   : constant String :=
+                    Unique_Name (Defining_Entity (N));
+                  Subprog_Entity : constant Entity_Id :=
+                    Defining_Entity (Subprog_Spec);
+                  Result      : constant String :=
+                    Subprog_Name & "___result";
+                  Result_Type : constant Irep :=
+                    Do_Type_Reference (Etype (Subprog_Entity));
+                  Result_Var  : constant Irep :=
+                    Make_Symbol_Expr
+                      (Source_Location => Loc,
+                       I_Type          => Result_Type,
+                       Range_Check     => False,
+                       Identifier      => Result);
+                  Result_Dec  : constant Irep :=
+                    Make_Code_Decl
+                      (Symbol          => Result_Var,
+                       Source_Location => Loc,
+                       I_Type          => Result_Type,
+                       Range_Check     => False);
+
+               begin
+                  Append_Op (Reps, Result_Dec);
+               end;
+            end if;
+         end;
+      end if;
+
+      if Present (Decls) then
+         Process_Declarations (Decls, Reps);
+      end if;
+
+      if Present (HSS) then
+         Process_Statement (HSS, Reps);
+      end if;
+
+      if Nkind (N) = N_Subprogram_Body and then
+        not Acts_As_Spec (N) and then
+        ASVAT.Pragma_Info.Has_Post_Condition (Spec) and then
+        Nkind (Specification (N)) = N_Procedure_Specification
+      then
+         Append_Op (Reps, Do_Post_Condition
+                    (ASVAT.Pragma_Info.Get_Post_Condition (Spec)));
+      end if;
+
+      if Present (HSS) and then Present (Exception_Handlers (HSS)) then
+         declare
+            A_Handler : Node_Id := First (Exception_Handlers (HSS));
+         begin
+            while Present (A_Handler) loop
+               Append_Op (All_Handlers,
+                          Process_Statements (Statements (A_Handler)));
+               Next (A_Handler);
+            end loop;
+         end;
+         Append_Op (Reps,
+                    Make_Code_Ifthenelse
+                      (Cond            => Typecast_If_Necessary
+                         (Expr           => Get_Int32_T_Zero,
+                          New_Type       => Make_Bool_Type,
+                          A_Symbol_Table => Global_Symbol_Table),
+                       Then_Case       => All_Handlers,
+                       Else_Case       => Make_Code_Block
+                         (Get_Source_Location (N)),
+                       Source_Location => Get_Source_Location (N),
+                       I_Type          => Make_Nil_Type,
+                       Range_Check     => False));
+      end if;
+
+      if Nkind (N) = N_Subprogram_Body and then
+        Present (Corresponding_Spec (N)) and then
+        No_Return (Corresponding_Spec (N))
+      then
+         Append_Op (Reps, Get_No_Return_Check);
+      end if;
+
+      return Reps;
+   end Do_Subprogram_Or_Block;
+
+   ----------------------------------------
+   -- Do_Subprogram_Renaming_Declaration --
+   ----------------------------------------
+
+   procedure Do_Subprogram_Renaming_Declaration (N : Node_Id) is
+      Renaming_Entity   : constant Entity_Id := Defining_Entity (N);
+      Original_Entity   : constant Entity_Id := Entity (Name (N));
+      Renaming_Name     : constant String := Unique_Name (Renaming_Entity);
+      Original_Name     : constant String := Unique_Name (Original_Entity);
+      Renaming_Id       : constant Symbol_Id := Intern (Renaming_Name);
+      Original_Id       : constant Symbol_Id := Intern (Original_Name);
+      Original_Declared : constant Boolean :=
+        Global_Symbol_Table.Contains (Original_Id);
+   begin
+      if Ekind (Renaming_Entity) = E_Subprogram_Body or else
+        Ekind (Original_Entity) = E_Enumeration_Literal or else
+        not Original_Declared
+      then
+         --  Nothing to be done. The front-end handles these cases.
+         --  If the original function is not declared it is probably an
+         --  inbuilt function like "+".
+         return;
+      end if;
+
+      declare
+         Original_Sym : constant Symbol := Global_Symbol_Table (Original_Id);
+      begin
+         --  The renaming entity should not be in the symbol table.
+         if not Global_Symbol_Table.Contains (Renaming_Id) then
+
+            --  The Original entity's Symbol is copied to the renaming enities
+            --  Symbol.  This means, in goto the original subprogram is called
+            --  rather than its renaming.
+            Global_Symbol_Table.Insert
+              (Key      => Renaming_Id,
+               New_Item => Original_Sym);
+         end if;
+         pragma Assert (Global_Symbol_Table.Contains (Renaming_Id));
+      end;
+   end Do_Subprogram_Renaming_Declaration;
+
+   --------------------------------
+   -- Do_Subprogram_Specification --
+   --------------------------------
+
+   function Do_Subprogram_Specification (N : Node_Id) return Irep is
+      Is_Function   : constant Boolean :=
+        Nkind (N) in N_Function_Specification | N_Access_Function_Definition;
+      Ret_Type_Node : constant Node_Id :=
+        (if Is_Function then
+            Etype (Result_Definition (N))
+         else
+            Types.Empty);
+      Ret_Type      : constant Irep :=
+        (if Is_Function then
+            Do_Type_Reference (Ret_Type_Node)
+         else
+            CProver_Void_T);
+
+      Param_List   : constant Irep := Make_Parameter_List;
+      Param_Iter   : Node_Id := First (Parameter_Specifications (N));
+   begin
+      while Present (Param_Iter) loop
+         declare
+            Param_Sort : constant Node_Id := Parameter_Type (Param_Iter);
+         begin
+            if not (Nkind (Param_Sort)
+                    in N_Has_Etype | N_Access_Definition)
+            then
+               return Report_Unhandled_Node_Type
+                 (N,
+                  "Do_Subprogram_Specification",
+                  "Param iter is not an access parameter or has no etype");
+            end if;
+            declare
+               Is_Out : constant Boolean := Out_Present (Param_Iter);
+
+               --  A subprogram can have a formal access parameter of the form
+               --  procedure P (Ptr_To_ObjectOf_Type_T : access T);
+               Is_Access_Param : constant Boolean :=
+                 Nkind (Param_Sort) = N_Access_Definition;
+
+               Param_Name : constant String :=
+                 Unique_Name (Defining_Identifier (Param_Iter));
+
+               Param_Ada_Type  : constant Node_Id :=
+                 (if Is_Access_Param then
+                     Etype (Subtype_Mark (Param_Sort))
+                  else
+                     Underlying_Type (Etype (Parameter_Type (Param_Iter))));
+            begin
+               if Is_Array_Type (Param_Ada_Type) then
+                  declare
+                     Component_Subtype : constant Node_Id :=
+                       Get_Non_Array_Component_Type (Param_Ada_Type);
+
+                     Component_Irep : constant Irep :=
+                       Do_Type_Reference (Component_Subtype);
+
+                     Ptr_To_Component : constant Irep :=
+                       Make_Pointer_Type
+                         (I_Subtype => Component_Irep,
+                          Width     => Pointer_Type_Width);
+
+                     --  Array parameters are represented as pointers to
+                     --  their component type (which could be an array).
+                     --  Multidimensional arrays are represented as a single
+                     --  dimensional array.
+
+                     Array_Param_Irep : constant Irep := Make_Code_Parameter
+                       (Source_Location => Get_Source_Location (Param_Iter),
+                        I_Type => Ptr_To_Component,
+                        Identifier => Param_Name,
+                        Base_Name => Param_Name,
+                        This => False,
+                        Default_Value => Ireps.Empty);
+                  begin
+                     if not Is_Constrained (Param_Ada_Type) then
+                        Add_Array_Friends
+                          (Param_Name, Param_Ada_Type, Param_List);
+                     end if;
+                     Append_Parameter (Param_List, Array_Param_Irep);
+                     New_Parameter_Symbol_Entry
+                       (Name_Id        => Intern (Param_Name),
+                        BaseName       => Param_Name,
+                        Symbol_Type    => Ptr_To_Component,
+                        A_Symbol_Table => Global_Symbol_Table);
+                  end;
+               else
+                  declare
+                     Param_Type_Base : constant Irep :=
+                       Do_Type_Reference (Param_Ada_Type);
+
+                     --  If the formal parameter is mode out or in out,
+                     --  or is an access parameter, it is made into a pointer
+                     Param_Type : constant Irep :=
+                       (if Is_Out or Is_Access_Param then
+                           Make_Pointer_Type (Param_Type_Base)
+                        else Param_Type_Base);
+
+                     Param_Irep : constant Irep := Make_Code_Parameter
+                       (Source_Location => Get_Source_Location (Param_Iter),
+                        I_Type => Param_Type,
+                        Identifier => Param_Name,
+                        Base_Name => Param_Name,
+                        This => False,
+                        Default_Value => Ireps.Empty);
+                  begin
+                     Append_Parameter (Param_List, Param_Irep);
+                     New_Parameter_Symbol_Entry
+                       (Name_Id        => Intern (Param_Name),
+                        BaseName       => Param_Name,
+                        Symbol_Type    => Param_Type,
+                        A_Symbol_Table => Global_Symbol_Table);
+                  end;
+               end if;
+               if Is_Definite_Subtype (Param_Ada_Type) then
+                  --  If the parameter is a definite subtype,
+                  --  record the size of the parameter.
+                  if ASVAT.Size_Model.Has_Size (Param_Ada_Type) then
+                     --  The existence of the size is checked here
+                     --  because any declaration of an unsuppored type
+                     --  will not have an ASVAT size.
+                     --  An unsupported feature message will have been reported
+                     --  at the declaration.  The check prevents further
+                     --  unecessary reports due to the unsupported declaration.
+                     ASVAT.Size_Model.Set_Size_From_Entity
+                       (Defining_Identifier (Param_Iter), Param_Ada_Type);
+                  end if;
+               end if;
+               Next (Param_Iter);
+            end;
+         end;
+      end loop;
+      --  if the subprogram is a function declare a result variable.
+      --  This may be referenced by <function_name>'Result in a postcondition.
+      --  It also resolves a problem when the result is obtained from an
+      --  array assignment which has its bounds specified by variables.
+      if Nkind (N) = N_Function_Specification then
+         declare
+            Fun_Name  : constant String :=
+              Unique_Name (Defining_Unit_Name (N));
+            Result    : constant String := Fun_Name & "___result";
+            Result_Id : constant Symbol_Id := Intern (Result);
+         begin
+            New_Object_Symbol_Entry
+              (Object_Name       => Result_Id,
+               Object_Type       => Ret_Type,
+               Object_Init_Value => Ireps.Empty,
+               A_Symbol_Table    => Global_Symbol_Table);
+         end;
+      end if;
+      return Make_Code_Type
+        (Parameters  => Param_List,
+         Ellipsis    => False,
+         Return_Type => Ret_Type,
+         Inlined     => False,
+         Knr         => False);
+   end Do_Subprogram_Specification;
+
+   ----------------------------
+   -- Do_Subtype_Declaration --
+   ----------------------------
+
+   procedure Do_Subtype_Declaration (N : Node_Id) is
+      Subtype_Entity : constant Entity_Id := Defining_Identifier (N);
+      New_Type       : constant Irep :=
+        (if Is_Array_Type (Subtype_Entity) then
+              Do_Array_Subtype
+           (Subtype_Node => N,
+            The_Entity   => Subtype_Entity)
+         else
+            Do_Subtype_Indication (Subtype_Entity, Subtype_Indication (N)));
+   begin
+      Do_Type_Declaration (New_Type, Defining_Identifier (N));
+   end Do_Subtype_Declaration;
+
+   ---------------------------
+   -- Do_Subtype_Indication --
+   ---------------------------
+
+   function Do_Subtype_Indication (Subtype_Entity : Entity_Id;
+                                   N : Node_Id) return Irep
+   is
+      Subtype_Def_Id : constant Entity_Id := Subtype_Entity;
+      --             Defining_Identifier (Parent (N));
+
+      Underlying : Irep;
+      Constr : Node_Id;
+   begin
+      case Nkind (N) is
+         when N_Subtype_Indication =>
+            declare
+               Sub_Type : constant Entity_Id :=
+                 Etype (Subtype_Mark (N));
+            begin
+               ASVAT.Size_Model.Set_Size_From_Entity
+                 (Subtype_Def_Id, Sub_Type);
+
+               Underlying := Do_Type_Reference (Sub_Type);
+               Constr := Constraint (N);
+               if Present (Constr) then
+                  case Nkind (Constr) is
+                  when N_Range_Constraint =>
+                     return Do_Range_Constraint (Constr, Underlying);
+                  when N_Index_Or_Discriminant_Constraint =>
+                     return
+                       Do_Index_Or_Discriminant_Constraint
+                         (Constr, Underlying);
+                  when others =>
+                     return
+                       Report_Unhandled_Node_Irep (N, "Do_Subtype_Indication",
+                                                   "Unknown expression kind");
+                  end case;
+               else
+                  return Underlying;
+               end if;
+            end;
+         when N_Identifier |
+              N_Expanded_Name =>
+            --  subtype indications w/o constraint are given only as identifier
+            ASVAT.Size_Model.Set_Size_From_Entity (Subtype_Def_Id, Etype (N));
+            Underlying := Do_Type_Reference (Etype (N));
+            return Underlying;
+         when others =>
+            return Report_Unhandled_Node_Irep (N, "Do_Subtype_Indication",
+                                               "Unknown expression kind");
+      end case;
+   end Do_Subtype_Indication;
+
+   ------------------------
+   -- Do_Type_Conversion --
+   ------------------------
+
+   function Do_Type_Conversion (N : Node_Id) return Irep is
+      Convert_Expr : constant Node_Id := Expression (N);
+   begin
+      if Nkind (Convert_Expr) = N_Slice then
+         --  Type conversion of a slice does not currently work if
+         --  the bounds of the target array and the array underlying
+         --  the slice are not identical.
+         --  Hopefully this is not a commonly used feature.
+         --  If it is required it probably wil have to be implemented
+         --  by copying to a temporary array.
+         return Report_Unhandled_Node_Irep
+           (N,
+            "Do_Type_Conversion",
+            "Type conversion of a slice is currently unsupported");
+      end if;
+
+      declare
+         To_Convert : constant Irep := Do_Expression (Convert_Expr);
+         New_Type   : constant Irep := Do_Type_Reference (Etype (N));
+         --  Presently onl scalar types are range checked.
+         Maybe_Checked_Op : constant Irep :=
+           (if Is_Scalar_Type (Etype (N)) and Do_Range_Check (Expression (N))
+            then Make_Range_Assert_Expr
+              (N => N,
+               Value => To_Convert,
+               Bounds_Type => New_Type)
+            else To_Convert);
+      begin
+         return Make_Op_Typecast
+           (Op0 => Maybe_Checked_Op,
+            I_Type => New_Type,
+            Source_Location => Get_Source_Location (N));
+      end;
+   end Do_Type_Conversion;
+
+   -------------------------
+   -- Do_Type_Declaration --
+   -------------------------
+
+   procedure Do_Type_Declaration (New_Type_In : Irep; E : Entity_Id) is
+      New_Type        : constant Irep := New_Type_In;
+      New_Type_Name   : constant String := Unique_Name (E);
+      New_Type_Name_Id   : constant Symbol_Id := Intern (New_Type_Name);
+      New_Type_Symbol : constant Symbol :=
+        Make_Type_Symbol (New_Type_Name_Id,
+                          (if New_Type_Name /= "system__address" then
+                           --  For all type declarations except the
+                           --  private type System.Address we use the
+                           --  type declared in the source code.
+                              New_Type
+                           else
+                           --  System.Address is modelled as a pointer
+                           --  to a byte (an array of bytes).
+                              Make_Pointer_Type
+                             (I_Subtype => Make_Unsignedbv_Type (8),
+                              Width     => Pointer_Type_Width)));
+   begin
+      if Kind (New_Type) = I_Struct_Type and then
+        --  A Bounded_Array already has a tag set
+        not Is_Bounded_Array (New_Type)
+      then
+         Set_Tag (New_Type, New_Type_Name);
+      end if;
+      if not Symbol_Maps.Contains (Global_Symbol_Table, New_Type_Name_Id) then
+         Symbol_Maps.Insert (Global_Symbol_Table, New_Type_Name_Id,
+                             New_Type_Symbol);
+      end if;
+   end Do_Type_Declaration;
+
+   ------------------------
+   -- Do_Type_Definition --
+   ------------------------
+
+   function Do_Type_Definition (N : Node_Id; Discs : List_Id) return Irep is
+   begin
+      if Discs /= List_Id (Types.Empty)
+        and then Nkind (N) /= N_Record_Definition
+      then
+         return Report_Unhandled_Node_Irep (N, "Do_Type_Definition",
+                                            "Wrong Nkind or wrong discs");
+      end if;
+      case Nkind (N) is
+         when N_Record_Definition =>
+            return Do_Record_Type_Definition (N, Discs);
+         when N_Signed_Integer_Type_Definition =>
+            return Do_Signed_Integer_Definition (N);
+         when N_Derived_Type_Definition =>
+            return Do_Derived_Type_Definition (N);
+         when N_Enumeration_Type_Definition =>
+            return Do_Enumeration_Definition (N);
+         when N_Constrained_Array_Definition =>
+            return Do_Constrained_Array_Definition (N);
+         when N_Unconstrained_Array_Definition =>
+            return Do_Unconstrained_Array_Definition (N);
+         when N_Modular_Type_Definition =>
+            return Do_Modular_Type_Definition (N);
+         when N_Floating_Point_Definition =>
+            return Do_Floating_Point_Definition (N);
+         when N_Access_Function_Definition =>
+            return Do_Access_Function_Definition (N);
+         when N_Access_Procedure_Definition =>
+            return Do_Access_Function_Definition (N);
+         when N_Access_To_Object_Definition =>
+            return Do_Access_To_Object_Definition (N);
+         when others =>
+            return Report_Unhandled_Node_Type (N, "Do_Type_Definition",
+                                               "Unknown expression kind");
+      end case;
+   end Do_Type_Definition;
+
+   -----------------------
+   -- Do_Type_Reference --
+   -----------------------
+
+   function Do_Type_Reference (E : Entity_Id) return Irep is
+      --  The type might be private or incomplete.
+      --  The underlying type is required.
+      Type_Entity : constant Entity_Id := Underlying_Type (E);
+      pragma Assert (Nkind (Type_Entity) in N_Entity);
+      Type_Name   : constant String := Unique_Name
+        (if Ekind (Type_Entity) = E_Access_Subtype then
+              Etype (Type_Entity) else Type_Entity);
+      Type_Id     : constant Symbol_Id := Intern (Type_Name);
+
+      --  The values of the following objects cannot be determined yet
+      --  because the type might be an gnat Itype which has not been entered
+      --  into the symbol table yet.
+      Type_Irep : Irep;
+      Type_Kind : Irep_Kind;
+      use Symbol_Maps;
+      In_Table    : Cursor;
+   begin
+      --  It may be an Itype, ensure it is in the symbol table.
+      Declare_Itype (Type_Entity);
+      --  The Type_Name sill may not be in the table if the full view
+      --  of a private or incomplete type declaration is being processed.
+      --  The full view may contain declarations not yet processed
+      --  by gnat2goto.
+      In_Table := Find (Global_Symbol_Table, Type_Id);
+      if In_Table /= No_Element then
+         Type_Irep := Element (In_Table).SymType;
+         Type_Kind := Kind (Type_Irep);
+
+         if Type_Kind not in Class_Type then
+            return Report_Unhandled_Node_Type
+              (E, "Do_Type_Reference",
+               "Expected I_Type found " &
+                 Irep_Kind'Image (Type_Kind));
+         else
+            return
+              (if Type_Kind = I_Struct_Type then
+               --  I_Struct_Types should not appear in the goto code.
+               --  The coresponding I_Struct_Tag_Type should be used.
+                  Make_Struct_Tag_Type (Type_Name)
+               elsif Type_Kind = I_Union_Type then
+                  Make_Union_Tag_Type (Type_Name)
+               else
+                  Type_Irep);
+         end if;
+      end if;
+      --
+      --  Gnat2goto has not yet processed the declaration.
+      --  Obtain the declaration node from the Atree and process and
+      --  process the declaration in advance.
+      --  This strategy may result in gnat2goto traversing the Atree
+      --  via mutually recursive calls of Do_Full_Type_Declaration or
+      --  Do_Subtype_Declaration and Do_Type_Reference if there are several
+      --  instances of private or incomplete types within nested structured
+      --  types.
+      declare
+         The_Decl : constant Node_Id :=
+           (if Present (Declaration_Node (Type_Entity)) then
+            Declaration_Node (Type_Entity)
+         elsif Present (Associated_Node_For_Itype (Type_Entity)) then
+               Associated_Node_For_Itype (Type_Entity)
+         else
+            Types.Empty);
+      begin
+         --  The declaration node may be a Full_Type_Declaration
+         --  or a Subtype_Declaration.
+         case Nkind (The_Decl) is
+            when N_Full_Type_Declaration =>
+               Do_Full_Type_Declaration (The_Decl);
+            when N_Subtype_Declaration =>
+               Do_Subtype_Declaration (The_Decl);
+            when N_Private_Type_Declaration =>
+               Do_Private_Type_Declaration (The_Decl);
+            when N_Incomplete_Type_Declaration =>
+               Do_Incomplete_Type_Declaration (The_Decl);
+            when others =>
+               Report_Unhandled_Node_Empty
+                 (The_Decl,
+                  "Do_Type_Reference",
+                  "Unexpected node kind " &
+                    Node_Kind'Image (Nkind (The_Decl)));
+         end case;
+
+         --  The forward reference to the type declaration should
+         --  now be resolved.
+         if Global_Symbol_Table.Contains (Type_Id) then
+            return Do_Type_Reference (Type_Entity);
+         else
+            Report_Unhandled_Node_Empty
+              (Type_Entity,
+               "Do_Type_Reference",
+               "Type name is not in the symbol table");
+            return Make_Symbol_Type (Type_Name);
+         end if;
+      end;
+   end Do_Type_Reference;
+
+   -------------------------
+   -- Do_Withed_Unit_Spec --
+   -------------------------
+
+   procedure Do_Withed_Unit_Spec (N : Node_Id) is
+   begin
+      if Defining_Entity (N) = Stand.Standard_Standard then
+         --  TODO: github issue #252
+         --  At the moment Standard is not processed
+         null;
+      else
+         --  Handle all other withed library unit declarations
+         case Nkind (N) is
+            when N_Subprogram_Body =>
+               if Acts_As_Spec (N) then
+                  --  The unit is a withed library unit which subprogram body
+                  --  that has no separate declaration, or,
+                  --  it is the subprogram body of the compilation unit being
+                  --  compiled and it has no separate declaration.
+                  --  Obtain the subprogram specification from the body
+                  --  and insert it into the symbol table.
+                  Register_Subprogram_Specification (Specification (N));
+               else
+                  null;
+               end if;
+            when N_Subprogram_Declaration =>
+               --  The unit is withed library unit that is a subprogram
+               --  declaration, or,
+               --  it is the declaration of the compilation unit body being
+               --  compiled.
+               --  Do_Subprogram_Declaration enters the specification of the
+               --  subprogram into the symbol table.
+               Do_Subprogram_Declaration (N);
+            when N_Package_Declaration =>
+               Do_Package_Declaration (N);
+            when N_Package_Renaming_Declaration =>
+               --  The gnat front end handles the renaming declaration but
+               --  the N_Package_Renaming_Declaration node remains in the
+               --  atree.  It must be "swallowed".
+               null;
+            when N_Package_Body =>
+               null;
+            when N_Generic_Subprogram_Declaration
+              | N_Generic_Package_Declaration =>
+               --  no special handling for generics is required
+               --  because their instantiations appear as nodes in the AST
+               null;
+            when others =>
+               Report_Unhandled_Node_Empty
+                 (N, "Do_Withed_Unit_Spec",
+                  "This type of library_unit is not yet handled");
+         end case;
+
+      end if;
+
+   end Do_Withed_Unit_Spec;
+
+   ---------------------------
+   -- Get_Import_Convention --
+   ---------------------------
+
+   function Get_Import_Convention (N : Node_Id) return String is
+      --  The gnat front end insists thet the parameters for
+      --  pragma Import are given in the specified order even
+      --  if named association is used:
+      --  1. Convention,
+      --  2. Enity,
+      --  3. Optional External_Name,
+      --  4. Optional Link_Name.
+      --  The first 2 parameters are mandatory and
+      --  for ASVAT models the External_Name is required.
+      --
+      --  The Convention parameter will always be present as
+      --  the first parameter.
+      Conv_Assoc : constant Node_Id :=
+        First (Pragma_Argument_Associations (N));
+      pragma Assert (Nkind (Expression (Conv_Assoc)) in N_Has_Chars);
+      Conv_Name  : constant Name_Id := Chars (Conv_Assoc);
+      Convention : constant String  := Get_Name_String
+        (Chars (Expression (Conv_Assoc)));
+   begin
+      --  Double check the named parameter if named association is used.
+      pragma Assert (Conv_Name = No_Name or else
+                     Get_Name_String (Conv_Name) = "convention");
+      return Convention;
+   end Get_Import_Convention;
+
+   ---------------------------
+   -- Make_Integer_Constant --
+   ---------------------------
+
+   function Make_Integer_Constant (Val : Integer; Ty : Node_Id) return Irep is
+      Type_Width    : constant Int := UI_To_Int (Esize (Ty));
+      Val_Binary    : constant String :=
+        Convert_Int_To_Binary (Val, Type_Width);
+      Type_Irep     : constant Irep := Do_Type_Reference (Ty);
+      Resolved_Type : constant Irep :=
+        (if Kind (Type_Irep) = I_C_Enum_Type then
+              Get_Subtype (Type_Irep)
+         else
+            Type_Irep);
+   begin
+      return Make_Constant_Expr
+        (Value => Val_Binary,
+         I_Type => Resolved_Type,
+         Source_Location => Internal_Source_Location);
+   end Make_Integer_Constant;
+
+   ------------------------
+   -- Make_Runtime_Check --
+   ------------------------
+
+   function Make_Runtime_Check (Condition : Irep) return Irep
+   is
+   begin
+
+      if Check_Function_Symbol = Ireps.Empty then
+         --  Create the check function on demand:
+         declare
+            Formal_Params : constant Irep := Make_Parameter_List;
+            Fn_Type : constant Irep := Make_Code_Type
+              (Parameters => Formal_Params,
+               Return_Type => CProver_Void_T);
+            Fn_Name : constant String := "__ada_runtime_check";
+            Formal_Param : constant Irep := Make_Code_Parameter
+              (Identifier => Fn_Name & "::arg",
+               Base_Name => "arg",
+               I_Type => CProver_Bool_T,
+               Default_Value => Ireps.Empty,
+               This => False,
+               Source_Location => Internal_Source_Location);
+            Formal_Expr : constant Irep := Make_Symbol_Expr
+              (Identifier => Get_Identifier (Formal_Param),
+               I_Type => Get_Type (Formal_Param),
+               Source_Location => Get_Source_Location (Formal_Param));
+            Assertion : constant Irep := Make_Code_Assert
+              (Assertion => Formal_Expr,
+               Source_Location => Internal_Source_Location);
+            Fn_Symbol : constant Symbol := New_Function_Symbol_Entry
+              (Name          => Fn_Name,
+               Symbol_Type   => Fn_Type,
+               Value         => Assertion,
+               A_Symbol_Table => Global_Symbol_Table);
+         begin
+            Append_Parameter (Formal_Params, Formal_Param);
+            Check_Function_Symbol := Symbol_Expr (Fn_Symbol);
+         end;
+      end if;
+
+      declare
+         Call_Args : constant Irep := Make_Argument_List;
+      begin
+         Append_Argument (Call_Args, Condition);
+         return Make_Side_Effect_Expr_Function_Call
+           (I_Function => Check_Function_Symbol,
+            I_Type => CProver_Void_T,
+            Arguments => Call_Args,
+            Source_Location => Get_Source_Location (Condition));
+      end;
+   end Make_Runtime_Check;
+
+   -----------------------------
+   --  Make_Struct_Component  --
+   -----------------------------
+
+   function Make_Struct_Component (Name : String; Ty : Irep) return Irep is
+   begin
+      return Make_Struct_Union_Component
+        (Source_Location => Internal_Source_Location,
+         Is_Padding      => False,
+         I_Access        => "public",
+         I_Type          => Ty,
+         Range_Check     => False,
+         Anonymous       => False,
+         Prettyname      => Name,
+         Name            => Name,
+         Basename        => Name);
+   end Make_Struct_Component;
+
+   ------------------------
+   --  Make_Type_Symbol  --
+   ------------------------
+
+   function Make_Type_Symbol (Name : Symbol_Id; Defn : Irep) return Symbol is
+      (Name => Name,
+       PrettyName => Name,
+       BaseName => Name,
+       SymType => Defn,
+       Mode => Intern ("C"),
+       IsType => True,
+       others => <>);
+
+   --------------------------
+   -- Process_Declaration --
+   --------------------------
+
+   procedure Process_Declaration (N : Node_Id; Block : Irep) is
+      procedure Handle_Representation_Clause (N : Node_Id);
+      procedure Handle_Representation_Clause (N : Node_Id) is
+         Attr_Id : constant String :=
+           (if Nkind (N) in N_Has_Chars then
+                 Get_Name_String (Chars (N))
+            else
+               "___no_name");
+      begin
+         case Nkind (N) is
+            when N_Enumeration_Representation_Clause =>
+               --  An Enumeration_Representation_Clause is used by the
+               --  front-end to assign valeues to the literals of an
+               --  enumeration.  The position number ('Pos) of the literals
+               --  is not changed, which is what gnat2goto uses.
+               --  The representation value, if one is assigned by an
+               --  Enumeration_Representation_Clause is available from the
+               --  front-end should gnat2goto need to use it in the future.
+               --  The node can be safely ignored.
+               return;
+            when N_Record_Representation_Clause =>
+               --  A Record_Representation_Clause may be handled by the
+               --  front-end but may also require processing by the back-end.
+               --  The back-end, gnat2goto does not model memory layout and
+               --  so does not use Record_Representation_Clauses.
+               --  Such nodes can be ignored by the current version of
+               --  gnat2goto.  If, in the future, some form of memory layout
+               --  model is considered this node may then have to be processed.
+               return;
+            when N_At_Clause =>
+               Report_Unhandled_Node_Empty
+                 (N, "Process_Declaration",
+                  "At clauses are unsupported");
+               return;
+            when others =>
+               null;
+         end case;
+
+         --  First check if it is an address clause which gnat2goto does not
+         --  currently handle
+         if Attr_Id = "address" then
+            --  ASVAT does not model physical memory and this value is not
+            --  currently used by ASVAT.
+            --  Nothing to be done.
+            return;
+         elsif Attr_Id = "size" or Attr_Id = "value_size" then
+            --  The size is recorded in the ASVAT extra information
+            --  The expression giving the size must be static according
+            --  to the rules of Ada. This is checked by the front-end.
+            ASVAT.Size_Model.Set_Rep_Size
+              (Entity (N), Expr_Value (Expression (N)));
+
+            --  Other than recording the size in the extra information,
+            --  nothing more to be done here.
+            --  The attribute does affect the values given for RM_Size and
+            --  Esize by the front-end.
+            return;
+
+         elsif Attr_Id = "component_size" then
+            --  The component size is recorded in the ASVAT extra information
+            --  The expression giving the size must be static according
+            --  to the rules of Ada. This is checked by the front-end.
+            ASVAT.Size_Model.Set_Rep_Component_Size
+              (Entity (N), Expr_Value (Expression (N)));
+
+            --  Other than recording the component_size in the extra
+            --  information, nothing more to be done here.
+            --  The attribute does may the values given for RM_Size and
+            --  Esize by the front-end.
+            return;
+         elsif Attr_Id = "alignment" then
+            --  ASVAT does not model alignment of objects in memory.
+            --  Nothing to be done.
+            return;
+         elsif Attr_Id = "storage_size" then
+            --  Allocates memory for a task.
+            --  ASVAT does not support tasking or model memory use.
+            --  Nothing to be done.
+            return;
+         end if;
+
+         Report_Unhandled_Node_Empty
+           (N, "Process_Declaration",
+            "Representation clause unsupported: " &
+            (if Attr_Id /= "" then
+                    Attr_Id
+               else
+              Node_Kind'Image (Nkind (N))));
+
+      end Handle_Representation_Clause;
+
+   begin
+      --  Deal with the declaration
+--      Print_Node_Briefly (Current_Scope);
+
+      case Nkind (N) is
+
+         --  basic_declarations  --
+
+         when N_Full_Type_Declaration =>
+            Do_Full_Type_Declaration (N);
+
+         when N_Incomplete_Type_Declaration =>
+            Do_Incomplete_Type_Declaration (N);
+
+         when N_Private_Type_Declaration =>
+            Do_Private_Type_Declaration (N);
+
+         when N_Subtype_Declaration =>
+            Do_Subtype_Declaration (N);
+
+         when N_Object_Declaration =>
+            Do_Object_Declaration (N, Block);
+
+         when N_Number_Declaration =>
+            --  A number declaration is replaced by its static initialisation
+            --  expression.
+            --  No action is required at the point of it's declaration;
+            null;
+
+         when N_Subprogram_Declaration =>
+            Do_Subprogram_Declaration (N);
+
+         when N_Abstract_Subprogram_Declaration =>
+            --  Ignored : Support is not necessary to capture the executable
+            --  semantics of the program.
+            null;
+         when N_Package_Declaration =>
+            Do_Package_Declaration (N);
+
+         --  remaining declarative items  --
+
+         when N_Renaming_Declaration =>
+            if Nkind (N) = N_Subprogram_Renaming_Declaration then
+               Do_Subprogram_Renaming_Declaration (N);
+            else
+               --  other renaming declarations are handled by the front-end;
+               null;
+            end if;
+         when N_Exception_Declaration => Do_Exception_Declaration (N);
+
+         when N_Generic_Declaration =>
+            null;
+
+         when N_Generic_Instantiation =>
+            null;
+
+            --  basic_declarative_items  --
+
+         when N_Representation_Clause =>
+            Handle_Representation_Clause (N);
+
+         when N_Use_Package_Clause =>
+            --  do nothing, name resolution is done by frontend
+            null;
+
+         when N_Use_Type_Clause =>
+            --  The gnat front end deals with making the type operations
+            --  visible.  Here the node is just accepted.
+            null;
+
+            --  proper_body  --
+
+         when N_Subprogram_Body =>
+            Do_Subprogram_Body (N);
+
+         when N_Package_Body =>
+            --  XXX: Need to add instructions for initialisers of subpackage
+            if Ekind (Corresponding_Spec (N)) /= E_Generic_Package then
+               declare
+                  Unused_Node_Result : constant Irep
+                    := Do_Subprogram_Or_Block (N);
+               begin
+                  pragma Unreferenced (Unused_Node_Result);
+               end;
+            end if;
+         when N_Task_Body =>
+            Report_Unhandled_Node_Empty (N, "Process_Declaration",
+                                         "Task body declaration");
+
+         when N_Protected_Body =>
+            Report_Unhandled_Node_Empty (N, "Process_Declaration",
+                                         "Protected body declaration");
+
+            --  body_stub  --
+
+         when N_Subprogram_Body_Stub =>
+            Do_Subprogram_Body_Stub (N);
+
+         when N_Package_Body_Stub =>
+            Report_Unhandled_Node_Empty (N, "Process_Declaration",
+                                         "Package body stub declaration");
+
+         when N_Task_Body_Stub =>
+            Report_Unhandled_Node_Empty (N, "Process_Declaration",
+                                         "Task body stub declaration");
+
+         when N_Protected_Body_Stub =>
+            Report_Unhandled_Node_Empty (N, "Process_Declaration",
+                                         "Protected body stub declaration");
+
+         --  Pragmas may appear in declarations  --
+
+         when N_Pragma =>
+            Process_Pragma_Declaration (N);
+
+            --  Every code lable is implicitly declared in  --
+            --  the closest surrounding block               --
+
+         when N_Implicit_Label_Declaration =>
+            --  Ignore for now, as I guess an implicit label can't be
+            --  referenced.
+            --  Yes it can: this is the declaration of the name it appears
+            --  the declaritve section but is used on a statement.
+            null;
+
+         when N_Validate_Unchecked_Conversion =>
+            --  All conversions are validated in ASVAT.Modelling
+            --  This declaraion node can safely be ignored.
+            null;
+
+         -- Not sure the nex two should be here --
+         when N_Itype_Reference =>
+            Do_Itype_Reference (N);
+
+         when N_Freeze_Entity |
+              N_Freeze_Generic_Entity =>
+            --  Ignore: not relevant to the kind of analysis we are doing or
+            --  the phase of compilation and building that we are working on.
+            null;
+
+         when N_Null_Statement =>
+            if Present (Original_Node (N)) then
+               --  is the result of rewritting -> can be ignored
+               null;
+            else
+               Report_Unhandled_Node_Empty (N, "Process_Declaration",
+                                            "Unsupported null statement");
+            end if;
+         when others =>
+            Report_Unhandled_Node_Empty (N, "Process_Declaration",
+                                         "Unknown declaration kind");
+
+      end case;
+
+   end Process_Declaration;
+
+   procedure Process_Pragma_Declaration (N : Node_Id) is
+      procedure Handle_Pragma_Volatile (N : Node_Id);
+      procedure Handle_Pragma_Machine_Attribute (N : Node_Id)
+        with Pre => Nkind (N) in N_Pragma
+        and then Pragma_Name (N) = Name_Machine_Attribute;
+
+      procedure Handle_Pragma_Volatile (N : Node_Id) is
+         Argument_Associations : constant List_Id :=
+           Pragma_Argument_Associations (N);
+         First_Argument_Expression : constant Node_Id :=
+           Expression (First (Argument_Associations));
+         Expression_Id : constant Symbol_Id :=
+           Intern (Unique_Name (Entity (First_Argument_Expression)));
+
+         procedure Set_Volatile (Key : Symbol_Id; Element : in out Symbol);
+         procedure Set_Volatile (Key : Symbol_Id; Element : in out Symbol) is
+         begin
+            pragma Assert (Unintern (Key) = Unintern (Expression_Id));
+            Element.IsVolatile := True;
+         end Set_Volatile;
+      begin
+         pragma Assert (Global_Symbol_Table.Contains (Expression_Id));
+         Global_Symbol_Table.Update_Element (
+                          Position => Global_Symbol_Table.Find (Expression_Id),
+                          Process  => Set_Volatile'Access);
+      end Handle_Pragma_Volatile;
+
+      procedure Handle_Pragma_Machine_Attribute (N : Node_Id) is
+         Argument_Associations : constant List_Id :=
+           Pragma_Argument_Associations (N);
+
+         --  first is the identifier to be given the attribute
+         First_Argument : constant Node_Id := First (Argument_Associations);
+
+         --  second is the attribute as string
+         Second_Argument : constant Node_Id := Next (First_Argument);
+         Attr_String_Id : constant String_Id :=
+           Strval (Expression (Second_Argument));
+         Attr_Length : constant Integer :=
+           Integer (String_Length (Attr_String_Id));
+      begin
+         String_To_Name_Buffer (Attr_String_Id);
+         declare
+            Attr_String : String
+              renames Name_Buffer (1 .. Attr_Length);
+         begin
+            if Attr_String = "signal" then
+            --  CBMC would not acknowledge this one anyway -> Ignored
+               null;
+            else
+               Report_Unhandled_Node_Empty
+                 (N, "Process_Pragma_Declaration",
+                  "Unsupported pragma: Machine Attribute "
+                  & Attr_String);
+            end if;
+         end;
+      end Handle_Pragma_Machine_Attribute;
+
+   begin
+--      Put_Line ("***Pragma: " & Get_Name_String (Pragma_Name (N)));
+      case Pragma_Name (N) is
+         when SPARK_Classic_Annotation =>
+            Put_Line ("SPARK_Classic Pragma " &
+                        Get_Name_String (Pragma_Name (N)));
+            --  SPARK_Classic.Pragmas.Process (N);
+         when Name_Assert |
+              Name_Assume |
+              Name_Assert_And_Cut |
+            --  Assert and introduce a cut point: the prover can safely forget
+            --  evaluations of local variables and only assume the asserted
+            --  condition. This could be used in symex (making it concolic)
+            --  but is only an optimization.
+            Name_Loop_Invariant =>
+            --  Equivalent to assert but also introduces a cut point wrt. the
+            --  variables local to the loop.
+            Report_Unhandled_Node_Empty (N, "Process_Pragma_Declaration",
+                                         "Unsupported pragma: Assert/Assume");
+         when Name_Precondition =>
+            --  Used to save a reference to the pargama in the ASVAT model.
+            declare
+               --  get the aspect from the node
+               The_Aspect : constant Node_Id := Corresponding_Aspect (N);
+               --  identify the entity that the pre condition belongs to
+               Enclosing : constant Node_Id := Entity (The_Aspect);
+
+            begin
+
+               ASVAT.Pragma_Info.Set_Pre_Condition (Enclosing, N);
+
+            end;
+
+         when Name_Postcondition =>
+            --  Used to save a reference to the pargama in the ASVAT model.
+            declare
+               --  get the aspect from the node
+               The_Aspect : constant Node_Id := Corresponding_Aspect (N);
+               --  identify the entity that the pre condition belongs to
+               Enclosing : constant Node_Id := Entity (The_Aspect);
+
+            begin
+
+               ASVAT.Pragma_Info.Set_Post_Condition (Enclosing, N);
+
+               --  Report_Unhandled_Node_Empty
+               --  (N, "Process_Pragma_Declaration",
+               --                               "Post condition");
+
+            end;
+         when Name_Refined_State |
+              Name_Refined_Global |
+              Name_Refined_Depends |
+              Name_Refined_Post =>
+            --  We are not supporting refinement at this point
+            --  Using it would (probably) require modification to CBMC.
+            --  Ignored.
+            null;
+         when Name_Global =>
+            --  Global is used in SPARK 2014 to allow modular analysis.  It
+            --  is not required and can be safely ignored when performing
+            --  whole program analysis.
+            --  ASVAT essentially performs whole program analysis and the only
+            --  use of pragma Global is when the body of a called subprogram
+            --  is not included in the analysis.  In such cases, ASVAT obtains
+            --  the list of inputs and outputs, including any listed in a
+            --  pragma Global from the subprogram specification.
+            --  No action is required here.
+--            Print_Node_Subtree (N);
+            null;
+         when Name_Variant =>
+            --  Could as well be ignored but is another verification condition
+            --  that should be checked
+            Report_Unhandled_Node_Empty (N, "Process_Pragma_Declaration",
+                                         "Unsupported pragma: Variant");
+         when Name_Asynchronous =>
+            --  Allows a remote subprogram call to return prior to completion
+            --  of the execution of the corresponding remote subprogram body.
+            --  It changes the semantics wrt to thread interleavings.
+            Report_Unhandled_Node_Empty (N, "Process_Pragma_Declaration",
+                                         "Unsupported pragma: Asynchronous");
+         when Name_Atomic |
+              Name_Atomic_Components =>
+            --  For an atomic object all reads and updates of the object as a
+            --  whole are indivisible. It changes the semantics wrt to thread
+            --  interleavings. Only changes the way data is written/read
+            --  not the values themselves. -> Ignored
+            null;
+         when Name_Volatile |
+              Name_Volatile_Full_Access |
+              Name_Volatile_Components =>
+            --  For a volatile object all reads and updates of the object as a
+            --  whole are performed directly to memory. In sequential execution
+            --  they may be modified by the environment. Effectively, they need
+            --  to be modelled as non-deterministic input in every state. It
+            --  changes the semantics wrt to thread interleavings.
+            Handle_Pragma_Volatile (N);
+         when Name_Volatile_Function =>
+            --  ASVAT always models function calls that appear in the source
+            --  code as side-effect function calls.  This will capture the
+            --  effect of a volatile function. -> Ignore
+            null;
+         when Name_Attach_Handler =>
+            --  The expression in the Attach_Handler pragma as evaluated at
+            --  object creation time specifies an interrupt. As part of the
+            --  initialization of that object, if the Attach_Handler pragma is
+            --  specified, the handler procedure is attached to the specified
+            --  interrupt. A check is made that the corresponding interrupt is
+            --  not reserved. We do not support that check yet.
+            Report_Unhandled_Node_Empty (N, "Process_Pragma_Declaration",
+                                         "Unsupported pragma: Attach Handler");
+         when Name_Import =>
+            --  Used to import an entity defined in a foreign language into an
+            --  Ada program, thus allowing a foreign-language subprogram to
+            --  be called from Ada, or a foreign-language variable to be
+            --  accessed from Ada. This would (probably) require gnat2goto to
+            --  understand the foreign code, which we do not at the moment.
+            --  However, if the calling convention is specified as "Intrinsic"
+            --  then the subprogram is built into the compiler and gnat2goto
+            --  can safely ignore the pragma.
+            --  If the calling convention is Ada the imported entity, if it is
+            --  subprogram, will have to be supplied when symtab2gb linking.
+            --  The convention is always the first parameter and External_Name
+            --  (if present) the third parameter of pragma Import.
+            --  This is enforced by the gnat front-end.
+            declare
+               Convention : constant String := Get_Import_Convention (N);
+
+               Is_Intrinsic : constant Boolean :=
+                 Convention = "intrinsic";
+               Is_Ada : constant Boolean :=
+                 Convention = "ada";
+
+            begin
+               if not (Is_Intrinsic or Is_Ada) then
+                  Report_Unhandled_Node_Empty
+                    (N, "Process_Pragma_Declaration",
+                     "pragma Import: Multi-language analysis unsupported");
+               end if;
+               --  ToDo: we should check if the import is applied to a
+               --  deferred constant and, if it is, set its value to nondet.
+            end;
+         when Name_Import_Function | Name_Import_Procedure |
+              Name_Import_Object | Name_Import_Value |
+              Name_Import_Valued_Procedure =>
+            Report_Unhandled_Node_Empty
+              (N, "Process_Pragma_Declaration",
+               "pragma Import: Multi-language analysis unsupported");
+         when Name_Elaborate =>
+            --  Specifies that the body of the named library unit is elaborated
+            --  before the current library_item. We will support packages.
+            Report_Unhandled_Node_Empty (N, "Process_Pragma_Declaration",
+                                         "Unsupported pragma: Elaborate");
+         when Name_Elaborate_All =>
+            --  Specifies that each library_item that is needed by the named
+            --  library unit declaration is elaborated before the current
+            --  library_item. Same reason for future support as above.
+            Report_Unhandled_Node_Empty (N, "Process_Pragma_Declaration",
+                                         "Unsupported pragma: Elaborate All");
+         when Name_Locking_Policy =>
+            --  Specifies whether or not protected objects have priorities, and
+            --  the relationships between these priorities and task priorities.
+            --  This may change thread interleaving.
+            Report_Unhandled_Node_Empty (N, "Process_Pragma_Declaration",
+                                         "Unsupported pragma: Locking Policy");
+         when Name_Normalize_Scalars =>
+            --  Ensures that an otherwise uninitialized scalar object is set to
+            --  a predictable value, but out of range if possible. This
+            --  obviously changes the behaviour.
+            Report_Unhandled_Node_Empty (N, "Process_Pragma_Declaration",
+                                      "Unsupported pragma: Normalize Scalars");
+         when Name_Queuing_Policy =>
+            --  Governs the order in which tasks are queued for entry
+            --  service, and the order in which different entry queues are
+            --  considered for service. This may change the behaviour.
+            Report_Unhandled_Node_Empty (N, "Process_Pragma_Declaration",
+                                         "Unsupported pragma: Queuing Policy");
+         when Name_Remote_Types =>
+            --  Defines types intended for use in communication between active
+            --  partitions. Concurrency may be supported in the future.
+            Report_Unhandled_Node_Empty (N, "Process_Pragma_Declaration",
+                                         "Unsupported pragma: Remote Types");
+         when Name_Restrictions =>
+            --  Expresses the user's intent to abide by certain restrictions.
+            --  This could probably be implemented as an assertion eventually.
+            Report_Unhandled_Node_Empty (N, "Process_Pragma_Declaration",
+                                         "Unsupported pragma: Restrictions");
+         when Name_Shared_Passive =>
+            --  Used for managing global data shared between active partitions.
+            --  Concurrency may be supported in the future.
+            Report_Unhandled_Node_Empty (N, "Process_Pragma_Declaration",
+                                         "Unsupported pragma: Shared Passive");
+         when Name_Task_Dispatching_Policy =>
+            --  Specifies the details of task dispatching that are not covered
+            --  by the basic task dispatching model. Concurrency may be
+            --  supported in the future.
+            Report_Unhandled_Node_Empty (N, "Process_Pragma_Declaration",
+                                "Unsupported pragma: Task Dispatching Policy");
+         when Name_All_Calls_Remote |
+              Name_Remote_Call_Interface =>
+            --  Library unit pragma; used by the distributed systems annex
+            --  Interface for remote function calls between active partitions
+            --  Should not alter the semantics, but we want to know about it.
+            Report_Unhandled_Node_Empty (N, "Process_Pragma_Declaration",
+                                  "Known but unsupported pragma: Remote Call");
+         when Name_Interrupt_Handler =>
+            --  If the pragma appears in a protected_definition, then the
+            --  corresponding procedure can be attached dynamically, as a
+            --  handler, to interrupts. We want to detect interrupts early.
+            Report_Unhandled_Node_Empty (N, "Process_Pragma_Declaration",
+                            "Known but unsupported pragma: Interrupt Handler");
+         when Name_Controlled =>
+            --  Used to prevent any automatic reclamation of storage (garbage
+            --  collection) for the objects created by allocators of a given
+            --  access type. Resource allocation problem must be detected.
+            Report_Unhandled_Node_Empty (N, "Process_Pragma_Declaration",
+                                   "Known but unsupported pragma: Controlled");
+         when Name_Export | Name_Export_Procedure | Name_Export_Function |
+              Name_Export_Object | Name_Export_Value |
+              Name_Export_Valued_Procedure =>
+            --  Used to export an Ada entity to a foreign language, thus
+            --  allowing an Ada subprogram to be called from a foreign
+            --  language, or an Ada object to be accessed from a foreign
+            --  language. Need to be detected.
+            Report_Unhandled_Node_Empty (N, "Process_Pragma_Declaration",
+                     "pragma Export: Multi-language analysis unsupported");
+         when Name_Machine_Attribute =>
+            Handle_Pragma_Machine_Attribute (N);
+         when Name_Check =>
+            Report_Unhandled_Node_Empty (N, "Process_Pragma_Declaration",
+                                         "Pragma Check unsupported " &
+                                           "in declarations");
+         when Name_No_Return =>
+            --  Can be detected when processing the function body
+            null;
+
+         when Name_Suppress_Initialization =>
+            --  pragma Suppress_Initialization can be ignored if it is
+            --  appied to an array or scalar type which do not have a
+            --  default value aspect applied.
+            --  If these conditions are not met an unsupported pragma is
+            --  reported.
+            declare
+               Arg : constant Node_Id :=
+                 First (Pragma_Argument_Associations (N));
+               E   : constant Entity_Id := Entity
+                 (if Present (Arg) and then
+                  Nkind (Arg) = N_Pragma_Argument_Association
+                  then
+                     Expression (Arg)
+                  else
+                     Arg);
+            begin
+               if not ((Is_Array_Type (E) and then
+                          not Present (Default_Aspect_Component_Value (E)))
+                        or else
+                        (Is_Scalar_Type (E) and then
+                             not Present (Default_Aspect_Value (E))))
+               then
+                  Report_Unhandled_Node_Empty
+                    (N, "Process_Pragma_Declaration",
+                     "Unsupported pragma: Suppress initialization");
+               end if;
+            end;
+         when Name_Annotate =>
+            --  Annotate ASVAT is only supported as an aspect
+            if not From_Aspect_Specification (N) then
+               declare
+                  Args : constant List_Id :=
+                    Pragma_Argument_Associations (N);
+                  First_Arg : constant Node_Id :=
+                    (if Present (Args) then
+                          First (Args)
+                     else
+                        Types.Empty);
+                  First_Expr : constant Node_Id :=
+                    (if Present (First_Arg) then
+                          Expression (First_Arg)
+                     else
+                        Types.Empty);
+
+                  pragma Assert (Nkind (First_Expr) in N_Has_Chars);
+                  Anno_Id : constant String :=
+                    (if Present (First_Expr) and then
+                     Nkind (First_Expr) = N_Identifier
+                     then
+                        Get_Name_String (Chars (First_Expr))
+                     else
+                        "");
+               begin
+                  if Anno_Id = "asvat" then
+                     Report_Unhandled_Node_Empty
+                       (N, "Process_Pragma_Declaration",
+                        "pragma Annotate: " &
+                          "ASVAT Annotation only supported as an aspect");
+                  end if;
+               end;
+            end if;
+
+         when Name_Assertion_Policy | Name_Check_Policy |
+            --  Control the pragma Assert according to the policy identifier
+            --  which can be Check, Ignore, or implementation-defined.
+            --  Ignore means that assertions are ignored at run-time -> Ignored
+              Name_Compile_Time_Warning | Name_Compile_Time_Error |
+            --  Used to issue a compile time warning or error from the compiler
+            --  front-end.  The warning will be issued by the front-end but has
+            --  no affect on the AST.  It can be ignored safely by gnat2goto.
+              Name_Component_Alignment |
+            --  ASVAT does not model memory layout. -> Ignored
+              Name_Discard_Names |
+            --  Used to request a reduction in storage used for the names of
+            --  certain entities. -> Ignored
+              Name_Favor_Top_Level |
+            --  This pragma is an efficiency hint to the compiler.
+            --  Not used by ASVAT. -> Ignore
+              Name_Ghost |
+            --  Ghost entities are treated as real entities by ASVAT.
+            --  -> Ignored
+              Name_Initializes |
+            --  Used to indicate that variables have been initialized by
+            --  elaboration for SPARK flow analysis. -> Ignored
+              Name_Inspection_Point |
+            --  Identifies a set of objects each of whose values is to be
+            --  available at the point(s) during program execution
+            --  corresponding to the position of the pragma in the compilation
+            --  unit. -> Ignored
+              Name_Linker_Options | Name_Linker_Section |
+            --  Used to specify the system linker parameters needed when a
+            --  given compilation unit is included in a partition. We want to
+            --  know that code manipulates the linking.Name_Linker_Options =>
+            --  Used to specify the system linker parameters needed when a
+            --  given compilation unit is included in a partition. The
+            --  goto functions produced by gnat2goto are linked by symtab2gb.
+            --  Currently there very few options for this linker and none that
+            --  apply to most linkers.  Currently  the pragma can ignored,
+            --  but in the future, if symtab2gb was to take more options
+            --  this pragma could be reinstated.
+              Name_List |
+            --  Takes one of the identifiers On or Off as the single
+            --  argument. It specifies that listing of the compilation is to be
+            --  continued or suspended until a List pragma with the opposite
+            --  argument is given within the same compilation. -> Ignored
+              Name_Page |
+            --  Specifies that the program text which follows the pragma should
+            --  start on a new page (if the compiler is currently producing a
+            --  listing). -> Ignored
+              Name_Obsolescent |
+            --  Documentation and warning control - not used by ASVAT.
+            --  -> Ignored
+              Name_Optimize |
+            --  Gives advice to the implementation as to whether time or space
+            --  is the primary optimization criterion. -> Ignored
+              Name_Ordered |
+            --  Used for documentation and with the option for the front-end
+            --  to print a warning if code depends on ordering of an
+            --  enumeration except if this pragma is associated with the
+            --  enumeration. -> Ignored
+              Name_Pack |
+            --  Specifies that storage minimization should be the main
+            --  criterion when selecting the representation of a composite
+            --  type. -> Ignored
+              Name_Pure |
+            --  Used to declare that a library unit is pure: does not contain
+            --  declaration of any variable or named access type. -> Ignored
+              Name_Reviewable |
+            --  Directs the implementation to provide information to facilitate
+            --  analysis and review of a program's object code. -> Ignored
+              Name_Storage_Size |
+            --  Specifies the amount of storage to be reserved for the
+            --  execution of a task. -> Ignored
+              Name_Unsuppress |
+            --  Voids the supressing request. -> Ignored
+              Name_Convention |
+            --  Used to specify that an Ada entity should use the conventions
+            --  of another language. It is intended primarily for types and
+            --  callback subprograms. -> Ignored
+              Name_Inline |
+              Name_Inline_Always |
+              Name_Inline_Generic |
+            --  Indicates that inline expansion is desired for all calls to
+            --  that entity. -> Ignored
+              Name_Pure_Function |
+            --  Optimisation control, can be ignored as it is not actually
+            --  checked
+              Name_Preelaborate |
+            --  If a library unit is preelaborated, then its declaration, if
+            --  any, and body, if any, are elaborated prior to all
+            --  non-preelaborated library_item s of the partition. -> Ignored
+              Name_Stream_Convert |
+            --  This pragma provides an efficient way of providing
+            --  user-defined stream attributes.
+            --  Streams are modelled in ASVAT externally to gnat2goto.
+            --  -> Ignored
+              Name_Suppress |
+            --  Suppressing is effectively also ignored (elaborated as example)
+              Name_SPARK_Mode |
+            --  Ignored for now
+              Name_No_Elaboration_Code_All |
+            --  Only affects elaboration and linking so can be ignored for now
+              Name_Universal_Aliasing |
+            --  Optimisation control, should be ignored
+              Name_Implementation_Defined |
+            --  Only informs the compiler that entities are implementation
+            --  defined. -> Ignored
+              Name_Preelaborable_Initialization |
+            --  Same as the above preelaborations.
+              Name_Warnings |
+            --  Ignoring pragma warnings means that all warnings are on.
+              Name_Weak_External |
+            --  Provides information to the linker.  Not used by ASVAT.
+            --  Ignored ->
+              Name_Abstract_State |
+              Name_Async_Readers |
+              Name_Async_Writers |
+              Name_Effective_Reads |
+              Name_Effective_Writes |
+              Name_Default_Initial_Condition |
+              Name_Contract_Cases |
+              Name_Ada_05 |
+              Name_Ada_2012 |
+              Name_Elaborate_Body |
+              Name_No_Strict_Aliasing |
+              Name_Unreferenced =>
+            --  The above are ignored because they are not relevant to the kind
+            --  of analysis we are doing or the phase of compilation and
+            --  building that we are working on.
+            null;
+         when others =>
+            declare
+               Unknown_Pragma_Diagnostic : constant String :=
+                 (if Pragma_Name (N) /= No_Name
+                  then Get_Name_String (Pragma_Name (N))
+                  else "<No Name>");
+            begin
+               Report_Unhandled_Node_Empty
+                 (N,
+                  "Process_Pragma_Declaration",
+                  "Unknown pragma: " & Unknown_Pragma_Diagnostic);
+            end;
+      end case;
+   end Process_Pragma_Declaration;
+
+   --------------------------
+   -- Process_Declarations --
+   --------------------------
+
+   procedure Process_Declarations (L : List_Id; Block : Irep) is
+      Decl : Node_Id := First (L);
+   begin
+      while Present (Decl) loop
+         Process_Declaration (Decl, Block);
+         Next (Decl);
+      end loop;
+
+   end Process_Declarations;
+
+   -------------------------
+   --  Process_Statement  --
+   -------------------------
+
+   procedure Process_Statement (N : Node_Id; Block : Irep) is
+   begin
+--      Put_Line ("Statement scope");
+--      Print_Node_Briefly (Current_Scope);
+      --  Deal with the statement
+      case Nkind (N) is
+         -- Simple statements --
+         when N_Null_Statement =>
+            null;
+
+         when N_Assignment_Statement =>
+            Do_Assignment_Statement (Block, N);
+
+         when N_Exit_Statement =>
+            Append_Op (Block, Do_Exit_Statement (N));
+
+         when N_Goto_Statement =>
+            Report_Unhandled_Node_Empty (N, "Process_Statement",
+                                         "Goto statement");
+
+         when N_Procedure_Call_Statement =>
+            Append_Op (Block, Do_Procedure_Call_Statement (N));
+
+         when N_Simple_Return_Statement =>
+            if No_Return (Return_Applies_To (Return_Statement_Entity (N)))
+            then
+               Append_Op (Block, Get_No_Return_Check);
+            end if;
+            Do_Simple_Return_Statement (Block, N);
+
+         when N_Entry_Call_Statement =>
+            Report_Unhandled_Node_Empty (N, "Process_Statement",
+                                         "Entry call statement");
+
+         when N_Requeue_Statement =>
+            Report_Unhandled_Node_Empty (N, "Process_Statement",
+                                         "Requeue statement");
+
+         when N_Delay_Statement =>
+            Report_Unhandled_Node_Empty (N, "Process_Statement",
+                                         "Delay statement");
+
+         when N_Abort_Statement =>
+            Report_Unhandled_Node_Empty (N, "Process_Statement",
+                                         "Abort statement");
+
+         when N_Raise_Statement =>
+            Append_Op (Block, Do_Raise_Statement (N));
+
+         when N_Code_Statement =>
+            Report_Unhandled_Node_Empty (N, "Process_Statement",
+                                         "Code statement");
+
+         --  Compound statements
+
+         when N_If_Statement =>
+            Append_Op (Block, Do_If_Statement (N));
+
+         when N_Case_Statement =>
+            Append_Op (Block, Do_Case_Statement (N));
+
+         when N_Loop_Statement =>
+            Append_Op (Block, Do_Loop_Statement (N));
+
+         when N_Block_Statement =>
+            Append_Op (Block, Do_N_Block_Statement (N));
+
+         when N_Handled_Sequence_Of_Statements =>  -- this seems incorrct
+            --  It should be block_statement
+            Append_Op (Block, Do_Handled_Sequence_Of_Statements (N));
+
+         when N_Extended_Return_Statement =>
+            Report_Unhandled_Node_Empty (N, "Process_Statement",
+                                         "Extended return statement");
+
+         when N_Accept_Statement =>
+            Report_Unhandled_Node_Empty (N, "Process_Statement",
+                                         "Accept statement");
+
+            -- Select statements --
+
+         when N_Selective_Accept =>
+            Report_Unhandled_Node_Empty (N, "Process_Statement",
+                                         "Selective Accept");
+
+         when N_Timed_Entry_Call =>
+            Report_Unhandled_Node_Empty (N, "Process_Statement",
+                                         "Timed entry call");
+
+         when N_Conditional_Entry_Call =>
+            Report_Unhandled_Node_Empty (N, "Process_Statement",
+                                         "Conditional entry call");
+
+         when N_Asynchronous_Select =>
+            Report_Unhandled_Node_Empty (N, "Process_Statement",
+                                         "Asynchronous select");
+
+         -- Pragmas may placed in sequences of statements --
+
+         when N_Pragma =>
+            Do_Pragma (N, Block);
+
+         --  Not sure the nex two should be here -
+         --  should they be in declarations? --
+--         when N_Itype_Reference =>
+--            Do_Itype_Reference (N);
+
+--         when N_Freeze_Entity =>
+--            --  Ignore, nothing to generate
+--            null;
+         when N_Object_Declaration =>
+            Do_Object_Declaration (N, Block);
+
+         when N_Freeze_Entity | N_Freeze_Generic_Entity =>
+            --  gnat2goto does not process freeze nodes as
+            --  the information contained therein is not needed by gnat2goto.
+            null;
+         when others =>
+            Report_Unhandled_Node_Empty (N, "Process_Statement",
+                                         "Unknown expression kind");
+
+      end case;
+   end Process_Statement;
+
+   ------------------------
+   -- Process_Statements --
+   ------------------------
+
+   function Process_Statements (L : List_Id) return Irep is
+      Stmt : Node_Id := First (L);
+      Reps : constant Irep := Make_Code_Block
+        (Source_Location => Get_Source_Location (Stmt));
+      package IO renames Ada.Text_IO;
+   begin
+      while Present (Stmt) loop
+         begin
+            Process_Statement (Stmt, Reps);
+         exception
+            when Error : others =>
+               IO.Put_Line (IO.Standard_Error, "<========================>");
+               IO.Put_Line (IO.Standard_Error,
+                            Ada.Exceptions.Exception_Information
+                              (Error));
+               if GNAT2GOTO.Options.Dump_Statement_AST_On_Error then
+                  Treepr.Print_Node_Subtree (Stmt);
+               end if;
+               IO.Put_Line (IO.Standard_Error, "<========================>");
+         end;
+         Next (Stmt);
+      end loop;
+
+      return Reps;
+   end Process_Statements;
+
+   function Do_Modular_Type_Definition (N : Node_Id) return Irep is
+      E       : constant Entity_Id := Defining_Identifier (Parent (N));
+      Mod_Max : constant Uint := Intval (Expression (N));
+      --  We start at 1, not 0, because our bitvectors
+      --  can't be smaller than 1 bit
+      Mod_Max_Binary_Logarithm : Integer := 1;
+      Power_Of_Two : Uint := Uint_2;
+      Ada_Type_Size : constant Integer :=
+        Integer (UI_To_Int (Esize (Defining_Identifier (Parent (N)))));
+   begin
+      while Power_Of_Two < Mod_Max loop
+         Mod_Max_Binary_Logarithm := Mod_Max_Binary_Logarithm + 1;
+         Power_Of_Two := Power_Of_Two * 2;
+      end loop;
+      --  If the max value is 2^w (for w > 0) then we can just
+      --  use an unsignedbv of width w
+      if Mod_Max = Power_Of_Two and Ada_Type_Size = Mod_Max_Binary_Logarithm
+      then
+         ASVAT.Size_Model.Set_Static_Size
+           (E          => E,
+            Model_Size => Mod_Max_Binary_Logarithm);
+
+         return Make_Unsignedbv_Type (Width => Mod_Max_Binary_Logarithm);
+      end if;
+
+      ASVAT.Size_Model.Set_Static_Size (E          => E,
+                                 Model_Size => Mod_Max_Binary_Logarithm);
+      return Make_Ada_Mod_Type
+        (Width => Ada_Type_Size,
+         Ada_Mod_Max => Convert_Uint_To_Hex
+           (Mod_Max, Pos (Ada_Type_Size)));
+   end Do_Modular_Type_Definition;
+
+   ---------------------------------------
+   -- Register_Subprogram_Specification --
+   ---------------------------------------
+
+   procedure Register_Subprogram_Specification (N : Node_Id) is
+      Subprog_Type : constant Irep :=
+        Do_Subprogram_Specification (N);
+      Subprog_Defining_Unit_Name : constant Node_Id := Defining_Unit_Name (N);
+      Subprog_Defining_Entity : constant Node_Id := (
+        if Nkind (Subprog_Defining_Unit_Name) = N_Defining_Program_Unit_Name
+        then Defining_Identifier (Subprog_Defining_Unit_Name)
+        else Subprog_Defining_Unit_Name);
+      Subprog_Name : constant Symbol_Id :=
+        Intern (Unique_Name (Subprog_Defining_Entity));
+   begin
+      New_Subprogram_Symbol_Entry (Subprog_Name   => Subprog_Name,
+                                   Subprog_Type   => Subprog_Type,
+                                   A_Symbol_Table => Global_Symbol_Table);
+   end Register_Subprogram_Specification;
+
+   -------------------------------
+   -- Register_Type_Declaration --
+   -------------------------------
+
+   procedure Register_Type_Declaration (N : Node_Id; E : Entity_Id) is
+      New_Type : constant Irep :=
+        Do_Type_Definition (Type_Definition (N),
+                            Discriminant_Specifications (N));
+   begin
+      pragma Assert (Kind (New_Type) in Class_Type);
+      Do_Type_Declaration (New_Type, E);
+
+      --  Declare the implicit initial subtype too
+      if Etype (E) /= E then
+         Do_Type_Declaration (New_Type, Etype (E));
+      end if;
+      --  A declaration of a tagged type is accepted by gnat2goto.
+      --  If it is a private tagged type a class wide type is also
+      --  declared.  The declaration node of the class wide type is
+      --  obtained from the private declaration entity and its
+      --  Irep type will be that of the full view.
+      --  The class wide type must be entered into the symbol table.
+      if Is_Tagged_Type (E) then
+         Do_Type_Declaration (New_Type, Class_Wide_Type (E));
+      end if;
+
+   end Register_Type_Declaration;
+
+   function "<" (Left, Right : Array_Dup_Key) return Boolean is
+   begin
+      if Left.Element_Type /= Right.Element_Type then
+         return Left.Element_Type < Right.Element_Type;
+      end if;
+      return Left.Index_Type < Right.Index_Type;
+   end "<";
+
+   function "<" (Left, Right : Array_Copy_Key) return Boolean is
+   begin
+      if Left.LHS_Element_Type /= Right.LHS_Element_Type then
+         return Left.LHS_Element_Type < Right.LHS_Element_Type;
+      end if;
+      if Left.RHS_Element_Type /= Right.RHS_Element_Type then
+         return Left.RHS_Element_Type < Right.RHS_Element_Type;
+      end if;
+      return Left.Index_Type < Right.Index_Type;
+   end "<";
+
+   function Do_Access_Function_Definition (N : Node_Id) return Irep
+   is
+      E : constant Entity_Id := Defining_Identifier (Parent (N));
+      --  The subprogram Do_Subprogram_Specification can be used
+      --  here for commonality.
+      --  Do_Subprogram_Specification has to be extended to accept
+      --  N_Access_Procedure and N_Access_Function nodes as well as
+      --  N_Subprogram_Specification nodes.
+   begin
+      ASVAT.Size_Model.Set_Static_Size (E          => E,
+                                 Model_Size => Pointer_Type_Width);
+      return Make_Pointer_Type (Do_Subprogram_Specification (N));
+   end Do_Access_Function_Definition;
+
+   function Do_Access_To_Object_Definition (N : Node_Id) return Irep
+   is
+      E : constant Entity_Id := Defining_Identifier (Parent (N));
+      Sub_Indication : constant Node_Id := Subtype_Indication (N);
+      Under_Type : constant Node_Id := Underlying_Type
+        (Etype
+           (if Nkind (Sub_Indication) = N_Subtype_Indication
+            then Subtype_Mark (Sub_Indication)
+            else Sub_Indication));
+   begin
+      ASVAT.Size_Model.Set_Static_Size (E          => E,
+                                        Model_Size => Pointer_Type_Width);
+      return Make_Pointer_Type
+      --  If this is a pointer to a record make it a pointer to
+      --  a struct_tag_type rather than the record type.
+      --  This prevents infinite recursion in the definition of types.
+        (if Is_Record_Type (Under_Type) then
+              Make_Struct_Tag_Type (Unique_Name (Under_Type))
+         else
+            Do_Type_Reference (Under_Type));
+   end Do_Access_To_Object_Definition;
+
+   function Get_No_Return_Check return Irep is
+      No_Return_Check_Symbol : constant Irep := Symbol_Expr
+        (Get_Ada_Check_Symbol
+           (Name           => "__CPROVER_Ada_Pragma_No_Return",
+            A_Symbol_Table => Global_Symbol_Table,
+            Source_Loc     => Internal_Source_Location));
+      No_Return_Check_Args : constant Irep := Make_Argument_List;
+      No_Return_Check_Call : constant Irep := Make_Code_Function_Call
+        (Arguments       => No_Return_Check_Args,
+         I_Function      => No_Return_Check_Symbol,
+         Lhs             => Make_Nil (Internal_Source_Location),
+         Source_Location => Internal_Source_Location,
+         I_Type          => Make_Void_Type);
+   begin
+      Append_Argument (No_Return_Check_Args, Get_Int32_T_Zero);
+      return No_Return_Check_Call;
+   end Get_No_Return_Check;
+
+   function Do_Null_Expression (N : Node_Id) return Irep is
+      Pointer_Type : constant Irep := Do_Type_Reference (Etype (N));
+   begin
+      return Make_Null_Pointer
+        (I_Type => Pointer_Type,
+         Source_Location => Get_Source_Location (N));
+   end Do_Null_Expression;
+
+   function Make_Resolved_I_Type (E : Entity_Id) return Irep is
+      I_Type_Pre : constant Irep := Do_Type_Reference (E);
+      I_Type     : constant Irep :=
+        (if Is_Scalar_Type (E) then
+             (if Kind (Follow_Symbol_Type
+              (I_Type_Pre, Global_Symbol_Table)) = I_C_Enum_Type
+              then
+                 Make_Unsignedbv_Type (ASVAT.Size_Model.Static_Size (E))
+              else
+                 I_Type_Pre)
+         else
+            I_Type_Pre);
+   begin
+      return I_Type;
+   end Make_Resolved_I_Type;
+
+end Tree_Walk;
