@@ -1,9 +1,5 @@
----------------------------- Tree_Abstraction  -------------------------------
---  This package body has to be excluded from SPARK analysis as the body    --
---  has state but its specification does not declare an abstract state      --
-------------------------------------------------------------------------------
 with GNAT.Dynamic_Tables;
-package body Tree_Abstraction with
+package body Basic_Tree with
   SPARK_Mode => Off
 is
 
@@ -17,10 +13,20 @@ is
 
       T : Gnat_Table.Instance;
 
+   ----------
+   -- Init --
+   ----------
+
    procedure Init is
    begin
       Gnat_Table.Init (T);
    end Init;
+
+   -------------------
+   -- Is_Empty_Tree --
+   -------------------
+
+   function Is_Empty_Tree return Boolean is (Gnat_Table.Is_Empty (T));
 
    --------------------------
    -- Is_A_Valid_Tree_Node --
@@ -78,7 +84,7 @@ is
    -- Set_Level --
    ---------------
 
-   procedure Set_Level (N : in out Valid_Tree_Node; Node_Level : Level_Type) is
+   procedure Set_Level (N : Valid_Tree_Node; Node_Level : Level_Type) is
    begin
       T.Table (N).Level := Node_Level;
    end Set_Level;
@@ -87,7 +93,7 @@ is
    -- Set_Left --
    --------------
 
-   procedure Set_Left (N : in out Valid_Tree_Node; Branch : Tree_Node) is
+   procedure Set_Left (N : Valid_Tree_Node; Branch : Tree_Node) is
    begin
       T.Table (N).Left := Branch;
    end Set_Left;
@@ -96,7 +102,7 @@ is
    -- Set_Right --
    ---------------
 
-   procedure Set_Right (N : in out Valid_Tree_Node; Branch : Tree_Node) is
+   procedure Set_Right (N : Valid_Tree_Node; Branch : Tree_Node) is
    begin
       T.Table (N).Right := Branch;
    end Set_Right;
@@ -105,7 +111,7 @@ is
    -- Set_Key --
    -------------
 
-   procedure Set_Key (N : in out Valid_Tree_Node; The_Key : Key_Type) is
+   procedure Set_Key (N : Valid_Tree_Node; The_Key : Key_Type) is
    begin
       T.Table (N).Key := The_Key;
    end Set_Key;
@@ -114,7 +120,7 @@ is
    -- Set_Value --
    ---------------
 
-   procedure Set_Value (N : in out Valid_Tree_Node;
+   procedure Set_Value (N : Valid_Tree_Node;
                         Node_Value : Value_Type) is
    begin
       T.Table (N).Value := Node_Value;
@@ -135,14 +141,18 @@ is
    -- Last_Node_In_Tree --
    -----------------------
 
-   function Last_Node_In_Tree (Dummy : Tree_Node) return Tree_Node is
-      (Gnat_Table.Last (T));
+   function Last_Node_In_Tree return Tree_Node is
+     (if Is_A_Valid_Tree_Node(Gnat_Table.Last (T))
+      then
+         Gnat_Table.Last (T)
+      else
+         Empty_Node);
 
    ---------------------------
    -- Clear_Tree_Below_Node --
    --------------------------
 
-   procedure Clear_Tree_Below_Node (N : in out  Tree_Node) is
+   procedure Clear_Tree_Below_Node (N : Tree_Node) is
    begin
       if N /= Empty_Node then
          Gnat_Table.Set_Last (T, N);
@@ -151,4 +161,4 @@ is
       end if;
     end Clear_Tree_Below_Node;
 
-end Tree_Abstraction;
+end Basic_Tree;

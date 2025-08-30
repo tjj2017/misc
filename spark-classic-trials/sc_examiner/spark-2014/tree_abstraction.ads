@@ -5,12 +5,15 @@
 --  the package body. The body of this package must be excluded from SPARK  --
 --  analysis because of the hidden state.  The stateless view of the        --
 --  package overcomes limitations of the 2021 SPARK-2012 examiner handling  --
---  state_abstraction in generic packages.                                  --
+--  state_abstraction in generic packages and the inability to "hide"       --
+--  private pointer types.                                                  --
 --  The collection of all Tree_Nodes represents a single tree.  There is    --
 --  no type to enable multiple tree decarations.  If multiple trees are     --
 --  required then, either multiple instatnces of this package are required  --
 --  or multiple sub-trees have to be accommodated within the single tree    --
---  structure this package provides.                                        --
+--  structure this package provides.
+--  Nodes are added to the tree using Add_Node and each node added has a    --
+--  monotonically increased value to the previous node added.                --
 --  The type Tree_Node, representing the nodes of the tree,                 --
 --  must have the range 0 .. Maximum_Number_Of_Nodes in the tree.           --
 --  The Maximum_Number_Of_Nodes_In_Tree < Tree_Node'Base'Last.              --
@@ -92,11 +95,13 @@ is
      Post   => Key (N) = The_Key and In_Tree (N),
      Inline;
 
+   function Last_Node_In_Tree (Dummy : Tree_Node) return Tree_Node;
+   --  Returns the last node added to the tree.
+
    --  N may be modified by the following procedures.
    procedure Clear_Tree_Below_Node (N : in out Tree_Node) with
-     Pre  => Is_A_Valid_Tree_Node (N),
-     Post => Is_Empty (N);
-   --  Removes all nodes from the Tree with Tree_Node values >= N.
+     Pre  => Is_A_Valid_Tree_Node (N);
+   --  Removes all nodes from the Tree with Tree_Node values > N.
 
 private
    type Actual_Node is

@@ -9,10 +9,15 @@
 --  multiple declarations of A_Tree objects is possible, all the objects    --
 --  all use the same hidden state of the underlying Tree_Abstraction.       --
 --  It is possible to have multiple A_Trees using the same underlying tree  --
---  object but be aware of using the Clear_Underlying_Tree_From subprogram  --
+--  object but be aware of the Clear_Underlying_Tree_From_Node subprogram   --
 --  as this is not A_Tree object aware and will clear from the given        --
 --  Atree root the rest of the underlying tree including any other Atrees   --
 --  contained within  the cleared part of the underlying tree.              --
+--  The intended purpose of the Clear_Underlying_Tree_From_Node is to       --
+--  provide a means for a tree to act like a stack. Nodes can be added to   --
+--  the tree from a certain point and be "popped' off to that same point.   --
+--  The function Last_Underlying_Node is called to identify the point to    --
+--  where the nodes will be "popped" of from.                               --
 --  The type Atree_Node, representing the nodes of the tree,                --
 --  must have the range 0 .. Maximum_Number_Of_Nodes in the Atree.          --
 --  The Maximum_Number_Of_Nodes_In_Tree < Aree_Node'Base'Last.              --
@@ -98,18 +103,35 @@ is
                   elsif Inserted then
                      Count (Tree) = Count (Tree'Old) + 1
                    else
-                     Count (Tree) = Count (Tree'Old));
+                  Count (Tree) = Count (Tree'Old));
 
-   procedure Clear_Underlying_Tree_From (Tree : in out A_Tree)
-     with Pre => not Empty_Tree (Tree),
-          Post => Empty_Tree (Tree);
+   --  *** The following subprograms should be used with care. ***
+   --  *** They operate on the underlying tree structure and   ***
+   --  *** are not A_Tree object aware.                        ***
 
+   function Last_Underlying_Tree_Node (Dummy : Atree_Node) return Atree_Node;
+   --  Returns the last used node in the underlying tree. Each successful
+   --  insertion (subprogram Insert parameter Inserted = True) creates a
+   --  new node in the underlying tree. The Last_Underlying_Tree_Node will
+   --  be the one created from the last successful Insert.
+
+   procedure Clear_Underlying_Tree_From_Node (Node : in out Atree_Node);
+   --  Removes all nodes below the given Node from the underlying tree.
+   --  This will invalidate all A_Tree objects
+
+   --  *************************************************************
+
+   ------------ Enumerators for Atree depth first traversal ---------------
    type Enumerator is private;
 
    function New_Enumerator (ATree : A_Tree) return Enumerator
      with Pre => Populated (ATree);
 
    procedure Next_Key (E : in out Enumerator; Key : out Key_Type);
+
+   procedure Next_Key_And_Value (E         : in out Enumerator;
+                                 Key       : out Key_Type;
+                                 Its_Value : out Value_Type);
 
 private
    Empty_Node : constant Atree_Node := Atree_Node'First;
@@ -128,6 +150,7 @@ private
       record
          Root      : Atree_Node;
          Count     : Natural;
+         Toggle    : Boolean;
       end record;
 
    type Direction is (Left, Right);

@@ -41,3 +41,1436 @@
     '
   output_parser: GNATprove_Parser
   timestamp: '2025-08-18T13:35:11.206125'
+'2025-08-21T17:24:47.142428':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    abs_int.ads:4:04: error: instantiation error at atrees.adb:4
+
+    abs_int.ads:4:04: error: this instantiation requires "Tree_Abstraction (body)"
+
+    abs_int.ads:4:04: error: but file "tree_abstraction.adb" was not found
+
+    compilation abandoned
+
+    gnatprove: error during generation of Global contracts
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-21T17:24:47.142428'
+'2025-08-21T17:25:06.255973':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    abs_int.ads:4:04: error: instantiation error at atrees.adb:4
+
+    abs_int.ads:4:04: error: this instantiation requires "Tree_Abstraction (body)"
+
+    abs_int.ads:4:04: error: but file "tree_abstraction.adb" was not found
+
+    compilation abandoned
+
+    gnatprove: error during generation of Global contracts
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-21T17:25:06.255973'
+'2025-08-21T17:26:39.961986':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    abs_int.ads:3:09: info: SPARK_Mode not applied to this compilation unit
+
+    abs_int.ads:3:09: info: only enclosed declarations with SPARK_Mode will be analyzed
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-21T17:26:39.961986'
+'2025-08-21T17:27:14.528427':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    abs_int.ads:3:01: error: incorrect placement for configuration pragma "Spark_Mode"
+
+    gnatprove: error during generation of Global contracts
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-21T17:27:14.528427'
+'2025-08-21T17:27:41.183947':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    atrees.adb:144:26: warning: "Tree" is not modified, could be IN, in instantiation
+    at abs_int.ads:5[#6]
+
+    atrees.adb:239:20: warning: "Tree" is not modified, could be IN, in instantiation
+    at abs_int.ads:5[#0]
+
+    atrees.adb:271:21: warning: "Tree" is not modified, could be IN, in instantiation
+    at abs_int.ads:5[#5]
+
+    atrees.adb:480:39: warning: "Current_Node" is set by "Set_Branch" but not used
+    after the call, in instantiation at abs_int.ads:5[#8]
+
+    atrees.adb:483:28: high: formal parameters "Sub_Root" and "Tree" are aliased (SPARK
+    RM 6.4.2), in instantiation at abs_int.ads:5[#10]
+
+    atrees.adb:483:41: warning: "Visited" is set by "Rebalance" but not used after
+    the call, in instantiation at abs_int.ads:5[#9]
+
+    atrees.adb:541:39: warning: "Current_Node" is set by "Set_Branch" but not used
+    after the call, in instantiation at abs_int.ads:5[#1]
+
+    atrees.adb:545:27: high: formal parameters "Sub_Root" and "Tree" are aliased (SPARK
+    RM 6.4.2), in instantiation at abs_int.ads:5[#3]
+
+    atrees.adb:545:40: warning: "Visited" is set by "Rebalance" but not used after
+    the call, in instantiation at abs_int.ads:5[#2]
+
+    atrees.adb:576:33: high: formal parameters "E" and "Tree" are aliased (SPARK RM
+    6.4.2), in instantiation at abs_int.ads:5[#4]
+
+    atrees.adb:684:32: warning: "Visited" is set by "Find" but not used after the
+    call, in instantiation at abs_int.ads:5[#7]
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-21T17:27:41.183947'
+'2025-08-21T17:45:39.618377':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    atrees.adb:1:14: warning: generic compilation unit is not analyzed
+
+    atrees.adb:1:14: warning: only instantiations of the generic will be analyzed
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-21T17:45:39.618377'
+'2025-08-21T17:45:55.140452':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    atrees.adb:144:26: warning: "Tree" is not modified, could be IN, in instantiation
+    at abs_int.ads:5[#2]
+
+    atrees.adb:239:20: warning: "Tree" is not modified, could be IN, in instantiation
+    at abs_int.ads:5[#9]
+
+    atrees.adb:271:21: warning: "Tree" is not modified, could be IN, in instantiation
+    at abs_int.ads:5[#1]
+
+    atrees.adb:481:39: warning: "Current_Node" is set by "Set_Branch" but not used
+    after the call, in instantiation at abs_int.ads:5[#3]
+
+    atrees.adb:484:28: high: formal parameters "Sub_Root" and "Tree" are aliased (SPARK
+    RM 6.4.2), in instantiation at abs_int.ads:5[#5]
+
+    atrees.adb:484:41: warning: "Visited" is set by "Rebalance" but not used after
+    the call, in instantiation at abs_int.ads:5[#4]
+
+    atrees.adb:542:39: warning: "Current_Node" is set by "Set_Branch" but not used
+    after the call, in instantiation at abs_int.ads:5[#6]
+
+    atrees.adb:546:27: high: formal parameters "Sub_Root" and "Tree" are aliased (SPARK
+    RM 6.4.2), in instantiation at abs_int.ads:5[#8]
+
+    atrees.adb:546:40: warning: "Visited" is set by "Rebalance" but not used after
+    the call, in instantiation at abs_int.ads:5[#7]
+
+    atrees.adb:577:33: high: formal parameters "E" and "Tree" are aliased (SPARK RM
+    6.4.2), in instantiation at abs_int.ads:5[#10]
+
+    atrees.adb:685:32: warning: "Visited" is set by "Find" but not used after the
+    call, in instantiation at abs_int.ads:5[#0]
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-21T17:45:55.140452'
+'2025-08-21T17:46:37.796694':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    atrees.adb:240:20: warning: "Tree" is not modified, could be IN, in instantiation
+    at abs_int.ads:5[#1]
+
+    atrees.adb:272:21: warning: "Tree" is not modified, could be IN, in instantiation
+    at abs_int.ads:5[#9]
+
+    atrees.adb:482:39: warning: "Current_Node" is set by "Set_Branch" but not used
+    after the call, in instantiation at abs_int.ads:5[#2]
+
+    atrees.adb:485:28: high: formal parameters "Sub_Root" and "Tree" are aliased (SPARK
+    RM 6.4.2), in instantiation at abs_int.ads:5[#4]
+
+    atrees.adb:485:41: warning: "Visited" is set by "Rebalance" but not used after
+    the call, in instantiation at abs_int.ads:5[#3]
+
+    atrees.adb:543:39: warning: "Current_Node" is set by "Set_Branch" but not used
+    after the call, in instantiation at abs_int.ads:5[#6]
+
+    atrees.adb:547:27: high: formal parameters "Sub_Root" and "Tree" are aliased (SPARK
+    RM 6.4.2), in instantiation at abs_int.ads:5[#8]
+
+    atrees.adb:547:40: warning: "Visited" is set by "Rebalance" but not used after
+    the call, in instantiation at abs_int.ads:5[#7]
+
+    atrees.adb:578:33: high: formal parameters "E" and "Tree" are aliased (SPARK RM
+    6.4.2), in instantiation at abs_int.ads:5[#5]
+
+    atrees.adb:686:32: warning: "Visited" is set by "Find" but not used after the
+    call, in instantiation at abs_int.ads:5[#0]
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-21T17:46:37.796694'
+'2025-08-21T17:47:39.281147':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    atrees.adb:273:21: warning: "Tree" is not modified, could be IN, in instantiation
+    at abs_int.ads:5[#8]
+
+    atrees.adb:483:39: warning: "Current_Node" is set by "Set_Branch" but not used
+    after the call, in instantiation at abs_int.ads:5[#1]
+
+    atrees.adb:486:28: high: formal parameters "Sub_Root" and "Tree" are aliased (SPARK
+    RM 6.4.2), in instantiation at abs_int.ads:5[#3]
+
+    atrees.adb:486:41: warning: "Visited" is set by "Rebalance" but not used after
+    the call, in instantiation at abs_int.ads:5[#2]
+
+    atrees.adb:544:39: warning: "Current_Node" is set by "Set_Branch" but not used
+    after the call, in instantiation at abs_int.ads:5[#4]
+
+    atrees.adb:548:27: high: formal parameters "Sub_Root" and "Tree" are aliased (SPARK
+    RM 6.4.2), in instantiation at abs_int.ads:5[#6]
+
+    atrees.adb:548:40: warning: "Visited" is set by "Rebalance" but not used after
+    the call, in instantiation at abs_int.ads:5[#5]
+
+    atrees.adb:579:33: high: formal parameters "E" and "Tree" are aliased (SPARK RM
+    6.4.2), in instantiation at abs_int.ads:5[#7]
+
+    atrees.adb:687:32: warning: "Visited" is set by "Find" but not used after the
+    call, in instantiation at abs_int.ads:5[#0]
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-21T17:47:39.281147'
+'2025-08-21T17:48:27.372969':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    atrees.adb:484:39: warning: "Current_Node" is set by "Set_Branch" but not used
+    after the call, in instantiation at abs_int.ads:5[#2]
+
+    atrees.adb:487:28: high: formal parameters "Sub_Root" and "Tree" are aliased (SPARK
+    RM 6.4.2), in instantiation at abs_int.ads:5[#4]
+
+    atrees.adb:487:41: warning: "Visited" is set by "Rebalance" but not used after
+    the call, in instantiation at abs_int.ads:5[#3]
+
+    atrees.adb:545:39: warning: "Current_Node" is set by "Set_Branch" but not used
+    after the call, in instantiation at abs_int.ads:5[#5]
+
+    atrees.adb:549:27: high: formal parameters "Sub_Root" and "Tree" are aliased (SPARK
+    RM 6.4.2), in instantiation at abs_int.ads:5[#7]
+
+    atrees.adb:549:40: warning: "Visited" is set by "Rebalance" but not used after
+    the call, in instantiation at abs_int.ads:5[#6]
+
+    atrees.adb:580:33: high: formal parameters "E" and "Tree" are aliased (SPARK RM
+    6.4.2), in instantiation at abs_int.ads:5[#1]
+
+    atrees.adb:688:32: warning: "Visited" is set by "Find" but not used after the
+    call, in instantiation at abs_int.ads:5[#0]
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-21T17:48:27.372969'
+'2025-08-21T17:51:55.231687':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    atrees.adb:485:39: warning: "Current_Node" is set by "Set_Branch" but not used
+    after the call, in instantiation at abs_int.ads:5[#1]
+
+    atrees.adb:489:39: warning: "Visited" is set by "Rebalance" but not used after
+    the call, in instantiation at abs_int.ads:5[#2]
+
+    atrees.adb:548:39: warning: "Current_Node" is set by "Set_Branch" but not used
+    after the call, in instantiation at abs_int.ads:5[#3]
+
+    atrees.adb:552:27: high: formal parameters "Sub_Root" and "Tree" are aliased (SPARK
+    RM 6.4.2), in instantiation at abs_int.ads:5[#5]
+
+    atrees.adb:552:40: warning: "Visited" is set by "Rebalance" but not used after
+    the call, in instantiation at abs_int.ads:5[#4]
+
+    atrees.adb:583:33: high: formal parameters "E" and "Tree" are aliased (SPARK RM
+    6.4.2), in instantiation at abs_int.ads:5[#6]
+
+    atrees.adb:691:32: warning: "Visited" is set by "Find" but not used after the
+    call, in instantiation at abs_int.ads:5[#0]
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-21T17:51:55.231687'
+'2025-08-21T17:54:12.705703':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    atrees.adb:485:39: warning: "Current_Node" is set by "Set_Branch" but not used
+    after the call, in instantiation at abs_int.ads:5[#1]
+
+    atrees.adb:489:39: warning: "Visited" is set by "Rebalance" but not used after
+    the call, in instantiation at abs_int.ads:5[#2]
+
+    atrees.adb:549:39: warning: "Current_Node" is set by "Set_Branch" but not used
+    after the call, in instantiation at abs_int.ads:5[#3]
+
+    atrees.adb:554:39: warning: "Visited" is set by "Rebalance" but not used after
+    the call, in instantiation at abs_int.ads:5[#4]
+
+    atrees.adb:586:33: high: formal parameters "E" and "Tree" are aliased (SPARK RM
+    6.4.2), in instantiation at abs_int.ads:5[#5]
+
+    atrees.adb:694:32: warning: "Visited" is set by "Find" but not used after the
+    call, in instantiation at abs_int.ads:5[#0]
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-21T17:54:12.705703'
+'2025-08-22T11:54:24.692708':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    test_it.ads:1:01: error: compilation unit expected
+
+    test_it.ads:2:01: error: misplaced "with"
+
+    gnatprove: error during generation of Global contracts
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-22T11:54:24.692708'
+'2025-08-22T11:54:50.756402':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    test_it.ads:5:04: error: instantiation error at basic_tree.adb:14
+
+    test_it.ads:5:04: error: "Instance" is not allowed in SPARK (due to general access-to-variable
+    type)
+
+    test_it.ads:5:04: error: violation of aspect SPARK_Mode at basic_tree.adb:3, instance
+    at line 5
+
+    test_it.ads:5:04: error: instantiation error at basic_tree.adb:26
+
+    test_it.ads:5:04: error: "Instance" is not allowed in SPARK (due to general access-to-variable
+    type)
+
+    test_it.ads:5:04: error: violation of aspect SPARK_Mode at basic_tree.adb:3, instance
+    at line 5
+
+    test_it.ads:5:04: error: instantiation error at g-dyntab.ads:142
+
+    test_it.ads:5:04: error: instantiation error at basic_tree.adb:6
+
+    test_it.ads:5:04: error: general access-to-variable type is not allowed in SPARK
+
+    test_it.ads:5:04: error: violation of aspect SPARK_Mode at basic_tree.adb:3, instance
+    at line 5
+
+    test_it.ads:5:04: error: instantiation error at g-dyntab.ads:152
+
+    test_it.ads:5:04: error: instantiation error at basic_tree.adb:6
+
+    test_it.ads:5:04: error: general access-to-variable type is not allowed in SPARK
+
+    test_it.ads:5:04: error: violation of aspect SPARK_Mode at basic_tree.adb:3, instance
+    at line 5
+
+    test_it.ads:5:04: error: instantiation error at g-dyntab.ads:185
+
+    test_it.ads:5:04: error: instantiation error at basic_tree.adb:6
+
+    test_it.ads:5:04: error: "Instance" is not allowed in SPARK (due to general access-to-variable
+    type)
+
+    test_it.ads:5:04: error: violation of aspect SPARK_Mode at basic_tree.adb:3, instance
+    at line 5
+
+    test_it.ads:5:04: error: instantiation error at g-dyntab.ads:188
+
+    test_it.ads:5:04: error: instantiation error at basic_tree.adb:6
+
+    test_it.ads:5:04: error: "Instance" is not allowed in SPARK (due to general access-to-variable
+    type)
+
+    test_it.ads:5:04: error: violation of aspect SPARK_Mode at basic_tree.adb:3, instance
+    at line 5
+
+    test_it.ads:5:04: error: instantiation error at g-dyntab.ads:198
+
+    test_it.ads:5:04: error: instantiation error at basic_tree.adb:6
+
+    test_it.ads:5:04: error: "Instance" is not allowed in SPARK (due to general access-to-variable
+    type)
+
+    test_it.ads:5:04: error: violation of aspect SPARK_Mode at basic_tree.adb:3, instance
+    at line 5
+
+    test_it.ads:5:04: error: instantiation error at g-dyntab.ads:203
+
+    test_it.ads:5:04: error: instantiation error at basic_tree.adb:6
+
+    test_it.ads:5:04: error: "Instance" is not allowed in SPARK (due to general access-to-variable
+    type)
+
+    test_it.ads:5:04: error: violation of aspect SPARK_Mode at basic_tree.adb:3, instance
+    at line 5
+
+    test_it.ads:5:04: error: instantiation error at g-dyntab.ads:215
+
+    test_it.ads:5:04: error: instantiation error at basic_tree.adb:6
+
+    test_it.ads:5:04: error: "Instance" is not allowed in SPARK (due to general access-to-variable
+    type)
+
+    test_it.ads:5:04: error: violation of aspect SPARK_Mode at basic_tree.adb:3, instance
+    at line 5
+
+    test_it.ads:5:04: error: instantiation error at g-dyntab.ads:224
+
+    test_it.ads:5:04: error: instantiation error at basic_tree.adb:6
+
+    test_it.ads:5:04: error: "Instance" is not allowed in SPARK (due to general access-to-variable
+    type)
+
+    test_it.ads:5:04: error: violation of aspect SPARK_Mode at basic_tree.adb:3, instance
+    at line 5
+
+    test_it.ads:5:04: error: instantiation error at g-dyntab.ads:228
+
+    test_it.ads:5:04: error: instantiation error at basic_tree.adb:6
+
+    test_it.ads:5:04: error: "Instance" is not allowed in SPARK (due to general access-to-variable
+    type)
+
+    test_it.ads:5:04: error: violation of aspect SPARK_Mode at basic_tree.adb:3, instance
+    at line 5
+
+    test_it.ads:5:04: error: instantiation error at g-dyntab.ads:232
+
+    test_it.ads:5:04: error: instantiation error at basic_tree.adb:6
+
+    test_it.ads:5:04: error: "Instance" is not allowed in SPARK (due to general access-to-variable
+    type)
+
+    test_it.ads:5:04: error: violation of aspect SPARK_Mode at basic_tree.adb:3, instance
+    at line 5
+
+    test_it.ads:5:04: error: instantiation error at g-dyntab.ads:239
+
+    test_it.ads:5:04: error: instantiation error at basic_tree.adb:6
+
+    test_it.ads:5:04: error: "Instance" is not allowed in SPARK (due to general access-to-variable
+    type)
+
+    test_it.ads:5:04: error: violation of aspect SPARK_Mode at basic_tree.adb:3, instance
+    at line 5
+
+    test_it.ads:5:04: error: instantiation error at g-dyntab.ads:243
+
+    test_it.ads:5:04: error: instantiation error at basic_tree.adb:6
+
+    test_it.ads:5:04: error: "Instance" is not allowed in SPARK (due to general access-to-variable
+    type)
+
+    test_it.ads:5:04: error: violation of aspect SPARK_Mode at basic_tree.adb:3, instance
+    at line 5
+
+    test_it.ads:5:04: error: instantiation error at g-dyntab.ads:252
+
+    test_it.ads:5:04: error: instantiation error at basic_tree.adb:6
+
+    test_it.ads:5:04: error: "Instance" is not allowed in SPARK (due to general access-to-variable
+    type)
+
+    test_it.ads:5:04: error: violation of aspect SPARK_Mode at basic_tree.adb:3, instance
+    at line 5
+
+    test_it.ads:5:04: error: instantiation error at g-dyntab.ads:255
+
+    test_it.ads:5:04: error: instantiation error at basic_tree.adb:6
+
+    test_it.ads:5:04: error: "Instance" is not allowed in SPARK (due to general access-to-variable
+    type)
+
+    test_it.ads:5:04: error: violation of aspect SPARK_Mode at basic_tree.adb:3, instance
+    at line 5
+
+    gnatprove: error during analysis of data and information flow
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-22T11:54:50.756402'
+'2025-08-22T12:02:08.288385':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    basic_tree.adb:3:20: error: extra ";" ignored
+
+    gnatprove: error during generation of Global contracts
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-22T12:02:08.288385'
+'2025-08-22T12:02:29.284237':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-22T12:02:29.284237'
+'2025-08-22T12:02:59.877965':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-22T12:02:59.877965'
+'2025-08-23T16:34:55.904967':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-23T16:34:55.904967'
+'2025-08-23T16:35:03.126980':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-23T16:35:03.126980'
+'2025-08-23T18:55:32.819123':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    tree_with_state.ads:34:35: error: "Node_Id" is not visible
+
+    tree_with_state.ads:34:35: error: non-visible declaration at types.ads:385
+
+    tree_with_state.ads:81:35: error: "Tree_Contents" is undefined (more references
+    follow)
+
+    gnatprove: error during generation of Global contracts
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-23T18:55:32.819123'
+'2025-08-25T10:21:28.147145':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    tree_with_state.ads:75:70: error: iterated component is an Ada 2022 feature
+
+    tree_with_state.ads:75:70: error: unit must be compiled with -gnat2022 switch
+
+    gnatprove: error during generation of Global contracts
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-25T10:21:28.147145'
+'2025-08-25T12:02:00.757581':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-25T12:02:00.757581'
+'2025-08-25T12:11:14.132105':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-25T12:11:14.132105'
+'2025-08-25T12:11:22.797440':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    tree_with_state.ads:79:07: medium: precondition might fail, cannot prove Is_A_Valid_Tree_Node
+    (N) [possible fix: subprogram at line 78 should mention Tree_With_State.Tree_Store
+    in a precondition][#0]
+
+    tree_with_state.ads:102:14: medium: range check might fail [reason for check:
+    slice bounds must fit in the underlying array] [possible fix: subprogram at line
+    84 should mention Except and Tree_After in a precondition][#1]
+
+    tree_with_state.ads:104:14: medium: range check might fail [reason for check:
+    slice bounds must fit in the underlying array] [possible fix: subprogram at line
+    84 should mention Except and Tree_After in a precondition][#2]
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-25T12:11:22.797440'
+'2025-08-27T16:53:03.524434':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-27T16:53:03.524434'
+'2025-08-27T16:53:12.446012':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    tree_with_state.ads:94:07: medium: precondition might fail, cannot prove Is_A_Valid_Tree_Node
+    (N) [possible fix: subprogram at line 93 should mention Tree_With_State.Tree_Store
+    in a precondition][#0]
+
+    tree_with_state.ads:117:14: medium: range check might fail [reason for check:
+    slice bounds must fit in the underlying array] [possible fix: subprogram at line
+    99 should mention Except and Tree_After in a precondition][#1]
+
+    tree_with_state.ads:119:14: medium: range check might fail [reason for check:
+    slice bounds must fit in the underlying array] [possible fix: subprogram at line
+    99 should mention Except and Tree_After in a precondition][#2]
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-27T16:53:12.446012'
+'2025-08-27T16:57:37.000589':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    tree_with_state.ads:97:39: error: "N" is undefined
+
+    gnatprove: error during generation of Global contracts
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-27T16:57:37.000589'
+'2025-08-27T16:58:58.467778':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    tree_with_state.ads:116:14: medium: range check might fail [reason for check:
+    slice bounds must fit in the underlying array] [possible fix: subprogram at line
+    98 should mention Except and Tree_After in a precondition][#0]
+
+    tree_with_state.ads:118:14: medium: range check might fail [reason for check:
+    slice bounds must fit in the underlying array] [possible fix: subprogram at line
+    98 should mention Except and Tree_After in a precondition][#1]
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-27T16:58:58.467778'
+'2025-08-27T17:02:24.763694':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    tree_with_state.ads:116:14: medium: range check might fail [reason for check:
+    slice bounds must fit in the underlying array] [possible fix: precondition of
+    subprogram at line 98 should mention Tree_After][#0]
+
+    tree_with_state.ads:118:14: medium: range check might fail [reason for check:
+    slice bounds must fit in the underlying array] [possible fix: precondition of
+    subprogram at line 98 should mention Tree_After][#1]
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-27T17:02:24.763694'
+'2025-08-27T17:07:06.774878':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-27T17:07:06.774878'
+'2025-08-30T16:05:46.917063':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    basic_tree.adb:144:13: error: not fully conformant with declaration at basic_tree.ads:67
+
+    basic_tree.adb:144:13: error: return type does not match
+
+    gnatprove: error during generation of Global contracts
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T16:05:46.917063'
+'2025-08-30T16:07:01.849633':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T16:07:01.849633'
+'2025-08-30T16:07:11.539987':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    tree_with_state.ads:98:13: medium: precondition might fail, cannot prove not (Is_Empty_Tree)[#0]
+
+    tree_with_state.ads:111:07: medium: precondition might fail, cannot prove not
+    (Is_Empty_Tree) [possible fix: subprogram at line 110 should mention Tree_With_State.Tree_Store
+    in a precondition][#2]
+
+    tree_with_state.ads:111:25: medium: precondition might fail, cannot prove not
+    (Is_Empty_Tree) [possible fix: subprogram at line 110 should mention Tree_With_State.Tree_Store
+    in a precondition][#1]
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T16:07:11.539987'
+'2025-08-30T16:07:59.963435':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    tree_with_state.adb:66:13: error: not fully conformant with declaration at tree_with_state.ads:96
+
+    tree_with_state.adb:66:13: error: type of "N" does not match
+
+    gnatprove: error during generation of Global contracts
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T16:07:59.963435'
+'2025-08-30T16:08:42.447415':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    tree_with_state.ads:98:13: medium: precondition might fail, cannot prove not (Is_Empty_Tree)[#2]
+
+    tree_with_state.ads:111:07: medium: precondition might fail, cannot prove not
+    (Is_Empty_Tree) [possible fix: subprogram at line 110 should mention Tree_With_State.Tree_Store
+    in a precondition][#1]
+
+    tree_with_state.ads:111:25: medium: precondition might fail, cannot prove not
+    (Is_Empty_Tree) [possible fix: subprogram at line 110 should mention Tree_With_State.Tree_Store
+    in a precondition][#0]
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T16:08:42.447415'
+'2025-08-30T16:11:17.387957':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    tree_with_state.ads:98:35: medium: precondition might fail, cannot prove not (Is_Empty_Tree)
+    [possible fix: use "and then" instead of "and" in precondition][#2]
+
+    tree_with_state.ads:111:07: medium: precondition might fail, cannot prove not
+    (Is_Empty_Tree) [possible fix: subprogram at line 110 should mention Tree_With_State.Tree_Store
+    in a precondition][#1]
+
+    tree_with_state.ads:111:25: medium: precondition might fail, cannot prove not
+    (Is_Empty_Tree) [possible fix: subprogram at line 110 should mention Tree_With_State.Tree_Store
+    in a precondition][#0]
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T16:11:17.387957'
+'2025-08-30T16:11:44.903891':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    tree_with_state.ads:111:07: medium: precondition might fail, cannot prove not
+    (Is_Empty_Tree) [possible fix: subprogram at line 110 should mention Tree_With_State.Tree_Store
+    in a precondition][#1]
+
+    tree_with_state.ads:111:25: medium: precondition might fail, cannot prove not
+    (Is_Empty_Tree) [possible fix: subprogram at line 110 should mention Tree_With_State.Tree_Store
+    in a precondition][#0]
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T16:11:44.903891'
+'2025-08-30T16:12:30.837418':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    tree_with_state.ads:201:50: medium: precondition might fail, cannot prove not
+    (Is_Empty_Tree)[#0]
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T16:12:30.837418'
+'2025-08-30T16:22:52.446911':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T16:22:52.446911'
+'2025-08-30T16:23:01.449759':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    tree_with_state.ads:202:53: medium: precondition might fail, cannot prove not
+    (Is_Empty_Tree)[#0]
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T16:23:01.449759'
+'2025-08-30T16:30:52.099945':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T16:30:52.099945'
+'2025-08-30T16:31:00.158424':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    tree_with_state.ads:103:16: medium: precondition might fail, cannot prove not
+    (Is_Empty_Tree)[#0]
+
+    tree_with_state.ads:111:07: medium: precondition might fail, cannot prove Is_A_Valid_Tree_Node
+    (N)[#1]
+
+    tree_with_state.ads:202:53: medium: precondition might fail, cannot prove not
+    (Is_Empty_Tree)[#2]
+
+    tree_with_state.ads:219:66: medium: range check might fail [reason for check:
+    input value must fit in parameter type][#3]
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T16:31:00.158424'
+'2025-08-30T16:31:59.587542':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T16:31:59.587542'
+'2025-08-30T16:32:06.258119':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    tree_with_state.ads:201:53: medium: precondition might fail, cannot prove not
+    (Is_Empty_Tree)[#0]
+
+    tree_with_state.ads:218:66: medium: range check might fail [reason for check:
+    input value must fit in parameter type][#1]
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T16:32:06.258119'
+'2025-08-30T16:32:37.990521':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    tree_with_state.ads:110:25: medium: precondition might fail, cannot prove not
+    (Is_Empty_Tree) [possible fix: subprogram at line 109 should mention Tree_With_State.Tree_Store
+    in a precondition][#0]
+
+    tree_with_state.ads:217:66: medium: range check might fail [reason for check:
+    input value must fit in parameter type][#1]
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T16:32:37.990521'
+'2025-08-30T16:48:01.783023':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    tree_with_state.adb:21:04: error: not subtype conformant with declaration at basic_tree.ads:67,
+    instance at line 5
+
+    tree_with_state.adb:21:04: error: return type does not match
+
+    tree_with_state.adb:21:13: error: not fully conformant with declaration at tree_with_state.ads:34
+
+    tree_with_state.adb:21:13: error: return type does not match
+
+    gnatprove: error during generation of Global contracts
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T16:48:01.783023'
+'2025-08-30T16:48:26.106745':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    basic_tree.adb:2:14: warning: generic compilation unit is not analyzed
+
+    basic_tree.adb:2:14: warning: only instantiations of the generic will be analyzed
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T16:48:26.106745'
+'2025-08-30T16:49:08.016486':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    tree_with_state.adb:21:04: error: not subtype conformant with declaration at basic_tree.ads:67,
+    instance at line 5
+
+    tree_with_state.adb:21:04: error: return type does not match
+
+    gnatprove: error during generation of Global contracts
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T16:49:08.016486'
+'2025-08-30T16:51:11.422904':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    basic_tree.adb:144:13: error: not fully conformant with declaration at basic_tree.ads:67
+
+    basic_tree.adb:144:13: error: return type does not match
+
+    gnatprove: error during generation of Global contracts
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T16:51:11.422904'
+'2025-08-30T16:51:40.230981':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T16:51:40.230981'
+'2025-08-30T16:51:47.804650':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    tree_with_state.ads:109:25: medium: range check might fail [reason for check:
+    input value must fit in parameter type] [possible fix: subprogram at line 108
+    should mention Tree_With_State.Tree_Store in a precondition][#0]
+
+    tree_with_state.ads:216:66: medium: range check might fail [reason for check:
+    input value must fit in parameter type][#1]
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T16:51:47.804650'
+'2025-08-30T16:53:29.008472':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    tree_with_state.adb:66:13: error: not fully conformant with declaration at tree_with_state.ads:95
+
+    tree_with_state.adb:66:13: error: type of "N" does not match
+
+    tree_with_state.adb:74:13: error: not fully conformant with declaration at tree_with_state.ads:99
+
+    tree_with_state.adb:74:13: error: type of "N" does not match
+
+    gnatprove: error during generation of Global contracts
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T16:53:29.008472'
+'2025-08-30T16:56:52.903779':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T16:56:52.903779'
+'2025-08-30T16:57:02.943579':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T16:57:02.943579'
+'2025-08-30T16:57:23.222363':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T16:57:23.222363'
+'2025-08-30T16:57:31.643648':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T16:57:31.643648'
+'2025-08-30T17:02:23.531993':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T17:02:23.531993'
+'2025-08-30T17:49:46.811814':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    basic_tree.adb:2:14: warning: generic compilation unit is not analyzed
+
+    basic_tree.adb:2:14: warning: only instantiations of the generic will be analyzed
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T17:49:46.811814'
+'2025-08-30T17:50:03.522914':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T17:50:03.522914'
+'2025-08-30T17:50:14.097397':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T17:50:14.097397'
+'2025-08-30T18:17:46.764869':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    basic_tree.adb:2:14: warning: generic compilation unit is not analyzed
+
+    basic_tree.adb:2:14: warning: only instantiations of the generic will be analyzed
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T18:17:46.764869'
+'2025-08-30T18:19:00.662428':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T18:19:00.662428'
+'2025-08-30T18:19:07.995991':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T18:19:07.995991'
+'2025-08-30T18:23:08.472564':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    tree_with_state.ads:11:28: high: "Tree_With_State.Tree_Store" must be mentioned
+    as an input of the Initializes aspect of "Tree_With_State" (SPARK RM 7.1.5(11))[#0]
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T18:23:08.472564'
+'2025-08-30T18:24:10.791973':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    tree_with_state.ads:10:01: error: aspect identifier expected
+
+    gnatprove: error during generation of Global contracts
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-30T18:24:10.791973'

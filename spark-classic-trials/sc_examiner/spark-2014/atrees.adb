@@ -155,6 +155,7 @@ is
            (N      => Node,
             Branch => Set_Node);
       end if;
+      Tree.Toggle := not Tree.Toggle;
    end Set_Branch;
    pragma Inline (Set_Branch);
 
@@ -265,6 +266,7 @@ is
          --  The root now becomes the left child.
          Sub_Root := Left_Child;
       end if;
+      Tree.Toggle := not Tree.Toggle;
    end Skew;
 
    procedure Split (Sub_Root : in out Atree_Node;
@@ -311,7 +313,8 @@ is
          --  Increment the level of the new root.
          Tree_Abs.Set_Level (Sub_Root,
                              Tree_Abs.Level (Sub_Root) + 1);
-     end if;
+      end if;
+      Tree.Toggle := not Tree.Toggle;
    end Split;
 
    procedure Rebalance (Sub_Root : in out Atree_Node;
@@ -429,6 +432,7 @@ is
    begin
       Tree.Root      := Empty_Node;
       Tree.Count     := 0;
+      Tree.Toggle    := False;
    end New_A_Tree;
 
    ------------
@@ -447,6 +451,7 @@ is
       Current_Node   : Atree_Node;
        --  A Child of the Current Node.
       Child          : Atree_Node;
+      Subroot        : Atree_Node;
    begin
       if not Populated (Tree) then
          --  First node of tree - Enter a new node with level 1 into the store
@@ -480,7 +485,9 @@ is
                         Node       => Current_Node,
                         Set_Node   => Child,
                         Tree       => Tree);
-            Rebalance (Tree.Root, Tree, Visited);
+            Subroot := Tree.Root;
+            Rebalance (Subroot, Tree, Visited);
+            Tree.Root := Subroot;
          end if;
       end if;
    end Insert;
@@ -503,6 +510,7 @@ is
       Current_Node   : Atree_Node;
        --  A Child of the Current Node.
       Child          : Atree_Node;
+      Subroot        : Atree_Node;
    begin
       if not Populated (Tree) then
          --  First node of tree - Enter a new node with level 1 into the store
@@ -542,22 +550,29 @@ is
                         Set_Node   => Child,
                         Tree       => Tree);
             Value_At_Node := Insert_Value;
-           Rebalance (Tree.Root, Tree, Visited);
+            Subroot := Tree.Root;
+            Rebalance (Subroot, Tree, Visited);
+            Tree.Root := Subroot;
          end if;
       end if;
    end Insert_With_Value;
 
-   ------------------
-   -- Clear_A_Tree --
-   ------------------
+   -------------------------------
+   -- Last_Underlying_Tree_Node --
+   -------------------------------
 
-   procedure Clear_Underlying_Tree_From (Tree : in out A_Tree)
+   function Last_Underlying_Tree_Node (Dummy : Atree_Node) return Atree_Node is
+      (Tree_Abs.Last_Node_In_Tree (Dummy));
+
+   -------------------------------------
+   -- Clear_Underlying_Tree_From_Node --
+   -------------------------------------
+
+   procedure Clear_Underlying_Tree_From_Node (Node : in out Atree_Node)
    is
    begin
-      Tree_Abs.Clear_Tree_Below_Node (Tree.Root);
-      Tree.Root := Empty_Node;
-      Tree.Count := 0;
-   end Clear_Underlying_Tree_From;
+      Tree_Abs.Clear_Tree_Below_Node (Node);
+   end Clear_Underlying_Tree_From_Node;
 
 
    procedure Next_Node (E : in out Enumerator; Node : out Atree_Node) is
