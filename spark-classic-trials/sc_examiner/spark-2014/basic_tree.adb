@@ -28,12 +28,23 @@ is
 
    function Is_Empty_Tree return Boolean is (Gnat_Table.Is_Empty (T));
 
+   ------------------------
+   -- First_Node_In_Tree --
+   ------------------------
+
+   function First_Node_In_Tree return Tree_Node is
+     (if not Gnat_Table.Is_Empty (T) then
+           Gnat_Table.First
+      else
+         Empty_Node);
+
    --------------------------
    -- Is_A_Valid_Tree_Node --
    --------------------------
 
    function Is_A_Valid_Tree_Node (N : Tree_Node) return Boolean is
-      (N in Valid_Tree_Node and N <= Gnat_Table.Last (T));
+     (not Gnat_Table.Is_Empty (T) and then
+      N in Valid_Tree_Node and then N <= Gnat_Table.Last (T));
 
    ------------
    -- In_Tree --
@@ -41,11 +52,7 @@ is
 
 
    function In_Tree (N : Tree_Node) return Boolean is
-      Result : Boolean;
-   begin
-      Result := Is_A_Valid_Tree_Node (N);
-      return Result;
-   end In_Tree;
+     (Is_A_Valid_Tree_Node (N));
 
     -----------
    -- Level --
@@ -134,7 +141,7 @@ is
    begin
       Gnat_Table.Append (T, Null_Actual_Node);
       N := Gnat_Table.Last (T);
-      T.Table (N) := Null_Actual_Node'Update (Key => The_Key);
+      T.Table (N).Key := The_Key;
    end Add_Node;
 
    -----------------------
@@ -152,7 +159,7 @@ is
    -- Clear_Tree_Below_Node --
    --------------------------
 
-   procedure Clear_Tree_Below_Node (N : Tree_Node) is
+   procedure Clear_Tree_Below_Node (N : Valid_Tree_Node) is
    begin
       if N /= Empty_Node then
          Gnat_Table.Set_Last (T, N);

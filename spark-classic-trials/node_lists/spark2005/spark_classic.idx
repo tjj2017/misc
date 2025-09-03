@@ -1,4 +1,0 @@
-types                        specification is in types.ads
-spark_classic                specification is in spark_classic.ads
-spark_classic.trees  specification is in spark_classic-trees.sss
-spark_classic.bounded_stacks specification is in spark_classic-bounded_stacks.sss

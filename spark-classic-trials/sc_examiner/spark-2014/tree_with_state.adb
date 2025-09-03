@@ -60,7 +60,7 @@ is
    procedure Add_Node  (N : out Valid_Tree_Node; The_Key : Key_Type) renames
      Tree.Add_Node;
 
-   procedure Clear_Tree_Below_Node (N : Tree_Node) renames
+   procedure Clear_Tree_Below_Node (N : Valid_Tree_Node) renames
      Tree.Clear_Tree_Below_Node;
 
    function Node_Contents (N : Tree_Node) return Node_Abstraction is

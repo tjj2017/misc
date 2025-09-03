@@ -1,22 +1,11 @@
---------------------------------- Tree_With_State ------------------------------
---  This package is a stateless abstraction providing basic operations on   --
---  an underlying tree.  The body of this package must be excluded from SPARK--
---  analysis because of the hidden state.  The stateless view of the        --
---  package overcomes limitations of the 2021 SPARK-2012 examiner handling  --
---  state_abstraction in generic packages and the inability to "hide"       --
---  private pointer types.                                                  --
---  For practical SPARK analysis a version of this package with an explicit --
---  abstract state is required.  The intention is to define an equvalent    --
---  package, the declaration of which has the explicit abstract state named --
---  and its body is "hidden" package body (SPARK_Mode => Off) and has an    --
---  instantiation of this generic package. The individual subprograms of    --
---  instatiated package are renamed to form the bodies of the subprograms   --
---  declared in the package with explicit abstract state.                   --
---                                                                          --
---  To assist in writing the package declaration of the package with the    --
---  explicit abstract state, the package declaration of this generic package--
---  contains the abstract state declaration and the global, pre and post    --
---  definitions using the abstract state provided but commented out.        --
+--------------------------------- Tree_With_State ----------------------------
+--  This package is a template for a basic tree in which the abstract state --
+--  of the package represents the nodes of the tree maintained by the       --
+--  package.  The package utilises the generic package, Basic_Tree,         --
+--  instantiated within the "hidden" (SPARK_Mode => Off) body of this       --
+--  package.                                                                --
+--  For practical SPARK analysis, this package has an explicit              --
+--  abstract state, Tree_Store, declared.
 --                                                                          --
 --  Nodes are added to the tree using Add_Node and each node added has a    --
 --  monotonically increased value to the previous node added.                --
@@ -32,14 +21,12 @@
 --  Both Key and Value need to have a null value provided.                  --
 --  The values of these fields are set and interrogated by the subprograms  --
 --  declared below.                                                         --
---  Procedure Init should be called prior to using the tree structure.      --
+--  Procedure Init should be called prior to using the tree structure to    --
+--  set the tree to Not_Empty_Tree.                                         --
 ------------------------------------------------------------------------------
-pragma Ada_2022;
+pragma Ada_2022;  --  Needed for the quantified expression.
 with Specific_Tree_Types;
-use type Specific_Tree_Types.Tree_Node,
-    Specific_Tree_Types.Level_Type,
-    Specific_Tree_Types.Key_Type,
-    Specific_Tree_Types.Value_Type;
+use type Specific_Tree_Types.Tree_Node;
 package Tree_With_State with
 SPARK_Mode,
   Abstract_State => Tree_Store
@@ -191,6 +178,7 @@ is
      Global => (In_Out => Tree_Store),
      Pre    => not Is_Empty_Tree,
      Post   => Left (N) = Branch and In_Tree (N)  and
+               Last_Node_In_Tree'Old = Last_Node_In_Tree and
                Preserved_Between (Tree_Before => Tree_Contents'Old,
                                   Tree_After  => Tree_Contents,
                                   Except      => Empty_Node) and
@@ -201,6 +189,7 @@ is
      Global => (In_Out => Tree_Store),
      Pre    => not Is_Empty_Tree,
      Post   => Right (N) = Branch and In_Tree (N)  and
+               Last_Node_In_Tree'Old = Last_Node_In_Tree and
                Preserved_Between (Tree_Before => Tree_Contents'Old,
                                   Tree_After  => Tree_Contents,
                                   Except      => Empty_Node) and
@@ -211,6 +200,7 @@ is
      Global => (In_Out => Tree_Store),
      Pre    => not Is_Empty_Tree,
      Post   => Key (N) = The_Key and In_Tree (N) and
+               Last_Node_In_Tree'Old = Last_Node_In_Tree and
                Preserved_Between (Tree_Before => Tree_Contents'Old,
                                   Tree_After  => Tree_Contents,
                                   Except      => N) and
@@ -221,6 +211,7 @@ is
      Global => (In_Out => Tree_Store),
      Pre    => not Is_Empty_Tree,
      Post   => Value (N) = Node_Value and In_Tree (N) and
+               Last_Node_In_Tree'Old = Last_Node_In_Tree and
                Preserved_Between (Tree_Before => Tree_Contents'Old,
                                   Tree_After  => Tree_Contents,
                                   Except      => N) and
@@ -231,6 +222,7 @@ is
      Global => (In_Out => Tree_Store),
      Post   => not Is_Empty_Tree and
                Key (N) = The_Key and In_Tree (N) and
+               Last_Node_In_Tree = Last_Node_In_Tree'Old + 1 and
                Preserved_Between (Tree_Before => Tree_Contents'Old,
                                   Tree_After
                                   => Tree_Contents_To (Last_Node_In_Tree),
@@ -238,7 +230,7 @@ is
               Tree_Contents (N) =
                  Null_Node_Abstraction'Update (Key => The_Key);
 
-   procedure Clear_Tree_Below_Node (N : Tree_Node) with
+   procedure Clear_Tree_Below_Node (N : Valid_Tree_Node) with
      Global => (In_Out => Tree_Store),
      Pre  => not Is_Empty_Tree and then Is_A_Valid_Tree_Node (N),
      Post => not Is_Empty_Tree and

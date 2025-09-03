@@ -60,7 +60,7 @@ is
      --  Global => Tree_Store,
      Inline;
 
-   function First_Node_In_Tree return Tree_Node is (Valid_Tree_Node'First) with
+   function First_Node_In_Tree return Tree_Node with
      --  Global => Tree_Store,
      Inline;
 
@@ -249,7 +249,7 @@ is
            --      Null_Node_Abstraction'Update (Key => The_Key);
      Inline;
 
-   procedure Clear_Tree_Below_Node (N : Tree_Node) with
+   procedure Clear_Tree_Below_Node (N : Valid_Tree_Node) with
      --  Global => (In_Out => Tree_Store),
      Pre  => not Is_Empty_Tree and then Is_A_Valid_Tree_Node (N),
      Post => not Is_Empty_Tree and

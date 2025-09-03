@@ -1474,3 +1474,103 @@
     '
   output_parser: GNATprove_Parser
   timestamp: '2025-08-30T18:24:10.791973'
+'2025-08-31T17:52:38.258569':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    tree_with_state.ads:27:19: error: compilation unit expected
+
+    tree_with_state.ads:28:01: error: misplaced "with"
+
+    gnatprove: error during generation of Global contracts
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-31T17:52:38.258569'
+'2025-08-31T17:53:05.954588':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-31T17:53:05.954588'
+'2025-08-31T17:53:12.864832':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-08-31T17:53:12.864832'
+'2025-09-03T11:17:25.075936':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-09-03T11:17:25.075936'
+'2025-09-03T11:17:34.667139':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-09-03T11:17:34.667139'
+'2025-09-03T15:36:58.949465':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-09-03T15:36:58.949465'
+'2025-09-03T15:37:08.237214':
+  category: GNATprove
+  files:
+  - /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    Summary logged in /home/spark/spark_classic/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-09-03T15:37:08.237214'
