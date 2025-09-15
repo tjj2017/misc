@@ -14,7 +14,6 @@
 --  A customised version of this template could appear at library level     --
 --  possibly as a child of another package or it could be embedded.         --
 ------------------------------------------------------------------------------
-pragma SPARK_Mode (On);
 with GNAT.Dynamic_Tables;
 package SPARK_2014.Dynamic_Tables with
    Abstract_State => The_Table

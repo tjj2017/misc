@@ -33,14 +33,30 @@
 --  Procedure Init should be called to initialise the underlying tree used  --
 --  to store the A_Tree objects.                                            --
 ------------------------------------------------------------------------------
+with Specific_Tree_Types;
 with Tree_With_State;
 with Bounded_Stacks;
-generic
-   type Atree_Node is  range <>;
-   type Key_Type is (<>);
-   type Value_Type is private;
-   Null_Key : Key_Type;
-   Null_Value : Value_Type;
+use type Specific_Tree_Types.Tree_Node;
+
+package Atrees_With_State
+with SPARK_Mode,
+     Abstract_State => Atree_Store
+is
+   package Withed_Tree_Types renames Specific_Tree_Types;
+
+   subtype Tree_Node is Withed_Tree_Types.Tree_Node;   --  type range <>;
+   subtype Level_Type is Withed_Tree_Types.Level_Type; --  type range <>;
+   subtype Key_Type is Withed_Tree_Types.Key_Type;     --  type (<>);
+   subtype Value_Type is Withed_Tree_Types.Value_Type; --  type private
+   Null_Key : constant Key_Type := Withed_Tree_Types.Null_Key;
+   Null_Value : constant Value_Type := Withed_Tree_Types.Null_Value;
+
+   --  Valid_Tree_Node must exclude the Empty_Node, i.e.
+   --  range Tree_Node'First + 1 .. Tree_Node'Last.
+   subtype Valid_Tree_Node is Tree_Node range
+     Tree_Node'First + 1 .. Tree_Node'Last;
+   --  Empty_Node must equal Tree_Node'First
+   Empty_Node : constant Tree_Node := Tree_Node'First;
 
    --  The Stack_Size must be large enough to traverse the tree without
    --  overflow.
@@ -51,17 +67,7 @@ generic
    --  K = Log2 (N + 1) - 1.
    Stack_Size : Positive;
 
-package Atrees_With_State
-with SPARK_Mode,
-     Abstract_State => Atree_Store
-is
    function Empty_Tree return Boolean with
-     Global => Atree_Store;
-
-   function Populated return Boolean with
-     Global => Atree_Store;
-
-   function Count return Natural with
      Global => Atree_Store;
 
    function Tree_Depth return Natural with
@@ -80,52 +86,45 @@ is
 
    procedure Insert (Key       : Key_Type;
                      Inserted  : out Boolean) with
-     Global => Atree_Store,
-     Pre    => Count < Natural'Last,
+     Global => (In_Out => Atree_Store),
      Post   => Is_Present (Key) and
-             (if not Populated (Tree'Old) then
-                Count (Tree) = 1
-              elsif Inserted then
-                Count (Tree) = Count (Tree'Old) + 1
-               else
-                Count (Tree) = Count (Tree'Old));
+               (Inserted = not Is_Present (Key)'Old);
 
-   procedure Insert_With_Value (Tree          : in out A_Tree;
-                                Key           : Key_Type;
+   pragma Unevaluated_Use_Of_Old (Allow);
+   procedure Insert_With_Value (Key           : Key_Type;
                                 Insert_Value  : Value_Type;
                                 Inserted      : out Boolean;
-                                Value_At_Node : out Value_Type)
-     with Pre  => Count (Tree) < Natural'Last,
-     Post => Is_Present (Tree, Key) and
-             (if Inserted then Value (Tree, Key) = Insert_Value) and
-             (if not Populated (Tree'Old) then
-                Count (Tree) = 1
-                  elsif Inserted then
-                     Count (Tree) = Count (Tree'Old) + 1
-                   else
-                  Count (Tree) = Count (Tree'Old));
+                                Value_At_Node : out Value_Type) with
+     Global => (In_Out => Atree_Store),
+     Post => Is_Present (Key) and
+             Inserted = not Is_Present (Key)'Old and
+             (if Inserted then
+                 Value (Key) = Insert_Value and
+                 Value_At_Node = Insert_Value
+              else
+                  Value (Key) = Value (Key)'Old and
+                  Value_At_Node = Value (Key));
 
-   --  *** The following subprograms should be used with care. ***
-   --  *** They operate on the underlying tree structure and   ***
-   --  *** are not A_Tree object aware.                        ***
+   procedure Update_Value (Key : Key_Type; New_Value : Value_Type) with
+     Global => (In_Out => Atree_Store),
+     Pre  => Is_Present (Key),
+     Post => Value (Key) = New_Value;
 
-   function Last_Underlying_Tree_Node (Dummy : Atree_Node) return Atree_Node;
-   --  Returns the last used node in the underlying tree. Each successful
-   --  insertion (subprogram Insert parameter Inserted = True) creates a
-   --  new node in the underlying tree. The Last_Underlying_Tree_Node will
-   --  be the one created from the last successful Insert.
+   function Last_Node_In_Tree return Tree_Node with
+     Global => ATree_Store;
 
-   procedure Clear_Underlying_Tree_From_Node (Node : in out Atree_Node);
+   procedure Clear_Tree_Below_Node (Node : Valid_Tree_Node) with
+     Global => (In_Out => Atree_Store);
    --  Removes all nodes below the given Node from the underlying tree.
-   --  This will invalidate all A_Tree objects
 
    --  *************************************************************
 
    ------------ Enumerators for Atree depth first traversal ---------------
    type Enumerator is private;
 
-   function New_Enumerator (ATree : A_Tree) return Enumerator
-     with Pre => Populated (ATree);
+   function New_Enumerator return Enumerator with
+     Global => Atree_Store,
+     Pre => not Empty_Tree;
 
    procedure Next_Key (E : in out Enumerator; Key : out Key_Type);
 
@@ -134,8 +133,6 @@ is
                                  Its_Value : out Value_Type);
 
 private
-   Empty_Node : constant Atree_Node := Atree_Node'First;
-
    package Bounded_Stack is new
      Bounded_Stacks (Atree_Node, Stack_Size);
 
@@ -144,13 +141,6 @@ private
          ATree   : A_Tree;
          --  A stack to record visited nodes when enumerating.
          Visited : Bounded_Stack.Stack;
-      end record;
-
-   type A_Tree is
-      record
-         Root      : Atree_Node;
-         Count     : Natural;
-         Toggle    : Boolean;
       end record;
 
    type Direction is (Left, Right);
