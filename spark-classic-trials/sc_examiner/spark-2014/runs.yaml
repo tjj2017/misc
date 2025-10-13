@@ -1574,3 +1574,136 @@
     '
   output_parser: GNATprove_Parser
   timestamp: '2025-09-03T15:37:08.237214'
+'2025-09-18T09:55:11.558864':
+  category: GNATprove
+  files:
+  - /home/trevorj/asvat/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    atrees_with_state.adb:4:28: error: "Tree" is undefined
+
+    atrees_with_state.adb:4:28: error: possible misspelling of "True"
+
+    atrees_with_state.adb:4:32: error: missing ";"
+
+    atrees_with_state.ads:42:24: error: state "Atree_Store" requires refinement
+
+    gnatprove: error during generation of Global contracts
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-09-18T09:55:11.558864'
+'2025-09-29T16:35:19.857651':
+  category: GNATprove
+  files:
+  - /home/trevorj/asvat/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    Summary logged in /home/trevorj/asvat/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-09-29T16:35:19.857651'
+'2025-09-29T16:35:35.710653':
+  category: GNATprove
+  files:
+  - /home/trevorj/asvat/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    Summary logged in /home/trevorj/asvat/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-09-29T16:35:35.710653'
+'2025-10-04T12:52:54.359987':
+  category: GNATprove
+  files:
+  - /home/trevorj/asvat/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    atrees_with_state.adb:3:14: error: missing body for "Get_Key" declared at atrees_with_state.ads:136
+
+    atrees_with_state.adb:9:06: error: aspect "Global" should be "Refined_Global"
+
+    atrees_with_state.adb:10:06: error: aspect specification must appear on initial
+    declaration
+
+    atrees_with_state.adb:11:06: error: aspect "Post" should be "Refined_Post"
+
+    atrees_with_state.adb:38:23: error: "Tree" is undefined (more references follow)
+
+    atrees_with_state.adb:38:23: error: possible misspelling of "True"
+
+    atrees_with_state.adb:48:10: error: "Push_In_Atree_Node" is undefined
+
+    atrees_with_state.adb:50:25: error: "Tree_Abs" is undefined (more references follow)
+
+    atrees_with_state.adb:57:22: error: "Get_Child" is undefined
+
+    atrees_with_state.adb:63:23: error: "Node_In_Atree" is undefined (more references
+    follow)
+
+    atrees_with_state.adb:64:37: error: "Top_In_Atree_Node" is undefined
+
+    atrees_with_state.ads:32:24: error: state "Atree_Store" requires refinement
+
+    gnatprove: error during generation of Global contracts
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-10-04T12:52:54.359987'
+'2025-10-09T17:50:52.873985':
+  category: GNATprove
+  files:
+  - /home/trevorj/asvat/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: analysis of data and information flow ...
+
+    Summary logged in /home/trevorj/asvat/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-10-09T17:50:52.873985'
+'2025-10-09T17:51:04.177562':
+  category: GNATprove
+  files:
+  - /home/trevorj/asvat/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Basic Prove File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    Phase 2 of 2: flow analysis and proof ...
+
+    Summary logged in /home/trevorj/asvat/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove/gnatprove.out
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-10-09T17:51:04.177562'
+'2025-10-09T19:11:18.462005':
+  category: GNATprove
+  files:
+  - /home/trevorj/asvat/misc/spark-classic-trials/sc_examiner/spark-2014/gnatprove
+  label: Examine Single File
+  output: 'Phase 1 of 2: generation of Global contracts ...
+
+    atrees_with_state.adb:556:26: error: no value supplied for component "Root"
+
+    atrees_with_state.adb:587:17: error: "Tree_Abs" is undefined (more references
+    follow)
+
+    atrees_with_state.ads:32:24: error: state "Tree_Store" requires refinement
+
+    gnatprove: error during generation of Global contracts
+
+    '
+  output_parser: GNATprove_Parser
+  timestamp: '2025-10-09T19:11:18.462005'

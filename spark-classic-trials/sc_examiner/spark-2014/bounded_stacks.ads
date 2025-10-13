@@ -9,35 +9,58 @@ is
 
    subtype Stack_Count is Natural range 0 .. Stack_Size;
 
-   function Count    (S : Stack) return Stack_Count;
-   function Is_Empty (S : Stack) return Boolean is (Count (S) = 0);
+   type Contents_Abstraction is array (1 .. Stack_Size) of Element_Type with
+     Ghost;
+
+   type Stack_Abstraction is
+      record
+         Contents  : Contents_Abstraction;
+         Stack_Top : Stack_Count;
+      end record with
+     Ghost;
+
+   function Stack_Abs (S : Stack) return Stack_Abstraction with
+     Ghost;
+
+   function Count    (S : Stack) return Stack_Count with
+     Post => Count'Result = Stack_Abs (S).Stack_Top;
+
+   function Is_Empty (S : Stack) return Boolean is (Count (S) = 0) with
+   Post => Is_Empty'Result = (Stack_Abs (S).Stack_Top = 0);
    pragma Inline (Is_Empty);
 
    procedure New_Stack (S : out Stack)
      with Post => Is_Empty (S);
 
    procedure Push (S : in out Stack;
-                   Value : Element_Type)
-     with Pre => Count (S) < Stack_Size,
-          Post => not Is_Empty (S) and
-                  Count (S) = Count (S)'Old + 1 and
-                  Top (S) = Value;
+                   Value : Element_Type) with
+     Pre => Count (S) < Stack_Size,
+     Post => not Is_Empty (S) and
+             Count (S) = Count (S)'Old + 1 and
+             Top (S) = Value and
+             Stack_Abs (S).Stack_Top = Stack_Abs (S'Old).Stack_Top + 1 and
+             Stack_Abs (S).Contents (Stack_Abs (S).Stack_Top) = Value;
 
    procedure Pop  (S : in out Stack;
-                   Value : out Element_Type)
-     with Pre => not Is_Empty (S),
-     Post => Count (S) = Count (S)'Old - 1;
+                   Value : out Element_Type) with
+     Pre  => not Is_Empty (S),
+     Post => Count (S) = Count (S)'Old - 1 and
+             Value = Top (S'Old) and
+             Stack_Abs (S).Stack_Top = (Stack_Abs (S'Old).Stack_Top - 1) and
+             Value = Stack_Abs (S'Old).Contents (Stack_Abs (S'Old).Stack_Top);
 
-   function Top (S : Stack) return Element_Type
-     with Pre => not Is_Empty (S);
+   function Top (S : Stack) return Element_Type with
+     Pre  => not Is_Empty (S),
+     Post => Top'Result = Stack_Abs (S).Contents (Stack_Abs (S).Stack_Top);
 
    function Predecessor (S : Stack;
                          Pred_Num : Stack_Count)
-                         return Element_Type
-     with Pre => Pred_Num < Count (S);
+                         return Element_Type with
+     Pre  => Pred_Num < Count (S),
+     Post => Predecessor'Result = Stack_Abs (S).Contents (Pred_Num);
 
-   procedure Clear (S : out Stack)
-     with Post => Is_Empty (S);
+   procedure Clear (S : out Stack) with
+     Post => Is_Empty (S) and Stack_Abs (S).Stack_Top = 0;
 
 private
    subtype Stack_Index is Stack_Count range 1 .. Stack_Count'Last;

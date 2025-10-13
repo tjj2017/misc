@@ -1,5 +1,5 @@
 with Basic_Tree;
-package body Tree_With_State with
+package body Atrees_With_State.Tree_With_State with
 SPARK_Mode => Off
 is
    package Tree is new Basic_Tree
@@ -15,14 +15,11 @@ is
    function Is_A_Valid_Tree_Node (N : Tree_Node) return Boolean renames
      Tree.Is_A_Valid_Tree_Node;
 
-   function Base_Node return Tree_Node renames
-     Tree.Base_Node;
+   function First_Node_In_Tree return Tree_Node renames
+     Tree.First_Node_In_Tree;
 
-   function Last_Node return Tree_Node renames
-     Tree.Last_Node;
-
-   function Root return Tree_Node renames
-     Tree.Root;
+   function Last_Node_In_Tree return Tree_Node renames
+     Tree.Last_Node_In_Tree;
 
    function In_Tree  (N : Tree_Node) return Boolean renames
      Tree.In_Tree;
@@ -44,8 +41,6 @@ is
 
    procedure Init renames
      Tree.Init;
-
-   procedure Set_Root (N : Valid_Tree_Node) renames Tree.Set_Root;
 
    procedure Set_Level (N : Valid_Tree_Node; Node_Level : Level_Type) renames
      Tree.Set_Level;
@@ -80,7 +75,7 @@ is
          Null_Node_Abstraction);
 
    function Tree_Contents_To (N : Tree_Node) return Tree_Abstraction is
-      Result : Tree_Abstraction (Base_Node .. N);
+      Result : Tree_Abstraction (First_Node_In_Tree .. N);
    begin
       for Node in Result'Range loop
          Result (Node) := Node_Contents (Node);
@@ -88,4 +83,4 @@ is
       return Result;
    end Tree_Contents_To;
 
-end Tree_With_State;
+end Atrees_With_State.Tree_With_State;

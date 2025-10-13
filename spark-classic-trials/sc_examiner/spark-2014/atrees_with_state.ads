@@ -1,27 +1,18 @@
 ---------------------------  Atrees_With_State  ------------------------------
---  This package is a stateless abstraction of an Anderson balanced tree    --
---  implementation. The Atree is represented by its collection of           --
---  Atree_Nodes, which are also the embodiment of the state hidden within   --
---  the instantiation of the Tree_Abstraction in the package body of Atrees.--
---  The stateless view of the package overcomes limitations of the          --
---  2021 SPARK-2012 examiner handling state_abstraction in generic packages.--
---  The use of type A_Tree must be restricted.  Although, in principle,     --
---  multiple declarations of A_Tree objects is possible, all the objects    --
---  all use the same hidden state of the underlying Tree_Abstraction.       --
---  It is possible to have multiple A_Trees using the same underlying tree  --
---  object but be aware of the Clear_Underlying_Tree_From_Node subprogram   --
---  as this is not A_Tree object aware and will clear from the given        --
---  Atree root the rest of the underlying tree including any other Atrees   --
---  contained within  the cleared part of the underlying tree.              --
+--  This package implements an Anderson balanced tree. The tree is          --
+--  maintained by the abstract state Tree_Store.  The package acts as a    --
+--  template rather than as a geeric package as SPARK 2014 (at least the    --
+--  2021 community version) does not handle generis with abstrate state     --
+--  correctly.
 --  The intended purpose of the Clear_Underlying_Tree_From_Node is to       --
 --  provide a means for a tree to act like a stack. Nodes can be added to   --
 --  the tree from a certain point and be "popped' off to that same point.   --
 --  The function Last_Underlying_Node is called to identify the point to    --
 --  where the nodes will be "popped" of from.                               --
---  The type Atree_Node, representing the nodes of the tree,                --
---  must have the range 0 .. Maximum_Number_Of_Nodes in the Atree.          --
---  The Maximum_Number_Of_Nodes_In_Tree < Aree_Node'Base'Last.              --
---  Atree_Node'First represents the Empty_Node.                             --
+--  The type Tree_Node, representing the nodes of the tree,                --
+--  must have the range 0 .. Maximum_Number_Of_Nodes in the tree.          --
+--  The Maximum_Number_Of_Nodes_In_Tree < Tree_Node'Base'Last.              --
+--  Tree_Node'First represents the Empty_Node.                             --
 --  Each node of the Tree has 5 fields:                                     --
 --  Left, Right : Tree_Node;   --  the children of the node                 --
 --  Level       : Level_Type;  --  the level of the node in the Tree        --
@@ -30,17 +21,15 @@
 --  Both Key and Value need to have a null value provided.                  --
 --  The values of these fields are set and interrogated by the subprograms  --
 --  declared below.                                                         --
---  Procedure Init should be called to initialise the underlying tree used  --
---  to store the A_Tree objects.                                            --
+--  Procedure Init should be called to initialise the Tree_Store.          --                                     --
 ------------------------------------------------------------------------------
 with Specific_Tree_Types;
-with Tree_With_State;
 with Bounded_Stacks;
 use type Specific_Tree_Types.Tree_Node;
 
 package Atrees_With_State
 with SPARK_Mode,
-     Abstract_State => Atree_Store
+     Abstract_State => Tree_Store
 is
    package Withed_Tree_Types renames Specific_Tree_Types;
 
@@ -68,25 +57,25 @@ is
    Stack_Size : Positive;
 
    function Empty_Tree return Boolean with
-     Global => Atree_Store;
+     Global => Tree_Store;
 
    function Tree_Depth return Natural with
-     Global => Atree_Store,
-     Pre => Populated;
+     Global => Tree_Store,
+     Pre => not Empty_Tree;
 
    function Is_Present (Key : Key_Type) return Boolean with
-     Global => Atree_Store;
+     Global => Tree_Store;
 
    function Value (Key : Key_Type) return Value_Type with
-     Global => Atree_Store;
+     Global => Tree_Store;
 
    procedure Init with
-     Global => (Output => Atree_Store),
+     Global => (Output => Tree_Store),
      Post   => Empty_Tree;
 
    procedure Insert (Key       : Key_Type;
                      Inserted  : out Boolean) with
-     Global => (In_Out => Atree_Store),
+     Global => (In_Out => Tree_Store),
      Post   => Is_Present (Key) and
                (Inserted = not Is_Present (Key)'Old);
 
@@ -95,7 +84,7 @@ is
                                 Insert_Value  : Value_Type;
                                 Inserted      : out Boolean;
                                 Value_At_Node : out Value_Type) with
-     Global => (In_Out => Atree_Store),
+     Global => (In_Out => Tree_Store),
      Post => Is_Present (Key) and
              Inserted = not Is_Present (Key)'Old and
              (if Inserted then
@@ -106,15 +95,15 @@ is
                   Value_At_Node = Value (Key));
 
    procedure Update_Value (Key : Key_Type; New_Value : Value_Type) with
-     Global => (In_Out => Atree_Store),
+     Global => (In_Out => Tree_Store),
      Pre  => Is_Present (Key),
      Post => Value (Key) = New_Value;
 
-   function Last_Node_In_Tree return Tree_Node with
-     Global => ATree_Store;
+   function Last_Node return Tree_Node with
+     Global => Tree_Store;
 
    procedure Clear_Tree_Below_Node (Node : Valid_Tree_Node) with
-     Global => (In_Out => Atree_Store);
+     Global => (In_Out => Tree_Store);
    --  Removes all nodes below the given Node from the underlying tree.
 
    --  *************************************************************
@@ -123,7 +112,7 @@ is
    type Enumerator is private;
 
    function New_Enumerator return Enumerator with
-     Global => Atree_Store,
+     Global => Tree_Store,
      Pre => not Empty_Tree;
 
    procedure Next_Key (E : in out Enumerator; Key : out Key_Type);
@@ -134,15 +123,58 @@ is
 
 private
    package Bounded_Stack is new
-     Bounded_Stacks (Atree_Node, Stack_Size);
+     Bounded_Stacks (Valid_Tree_Node, Stack_Size);
 
-   type Enumerator is
+     type Enumerator is
       record
-         ATree   : A_Tree;
+         Root : Valid_Tree_Node;
          --  A stack to record visited nodes when enumerating.
          Visited : Bounded_Stack.Stack;
       end record;
 
    type Direction is (Left, Right);
 
+   function Get_Key (N : Tree_Node) return Key_Type with
+     Global => Tree_Store,
+     Pre  => N /= Empty_Node;
+
+   procedure Find (Start_Node : Tree_Node;
+                   Key        : Key_Type;
+                   Found      : out Boolean;
+                   Visited    : out Bounded_Stack.Stack) with
+     Global => Tree_Store,
+     Pre  => not Empty_Tree,
+     Post => (if Found then
+                (Get_Key (Bounded_Stack.Top (Visited)) = Key));
+   --  Found is true ony if a node with the given Key is present.
+   --  If Found, the top of the Visited stack is the Tree_Node
+   --  in the tree which contains the Key.
+
+   function Is_Present_From (Start_Node : Tree_Node;
+                             Key        : Key_Type) return Boolean with
+     Global => Tree_Store;
+
+   function Value_From (Start_Node : Tree_Node; Key : Key_Type)
+                        return Value_Type with
+     Global => Tree_Store;
+
+   procedure Insert_Value_From (Start_Node      : in out Tree_Node;
+                                Key             : Key_Type;
+                                Insert_Value    : Value_Type;
+                                Overwrite       : Boolean;
+                                Inserted        : out Boolean;
+                                Insertion_Point : out Tree_Node;
+                                Value_At_Node   : out Value_Type) with
+     Global => (In_Out => Tree_Store),
+     Post   => Is_Present_From (Start_Node, Key) and
+     (Inserted = not Is_Present_From (Start_Node, Key)'Old) and
+     (if Inserted or Overwrite then
+        Insert_Value = Value_From (Start_Node, Key) and
+          Value_At_Node = Insert_Value and
+            Value (Insertion_Point) = Insert_Value
+        else
+          Value_At_Node = Value (Insertion_Point));
+
+   function New_Enumerator_From (Start_Node : Valid_Tree_Node)
+                                 return Enumerator;
 end Atrees_With_State;

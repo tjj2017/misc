@@ -11,7 +11,9 @@ is
       Table_Increment      => 100,
       Release_Threshold    => 0);
 
-      T : Gnat_Table.Instance;
+   T : Gnat_Table.Instance;
+
+   Current_Root : Tree_Node;
 
    ----------
    -- Init --
@@ -20,6 +22,8 @@ is
    procedure Init is
    begin
       Gnat_Table.Init (T);
+      T.Table (Base_Node) := Null_Actual_Node;
+      Current_Root := Base_Node;
    end Init;
 
    -------------------
@@ -28,15 +32,21 @@ is
 
    function Is_Empty_Tree return Boolean is (Gnat_Table.Is_Empty (T));
 
-   ------------------------
-   -- First_Node_In_Tree --
-   ------------------------
+   ---------------
+   -- Base_Node --
+   ---------------
 
-   function First_Node_In_Tree return Tree_Node is
+   function Base_Node return Tree_Node is
      (if not Gnat_Table.Is_Empty (T) then
            Gnat_Table.First
       else
          Empty_Node);
+
+   ----------
+   -- Root --
+   -----------
+
+   function Root return Tree_Node is (Current_Root);
 
    --------------------------
    -- Is_A_Valid_Tree_Node --
@@ -86,6 +96,15 @@ is
 
    function Value (N : Valid_Tree_Node) return Value_Type is
      (T.Table (N).Value);
+
+   --------------
+   -- Set_Root --
+   --------------
+
+ procedure Set_Root (N : Valid_Tree_Node) is
+   begin
+      Current_Root := N;
+   end Set_Root;
 
    ---------------
    -- Set_Level --
@@ -148,7 +167,7 @@ is
    -- Last_Node_In_Tree --
    -----------------------
 
-   function Last_Node_In_Tree return Tree_Node is
+   function Last_Node return Tree_Node is
      (if Is_A_Valid_Tree_Node(Gnat_Table.Last (T))
       then
          Gnat_Table.Last (T)

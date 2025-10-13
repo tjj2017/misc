@@ -60,15 +60,19 @@ is
      --  Global => Tree_Store,
      Inline;
 
-   function First_Node_In_Tree return Tree_Node with
+   function Base_Node return Tree_Node with
      --  Global => Tree_Store,
      Inline;
 
-   function Last_Node_In_Tree return Tree_Node with
+   function Last_Node return Tree_Node with
      --  Global => Tree_Store,
      Inline;
    --  Returns the last node added to the tree - Enpty_Node
    --  if tree is empty.
+
+   function Root return Tree_Node with
+     --  Global Tree_Store;
+     Inline;
 
    function Is_A_Valid_Tree_Node (N : Tree_Node) return Boolean with
      --  Global => Tree_Store,
@@ -172,6 +176,11 @@ is
    --            Tree_After (Except + 1 .. Tree_After'Last)))
    --      with Ghost;
 
+   procedure Set_Root (N : Valid_Tree_Node) with
+     --  Global => (In_Out => Tree_Store),
+     --  Post => Root = N and N in Valid_Tree_Node,
+     Inline;
+
    procedure Set_Level (N : Valid_Tree_Node; Node_Level : Level_Type) with
      --  Global => (In_Out => Tree_Store),
      Pre    => not Is_Empty_Tree,
@@ -253,7 +262,7 @@ is
      --  Global => (In_Out => Tree_Store),
      Pre  => not Is_Empty_Tree and then Is_A_Valid_Tree_Node (N),
      Post => not Is_Empty_Tree and
-             Last_Node_In_Tree = N,
+             Last_Node = N,
          --  and
          --  Tree_Contents'Last = N
          --  Preserved_Between (Tree_Before => Tree_Contents_To (N)'Old,
