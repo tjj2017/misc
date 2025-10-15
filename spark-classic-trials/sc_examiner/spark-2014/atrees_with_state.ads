@@ -127,7 +127,6 @@ private
 
      type Enumerator is
       record
-         Root : Valid_Tree_Node;
          --  A stack to record visited nodes when enumerating.
          Visited : Bounded_Stack.Stack;
       end record;

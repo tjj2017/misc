@@ -10,16 +10,19 @@ is
       Null_Key   => Null_Key,
       Null_Value => Null_Value);
 
-   function Is_Empty_Tree return Boolean renames Tree.Is_Empty_Tree;
+  function Is_Empty_Tree return Boolean renames Tree.Is_Empty_Tree;
 
    function Is_A_Valid_Tree_Node (N : Tree_Node) return Boolean renames
      Tree.Is_A_Valid_Tree_Node;
 
-   function First_Node_In_Tree return Tree_Node renames
-     Tree.First_Node_In_Tree;
+   function Base_Node return Tree_Node renames
+     Tree.Base_Node;
 
-   function Last_Node_In_Tree return Tree_Node renames
-     Tree.Last_Node_In_Tree;
+   function Last_Node return Tree_Node renames
+     Tree.Last_Node;
+
+   function Root return Tree_Node renames
+     Tree.Root;
 
    function In_Tree  (N : Tree_Node) return Boolean renames
      Tree.In_Tree;
@@ -41,6 +44,8 @@ is
 
    procedure Init renames
      Tree.Init;
+
+   procedure Set_Root (N : Valid_Tree_Node) renames Tree.Set_Root;
 
    procedure Set_Level (N : Valid_Tree_Node; Node_Level : Level_Type) renames
      Tree.Set_Level;
@@ -75,7 +80,7 @@ is
          Null_Node_Abstraction);
 
    function Tree_Contents_To (N : Tree_Node) return Tree_Abstraction is
-      Result : Tree_Abstraction (First_Node_In_Tree .. N);
+      Result : Tree_Abstraction (Base_Node .. N);
    begin
       for Node in Result'Range loop
          Result (Node) := Node_Contents (Node);

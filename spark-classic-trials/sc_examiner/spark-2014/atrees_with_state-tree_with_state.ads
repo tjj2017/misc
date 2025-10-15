@@ -24,7 +24,7 @@
 --  Procedure Init should be called prior to using the tree structure to    --
 --  set the tree to Not_Empty_Tree.                                         --
 ------------------------------------------------------------------------------
-pragma Ada_2022;  --  Needed for the quantified expression.
+--  pragma Ada_2022;  --  Needed for the quantified expression.
 with Specific_Tree_Types;
 use type Specific_Tree_Types.Tree_Node;
 private package Atrees_With_State.Tree_With_State with
@@ -50,11 +50,11 @@ is
    function Is_Empty_Tree return Boolean with
      Global => Tree_Store;
 
-   function First_Node_In_Tree return Tree_Node with
+   function Base_Node return Tree_Node with
      Global => Tree_Store,
      Pre => Not Is_Empty_Tree;
 
-   function Last_Node_In_Tree return Tree_Node with
+   function Last_Node return Tree_Node with
      Global => Tree_Store;
    --  Returns the last node added to the tree - Empty_Node
    --  if the tree is empty.
@@ -62,8 +62,10 @@ is
    function Is_A_Valid_Tree_Node (N : Tree_Node) return Boolean with
      Global => Tree_Store,
      Post   => Is_A_Valid_Tree_Node'Result = (N in
-                  Valid_Tree_Node'First .. Last_Node_In_Tree);
+                  Valid_Tree_Node'First .. Last_Node);
 
+   function Root return Tree_Node with
+     Global => Tree_Store;
 
    function In_Tree  (N : Tree_Node) return Boolean with
      Global => Tree_Store,
@@ -129,7 +131,7 @@ is
      Ghost;
 
    function Tree_Contents return Tree_Abstraction is
-     (Tree_Contents_To (Last_Node_In_Tree))
+     (Tree_Contents_To (Last_Node))
       with
          Global => Tree_Store,
          Ghost;
@@ -160,14 +162,18 @@ is
        with Ghost;
 
    procedure Init with
-     global => (Output => Tree_Store),
+     Global => (Output => Tree_Store),
      Post   => Is_Empty_Tree;
+
+   procedure Set_Root (N : Valid_Tree_Node) with
+     Global => (In_Out => Tree_Store),
+     Post => Root = N and Root in Valid_Tree_Node;
 
    procedure Set_Level (N : Valid_Tree_Node; Node_Level : Level_Type) with
      Global => (In_Out => Tree_Store),
      Pre    => not Is_Empty_Tree,
      Post   => Level (N) = Node_Level and In_Tree (N) and
-               Last_Node_In_Tree'Old = Last_Node_In_Tree and
+               Last_Node'Old = Last_Node and
                Preserved_Between (Tree_Before => Tree_Contents'Old,
                                   Tree_After  => Tree_Contents,
                                   Except      => Empty_Node) and
@@ -178,7 +184,7 @@ is
      Global => (In_Out => Tree_Store),
      Pre    => not Is_Empty_Tree,
      Post   => Left (N) = Branch and In_Tree (N)  and
-               Last_Node_In_Tree'Old = Last_Node_In_Tree and
+               Last_Node = Last_Node and
                Preserved_Between (Tree_Before => Tree_Contents'Old,
                                   Tree_After  => Tree_Contents,
                                   Except      => Empty_Node) and
@@ -189,7 +195,7 @@ is
      Global => (In_Out => Tree_Store),
      Pre    => not Is_Empty_Tree,
      Post   => Right (N) = Branch and In_Tree (N)  and
-               Last_Node_In_Tree'Old = Last_Node_In_Tree and
+               Last_Node'Old = Last_Node and
                Preserved_Between (Tree_Before => Tree_Contents'Old,
                                   Tree_After  => Tree_Contents,
                                   Except      => Empty_Node) and
@@ -200,7 +206,7 @@ is
      Global => (In_Out => Tree_Store),
      Pre    => not Is_Empty_Tree,
      Post   => Key (N) = The_Key and In_Tree (N) and
-               Last_Node_In_Tree'Old = Last_Node_In_Tree and
+               Last_Node'Old = Last_Node and
                Preserved_Between (Tree_Before => Tree_Contents'Old,
                                   Tree_After  => Tree_Contents,
                                   Except      => N) and
@@ -211,7 +217,7 @@ is
      Global => (In_Out => Tree_Store),
      Pre    => not Is_Empty_Tree,
      Post   => Value (N) = Node_Value and In_Tree (N) and
-               Last_Node_In_Tree'Old = Last_Node_In_Tree and
+               Last_Node'Old = Last_Node and
                Preserved_Between (Tree_Before => Tree_Contents'Old,
                                   Tree_After  => Tree_Contents,
                                   Except      => N) and
@@ -222,10 +228,10 @@ is
      Global => (In_Out => Tree_Store),
      Post   => not Is_Empty_Tree and
                Key (N) = The_Key and In_Tree (N) and
-               Last_Node_In_Tree = Last_Node_In_Tree'Old + 1 and
+               Last_Node = Last_Node'Old + 1 and
                Preserved_Between (Tree_Before => Tree_Contents'Old,
                                   Tree_After
-                                  => Tree_Contents_To (Last_Node_In_Tree),
+                                  => Tree_Contents_To (Last_Node),
                                   Except      => Empty_Node) and
               Tree_Contents (N) =
                  Null_Node_Abstraction'Update (Key => The_Key);
@@ -234,7 +240,7 @@ is
      Global => (In_Out => Tree_Store),
      Pre  => not Is_Empty_Tree and then Is_A_Valid_Tree_Node (N),
      Post => not Is_Empty_Tree and
-             Last_Node_In_Tree = N and
+             Last_Node = N and
              Tree_Contents'Last = N and
              Preserved_Between (Tree_Before => Tree_Contents_To (N)'Old,
                                 Tree_After  => Tree_Contents,
@@ -244,4 +250,4 @@ is
                                               Right => Empty_Node);
    --  Removes all nodes from the Tree with Tree_Node values > N.
 
-end Atrees_with_state.Tree_With_State;
+end Atrees_With_State.Tree_With_State;

@@ -1,6 +1,8 @@
 pragma Ada_2012;
-with Tree_With_State;
-package body Atrees_With_State is
+with Atrees_With_State.Tree_With_State;
+package body Atrees_With_State with
+Refined_State => (Tree_Store => Tree_With_State.Tree_Store)
+is
 
    --  Local subprograms
    procedure New_Node (Key      : Key_Type;
@@ -53,7 +55,7 @@ package body Atrees_With_State is
    ----------
 
    procedure Skew (Sub_Root   : in out Tree_Node) with
-     Global => (In_Out => Tree_Store),
+     Global => (In_Out => Tree_With_State.Tree_Store),
      Pre  => Sub_Root /= Empty_Node
    is
       Left_Child : Tree_Node;
@@ -86,7 +88,7 @@ package body Atrees_With_State is
    -----------
 
    procedure Split (Sub_Root : in out Tree_Node) with
-     Global => (In_Out => Tree_Store),
+     Global => (In_Out => Tree_With_State.Tree_Store),
      Pre  => Sub_Root /= Empty_Node
    is
       Right_Child       : Tree_Node;
@@ -136,7 +138,7 @@ package body Atrees_With_State is
 
    procedure Rebalance (Sub_Root : in out Tree_Node;
                         Visited  : in out Bounded_Stack.Stack) with
-     Global => (In_Out => Tree_Store),
+     Global => (In_Out => Tree_With_State.Tree_Store),
      Pre  => Sub_Root /= Empty_Node
    is
       Current_Node : Tree_Node;
@@ -417,15 +419,6 @@ package body Atrees_With_State is
       end if;
    end Insert_Value_From;
 
-   function New_Enumerator_From (Start_Node : Valid_Tree_Node)
-                                 return Enumerator
-   is
-      S : Bounded_Stack.Stack;
-   begin
-      Bounded_Stack.New_Stack (S);
-      return (Enumerator'(Root    => Tree_With_State.Root,
-                          Visited => S));
-   end New_Enumerator_From;
 
    --  Visible Interface
 
@@ -545,16 +538,29 @@ package body Atrees_With_State is
       Tree_With_State.Clear_Tree_Below_Node (Node);
    end Clear_Tree_Below_Node;
 
+   -------------------------
+   -- New_Enumerator_From --
+   -------------------------
+
+  function New_Enumerator_From (Start_Node : Valid_Tree_Node)
+                                return Enumerator
+   is
+      S : Bounded_Stack.Stack;
+      E : Enumerator;
+   begin
+      Bounded_Stack.New_Stack (S);
+      Bounded_Stack.Push (S, Start_Node);
+      E := Enumerator'(Visited => S);
+      Trace_To_Left_Leaf (E);
+      return E;
+   end New_Enumerator_From;
+
    --------------------
    -- New_Enumerator --
    --------------------
 
    function New_Enumerator return Enumerator is
-      S : Bounded_Stack.Stack;
-   begin
-      Bounded_Stack.New_Stack (S);
-      return (Enumerator'(Visited => S));
-   end New_Enumerator;
+      (New_Enumerator_From (Tree_With_State.Root));
 
    --------------
    -- Next_Key --
@@ -584,8 +590,8 @@ package body Atrees_With_State is
    begin
       Next_Node (E, Node);
       if Node /= Empty_Node then
-         Key := Tree_Abs.Key (Node);
-         Its_Value := Tree_Abs.Value (Node);
+         Key := Tree_With_State.Key (Node);
+         Its_Value := Tree_With_State.Value (Node);
       else
          Key := Null_Key;
          Its_Value := Null_Value;
