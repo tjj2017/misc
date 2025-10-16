@@ -1,0 +1,51 @@
+with Specific_Tree_Types;
+--# inherit Specific_Tree_Types;
+package Bounded_Stacks is
+   Stack_Size : constant := Specific_Tree_Types.Stack_Size;
+   subtype Element_Type is Specific_Tree_Types.Tree_Node;
+
+   type Stack is private;
+
+   subtype Stack_Count is Natural range 0 .. Stack_Size;
+
+   function Count    (S : Stack) return Stack_Count;
+
+   function Is_Empty (S : Stack) return Boolean;
+   --# return Count (S) = 0;
+
+   function Top (S : Stack) return Element_Type;
+   --# pre not Is_Empty (S);
+
+   function Predecessor (S : Stack;
+                         Pred_Num : Stack_Count)
+                         return Element_Type;
+   --# pre Pred_Num < Count (S);
+
+    procedure New_Stack (S : out Stack);
+   --# post Is_Empty (S);
+
+   procedure Push (S : in out Stack; Value : Element_Type);
+   --# pre Count (S) < Stack_Size;
+   --# post not Is_Empty (S) and
+   --#      Count (S) = Count (S~) + 1 and
+   --#      Top (S) = Value;
+
+   procedure Pop  (S : in out Stack; Value : out Element_Type);
+   --# pre  not Is_Empty (S);
+   --# post Count (S) = Count (S~) - 1 and
+   --#      Value = Top (S~);
+
+   procedure Clear (S : out Stack);
+   --# post Is_Empty (S);
+
+private
+   subtype Stack_Index is Stack_Count range 1 .. Stack_Count'Last;
+   type Stack_Contents is array (Stack_Index) of Element_Type;
+
+   type Stack is
+      record
+         Count    : Stack_Count;
+         Contents : Stack_Contents;
+      end record;
+
+end Bounded_Stacks;
