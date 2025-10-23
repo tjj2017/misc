@@ -12,31 +12,30 @@ package body Bounded_Stacks is
    end Count;
    pragma Inline (Count);
 
-   --------------
-   -- Is_Empty --
-   --------------
+   ---------------
+   -- Not_Empty --
+   ---------------
 
-   function Is_Empty (S : Stack) return Boolean
-   --# return E => (E <-> S.Count = 0);
+   function Not_Empty (S : Stack) return Boolean
    is
    begin
-      return S.Count = 0;
-   end Is_Empty;
+      return Count (S) > Stack_Count'First;
+   end Not_Empty;
 
   ---------
    -- Top --
    ---------
 
    function Top (S : Stack) return Element_Type
-   --# pre (Is_Empty (S) <-> S.Count = 0) and S.Count > 0;
-   --# return T => T = S.Contents (S.Count);
+   --# pre Count (S) > Stack_Count'First;
+   --# return S.Contents (Count (S));
    is
    begin
-      return S.Contents (S.Count);
+      return S.Contents (Count (S));
    end Top;
    pragma Inline (Top);
 
-    procedure New_Stack (S : out Stack)
+   procedure New_Stack (S : out Stack)
   is
    --# hide New_Stack;
    begin
@@ -50,17 +49,14 @@ package body Bounded_Stacks is
    ----------
 
    procedure Push (S : in out Stack; Value : Element_Type)
-   --# pre Count (S) = S.Count and S.Count < Stack_Count'Last;
-   --# post S.Count > 0 and not Is_Empty (S);
+   --# pre S.Count < Stack_Count'Last and Count (S) = S.Count;
+   --# post (Top (S) = S.Contents (Count (S))) and
+   --#      (S.Contents (Count (S)) = Value) and
+   --#      ((S.Count = S~.Count + 1) and (Count (S) = Count (S~) + 1));
    is
    begin
-      --# check Is_Empty (S) <-> S.Count = 0;
       S.Count := S.Count + 1;
-      --# check Is_Empty (S) <-> S.Count = 0;
-      --# check (not Is_Empty (S)) <-> S.Count > 0;
-      --# check S.Count > 0;
-      --# check not Is_Empty (S);
-     S.Contents (S.Count) := Value;
+      S.Contents (Count (S)) := Value;
    end Push;
    pragma Inline (Push);
 
@@ -69,10 +65,10 @@ package body Bounded_Stacks is
    ---------
 
    procedure Pop (S : in out Stack; Value : out Element_Type)
-   --# pre (Is_Empty (S) <-> S.Count = 0) and S.Count > 0 and
-   --#     Count (S) = S.Count;
-   --# post Count (S) = S~.Count - 1 and
-   --#      Value =  Top (S~);
+   --# pre S.Count > Stack_Count'First and Count (S) = S.Count and
+   --#       (Not_Empty (S) -> (S.Count > Stack_Count'First));
+   --# post S.Count = S~.Count - 1 and Count (S) = S.Count and
+   --#      Value = Top (S~);
    is
    begin
       Value := Top (S);

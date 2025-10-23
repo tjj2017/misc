@@ -10,33 +10,32 @@ package Bounded_Stacks is
 
    function Count    (S : Stack) return Stack_Count;
 
-   function Is_Empty (S : Stack) return Boolean;
-   --# return Count (S) = 0;
+   function Not_Empty (S : Stack) return Boolean;
+   --# return Count (S) > Stack_Count'First;
 
    function Top (S : Stack) return Element_Type;
-   --# pre not Is_Empty (S);
+   --# pre Not_Empty (S);
 
    function Predecessor (S : Stack;
                          Pred_Num : Stack_Count)
                          return Element_Type;
-   --# pre Pred_Num < Count (S);
+   --# pre Pred_Num > Stack_Count'First and Pred_Num < Count (S);
 
     procedure New_Stack (S : out Stack);
-   --# post Is_Empty (S);
+   --# post Count (S) = Stack_Count'First;
 
    procedure Push (S : in out Stack; Value : Element_Type);
    --# pre Count (S) < Stack_Size;
-   --# post not Is_Empty (S) and
-   --#      Count (S) = Count (S~) + 1 and
+   --# post Count (S) = Count (S~) + 1 and
    --#      Top (S) = Value;
 
    procedure Pop  (S : in out Stack; Value : out Element_Type);
-   --# pre  not Is_Empty (S);
+   --# pre  Not_Empty (S);
    --# post Count (S) = Count (S~) - 1 and
    --#      Value = Top (S~);
 
    procedure Clear (S : out Stack);
-   --# post Is_Empty (S);
+   --# post Count (S) = Stack_Count'First;
 
 private
    subtype Stack_Index is Stack_Count range 1 .. Stack_Count'Last;
