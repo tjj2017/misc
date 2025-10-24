@@ -33,7 +33,6 @@ package Basic_Tree is
 
    type Tree is limited private;
    type Node_Index is private;
-   type Valid_Node_Index is private;
 
    subtype Node_Index_Range is Specific_Tree_Types.Tree_Node;
    subtype Level_Type is Specific_Tree_Types.Level_Type;
@@ -42,58 +41,57 @@ package Basic_Tree is
    Null_Key : constant Key_Type := Specific_Tree_Types.Null_Key;
    Null_Value : constant Value_Type := Specific_Tree_Types.Null_Value;
    No_Node : constant Node_Index;
+   Empty_Node : constant Specific_Tree_Types.Tree_Node :=
+     Specific_Tree_Types.Tree_Node'First;
 
    procedure Init (T : out Tree);
 
 
-   function Is_Empty_Tree (T : Tree) return Boolean;
+   function Not_Empty_Tree (T : Tree) return Boolean;
+   pragma Inline (Not_Empty_Tree);
 
-   function Base_Node_Index (T : Tree) return Node_Index with
-     Inline;
+   function First_Node_Index_Range (T : Tree) return Node_Index_Range;
+   pragma Inline (First_Node_Index_Range);
+   --  Returns Lowest Node_Index of the Tree.
 
-   function Last_Node_Index (T : Tree) return Node_Index with
-     Inline;
-   --  Returns the last node added to the tree - No_Node
+   function Last_Node_Index_Range (T : Tree) return Node_Index_Range;
+   pragma Inline (Last_Node_Index_Range);
+   --  Returns Index to the last node added to the tree - No_Node
    --  if tree is empty.
 
-   function Root (T : Tree) return Node_Index with
-     Inline;
+   function Root_Index (T : Tree) return Node_Index;
+   pragma Inline (Root_Index);
+   --  Returns the Node_Index of the current root of the tree.
 
-   function Is_A_Valid_Node_Index (T : Tree; N : Node_Index) return Boolean with
-     Inline;
+   function Is_A_Valid_Node_Index (T : Tree; I : Node_Index) return Boolean;
+   --# return V : V -> Not_Empty_Tree (T);
+   pragma Inline (Is_A_Valid_Node_Index);
 
-   function In_Tree  (T : Tree; N : Node_Index) return Boolean with
-     Post   => (if In_Tree'Result then
-                  not Is_Empty_Tree and Is_A_Valid_Tree_Node (N) and
-                  N in Valid_Tree_Node),
-     Inline;
+   function In_Tree  (T : Tree; I : Node_Index) return Boolean;
+   --# return Not_Empty_Tree (T) and Is_A_Valid_Tree_Node (T, I);
+   pragma Inline (Is_A_Valid_Node_Index);
 
-   function Level (N : Valid_Tree_Node) return Level_Type with
-     --  Global => Tree_Store,
-     Pre => not Is_Empty_Tree,
-     Inline;
+   function Level (T : Tree; I : Node_Index) return Level_Type;
+   --# pre Not_Empty_Tree (T) and In_Tree (T, I);
+   pragma Inline (Level);
 
-   function Left  (N : Valid_Tree_Node) return Tree_Node with
-     --  Global => Tree_Store,
-     Pre    => not Is_Empty_Tree,
-     Post   => (if Left'Result /= Empty_Node then
-                  In_Tree (Left'Result)),
-     Inline;
-   function Right (N : Valid_Tree_Node) return Tree_Node with
-     --  Global => Tree_Store,
-     Pre    => not Is_Empty_Tree,
-     Post   => (if  Right'Result/= Empty_Node then
-                  In_Tree (Right'Result)),
-     Inline;
-   function Key (N : Valid_Tree_Node) return Key_Type with
-     --  Global => Tree_Store,
-     Pre    => not Is_Empty_Tree,
-     Inline;
+   function Left  (T : Tree; I : Node_Index) return Node_Index;
+   --# pre Not_Empty_Tree (T) and In_Tree (T, I);
+   --# return C => (C /= Empty_Node) -> In_Tree (T, C);
+   pragma Inline (Left);
 
-   function Value (N : Valid_Tree_Node) return Value_Type with
-     --  Global Tree_Store,
-     Pre => not Is_Empty_Tree,
-     Inline;
+   function Right (T : Tree; I : Node_Index) return Node_Index;
+   --# pre Not_Empty_Tree (T) and In_Tree (T, I);
+   --# return C => (C /= Empty_Node) -> In_Tree (T, C);
+   pragma Inline (Right);
+
+   function Key (T : Tree; I : Node_Index) return Key_Type;
+   --# pre Not_Empty_Tree (T) and In_Tree (T, I);
+   pragma Inline (Key);
+
+   function Value (T : Tree; I : Node_Index) return Value_Type;
+   --# pre Not_Empty_Tree (T) and In_Tree (T, I);
+   pragma Inline (Value);
 
    --  type Node_Abstraction is
    --     record
@@ -159,12 +157,39 @@ package Basic_Tree is
    --            Tree_After (Except + 1 .. Tree_After'Last)))
    --      with Ghost;
 
-   procedure Set_Root (N : Valid_Tree_Node) with
-     --  Global => (In_Out => Tree_Store),
-     --  Post => Root = N and N in Valid_Tree_Node,
-     Inline;
+   --# function To_Node_Index
+   --#    (T : Tree; NR : Node_Index_Range) return Node_Index;
+   --# pre Not_Empty_Tree (T);
+   --# return I => (I /= No_Node) -> In_Tree (T, I);
 
-   procedure Set_Level (N : Valid_Tree_Node; Node_Level : Level_Type) with
+   --# function To_Node_Index_Range
+   --#    (T : Tree; I : Node_Index) return Node_Index_Range;
+   --# pre Not_Empty_Tree (T) and In_Tree (T, I);
+   --# return NR => In_Tree (T, To_Node_Index (T, NR));
+
+   --# function Node_Equivalence
+   --#    (T1, T2 : Tree; I1, I2 : Node_Index) return Boolean;
+   --# return Key (T1, I1) = Key (T2, I2) and Value (T1, I1) = Value (T2, I2);
+
+   --# function Preserved_Between (T1, T2 ; Tree; Except : Node_Index)
+   --#                             return Boolean;
+   --# pre Not_Empty_Tree (T1) and Not_Empty_Tree (T2);
+   --# return First_Node_Index_Range (Pre_Tree) = First_Node_Index_Range (T2) and
+   --#        Last_Node_Index_Range (T1)  = Last_Node_Index_Range (T2)  and
+   --#        ((Except = No_Node) ->
+   --#            (for all NR in Node_Index_Range range
+   --#               First_Node_Index_Range (T1) .. Last_Node_Index_Range (T2)
+   --#                  => Node_Equivalence (T1, T2,
+   --#                       To_Node_Index (T1, NR), To_Node_Index (T2, NR))))
+   --#
+
+   procedure Set_Root_Index (T : Tree; I : Node_Index);
+   --# Not_Empty_Tree (T) and In_Tree (T, I);
+   --# post Root_Index (T) = I;
+   pragma Inline (Set_Root_Index);
+
+   procedure Set_Level (T : in out Tree; I : Node_Index; Node_Level : Level_Type);
+   --# pre Not_Empty_Tree (T) and In_Tree (I, T);
      --  Global => (In_Out => Tree_Store),
      Pre    => not Is_Empty_Tree,
      Post   => Level (N) = Node_Level and In_Tree (N),
