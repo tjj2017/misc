@@ -5,11 +5,18 @@ package body Basic_Tree is
    ----------
 
    procedure Init (T : out Tree) is
-      Temp_Instance : Table.Instance;
    begin
-      Table.Init (Temp_Instance);
-      T := Tree (Temp_Instance);
+      null;  -- Declaration of object of type T initializes the Object;
    end Init;
+
+   -----------
+   -- Reset --
+   -----------
+
+   procedure Reset (T : in out Tree) is
+   begin
+      Table.Init (Table.Instance (T));
+   end Reset;
 
     -----------
    -- Level --
@@ -22,14 +29,14 @@ package body Basic_Tree is
    -- Left --
    ----------
 
-   function Left (T : Tree; I : Valid_Node_Index) return Valid_Node_Index is
+   function Left (T : Tree; I : Valid_Node_Index) return Node_Index is
      (T.Table (I).Left);
 
    -----------
    -- Right --
    -----------
 
-   function Right (T: Tree; I : Valid_Node_Index) return Valid_Node_Index is
+   function Right (T: Tree; I : Valid_Node_Index) return Node_Index is
      (T.Table (I).Right);
 
    ---------
@@ -135,8 +142,8 @@ package body Basic_Tree is
    is
    begin
       Table.Set_Last (Table.Instance (T), Final_Node);
-      T.Table (Final_Node).Left := Empty_Node;
-      T.Table (Final_Node).Right := Empty_Node;
+      T.Table (Final_Node).Left := Null_Index;
+      T.Table (Final_Node).Right := Null_Index;
     end Clear_Tree_Below_Node;
 
 end Basic_Tree;

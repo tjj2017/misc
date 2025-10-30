@@ -70,49 +70,52 @@ package Basic_Tree is
    --  A tree can only become not empty by adding a node (by calling Add_Node).
    --# function Empty_Tree (T : Tree) return Boolean;
 
-   --  Proof function to indicate the Node_Index potentially indexes a
-   --  node within the tree.  It is definitely in the tree if the Node_Index
-   --  is less or equal to the Last_Node_Index in the tree.
-   --# function Potentially_In_Tree (T : Tree; I: Node_Index) return Boolean;
-
-
-   function Last_Node_Index (T : Tree) return Node_Index;
-   --# return L => ((not Empty_Tree (T) -> (L /= Null_Index and
-   --#                  L in Valid_Node_Index and Potentially_In_Tree (T, L)
-   --#                  and L >= First_Node_Index))
-   --#              and
-   --#              (Empty_Tree (T) -> (L = Null_Index)));
-   pragma Inline (Last_Node_Index);
-   --  Returns Index to the last node added to the tree --  Null_Index if empty.
+   --  Proof function to representing the last Node_Index in the Tree, T.
+   --  It's value is Null_Index if the tree is empty.
+   --# function Last_Index (T : Tree) return Node_Index;
 
    --  Proof function stating that the given Node_Index does, indeed,
    --  reference a node in the tree.
    --  A Node Index onl references a node in the tree if it is the Node_Index
    --  returned fom a call to Add_Node.
    --# function In_Tree (T : Tree; I : Node_Index) return Boolean;
-   --# return Potentially_In_Tree (T, I) and I <= Last_Node_Index (T);
+   --# pre not Empty_Tree (T);
+   --# return I in Valid_Node_Index and I <= Last_Index (T);
 
+   -- This procedure must be called prior to using an object of type Tree
+   -- but should not be used thereafter.
    procedure Init (T : out Tree);
    --# post Empty_Tree(T) and
-   --# Last_Node_Index (T)  = Null_Index;
+   --# Last_Index (T)  = Null_Index;
 
-   function Tree_Leaf (T : Tree; I : Valid_Node_Index) return Boolean;
-   --# pre not Empty_Tree (T) and In_Tree (T, I);
-   --  True if the Node_Index references a leaf of the Tree.
-   pragma Inline (Tree_Leaf);
+   -- This procedure resets the Tree, T, to empty and reinitializes T.
+   -- Do not recall Init.
+   procedure Reset (T : in out Tree);
+   --# post Empty_Tree(T) and
+   --# Last_Index (T)  = Null_Index;
+
+   function Last_Node_Index (T : Tree) return Node_Index;
+   --# pre not Empty_Tree (T);
+   --# return L => L = Last_Index (T) and In_Tree (T, L);
+   pragma Inline (Last_Node_Index);
+   --  Returns Index to the last node added to the tree --  Null_Index if empty.
 
    function Level (T : Tree; I : Valid_Node_Index) return Level_Type;
    --# pre not Empty_Tree (T) and In_Tree (T, I);
    pragma Inline (Level);
 
-   function Left  (T : Tree; I : Valid_Node_Index) return Valid_Node_Index;
+   -- Left returns Null_Index if the node referenced by the Node_Index has
+   -- no left child otherwise it returns the Node_Index of the left child.
+   function Left  (T : Tree; I : Valid_Node_Index) return Node_Index;
    --# pre not Empty_Tree (T) and In_Tree (T, I);
-   --# return C => In_Tree (T, C);
+   --# return C => C /= Null_Index -> In_Tree (T, C);
    pragma Inline (Left);
 
-   function Right (T : Tree; I : Valid_Node_Index) return Valid_Node_Index;
+   -- Right returns Null_Index if the node referenced by the Node_Index has
+   -- no right child otherwise it returns the Node_Index of the right child.
+   function Right (T : Tree; I : Valid_Node_Index) return Node_Index;
    --# pre not Empty_Tree (T) and In_Tree (T, I);
-   --# return C => In_Tree (T, C);
+   --# return C => C /= Null_Index -> In_Tree (T, C);
    pragma Inline (Right);
 
    function Key (T : Tree; I : Valid_Node_Index) return Key_Type;
@@ -324,14 +327,15 @@ package Basic_Tree is
    --# post (not Empty_Tree (T~) ->
    --#          (Structure_Preserved_Except (T, T~, Last_Node_Index (T)) and
    --#           Contents_Preserved_Except (T, T~, Last_Node_Index (T~)))) and
+   --#      Last_Index (T) = Last_Node_Index (T) and
    --#      Last_Node_Index (T) = Last_Node_Index (T~) + 1 and
    --#      Last_Node_Index (T) >= First_Node_Index and
    --#      not Empty_Tree (T) and In_Tree (T, New_Index) and
    --#      Key (T, Last_Node_Index (T)) = The_Key and
    --#      Value (T, Last_Node_Index (T)) = Null_Value and
    --#      Level (T, Last_Node_Index (T)) = Level_Type'First and
-   --#      Tree_Leaf (T, Left  (T, Last_Node_Index (T))) and
-   --#      Tree_Leaf (T, Right (T, Last_Node_Index (T))) and
+   --#      Left (T, Last_Node_Index (T)) = Null_Index and
+   --#      Right (T, Last_Node_Index (T)) = Null_Index and
    --#      New_Index = Last_Node_Index (T);
    pragma Inline (Add_Node);
 
