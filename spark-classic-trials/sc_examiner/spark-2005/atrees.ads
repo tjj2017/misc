@@ -24,6 +24,8 @@ package Atrees is
    Null_Key : constant Key_Type := Specific_Tree_Types.Null_Key;
    Null_Value : Value_Type;
 
+   type A_Tree is private;
+
    --  The Stack_Size must be large enough to traverse the tree without
    --  overflow.
    --  The minimum Stack_Size can be calculated from the maximum nodes, N,
@@ -33,43 +35,82 @@ package Atrees is
    --  K = Log2 (N + 1) - 1.
    --  Stack_Size : Positive
 
-   type A_Tree is private;
+   --  The following type declaration and proof functions allow specifications
+   --  in terms of the underlying host tree TYPE Node_Index which is a scalar
+   --  which can be used in quantifiers,
 
-   --# function Empty_Atree (ATree : A_Tree; Host : Host_Tree) return Boolean;
-   --# function Key_In_Atree (Atree : A_Tree; Host : Host_Tree) return Boolean;
-   --# function Value_From_Key (Atree : A_Tree;
-   --#                          Host : Host_Tree;
-   --#                          Key : Key_Type) return Value_Type;
+   subtype Node_Index is Basic_Tree.Node_Index;
 
-   function Count (ATree : A_Tree; Host : Host_Tree) return Natural;
+   Null_Index : constant := Basic_Tree.Null_Index;
 
-   function Tree_Depth (ATree : A_Tree; Host : Host_Tree) return Natural;
+   --# function First_Index (Atree : A_Tree) return Node_Index;
+   --# function Last_Index (Atree : A_Tree) return Node_Index;
+   --# function Base_Index (Atree : Atree) return Node_Index;
+   --# function Find_Key (Atree : Atree; Host : Host_Tree; Key : Key_Type)
+   --#                    return Node_Index;
+   --# function Next_Key_Index (Atree : A_Tree;
+   --#                          Host  : Host_Tree;
+   --#                          Previous_Index : Node_Index)
+   --#                          return Node_Index;
 
-   function Is_Present (ATree : A_Tree; Host : Host_Tree; Key : Key_Type)
+   --  The following proof functions are used in specifying the executable
+   --  subprograms declared in the declaration of this package.
+
+   --# function Populated (Atree : A_Tree, Host : Host_Tree) return Boolean;
+   --# return P => P -> (not Basic_Tree.Empty_Tree (Host) and
+   --#                   Last_Index (Atree) /= Null_Index);
+
+   function Count (Atree : A_Tree; Host : Host_Tree) return Natural;
+
+   function Tree_Depth (Atree : A_Tree; Host : Host_Tree) return Natural;
+
+   function Is_Present (Atree : A_Tree; Host : Host_Tree; Key : Key_Type)
                         return Boolean;
-   --# pre not Empty_Atree (Atree, Host);
-   --# return Key_In_Atree (Atree, Host, Key);
+   --# pre Populated (Atree, Host);
+   --# return (Find_Key (Atree, Host, Key) /= Null_Index) ->
+   --#           (Basic_Tree.Key (Find_Key (Atree, Host, Key)) = Key);
 
    function Value (ATree : A_Tree; Host : Host_Tree; Key : Key_Type)
                    return Value_Type;
-   --# pre not Empty_Atree (Atree, Host);
-   --# return Value_From_Key (Atree, Host, Key);
+   --# pre Populated (Atree, Host);
+   --# return (Find_Key (Atree, Host, Key) /= Null_Index) ->
+   --#           (Basic_Tree.Value (Find_Key (Atree, Host, Key)) = Value);
 
    function Equal_Keys (Atree_1, Atree_2 : A_Tree,
                         Host_1, Host_2 : Host_Tree) return Boolean;
-   --# not Empty_Atree (Atree_1, Host_1) and not Empty_Atree (Atree_2, Host_2);
+   --# pre Populated (Atree_1, Host_1) and Populated (Atree_2, Host_2);
+   --# return  (Count (Atree_1) = Count (Atree_2)) and then
+   --#         ((Next_Key_Index (Atree_1, Host_1, Base_Index (Atree_1))
+   --#                                                     /= Null_Index
+   --#           and
+   --#           (Next_Key_Index (Atree_1, Host_1, Base_Index (Atree_1)) =
+   --#           Next_Key_Index (Atree_2, Host_2, Base_Index (Atree_2))
+
+     (Count (Atree_1, Host_1) = Count (Atree_2, Host_2) and then
+   --#           (for all I in Natural range 0 .. Count =>
+   --#               (Basic_Tree.Key (First_Index (Atree_1) + Node_Index (I)) =
+   --#                Basic_Tree.Key (First_Index (Atree_2) + Node_Index (I))));
+
+   function Equal_Keys_And_Values (Atree_1, Atree_2 : A_Tree;
+                                   Host_1, Host_2 : Host_Tree) return Boolean;
+   --# pre Populated (Atree_1, Host_1) and Populated (Atree_2, Host_2);
    --# return => (Count (Atree_1, Host_1) = Count (Atree_2, Host_2) and then
    --#           (for all I in Natural range 0 .. Count =>
-   --#               (Key_At_Index (First_Index (Atree_1) + Node_Index (I)) =
-   --#                Key_At_Index (First_Index (Atree_2) + Node_Index (I))));
+   --#               (Basic_Tree.Key (First_Index (Atree_1) + Node_Index (I)) =
+   --#                Basic_Tree.Key (First_Index (Atree_2) + Node_Index (I))
+   --#                and
+   --#                Basic_Tree.Value (First_Index (Atree_1) + Node_Index (I) =
+   --#                Basic_Tree.Value (First_Index
 
-   with Pre => Populated (ATree_1) and Populated (ATree_2);
 
-   function Equal_Keys_And_Values (ATree_1, ATree_2 : A_Tree) return Boolean
-   with Pre => Populated (ATree_1) and Populated (ATree_2);
+   --# return Current_Index (Atree, Host) /= Null_Index and then
+   --#        (Basic_Tree.Key (Current_Index (Atree, Host)) = Key and
+   --#        Basic_Tree.Key (Current_Index (Atree, Host)) = Value);
 
-   procedure New_A_Tree (Tree : out A_Tree)
-     with Post => Empty_Tree (Tree);
+
+   procedure New_A_Tree (Atree : out A_Tree; Host : in out Host_Tree);
+   --# post Empty_Atree (Atree) and not Basic_Tree.Empty_Tree (Host) and
+   --#      Last_Index = Null_Index;
 
    procedure Insert (Tree      : in out A_Tree;
                      Key       : Key_Type;
