@@ -24,7 +24,8 @@ package Atrees is
    Null_Key : constant Key_Type := Specific_Tree_Types.Null_Key;
    Null_Value : Value_Type;
 
-   type A_Tree is private;
+   --  function Count returns the number of Keys in the Atree.
+   function Count (Atree : A_Tree; Host : Host_Tree) return Natural;
 
    --  The Stack_Size must be large enough to traverse the tree without
    --  overflow.
@@ -39,41 +40,33 @@ package Atrees is
    --  in terms of the underlying host tree TYPE Node_Index which is a scalar
    --  which can be used in quantifiers,
 
-   subtype Node_Index is Basic_Tree.Node_Index;
+   --  Logically,each Key in he tree has an index.  Keys are indexed
+   --  consecutively such that for all keys in the Atree the value of
+   --  Indexed_Key (I + 1) > Indexed_Key (I).  The keysareordered by index
+   --  and there are no duplicate keys.
+   --# function Indexed_Key (Index : Positive;
+   --#                       Atree : A_Tree;
+   --#                       Host : Host_Tree) return Key_Type;
 
-   Null_Index : constant := Basic_Tree.Null_Index;
-
-   --# function First_Index (Atree : A_Tree) return Node_Index;
-   --# function Last_Index (Atree : A_Tree) return Node_Index;
-   --# function Base_Index (Atree : Atree) return Node_Index;
-   --# function Find_Key (Atree : Atree; Host : Host_Tree; Key : Key_Type)
-   --#                    return Node_Index;
-   --# function Next_Key_Index (Atree : A_Tree;
-   --#                          Host  : Host_Tree;
-   --#                          Previous_Index : Node_Index)
-   --#                          return Node_Index;
 
    --  The following proof functions are used in specifying the executable
    --  subprograms declared in the declaration of this package.
 
    --# function Populated (Atree : A_Tree, Host : Host_Tree) return Boolean;
-   --# return P => P -> (not Basic_Tree.Empty_Tree (Host) and
-   --#                   Last_Index (Atree) /= Null_Index);
-
-   function Count (Atree : A_Tree; Host : Host_Tree) return Natural;
+   --# return Count (Atree) > 0;
 
    function Tree_Depth (Atree : A_Tree; Host : Host_Tree) return Natural;
 
    function Is_Present (Atree : A_Tree; Host : Host_Tree; Key : Key_Type)
                         return Boolean;
    --# pre Populated (Atree, Host);
-   --# return (Find_Key (Atree, Host, Key) /= Null_Index) ->
-   --#           (Basic_Tree.Key (Find_Key (Atree, Host, Key)) = Key);
+   --# return for some I in Positive range 1 .. Count (Atree) =>
+   --#           Index_Key (I, Atree, Host) = Key;
 
    function Value (ATree : A_Tree; Host : Host_Tree; Key : Key_Type)
                    return Value_Type;
    --# pre Populated (Atree, Host);
-   --# return (Find_Key (Atree, Host, Key) /= Null_Index) ->
+   --# return V => for some I in Positive range 1 .. Count(Find_Key (Atree, Host, Key) /= Null_Index) ->
    --#           (Basic_Tree.Value (Find_Key (Atree, Host, Key)) = Value);
 
    function Equal_Keys (Atree_1, Atree_2 : A_Tree,
