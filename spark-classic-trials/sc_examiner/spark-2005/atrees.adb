@@ -1,239 +1,211 @@
-package body Atrees
-with SPARK_Mode
-is
-   package Tree_Abs is new
-     Tree_Abstraction
-       (Tree_Node  => Atree_Node,
-        Level_Type => Natural,
-        Key_Type   => Key_Type,
-        Value_Type => Value_Type,
-        Null_Key   => Null_Key,
-        Null_Value => Null_Value);
+package body Atrees is
 
-   --  Basic Predicate
-   ----------------
-   -- Empty_Tree --
-   ----------------
+   --  The Stack_Size must be large enough to traverse the tree without
+   --  overflow.
+   --  The minimum Stack_Size can be calculated from the maximum nodes, N,
+   --  in the Atree.
+   --  As the Atree will be balanced, the minimum Stack_Size must be greater
+   --  than the maximum height of the tree, K.
+   --  K = Log2 (N + 1) - 1.
+   --  Stack_Size : Positive
 
-   function Empty_Tree (ATree : A_Tree) return Boolean is
-      (ATree.Root = Empty_Node);
+   type Direction is (Left, Right);
 
-   ---------------
-   -- Populated --
-   ---------------
-
-   function Populated (ATree : A_Tree) return Boolean is
-      (Tree_Abs.In_Tree (ATree.Root) and
-           ATree.Count > 0);
+   Null_Index : constant Node_Index := Basic_Tree.Null_Index;
 
    -----------
    -- Count --
    -----------
 
-   function Count (Atree : A_Tree) return Natural is (Atree.Count);
-
-   -------------------
-   -- Node_In_Atree --
-   -------------------
-
-   function Node_In_Atree (Atree : A_Tree; N : Atree_Node) return Boolean is
-     (N >= Atree.Root and then Atree.Count > 0
-      and then Integer (N + Atree.Root) <= Integer (Atree.Root) + Atree.Count
-      and then Tree_Abs.In_Tree (N));
-
-   --  --  Proof helper subprograms
-   --
-   --  Pushing exclusively using Push_In_Tree_Node ensures that
-   --  every Node on the stack is in the Tree.
-   function Top_In_Atree_Node (S : Bounded_Stack.Stack;
-                               Tree : A_Tree) return Atree_Node
-   with Pre  => not Bounded_Stack.Is_Empty (S),
-        Post =>  Node_In_Atree (Tree, Top_In_Atree_Node'Result)
-   is
-      Result : Atree_Node;
+   function Count (Atree : A_Tree) return Natural is
    begin
-      Result := Bounded_Stack.Top (S);
-      pragma Assume (Node_In_Atree (Tree, Result),
-                     "The exclusive use of Push_In_Tree ensures all " &
-                     "pushed nodes are In_Tree, so, " &
-                     "all nodes popped by Pop_In_Tree_Node will also be.");
+      return Atree.Count;
+   end Count;
 
-      return Result;
-      pragma Warnings (Off, "unused variable ""Tree""",
-                      Reason => "Tree is only used in proof context");
-   end Top_In_Atree_Node;
-   pragma Warnings (On, "unused variable ""Tree""");
-   pragma Inline (Top_In_Atree_Node);
 
-   --  Ensures that each Node pushed on the stack is in the Tree.
-   --  With a stack size of 32 a balanced tree would be enormous, it would
-   --  have more nodes than the number actually available.
-   procedure Push_In_Atree_Node (S : in out Bounded_Stack.Stack;
-                                 Tree : A_Tree;
-                                 Node : Atree_Node)
-   with Pre  => Node_In_Atree (Tree, Node),
-        Post => not Bounded_Stack.Is_Empty (S) and
-                Top_In_Atree_Node (S, Tree) = Node
-   is
-   begin
-      pragma Assume (Bounded_Stack.Count (S) < Bounded_Stack.Stack_Count'Last,
-                     "A Stack_Size of 32 allows the traversal of " &
-                     "balanced tree with more distinct nodes " &
-                     "than can be handled by the gnat front-end");
-      Bounded_Stack.Push (S, Node);
-      pragma Assume (Top_In_Atree_Node (S, Tree) = Node,
-                     "The Node pushed on the stack is the top of the stack");
-      pragma Warnings (Off, "unused variable ""Tree""",
-                      Reason => "Tree is only used in proof context");
-   end Push_In_Atree_Node;
-   pragma Warnings (On, "unused variable ""Tree""");
-   pragma Inline (Push_In_Atree_Node);
-
-   --  Pushing exclusively using Push_In_Tree_Node ensures that
-   --  every Node on the stack is in the Tree.
-   procedure Pop_In_Atree_Node (S : in out Bounded_Stack.Stack;
-                                Tree : A_Tree;
-                                Node : out Atree_Node)
-   with Pre  => not Bounded_Stack.Is_Empty (S),
-        Post => Node_In_Atree (Tree, Node) and
-                Bounded_Stack.Count (S) = Bounded_Stack.Count (S'Old) - 1
-   is
-   begin
-      Bounded_Stack.Pop (S, Node);
-      pragma Assume (Node_In_Atree (Tree, Node),
-                     "The exclusive use of Push_In_Tree ensures all " &
-                     "pushed nodes are In_Tree, so, " &
-                     "all nodes popped by Pop_In_Tree_Node will also be.");
-
-      pragma Warnings (Off, "unused variable ""Tree""",
-                      Reason => "Tree is only used in proof context");
-   end Pop_In_Atree_Node;
-   pragma Warnings (On, "unused variable ""Tree""");
-   pragma Inline (Pop_In_Atree_Node);
+--     --  --  Proof helper subprograms
+--     --
+--     --  Pushing exclusively using Push_In_Tree_Node ensures that
+--     --  every Node on the stack is in the Tree.
+--     function Top_In_Atree_Node (S : Bounded_Stack.Stack;
+--                                 Tree : A_Tree) return Atree_Node
+--     with Pre  => not Bounded_Stack.Is_Empty (S),
+--          Post =>  Node_In_Atree (Tree, Top_In_Atree_Node'Result)
+--     is
+--        Result : Atree_Node;
+--     begin
+--        Result := Bounded_Stack.Top (S);
+--        pragma Assume (Node_In_Atree (Tree, Result),
+--                       "The exclusive use of Push_In_Tree ensures all " &
+--                       "pushed nodes are In_Tree, so, " &
+--                       "all nodes popped by Pop_In_Tree_Node will also be.");
+--
+--        return Result;
+--        pragma Warnings (Off, "unused variable ""Tree""",
+--                        Reason => "Tree is only used in proof context");
+--     end Top_In_Atree_Node;
+--     pragma Warnings (On, "unused variable ""Tree""");
+--     pragma Inline (Top_In_Atree_Node);
+--
+--     --  Ensures that each Node pushed on the stack is in the Tree.
+--     --  With a stack size of 32 a balanced tree would be enormous, it would
+--     --  have more nodes than the number actually available.
+--     procedure Push_In_Atree_Node (S : in out Bounded_Stack.Stack;
+--                                   Tree : A_Tree;
+--                                   Node : Atree_Node)
+--     with Pre  => Node_In_Atree (Tree, Node),
+--          Post => not Bounded_Stack.Is_Empty (S) and
+--                  Top_In_Atree_Node (S, Tree) = Node
+--     is
+--     begin
+--        pragma Assume (Bounded_Stack.Count (S) < Bounded_Stack.Stack_Count'Last,
+--                       "A Stack_Size of 32 allows the traversal of " &
+--                       "balanced tree with more distinct nodes " &
+--                       "than can be handled by the gnat front-end");
+--        Bounded_Stack.Push (S, Node);
+--        pragma Assume (Top_In_Atree_Node (S, Tree) = Node,
+--                       "The Node pushed on the stack is the top of the stack");
+--        pragma Warnings (Off, "unused variable ""Tree""",
+--                        Reason => "Tree is only used in proof context");
+--     end Push_In_Atree_Node;
+--     pragma Warnings (On, "unused variable ""Tree""");
+--     pragma Inline (Push_In_Atree_Node);
+--
+--     --  Pushing exclusively using Push_In_Tree_Node ensures that
+--     --  every Node on the stack is in the Tree.
+--     procedure Pop_In_Atree_Node (S : in out Bounded_Stack.Stack;
+--                                  Tree : A_Tree;
+--                                  Node : out Atree_Node)
+--     with Pre  => not Bounded_Stack.Is_Empty (S),
+--          Post => Node_In_Atree (Tree, Node) and
+--                  Bounded_Stack.Count (S) = Bounded_Stack.Count (S'Old) - 1
+--     is
+--     begin
+--        Bounded_Stack.Pop (S, Node);
+--        pragma Assume (Node_In_Atree (Tree, Node),
+--                       "The exclusive use of Push_In_Tree ensures all " &
+--                       "pushed nodes are In_Tree, so, " &
+--                       "all nodes popped by Pop_In_Tree_Node will also be.");
+--
+--        pragma Warnings (Off, "unused variable ""Tree""",
+--                        Reason => "Tree is only used in proof context");
+--     end Pop_In_Atree_Node;
+--     pragma Warnings (On, "unused variable ""Tree""");
+--     pragma Inline (Pop_In_Atree_Node);
 
    --  Local subprograms
-   procedure New_Node (Key      : Key_Type;
-                       The_Node : out Atree_Node)
-   is
-   begin
-      Tree_Abs.Add_Node (The_Node, Key);
-   end New_Node;
 
    function Get_Child (Is_Right : Boolean;
-                       Node     : Atree_Node;
-                       Tree     : A_Tree)
-                       return Atree_Node
-   with Pre  => Node_In_Atree (Tree, Node),
-        Post => (if Get_Child'Result /= Empty_Node then
-                    Node_In_Atree (Tree, Get_Child'Result))
+                       Host     : in out Host_Tree;
+                       Index    : Node_Index)
+                       return Node_Index
    is
-      Result : Atree_Node;
+      Result : Node_Index;
    begin
       if Is_Right then
-         Result := Tree_Abs.Right (Node);
+         Result := Basic_Tree.Right (Host, Index);
       else
-         Result := Tree_Abs.Left (Node);
+         Result := Basic_Tree.Left (Host, Index);
       end if;
       return Result;
    end Get_Child;
    pragma Inline (Get_Child);
 
    procedure Set_Branch (Is_Right   : Boolean;
-                         Node       : in out Atree_Node;
-                         Set_Node   : Atree_Node;
-                         Tree       : in out A_Tree)
-   with Pre  => Node_In_Atree (Tree, Node) and
-                Node_In_Atree (Tree, Set_Node)
+                         Host       : in out Host_Tree;
+                         Index      : Node_Index;
+                         Set_Index  : Node_Index)
    is
    begin
       if Is_Right then
-         Tree_Abs.Set_Right
-           (N      => Node,
-            Branch => Set_Node);
+         Basic_Tree.Set_Right
+           (T      => Host,
+            I      => Index,
+            Branch => Set_Index);
       else
-         Tree_Abs.Set_Left
-           (N      => Node,
-            Branch => Set_Node);
+         Basic_Tree.Set_Left
+           (T      => Host,
+            I      => Index,
+            Branch => Set_Index);
       end if;
-      Tree.Toggle := not Tree.Toggle;
    end Set_Branch;
    pragma Inline (Set_Branch);
 
-   procedure Find (Tree      : A_Tree;
+   procedure Find (Host       : Host_Tree;
+                   Root_Index : Node_Index;
                    Key        : Key_Type;
                    Found      : out Boolean;
-                   Visited    : out Bounded_Stack.Stack)
-   with Pre  => Populated (Tree),
-     Post => (if Found then
-                (Tree_Abs.Key (Top_In_Atree_Node (Visited, Tree)) = Key))
+                   Visited    : out Bounded_Stacks.Stack)
    --  Found is true ony if a node with the given Key is present.
-   --  If Found, the top of the Visited stack is the Atree_Node
-   --  in the tree which contains the Key.
+   --  If Found, the top of the Visited stack is the Node_Index
+   --  of the node in the tree which contains the Key.
    is
 
-      Current_Node  : Atree_Node;
+      Current_Index  : Node_Index;
 
       Current_Key   : Key_Type;
 
       --  A Child of the current node.
-      Child         : Atree_Node;
+      Child         : Node_Index;
       --  Direction: Left = False, Right = True
       Is_Right      : Boolean;
 
    begin
-      Child := Empty_Node;
+      --  Assume that a match for the Key, has not been found.
+      Found := False;
       --  Clear the visited stack - the Tree is being searced from its root.
-      Bounded_Stack.Clear (Visited);
+      Bounded_Stacks.Clear (Visited);
 
       --  If the Tree.Root is not present, the Tree is empty
       --  and the given Key will not be found.
       --  There is nothing more to be done.
+      if Root_Index /= Null_Index then
+         --  The Atree is not empty the given Key may be present.
 
-      --  The Current_Node is initially set to the root of the tree.
-      Current_Node := Tree.Root;
-      --  Search the binary tree to find a matching Key or, if it is
-      --  not found, locate an appropriate leaf to place the Key.
-      --  If Found the node with the matching Key is on the top of the
-      --  Tree.Visited stack.
-      --  If not Found the top of the Visited stack contains the leaf node
-      --  appropriate for the insertion of the key into one of its child
-      --  branches.
-      loop
-         --  A record of nodes visited is held in the Visited stack.
-         Push_In_Atree_Node (Visited, Tree, Current_Node);
+         --  The Current_Node_Index is initially the root index of the Atree.
+         Current_Index := Root_Index;
+         --  Search the binary tree to find a matching Key or, if it is
+         --  not found, locate an appropriate leaf to place the Key.
+         --  If Found the node with the matching Key is on the top of the
+         --  Tree.Visited stack.
+         --  If not Found the top of the Visited stack contains the leaf node
+         --  appropriate for the insertion of the key into one of its child
+         --  branches.
 
-         Current_Key := Tree_Abs.Key (Current_Node);
-         Found := Current_Key = Key;
-         pragma Assert (if Found then Tree_Abs.In_Tree (Current_Node));
-         if not Found then
-            --  Take the right branch if the Key value is greater
-            --  than the Current_Node Key, otherwise take the left branch.
-            Is_Right := Tree_Abs.Key (Current_Node) < Key;
-            Child := Get_Child (Is_Right, Current_Node, Tree);
-         end if;
+         loop
+            -- Loop_Invariant
+            --# assert not Bounded_Stacks.Is_Empty (Visited) and
+            --# Found -> (Basic_Tree.Key (Host,
+            --#              Bounded_Stacks.Top (Visited)) = Key);
 
-         pragma Loop_Invariant
-           (not Bounded_Stack.Is_Empty (Visited) and
-                (if Found then
-                      Node_In_Atree (Tree, Current_Node) and
-                      Tree_Abs.Key (Top_In_Atree_Node (Visited, Tree)) = Key));
+            --  A record of nodes visited is held in the Visited stack.
+            Bounded_Stacks.Push (Visited, Current_Index);
 
-         exit when Found or else not Tree_Abs.In_Tree (Child);
+            Current_Key := Basic_Tree.Key (Host, Current_Index);
+            Found := Current_Key = Key;
+            if not Found then
+               --  Take the right branch if the Key value is greater
+               --  than the Current_Node Key, otherwise take the left branch.
+               Is_Right := Key > Current_Key;
+                  Child := Get_Child (Is_Right, Host, Current_Index);
+            end if;
 
-         --  Traverse the tree: the Current_Node is set to one of its
-         --  children.
-         Current_Node := Child;
-      end loop;
-      pragma Assert (if Found then Node_In_Atree (Tree, Current_Node));
-      --  The Tree.Visited stack will not be empty.
-      --  if Found is True, the Tree contains a node with the
-      --  matching Key.  The Tree_Node on the top of the Visted
-      --  is the node with the given Key.
-      --  If Found is False, the tree does not contain a node
-      --  with a matching Key. The Tree_Node at the top of
-      --  Visited stack will contain the Tree_Node which will be the
-      --  Parent of a Tree_Node of a node containing
-      --  the Key if it were to be added into the Tree.
+            exit when Found or else Child = Null_Index;
+
+            --  Traverse the tree: the Current_Node is set to one of its
+            --  children.
+            Current_Index := Child;
+         end loop;
+         --  The Tree.Visited stack will not be empty.
+         --  if Found is True, the Tree contains a node with the
+         --  matching Key.  The Tree_Node on the top of the Visted
+         --  is the node with the given Key.
+         --  If Found is False, the tree does not contain a node
+         --  with a matching Key. The Tree_Node at the top of
+         --  Visited stack will contain the Tree_Node which will be the
+         --  Parent of a Tree_Node of a node containing
+         --  the Key if it were to be added into the Tree.
+      end if;
    end Find;
 
    procedure Skew (Sub_Root   : in out Atree_Node;
