@@ -1,8 +1,10 @@
 with Specific_Tree_Types;
---# inherit Specific_Tree_Types;
+with Basic_Tree;
+--# inherit Specific_Tree_Types,
+--#         Basic_Tree;
 package Bounded_Stacks is
    Stack_Size : constant := Specific_Tree_Types.Stack_Size;
-   subtype Element_Type is Specific_Tree_Types.Tree_Node;
+   subtype Element_Type is Basic_Tree.Valid_Node_Index;
 
    type Stack is private;
 

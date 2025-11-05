@@ -96,7 +96,7 @@ package body Atrees is
    --  Local subprograms
 
    function Get_Child (Is_Right : Boolean;
-                       Host     : in out Host_Tree;
+                       Host     : Host_Tree;
                        Index    : Node_Index)
                        return Node_Index
    is
@@ -131,14 +131,21 @@ package body Atrees is
    end Set_Branch;
    pragma Inline (Set_Branch);
 
+   --  If Found, the top of the Visited stack is the Node_Index
+   --  of the node in the tree which contains the Key.
+   --  If Found is False, the tree does not contain a node
+   --  with a matching Key and The Node_Index at the top of the Visited stack
+   --  will contain the Node_Index of the Parent of a of the node containing
+   --  the Key if it were to be added into the Tree.
    procedure Find (Host       : Host_Tree;
                    Root_Index : Node_Index;
                    Key        : Key_Type;
                    Found      : out Boolean;
                    Visited    : out Bounded_Stacks.Stack)
-   --  Found is true ony if a node with the given Key is present.
-   --  If Found, the top of the Visited stack is the Node_Index
-   --  of the node in the tree which contains the Key.
+   --# pre not Basic_Tree.Empty_Tree (Host) and Root_Index /= Null_Index;
+   --# post Bounded_Stacks.Not_Empty (Visited) and
+   --#     (Found ->
+   --#        (Basic_Tree.Key (Host, Bounded_Stacks.Top (Visited)) = Key));
    is
 
       Current_Index  : Node_Index;
@@ -156,179 +163,151 @@ package body Atrees is
       --  Clear the visited stack - the Tree is being searced from its root.
       Bounded_Stacks.Clear (Visited);
 
-      --  If the Tree.Root is not present, the Tree is empty
-      --  and the given Key will not be found.
-      --  There is nothing more to be done.
-      if Root_Index /= Null_Index then
-         --  The Atree is not empty the given Key may be present.
+      --  The Current_Node_Index is initially the root index of the Atree.
+      Current_Index := Root_Index;
+      --  Search the binary tree to find a matching Key or, if it is
+      --  not found, locate an appropriate leaf to place the Key.
+      --  If Found the node with the matching Key is on the top of the
+      --  Tree.Visited stack.
+      --  If not Found the top of the Visited stack contains the leaf node
+      --  appropriate for the insertion of the key into one of its child
+      --  branches.
 
-         --  The Current_Node_Index is initially the root index of the Atree.
-         Current_Index := Root_Index;
-         --  Search the binary tree to find a matching Key or, if it is
-         --  not found, locate an appropriate leaf to place the Key.
-         --  If Found the node with the matching Key is on the top of the
-         --  Tree.Visited stack.
-         --  If not Found the top of the Visited stack contains the leaf node
-         --  appropriate for the insertion of the key into one of its child
-         --  branches.
+      loop
+         --  A record of nodes visited is held in the Visited stack.
+         Bounded_Stacks.Push (Visited, Current_Index);
 
-         loop
-            -- Loop_Invariant
-            --# assert not Bounded_Stacks.Is_Empty (Visited) and
-            --# Found -> (Basic_Tree.Key (Host,
-            --#              Bounded_Stacks.Top (Visited)) = Key);
+         -- Loop_Invariant
+         --# assert Bounded_Stacks.Not_Empty (Visited) and
+         --# (Found -> (Basic_Tree.Key (Host,
+         --#              Bounded_Stacks.Top (Visited)) = Key));
 
-            --  A record of nodes visited is held in the Visited stack.
-            Bounded_Stacks.Push (Visited, Current_Index);
+         Current_Key := Basic_Tree.Key (Host, Current_Index);
+         Found := Current_Key = Key;
+         if not Found then
+            --  Take the right branch if the Key value is greater
+            --  than the Current_Node Key, otherwise take the left branch.
+            Is_Right := Key > Current_Key;
+            Child := Get_Child (Is_Right, Host, Current_Index);
+         end if;
 
-            Current_Key := Basic_Tree.Key (Host, Current_Index);
-            Found := Current_Key = Key;
-            if not Found then
-               --  Take the right branch if the Key value is greater
-               --  than the Current_Node Key, otherwise take the left branch.
-               Is_Right := Key > Current_Key;
-                  Child := Get_Child (Is_Right, Host, Current_Index);
-            end if;
+         exit when Found or else Child = Null_Index;
 
-            exit when Found or else Child = Null_Index;
-
-            --  Traverse the tree: the Current_Node is set to one of its
-            --  children.
-            Current_Index := Child;
-         end loop;
-         --  The Tree.Visited stack will not be empty.
-         --  if Found is True, the Tree contains a node with the
-         --  matching Key.  The Tree_Node on the top of the Visted
-         --  is the node with the given Key.
-         --  If Found is False, the tree does not contain a node
-         --  with a matching Key. The Tree_Node at the top of
-         --  Visited stack will contain the Tree_Node which will be the
-         --  Parent of a Tree_Node of a node containing
-         --  the Key if it were to be added into the Tree.
-      end if;
+         --  Traverse the tree: the Current_Index is set to the Node_Index
+         --  of one of its children.
+         Current_Index := Child;
+      end loop;
    end Find;
 
-   procedure Skew (Sub_Root   : in out Atree_Node;
-                   Tree       : in out A_Tree)
-   with Pre => Node_In_Atree (Tree, Sub_Root),
-        Post => Node_In_Atree (Tree, Sub_Root)
+   --  The Skew operation on an Andersson tree after inserting a node.
+   procedure Skew (Host           : in out Host_Tree;
+                   Sub_Root_Index : in out Node_Index)
    is
-      T_In : constant A_Tree := Tree
-      with Ghost;
-      Left_Child : Atree_Node;
+      Left_Child : Node_Index;
    begin
-      Left_Child := Tree_Abs.Left (Sub_Root);
+      Left_Child := Basic_Tree.Left (Host, Sub_Root_Index);
       --  No action is performed if the levels of the sub-root and left nodes
       --  are not equal.
-      if Node_In_Atree (Tree, Left_Child) and then
-        Tree_Abs.Level (Left_Child) = Tree_Abs.Level (Sub_Root)
+      if Basic_Tree.Level (Host, Left_Child) =
+            Basic_Tree.Level (Host, Sub_Root_Index)
       then
          --  The left child has the same level as its parent breaking
-         --  rule 2 of an Anderson tree. To resolve rotate right at the parent.
+         --  rule 2 of an Andersson tree. To resolve rotate right at the parent.
          --  That is, the root node left child becomes the right child of
          --  root node left node.  The right child of the root node left child
          --  becomes the root index, and lastly, the index of the root
-         --  left child becomes the new root {index}.
-         Tree_Abs.Set_Left
-           (N      => Sub_Root,
-            Branch => Tree_Abs.Right (Left_Child));
-         Tree_Abs.Set_Right
-           (N      => Left_Child,
-            Branch => Sub_Root);
-         --  The root now becomes the left child.
-         Sub_Root := Left_Child;
+         --  left child becomes the new root_index.
+         Basic_Tree.Set_Left
+           (T      => Host,
+            I      => Left_Child,
+            Branch => Basic_Tree.Right (Host, Left_Child));
+         --  The root_index now becomes the left child.
+         Sub_Root_Index := Left_Child;
       end if;
-      Tree.Toggle := not Tree.Toggle;
    end Skew;
 
-   procedure Split (Sub_Root : in out Atree_Node;
-                    Tree : in out A_Tree)
-   with Pre  => Node_In_Atree (Tree, Sub_Root),
-        Post => Node_In_Atree (Tree, Sub_Root)
+   --  The Split operation on an Andersson tree after inserting a node.
+   procedure Split (Host           : in out Host_Tree;
+                    Sub_Root_Index : in out Node_Index)
    is
-      T_In : constant A_Tree := Tree
-      with Ghost;
-      Right_Child       : Atree_Node;
-      Right_Right_Child : Atree_Node;
+      Right_Child       : Node_Index;
+      Right_Right_Child : Node_Index;
    begin
-      Right_Child  := Tree_Abs.Right (Sub_Root);
-      if Node_In_ATree (Tree, Right_Child) then
-         Right_Right_Child := Tree_Abs.Right (Right_Child);
-      else
-         Right_Right_Child := Empty_Node;
+      Right_Child  := Basic_Tree.Right (Host, Sub_Root_Index);
+      if Right_Child /= Null_Index then
+         Right_Right_Child := Basic_Tree.Right (Host, Right_Child);
       end if;
 
       --  No action is taken if there are not two consecutive right children
       -- with the same level
-      if Node_In_Atree (Tree, Right_Child) and then
-         Node_In_Atree (Tree, Right_Right_Child) and then
-        Tree_Abs.Level (Right_Right_Child) = Tree_Abs.Level (Sub_Root)
+      if Right_Child /= Null_Index and then Right_Right_Child /= Null_Index
+         and then
+          Basic_Tree.Level (Host, Right_Right_Child) =
+            Basic_Tree.Level (Host, Sub_Root_Index)
       then
          --  There are two consecutive right children with the same level
          --  Breaking rule 3 of an Anderson tree.
          --  To resolve rotate left and increment the level of the parent.
-         --  That is, the ruight child of the root becomes the left child
+         --  That is, the right child of the root becomes the left child
          --  of the right child of the root. The right child of the
          --  right child of the root becomes the root
          --  the right child of the root becomes the new root and its level
          --  is incremented.
-         Tree_Abs.Set_Right
-           (N      => Sub_Root,
-            Branch => Tree_Abs.Left (Right_Child));
-         Tree_Abs.Set_Left
-           (N      => Right_Child,
-            Branch => Sub_Root);
+         Basic_Tree.Set_Right
+           (T      => Host,
+            I      => Sub_Root_Index,
+            Branch => Basic_Tree.Left (Host, Right_Child));
+         Basic_Tree.Set_Left
+           (T      => Host,
+            I      => Right_Child,
+            Branch => Sub_Root_Index);
          --  The root now becomes the right child.
-         Sub_Root := Right_Child;
-         pragma Assume (Tree_Abs.Level (Sub_Root) < Natural'Last,
-                        "The Level cannot exceed the number of nodes");
+         Sub_Root_Index := Right_Child;
          --  Increment the level of the new root.
-         Tree_Abs.Set_Level (Sub_Root,
-                             Tree_Abs.Level (Sub_Root) + 1);
+         Basic_Tree.Set_Level (Host,
+                               Sub_Root_Index,
+                               Basic_Tree.Level (Host, Sub_Root_Index) + 1);
       end if;
-      Tree.Toggle := not Tree.Toggle;
    end Split;
 
-   procedure Rebalance (Sub_Root : in out Atree_Node;
-                        Tree     : in out A_Tree;
-                        Visited  : in out Bounded_Stack.Stack)
-   with Pre  => Node_In_Atree (Tree, Sub_Root),
-     Post => Node_In_Atree (Tree, Sub_Root)
+   --  Rebalance Andersson tree after am insertion.
+   procedure Rebalance (Host           : in out Host_Tree;
+                        Sub_Root_Index : in out Node_Index;
+                        Visited        : in out Bounded_Stacks.Stack)
    is
-      Current_Node : Atree_Node;
-      Top_Node     : Atree_Node;
-      --  The parent of the Current_Node
-      Parent       : Atree_Node;
+      Current_Index : Node_Index;
+      Top_Index     : Node_Index;
+      --  The Node_Index of the parent of the node referenced by Current_Index
+      Parent       : Node_Index;
       Is_Right     : Boolean;
       Stack_Count  : Natural;
    begin
       --  The following two initalizing statements avoid
       --  flow errors using SPARK 2005 Examiner.
       Is_Right := False;
-      Parent := Empty_Node;
+      Parent := Null_Index;
 
-      Current_Node := Sub_Root;
+      Current_Index := Sub_Root_Index;
       --  Rebalance the tree by working back up through the visited
-      --  node indices on the Tree.Visited stack.
-      Stack_Count := Bounded_Stack.Count (Visited);
+      --  node indices on the Visited stack.
+      Stack_Count := Bounded_Stacks.Count (Visited);
       for Stack_Top in reverse Natural range 1 .. Stack_Count
       loop
-         pragma Loop_Invariant (Node_In_Atree (Tree, Current_Node) and
-                                not Bounded_Stack.Is_Empty (Visited) and
-                                  Stack_Top = Bounded_Stack.Count (Visited));
-         --  Make the Current_Node equal to the Tree_Node at the top of
+         --# assert (Bounded_Stacks.Not_Empty (Visited) and
+         --#            Stack_Top = Bounded_Stacks.Count (Visited));
+         --  Make the Current_Index equal to the Node_Index at the top of
          --  the stack.
-         Pop_In_Atree_Node (Visited, Tree, Top_Node);
-         Current_Node := Top_Node;
-         pragma Assert (Node_In_Atree (Tree, Current_Node));
+         Bounded_Stacks.Pop (Visited, Top_Index);
+         Current_Index := Top_Index;
 
          if Stack_Top > 1 then
             --  There was more than element on the stack - the current
-            --  stack top is the parent of the Current_Node
-            --  As the Current_Node has a parent, determine
-            --  whether the Current_Node is a left or right child of
+            --  stack top is the Node_Index of the parent of the node
+            --  referenced by the Current_Index, the current node.
+            --  As the current node has a parent, determine
+            --  whether the current node is a left or right child of
             --  its parent.
-            Parent := Top_In_Atree_Node (Visited,  Tree);
+            Parent := Bounded_Stacks.Top (Visited);
             --  This boolean expression determines which branch of
             --  the parent has the the Current_Node as its child.
             --  False => Left, True => Right.
@@ -336,130 +315,147 @@ package body Atrees is
             --  call of Skew and Split as these may change the
             --  Current_Node.
             Is_Right :=
-              Tree_Abs.Right (Parent) = Top_Node;
+              Basic_Tree.Right (Host, Parent) = Top_Index;
          end if;
 
-         --  Perform the Anderson Tree Skew and Split operations on
+         --  Perform the Andersosn Tree Skew and Split operations on
          --  the Current_Node.  The Current_Node
          --  may be changed by Skew and Split.
-         Skew (Current_Node, Tree);
-         Split (Current_Node, Tree);
+         Skew (Host, Current_Index);
+         Split (Host, Current_Index);
          --  Update the parent node to point to its new child.
-         if Current_Node /= Top_Node and then Stack_Top > 1 then
-            --  The value of the Current_Node
+         if Current_Index /= Top_Index and then Stack_Top > 1 then
+            --  The value of the Current_Index
             --  may have changed and the stack has the
-            --  parent of the Current_Node at the top of the
+            --  parent of the Current_Index at the top of the
             --  visited stack.
-            --  The branch that has the Current_Node as its child
+            --  The branch that has the Current_Index as its child
             --  has to be patched up to contain the new value of
             --  Current_Node as its child.
-            --  As the value of the Current_Node may have changed.
             Set_Branch
-              (Is_Right   => Is_Right,
-               Node       => Parent,
-               Set_Node   => Current_Node,
-               Tree       => Tree);
+              (Is_Right  => Is_Right,
+               Host      => Host,
+               Index     => Parent,
+               Set_Index => Current_Index);
          end if;
-         --  SPARK 2014 does not treat Tree_Type as completely private.
-         --  It knows it is a record type with a component of an access type.
-         --  It therefore assumes that it may be changed indirectly.
-         --  Skew, Split and Set_Branch all maintain Persistence but SPARK 2014
-         --  does not assume this. Should a private type be really private?
       end loop;
       --  The root of the tree after inserting a node and rebalancing.
-      Sub_Root := Current_Node;
+      Sub_Root_Index := Current_Index;
    end Rebalance;
 
-   procedure Trace_To_Left_Leaf (E    : in out Enumerator;
-                                 Tree : A_Tree)
-   with Pre => not Bounded_Stack.Is_Empty (E.Visited)
+   --  Trace the Atree to locate its lowest value Key which is its leftmost
+   --  node.
+   procedure Trace_To_Left_Leaf (Host : Host_Tree;
+                                 E    : in out Enumerator)
+   --# pre Bounded_Stacks.Not_Empty (E.Visited);
    is
-      Current_Node : Atree_Node;
+      Current_Index : Node_Index;
    begin
-      Current_Node :=
-        Tree_Abs.Left (Top_In_Atree_Node (E.Visited, Tree));
-      while Node_In_Atree (Tree, Current_Node) loop
-            Push_In_Atree_Node (E.Visited, Tree, Current_Node);
-            Current_Node := Tree_Abs.Left (Current_Node);
+      Current_Index :=
+        Basic_Tree.Left (Host, Bounded_Stacks.Top (E.Visited));
+      while Current_Index /= Null_Index loop
+            Bounded_Stacks.Push (E.Visited, Current_Index);
+            Current_Index := Basic_Tree.Left (Host, Current_Index);
       end loop;
    end Trace_To_Left_Leaf;
 
-   procedure Init_Enumerator (Tree      : A_Tree;
-                              Enum       : out Enumerator)
-   with Pre => Tree_Abs.In_Tree (Tree.Root)
-   is
-   begin
-      Enum.ATree := Tree;
-      Bounded_Stack.New_Stack (Enum.Visited);
-      Push_In_Atree_Node (Enum.Visited, Tree, Tree.Root);
-      Trace_To_Left_Leaf (Enum, Tree);
-   end Init_Enumerator;
+   --------------------
+   -- New_Enumerator --
+   --------------------
 
-  --------------
-   -- New_Tree --
-   --------------
-
-   procedure New_A_Tree (Tree : out A_Tree)
+   function New_Enumerator (Atree : A_Tree; Host : Host_Tree)
+                            return Enumerator
+   --# pre not Basic_Tree.Empty_Tree (Host) and Populated (Atree, Host);
    is
+      Result : Enumerator;
    begin
-      Tree.Root      := Empty_Node;
-      Tree.Count     := 0;
-      Tree.Toggle    := False;
+      Bounded_Stacks.New_Stack (Result.Visited);
+      Bounded_Stacks.Push (Result.Visited, Atree.Root);
+      Trace_To_Left_Leaf (Host, Result);
+      return Result;
+   end New_Enumerator;
+
+  -----------------
+   -- New_A_Tree --
+   ----------------
+
+   procedure New_A_Tree (Atree : out A_Tree; Host : in out Host_Tree)
+   is
+      New_Index : Node_Index;
+   begin
+      Basic_Tree.Add_Node
+        (T         => Host,
+         New_Index => New_Index,
+         The_Key   => Null_Key);
+      Atree := A_Tree'
+        (Count => 0,
+         Base  => New_Index,
+         Root  => Null_Index);
    end New_A_Tree;
 
    ------------
    -- Insert --
    ------------
 
-   procedure Insert
-     (Tree      : in out A_Tree;
-      Key       : Key_Type;
-      Inserted  : out Boolean)
+   procedure Insert (Atree     : in out A_Tree;
+                     Host      : in out Host_Tree;
+                     Key       : Key_Type;
+                     Inserted  : out Boolean)
    is
-      Visited        : Bounded_Stack.Stack;
+      Visited        : Bounded_Stacks.Stack;
       Key_Found      : Boolean;
       Is_Right       : Boolean;
-      Insert_Node    : Atree_Node;
-      Current_Node   : Atree_Node;
-       --  A Child of the Current Node.
-      Child          : Atree_Node;
-      Subroot        : Atree_Node;
+      Insert_Index   : Node_Index;
+       --  A Child of the currently Indexed node.
+      Child          : Node_Index;
+      Subroot_Index  : Node_Index;
    begin
-      if not Populated (Tree) then
-         --  First node of tree - Enter a new node with level 1 into the store
+      if Count (Atree) = 0 then
+         --  First node of Atree - Enter a new node with level 1 into the store
          Inserted := True;
-         --  Set_Count (ATree, 1);
-         Tree.Count := 1;
-         Tree_Abs.Add_Node
-           (N       => Insert_Node,
-            The_Key => Key);
-         --  The new node is the root of the new tree
-         Tree.Root := Insert_Node;
+         Atree.Count := 1;
+         --  An empty node has already been placed in the host tree by
+         --  New_A_Tree.  Its index is in Atree.Base.
+         --  Update the node with the given key and make it the root.
+         Atree.Count := 1;
+         Atree.Root := Atree.Base;
+         Basic_Tree.Set_Key (Host, Atree.Root, Key);
+         Basic_Tree.Set_Level (Host, Atree.Root, 1);
       else
          --  Make sure that the tree does not already include the key.
-         Find (Tree, Key, Key_Found, Visited);
+         Find (Host       => Host,
+               Root_Index => Atree.Root,
+               Key        => Key,
+               Found      => Key_Found,
+               Visited    => Visited);
          if Key_Found then
             --  The Key is already in the tree, do not add it again.
             Inserted := False;
           else
             Inserted := True;
-            Tree.Count := Tree.Count + 1;
-            Current_Node := Top_In_Atree_Node (Visited, Tree);
-            --  A right branch if the value of Key is greater (or equal)
+            Atree.Count := Atree.Count + 1;
+            Insert_Index := Bounded_Stacks.Top (Visited);
+            --  A right branch if the value of Key is greater
             --  to the Top Value, otherwise take the left branch.
-            Is_Right := Tree_Abs.Key (Current_Node) < Key;
+            --  There are no duplicate Keys.
+            Is_Right := Key > Basic_Tree.Key (Host, Insert_Index);
 
             --  Add a new child node to extend the tree
-            Tree_Abs.Add_Node
-              (N       => Child,
-               The_Key => Key);
-            Set_Branch (Is_Right   => Is_Right,
-                        Node       => Current_Node,
-                        Set_Node   => Child,
-                        Tree       => Tree);
-            Subroot := Tree.Root;
-            Rebalance (Subroot, Tree, Visited);
-            Tree.Root := Subroot;
+            Basic_Tree.Add_Node
+              (T         => Host,
+               New_Index => Child,
+               The_Key   => Key);
+            Set_Branch
+              (Is_Right  => Is_Right,
+               Host      => Host,
+               Index     => Insert_Index,
+               Set_Index => Child);
+            Subroot_Index := Atree.Root;
+            Rebalance
+              (Host           => Host,
+               Sub_Root_Index => Subroot_Index,
+               Visited        => Visited);
+            Atree.Root := Subroot_Index;
          end if;
       end if;
    end Insert;
@@ -468,111 +464,119 @@ package body Atrees is
    -- Insert_With_Value --
    -----------------------
 
-   procedure Insert_With_Value
-     (Tree          : in out A_Tree;
-      Key           : Key_Type;
-      Insert_Value  : Value_Type;
-      Inserted      : out Boolean;
-      Value_At_Node : out Value_Type)
+   procedure Insert_With_Value (Atree         : in out A_Tree;
+                                Host          : in out Host_Tree;
+                                Key           : Key_Type;
+                                Insert_Value  : Value_Type;
+                                Inserted      : out Boolean;
+                                Value_At_Node : out Value_Type)
    is
-      Visited        : Bounded_Stack.Stack;
+      Visited        : Bounded_Stacks.Stack;
       Key_Found      : Boolean;
       Is_Right       : Boolean;
-      Insert_Node    : Atree_Node;
-      Current_Node   : Atree_Node;
-       --  A Child of the Current Node.
-      Child          : Atree_Node;
-      Subroot        : Atree_Node;
+      Insert_Index   : Node_Index;
+       --  A Child of the currently Indexed node.
+      Child          : Node_Index;
+      Subroot_Index  : Node_Index;
    begin
-      if not Populated (Tree) then
-         --  First node of tree - Enter a new node with level 1 into the store
+      if Count (Atree) = 0 then
+         --  First node of Atree - Enter a new node with level 1 into the store
          Inserted := True;
-         Tree.Count := 1;
-         Tree_Abs.Add_Node
-           (N       => Insert_Node,
-            The_Key => Key);
-         Tree_Abs.Set_Value (Insert_Node, Insert_Value);
-         --  The new node is the root of the new tree
-         Tree.Root := Insert_Node;
+         Atree.Count := 1;
+         --  An empty node has already been placed in the host tree by
+         --  New_A_Tree.  Its index is in Atree.Base.
+         --  Update the node with the given key and make it the root.
+         Atree.Count := 1;
+         Atree.Root := Atree.Base;
+         Basic_Tree.Set_Key (Host, Atree.Root, Key);
+         Basic_Tree.Set_Value (Host, Atree.Root, Insert_Value);
+         Basic_Tree.Set_Level (Host, Atree.Root, 1);
          Value_At_Node := Insert_Value;
       else
          --  Make sure that the tree does not already include the key.
-         Find (Tree, Key, Key_Found, Visited);
+         Find (Host       => Host,
+               Root_Index => Atree.Root,
+               Key        => Key,
+               Found      => Key_Found,
+               Visited    => Visited);
          if Key_Found then
             --  The Key is already in the tree, do not add it again.
             Inserted := False;
-            --  The node with the key is on the top of the visited stack.
-            --  Get its value.
+            --  The index to the node with the key is on the top of the
+            --  visited stack. Get its value.
             Value_At_Node :=
-              Tree_Abs.Value (Top_In_Atree_Node (Visited, Tree));
+              Basic_Tree.Value (Host, Bounded_Stacks.Top (Visited));
          else
             Inserted := True;
-            Tree.Count := Tree.Count + 1;
-            Current_Node := Top_In_Atree_Node (Visited, Tree);
-            --  A right branch if the value of Key is greater (or equal)
+            Atree.Count := Atree.Count + 1;
+            Insert_Index := Bounded_Stacks.Top (Visited);
+            --  A right branch if the value of Key is greater
             --  to the Top Value, otherwise take the left branch.
-            Is_Right := Tree_Abs.Key (Current_Node) < Key;
+            --  There are no duplicate Keys.
+            Is_Right := Key > Basic_Tree.Key (Host, Insert_Index);
 
             --  Add a new child node to extend the tree
-            Tree_Abs.Add_Node
-              (N       => Child,
-               The_Key => Key);
-            Set_Branch (Is_Right   => Is_Right,
-                        Node       => Current_Node,
-                        Set_Node   => Child,
-                        Tree       => Tree);
+            Basic_Tree.Add_Node
+              (T         => Host,
+               New_Index => Child,
+               The_Key   => Key);
+            --  Add the Value to the node.
+            Basic_Tree.Set_Value
+              (T          => Host,
+               I          => Child,
+               Node_Value => Insert_Value);
+            --  Make the new Child node a child of the node indexed by
+            --  Current_Index.
+            Set_Branch
+              (Is_Right  => Is_Right,
+               Host      => Host,
+               Index     => Insert_Index,
+               Set_Index => Child);
+
             Value_At_Node := Insert_Value;
-            Subroot := Tree.Root;
-            Rebalance (Subroot, Tree, Visited);
-            Tree.Root := Subroot;
+            Subroot_Index := Atree.Root;
+            Rebalance
+              (Host           => Host,
+               Sub_Root_Index => Subroot_Index,
+               Visited        => Visited);
+            Atree.Root := Subroot_Index;
          end if;
       end if;
    end Insert_With_Value;
 
-   -------------------------------
-   -- Last_Underlying_Tree_Node --
-   -------------------------------
-
-   function Last_Underlying_Tree_Node (Dummy : Atree_Node) return Atree_Node is
-      (Tree_Abs.Last_Node_In_Tree (Dummy));
-
-   -------------------------------------
-   -- Clear_Underlying_Tree_From_Node --
-   -------------------------------------
-
-   procedure Clear_Underlying_Tree_From_Node (Node : in out Atree_Node)
+   procedure Next_Node_Index (Host  : Host_Tree;
+                              E     : in out Enumerator;
+                              Index : out Node_Index)
    is
+      Right_Child : Node_Index;
    begin
-      Tree_Abs.Clear_Tree_Below_Node (Node);
-   end Clear_Underlying_Tree_From_Node;
-
-
-   procedure Next_Node (E : in out Enumerator; Node : out Atree_Node) is
-      Right_Child : Atree_Node;
-   begin
-      if not Bounded_Stack.Is_Empty (E.Visited) then
-         Pop_In_Atree_Node (E.Visited, E.ATree, Node);
-         Right_Child := Tree_Abs.Right (Node);
-         if  Node_In_Atree (E.ATree, Right_Child) then
-            Push_In_Atree_Node (E.Visited, E.ATree, Right_Child);
-            Trace_To_Left_Leaf (E, E.ATree);
+      if Bounded_Stacks.Not_Empty (E.Visited) then
+         Bounded_Stacks.Pop (E.Visited, Index);
+         Right_Child := Basic_Tree.Right (Host, Index);
+         if Right_Child /= Null_Index then
+            Bounded_Stacks.Push (E.Visited, Right_Child);
+            Trace_To_Left_Leaf (Host, E);
          end if;
       else
-         Node := Empty_Node;
+         Index := Null_Index;
       end if;
-   end Next_Node;
-   pragma Inline (Next_Node);
+   end Next_Node_Index;
+   pragma Inline (Next_Node_Index);
 
    --------------
    -- Next_Key --
    --------------
 
-   procedure Next_Key (E : in out Enumerator; Key : out Key_Type) is
-      Node : Atree_Node;
+   procedure Next_Key (E : in out Enumerator;
+                       Atree : A_Tree;
+                       Host : Host_Tree;
+                       Key : out Key_Type)
+   is
+      Next_Index : Node_Index;
    begin
-      Next_Node (E, Node);
-      if Node /= Empty_Node then
-         Key := Tree_Abs.Key (Node);
+      Next_Node_Index (Host, E, Next_Index);
+      if Next_Index /= Null_Index then
+         Key := Basic_Tree.Key (Host, Next_Index);
       else
          Key := Null_Key;
       end if;
@@ -583,16 +587,18 @@ package body Atrees is
    -- Next_Key_And_Value --
    ------------------------
 
-   procedure Next_Key_And_Value (E        : in out Enumerator;
+   procedure Next_Key_And_Value (E         : in out Enumerator;
+                                 Atree     : A_Tree;
+                                 Host      : Host_Tree;
                                  Key       : out Key_Type;
                                  Its_Value : out Value_Type)
    is
-      Node : Atree_Node;
+      Next_Index : Node_Index;
    begin
-      Next_Node (E, Node);
-      if Node /= Empty_Node then
-         Key := Tree_Abs.Key (Node);
-         Its_Value := Tree_Abs.Value (Node);
+      Next_Node_Index (Host, E, Next_Index);
+      if Next_Index /= Null_Index then
+         Key := Basic_Tree.Key (Host, Next_Index);
+         Its_Value := Basic_Tree.Value (Host, Next_Index);
       else
          Key := Null_Key;
          Its_Value := Null_Value;
@@ -604,7 +610,8 @@ package body Atrees is
    -- Equal_Keys --
    ----------------
 
-  function Equal_Keys (ATree_1, ATree_2 : A_Tree) return Boolean
+   function Equal_Keys (Atree_1, Atree_2 : A_Tree;
+                        Host_1, Host_2 : Host_Tree) return Boolean
    is
       Enum_1       : Enumerator;
       Enum_2       : Enumerator;
@@ -612,13 +619,19 @@ package body Atrees is
       Key_2        : Key_Type;
       Equal        : Boolean;
    begin
-      Equal := ATree_1.Count = ATree_2.Count;
+      Equal := Atree_1.Count = Atree_2.Count;
       if Equal then
-         Init_Enumerator (ATree_1, Enum_1);
-         Init_Enumerator (ATree_2, Enum_2);
+         Enum_1 := New_Enumerator (Atree_1, Host_1);
+         Enum_2 := New_Enumerator (Atree_2, Host_2);
          loop
-            Next_Key (Enum_1, Key_1);
-            Next_Key (Enum_2, Key_2);
+            Next_Key (E     => Enum_1,
+                      Atree => Atree_1,
+                      Host  => Host_1,
+                      Key   => Key_1);
+            Next_Key (E     => Enum_2,
+                      Atree => Atree_2,
+                      Host  => Host_2,
+                      Key   => Key_2);
             Equal := Key_1 = Key_2;
             exit when not Equal or else Key_1 = Null_Key;
          end loop;
@@ -630,7 +643,8 @@ package body Atrees is
    -- Equal_Keys_And_Values --
    ---------------------------
 
-  function Equal_Keys_And_Values (ATree_1, ATree_2 : A_Tree) return Boolean
+  function Equal_Keys_And_Values (Atree_1, Atree_2 : A_Tree;
+                                   Host_1, Host_2 : Host_Tree) return Boolean
    is
       Enum_1       : Enumerator;
       Enum_2       : Enumerator;
@@ -642,11 +656,20 @@ package body Atrees is
    begin
       Equal := ATree_1.Count = ATree_2.Count;
       if Equal then
-         Init_Enumerator (ATree_1, Enum_1);
-         Init_Enumerator (ATree_2, Enum_2);
+         Enum_1 := New_Enumerator (Atree_1, Host_1);
+         Enum_2 := New_Enumerator (Atree_2, Host_2);
          loop
-            Next_Key_And_Value (Enum_1, Key_1, Value_1);
-            Next_Key_And_Value (Enum_2, Key_2, Value_2);
+            Next_Key_And_Value (E     => Enum_1,
+                                Atree => Atree_1,
+                                Host  => Host_1,
+                                Key   => Key_1,
+                                Its_Value => Value_1);
+            Next_Key_And_Value (E     => Enum_2,
+                                Atree => Atree_2,
+                                Host  => Host_2,
+                                Key   => Key_2,
+                                Its_Value => Value_2);
+
             Equal := Key_1 = Key_2 and then Value_1 = Value_2;
             exit when not Equal or else Key_1 = Null_Key;
          end loop;
@@ -658,12 +681,13 @@ package body Atrees is
    -- Is_Present --
    ----------------
 
-   function Is_Present (ATree : A_Tree; Key : Key_Type) return Boolean
+   function Is_Present (Atree : A_Tree; Host : Host_Tree; Key : Key_Type)
+                        return Boolean
    is
-      Visited : Bounded_Stack.Stack;
+      Visited : Bounded_Stacks.Stack;
       Found   : Boolean;
    begin
-      Find (ATree, Key, Found, Visited);
+      Find (Host, Atree.Root, Key, Found, Visited);
       return Found;
    end Is_Present;
 
@@ -671,15 +695,16 @@ package body Atrees is
    -- Value --
    ------------
 
-   function Value (ATree : A_Tree; Key : Key_Type) return Value_Type
+   function Value (ATree : A_Tree; Host : Host_Tree; Key : Key_Type)
+                   return Value_Type
    is
-      Visited : Bounded_Stack.Stack;
+      Visited : Bounded_Stacks.Stack;
       Found   : Boolean;
       Result  : Value_Type;
    begin
-      Find (ATree, Key, Found, Visited);
+      Find (Host, Atree.Root, Key, Found, Visited);
       if Found then
-         Result := Tree_Abs.Value (Top_In_Atree_Node (Visited, ATree));
+         Result := Basic_Tree.Value (Host, Bounded_Stacks.Top (Visited));
       else
          Result := Null_Value;
       end if;
@@ -690,31 +715,16 @@ package body Atrees is
    -- Tree_Depth --
    ----------------
 
-   function Tree_Depth (ATree : A_Tree) return Natural
+   function Tree_Depth (Atree : A_Tree; Host : Host_Tree) return Natural
    is
       Result : Natural;
    begin
-      if Empty_Tree (ATree) then
+      if Atree.Count = 0 then
          Result := 0;
       else
-         Result := Tree_Abs.Level (ATree.Root);
+         Result := Basic_Tree.Level (Host, Atree.Root);
       end if;
       return Result;
    end Tree_Depth;
-
-   --------------------
-   -- New_Enumerator --
-   --------------------
-
-   function New_Enumerator (ATree : A_Tree) return Enumerator
-   is
-      Result : Enumerator;
-   begin
-      Result.ATree := ATree;
-      Bounded_Stack.New_Stack (Result.Visited);
-      Push_In_Atree_Node (Result.Visited, ATree, ATree.Root);
-      Trace_To_Left_Leaf (Result, ATree);
-      return Result;
-   end New_Enumerator;
 
 end Atrees;

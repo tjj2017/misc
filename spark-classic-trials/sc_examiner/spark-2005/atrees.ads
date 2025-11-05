@@ -1,10 +1,10 @@
 ----------------------------------  Atrees  -----------------------------------
---  This package provides an implementaion of Anderson balanced trees using  --
+--  This package provides an implementaion of Andersson balanced trees using  --
 --  a Basic_Tree.Tree object to store the nodes of the tree.                 --
 --  Anderson Trees are accessed via a type A_Tree object A new Anderson tree --
 --  is established by calling the New_Atree procedure to associate the       --
 --  A_Tree object with the Basic_Tree.Tree object.                           --
---  All interactions with the Anderson tree are accomplished using the       --
+--  All interactions with the Andersson tree are accomplished using the       --
 --  subprograms in this package declaration using the Atree and Basic_Tree   --
 --  objects as parameters.                                                   --
 -------------------------------------------------------------------------------
@@ -13,6 +13,7 @@ with Specific_Tree_Types;
 with Basic_Tree;
 with Bounded_Stacks;
 use type Basic_Tree.Node_Index;
+use type Specific_Tree_Types.Key_Type;
 --# inherit Specific_Tree_Types, Basic_Tree, Bounded_Stacks;
 package Atrees is
 
@@ -26,6 +27,7 @@ package Atrees is
 
    --  function Count returns the number of Keys in the Atree.
    function Count (Atree : A_Tree) return Natural;
+   pragma Inline (Count);
 
    --  proof function to assert that the contents of Atree are maintained
    --  within the Host_Tree, Host.
