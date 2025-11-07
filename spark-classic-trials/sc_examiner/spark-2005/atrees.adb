@@ -96,7 +96,7 @@ package body Atrees is
    --  Local subprograms
 
    function Get_Child (Is_Right : Boolean;
-                       Host     : Host_Tree;
+                       Host     : Basic_Tree.Tree;
                        Index    : Node_Index)
                        return Node_Index
    is
@@ -112,9 +112,9 @@ package body Atrees is
    pragma Inline (Get_Child);
 
    procedure Set_Branch (Is_Right   : Boolean;
-                         Host       : in out Host_Tree;
-                         Index      : Node_Index;
-                         Set_Index  : Node_Index)
+                         Host       : in out Basic_Tree.Tree;
+                         Index      : Basic_Tree.Valid_Node_Index;
+                         Set_Index  : Basic_Tree.Valid_Node_Index)
    is
    begin
       if Is_Right then
@@ -158,8 +158,6 @@ package body Atrees is
       Is_Right      : Boolean;
 
    begin
-      --  Assume that a match for the Key, has not been found.
-      Found := False;
       --  Clear the visited stack - the Tree is being searced from its root.
       Bounded_Stacks.Clear (Visited);
 
@@ -174,6 +172,8 @@ package body Atrees is
       --  branches.
 
       loop
+         --  Avoid a conditional flow error.
+         Child := Null_Index;
          --  A record of nodes visited is held in the Visited stack.
          Bounded_Stacks.Push (Visited, Current_Index);
 
@@ -236,6 +236,8 @@ package body Atrees is
       Right_Child  := Basic_Tree.Right (Host, Sub_Root_Index);
       if Right_Child /= Null_Index then
          Right_Right_Child := Basic_Tree.Right (Host, Right_Child);
+      else
+         Right_Right_Child := Null_Index;
       end if;
 
       --  No action is taken if there are not two consecutive right children
@@ -417,7 +419,6 @@ package body Atrees is
          --  An empty node has already been placed in the host tree by
          --  New_A_Tree.  Its index is in Atree.Base.
          --  Update the node with the given key and make it the root.
-         Atree.Count := 1;
          Atree.Root := Atree.Base;
          Basic_Tree.Set_Key (Host, Atree.Root, Key);
          Basic_Tree.Set_Level (Host, Atree.Root, 1);
@@ -451,10 +452,14 @@ package body Atrees is
                Index     => Insert_Index,
                Set_Index => Child);
             Subroot_Index := Atree.Root;
+
+            --# accept F, 10, Visited, "Stack is not needed after rebalancing.";
             Rebalance
               (Host           => Host,
                Sub_Root_Index => Subroot_Index,
                Visited        => Visited);
+           --#  end accept;
+
             Atree.Root := Subroot_Index;
          end if;
       end if;
@@ -486,7 +491,6 @@ package body Atrees is
          --  An empty node has already been placed in the host tree by
          --  New_A_Tree.  Its index is in Atree.Base.
          --  Update the node with the given key and make it the root.
-         Atree.Count := 1;
          Atree.Root := Atree.Base;
          Basic_Tree.Set_Key (Host, Atree.Root, Key);
          Basic_Tree.Set_Value (Host, Atree.Root, Insert_Value);
@@ -535,10 +539,14 @@ package body Atrees is
 
             Value_At_Node := Insert_Value;
             Subroot_Index := Atree.Root;
+
+            --# accept F, 10, Visited, "Stack is not needed after rebalancing.";
             Rebalance
               (Host           => Host,
                Sub_Root_Index => Subroot_Index,
                Visited        => Visited);
+            --# end accept;
+
             Atree.Root := Subroot_Index;
          end if;
       end if;
@@ -580,6 +588,8 @@ package body Atrees is
       else
          Key := Null_Key;
       end if;
+
+      --# accept F, 30, Atree, "Atree is used in pre and post condition.";
    end Next_Key;
    pragma Inline (Next_Key);
 
@@ -603,6 +613,7 @@ package body Atrees is
          Key := Null_Key;
          Its_Value := Null_Value;
       end if;
+      --# accept F, 30, Atree, "Atree is used in pre and post condition.";
    end Next_Key_And_Value;
    pragma Inline (Next_Key_And_Value);
 
@@ -687,6 +698,9 @@ package body Atrees is
       Visited : Bounded_Stacks.Stack;
       Found   : Boolean;
    begin
+      --# accept F, 10, Visited, "Stack is not needed once presence is known." &
+      --#        F, 33, Visited, "Stack is not needed after rebalancing.";
+
       Find (Host, Atree.Root, Key, Found, Visited);
       return Found;
    end Is_Present;

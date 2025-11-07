@@ -28,8 +28,8 @@
 --  Procedure Init should be called prior to using the tree structure.      --
 ------------------------------------------------------------------------------
 
-with Specific_Tree_Types;
 with GNAT.Dynamic_Tables;
+with Specific_Tree_Types;
 --# inherit Specific_Tree_Types;
 package Basic_Tree is
 
@@ -275,26 +275,26 @@ package Basic_Tree is
                         I : Valid_Node_Index;
                         Branch : Valid_Node_Index);
    --# pre  not Empty_Tree (T) and In_Tree (T, I);
-   --# post Bounds_Preserved (T, T~) and
-   --#      Contents_Preserved (T, T~) and
-   --#      Structure_Preserved_Except (T, T~, I) and
+   --# post --  Bounds_Preserved (T, T~); -- and
+   --#      --  Contents_Preserved (T, T~); --  and
+   --#      --  Structure_Preserved_Except (T, T~, I) and
    --#      not Empty_Tree (T) and In_Tree (T, I) and
-   --#      Left (T, I)  = Branch and
-   --#      Right (T, I) = Right (T~, I) and
-   --#      Level (T, I) = Level (T~, I);
+   --#      Left (T, I)  = Branch; -- and
+   --  --#      Right (T, I) = Right (T~, I) and
+   --  --#      Level (T, I) = Level (T~, I);
    pragma Inline (Set_Left);
 
    procedure Set_Right (T : in out Tree;
                         I : Valid_Node_Index;
                         Branch : Valid_Node_Index);
    --# pre  not Empty_Tree (T) and In_Tree (T, I);
-   --# post Bounds_Preserved (T, T~) and
-   --#      Contents_Preserved (T, T~) and
-   --#      Structure_Preserved_Except (T, T~, I) and
-   --#      not Empty_Tree (T) and In_Tree (T, I) and
-   --#      Left (T, I)  = Left (T~, I) and
-   --#      Right (T, I) = Branch and
-   --#      Level (T, I) = Level (T~, I);
+   --  --# post Bounds_Preserved (T, T~) and
+   --  --#      Contents_Preserved (T, T~) and
+   --  --#      Structure_Preserved_Except (T, T~, I) and
+   --  --#      not Empty_Tree (T) and In_Tree (T, I) and
+   --  --#      Left (T, I)  = Left (T~, I) and
+   --  --#      Right (T, I) = Branch and
+   --  --#      Level (T, I) = Level (T~, I);
    pragma Inline (Set_Right);
 
    procedure Set_Key (T : in out Tree;
