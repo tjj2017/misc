@@ -1,6 +1,12 @@
 package body Bounded_Stacks
 with SPARK_Mode
 is
+   ---------------
+   -- Stack_Abs --
+   ---------------
+
+   function Stack_Abs (S : Stack) return Stack_Abstraction is
+     ((Contents => Contents_Abstraction (S.Contents), Stack_Top => S.Count));
 
    -----------
    -- Count --
