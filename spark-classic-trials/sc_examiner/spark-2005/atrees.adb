@@ -96,7 +96,7 @@ package body Atrees is
    --  Local subprograms
 
    function Get_Child (Is_Right : Boolean;
-                       Host     : Basic_Tree.Tree;
+                       Host     : Host_Tree;
                        Index    : Node_Index)
                        return Node_Index
    is
@@ -112,9 +112,9 @@ package body Atrees is
    pragma Inline (Get_Child);
 
    procedure Set_Branch (Is_Right   : Boolean;
-                         Host       : in out Basic_Tree.Tree;
-                         Index      : Basic_Tree.Valid_Node_Index;
-                         Set_Index  : Basic_Tree.Valid_Node_Index)
+                         Host       : in out Host_Tree;
+                         Index      : Valid_Node_Index;
+                         Set_Index  : Valid_Node_Index)
    is
    begin
       if Is_Right then
