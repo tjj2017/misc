@@ -1,12 +1,18 @@
 package body Basic_Tree is
 
+   ----------------
+   -- Last_Index --
+   ----------------
+
+   function Last_Index (T : Tree) return Node_Index is (T. Last);
+
    ----------
    -- Init --
    ----------
 
    procedure Init (T : out Tree) is
    begin
-      null;  -- Declaration of object of type T initializes the Object;
+      T.Last := Null_Index;  -- Declaration of object of type T initializes the Object;
    end Init;
 
    -----------
@@ -15,7 +21,7 @@ package body Basic_Tree is
 
    procedure Reset (T : in out Tree) is
    begin
-      Table.Init (Table.Instance (T));
+      T.Last := Null_Index;
    end Reset;
 
     -----------
@@ -121,8 +127,9 @@ package body Basic_Tree is
                        The_Key   : Key_Type)
    is
    begin
-      Table.Append (Table.Instance (T), Null_Actual_Node);
-      New_Index := Table.Last (Table.Instance (T));
+      T.Last := T.Last + 1;
+      T.Table (T.Last) := Null_Actual_Node;
+      New_Index := T.Last;
       T.Table (New_Index).Key := The_Key;
    end Add_Node;
 
@@ -130,8 +137,7 @@ package body Basic_Tree is
    -- Last_Node_Index --
    ---------------------
 
-   function Last_Node_Index (T : Tree) return Node_Index is
-     (Table.Last (Table.Instance (T)));
+   function Last_Node_Index (T : Tree) return Valid_Node_Index is (T.Last);
 
    ---------------------------
    -- Clear_Tree_Below_Node --
@@ -141,9 +147,7 @@ package body Basic_Tree is
                                     Final_Node : Valid_Node_Index)
    is
    begin
-      Table.Set_Last (Table.Instance (T), Final_Node);
-      T.Table (Final_Node).Left := Null_Index;
-      T.Table (Final_Node).Right := Null_Index;
+      T.Last := Final_Node;
     end Clear_Tree_Below_Node;
 
 end Basic_Tree;

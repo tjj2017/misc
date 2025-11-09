@@ -28,7 +28,7 @@
 --  Procedure Init should be called prior to using the tree structure.      --
 ------------------------------------------------------------------------------
 
-with GNAT.Dynamic_Tables;
+--  with GNAT.Dynamic_Tables;  --  Needed for runnable version.
 generic
    --  Node_Index must have a range as the number of possible nodes in the tree.
    --  Each Node_Index references a particular node in the tree.
@@ -51,7 +51,7 @@ generic
 
 package Basic_Tree is
 
-   type Tree is limited private;  -- Limited type because it uses pointers.
+   type Tree is private;  -- Should be Limited type because it uses pointers.
 
    --  Each node added to a tree has a Node_Index the value of which
    --  increases consecutuvely as nodes are added.  If two trees have the same
@@ -73,25 +73,27 @@ package Basic_Tree is
    -- the tree is non-empty.
    First_Node_Index : constant Valid_Node_Index := First_Valid_Node_Index;
 
-   --  Proof function to indicate the Tree is empty (has no nodes) after an
-   --  initialization (by calling Init.
-   --  A tree can only become not empty by adding a node (by calling Add_Node).
-   function Empty_Tree (T : Tree) return Boolean with
-     Ghost;
-
    --  Proof function to representing the last Node_Index in the Tree, T.
    --  It's value is Null_Index if the tree is empty.
    function Last_Index (T : Tree) return Node_Index with
      Ghost;
 
+   --  Proof function to indicate the Tree is empty (has no nodes) after an
+   --  initialization (by calling Init.
+   --  A tree can only become not empty by adding a node (by calling Add_Node).
+   function Empty_Tree (T : Tree) return Boolean is
+     (Last_Index (T) = Null_Index) with
+     Ghost;
+
+
    --  Proof function stating that the given Node_Index does, indeed,
    --  reference a node in the tree.
    --  A Node Index onl references a node in the tree if it is the Node_Index
    --  returned fom a call to Add_Node.
-   function In_Tree (T : Tree; I : Node_Index) return Boolean with
-     Pre =>  not Empty_Tree (T),
-     Post => In_Tree'Result = (I in Valid_Node_Index and I <= Last_Index (T)),
-     Ghost;
+   function In_Tree (T : Tree; I : Node_Index) return Boolean is
+     (I in Valid_Node_Index and I <= Last_Index (T)) with
+   Pre =>  not Empty_Tree (T),
+   Ghost;
 
    -- This procedure must be called prior to using an object of type Tree
    -- but should not be used thereafter.
@@ -103,7 +105,7 @@ package Basic_Tree is
    procedure Reset (T : in out Tree) with
      Post => Empty_Tree(T) and Last_Index (T)  = Null_Index;
 
-   function Last_Node_Index (T : Tree) return Node_Index with
+   function Last_Node_Index (T : Tree) return Valid_Node_Index with
      Pre  => not Empty_Tree (T),
      Post => Last_Node_Index'Result = Last_Index (T) and
              In_Tree (T, Last_Node_Index'Result),
@@ -190,7 +192,9 @@ package Basic_Tree is
       return Boolean is
      ((In_Tree (T1, S) and In_Tree (T2, S) and
          In_Tree (T1, E) and In_Tree (T2, E) and
-         In_Tree (T1, Except) and In_Tree (T2, Except)) and then
+         (if Except /= Null_Index then
+             In_Tree (T1, Except) and In_Tree (T2, Except)))
+      and then
         (if Except = Null_Index then
            Contents_Equal (T1, T2, S, E)
          elsif Except = S then
@@ -205,166 +209,169 @@ package Basic_Tree is
                  (S <= E and Except >= S and Except <= E))),
    Ghost;
 
-   --# function Contents_Preserved_Except (T1, T2 : Tree;
-   --#                                     Except : Node_Index)
-   --#                                     return Boolean;
-   --# pre not Empty_Tree (T1) and not Empty_Tree (T2)  and
-   --#         (Except = Null_Index or else (Except in Valid_Node_Index and
-   --#            Except <= Last_Node_Index (T1) and
-   --#            Except <= Last_Node_Index (T2)));
-   --# return Contents_Preserved_Between (T1, T2,
-   --#                                    First_Node_Index,
-   --#                                    Last_Node_Index (T1),
-   --#                                    Except);
+   function Contents_Preserved_Except (T1, T2 : Tree;
+                                       Except : Node_Index)
+                                       return Boolean is
+     (Contents_Preserved_Between (T1, T2,
+                                  First_Node_Index,
+                                  Last_Node_Index (T1),
+                                  Except)) with
+   Pre => not Empty_Tree (T1) and not Empty_Tree (T2)  and
+     (Except = Null_Index or else
+        (Except in Valid_Node_Index and
+             Except <= Last_Node_Index (T1) and
+             Except <= Last_Node_Index (T2))),
+   Ghost;
 
-   --# function Contents_Preserved (T1, T2 : Tree) return Boolean;
-   --# pre not Empty_Tree (T1) and not Empty_Tree (T2);
-   --# return Contents_Preserved_Except (T1, T2, Null_Index);
+   function Contents_Preserved (T1, T2 : Tree) return Boolean is
+      (Contents_Preserved_Except (T1, T2, Null_Index)) with
+   Pre => not Empty_Tree (T1) and not Empty_Tree (T2),
+   Ghost;
 
-   --# function Structure_Preserved_Between
-   --#    (T1, T2 : Tree;       --  T1 and T2 have the same Node_Index values
-   --#     S, E,                --  between start, S, and end, E, Indices.
-   --#     Except : Node_Index) --  Exclude this node.
-   --#                          --  Null_Index -> no exclusion.
-   --#     return Boolean;
-   --# pre not Empty_Tree (T1) and not Empty_Tree (T2) and
-   --#     ((Except = Null_Index or else
-   --#         (S <= E and Except >= S and Except <= E)));
-   --# return (In_Tree (T1, S) and In_Tree (T2, S) and
-   --#         In_Tree (T1, E) and In_Tree (T2, E) and
-   --#         In_Tree (T1, Except) and In_Tree (T2, Except)) and then
-   --#            (((Except = Null_Index) ->
-   --#                Structure_Equal (T1, T2, S, E))
-   --#             and
-   --#             ((Except = S) ->
-   --#                Structure_Equal (T1, T2, S + 1, E))
-   --#             and
-   --#             ((Except = E) ->
-   --#                Structure_Equal (T1, T2, S, E - 1))
-   --#             and
-   --#             ((Except /= Null_Index and Except /= S and Except /= E) ->
-   --#                (Structure_Equal (T1, T2, S, Except - 1)
-   --#                 and
-   --#                 Structure_Equal (T1, T2, Except + 1, E))));
+   function Structure_Preserved_Between
+     (T1, T2 : Tree;       --  T1 and T2 have the same Node_Index values
+      S, E,                --  between start, S, and end, E, Indices.
+      Except : Node_Index) --  Exclude this node.
+                           --  Null_Index -> no exclusion.
+      return Boolean is
+     ((In_Tree (T1, S) and In_Tree (T2, S) and
+         In_Tree (T1, E) and In_Tree (T2, E) and
+         (if Except /= Null_Index then
+             In_Tree (T1, Except) and In_Tree (T2, Except)))
+      and then
+        (if Except = Null_Index then
+           Structure_Equal (T1, T2, S, E)
+         elsif Except = S then
+           Structure_Equal (T1, T2, S + 1, E)
+         elsif Except = E then
+           Structure_Equal (T1, T2, S, E - 1)
+        else
+          Structure_Equal (T1, T2, S, Except - 1) and
+             Structure_Equal (T1, T2, Except + 1, E))) with
+   Pre => not Empty_Tree (T1) and not Empty_Tree (T2) and
+         ((Except = Null_Index or else
+            (S <= E and Except >= S and Except <= E))),
+   Ghost;
 
-   --# function Structure_Preserved_Except (T1, T2 : Tree;
-   --#                                      Except : Node_Index) return Boolean;
-   --# pre not Empty_Tree (T1) and not Empty_Tree (T2) and
-   --#         (Except = Null_Index or else (Except in Valid_Node_Index and
-   --#            Except <= Last_Node_Index (T1) and
-   --#            Except <= Last_Node_Index (T2)));
-   --# return Structure_Preserved_Between (T1, T2,
-   --#                                     First_Node_Index,
-   --#                                     Last_Node_Index (T1),
-   --#                                     Except);
+   function Structure_Preserved_Except (T1, T2 : Tree;
+                                        Except : Node_Index) return Boolean is
+     (Structure_Preserved_Between (T1, T2,
+                                   First_Node_Index,
+                                   Last_Node_Index (T1),
+                                   Except)) with
+   Pre => not Empty_Tree (T1) and not Empty_Tree (T2) and
+          (Except = Null_Index or else
+          (Except in Valid_Node_Index and
+           Except <= Last_Node_Index (T1) and
+               Except <= Last_Node_Index (T2))),
+   Ghost;
 
-   --# function Structure_Preserved (T1, T2 : Tree) return Boolean;
-   --# pre not Empty_Tree (T1) and not Empty_Tree (T2);
-   --# return Structure_Preserved_Except (T1, T2, Null_Index);
+   function Structure_Preserved (T1, T2 : Tree) return Boolean is
+     (Structure_Preserved_Except (T1, T2, Null_Index)) with
+   Pre => not Empty_Tree (T1) and not Empty_Tree (T2),
+   Ghost;
 
-   --# function Bounds_Preserved (T1, T2 : Tree) return Boolean;
-   --# return Last_Node_Index  (T1) = Last_Node_Index (T2);
+   function Bounds_Preserved (T1, T2 : Tree) return Boolean is
+     (Last_Node_Index  (T1) = Last_Node_Index (T2)) with
+   Ghost;
 
    -----------------------------------------------------------------------------
    --  Procedures that update the Tree parameter                              --
    -----------------------------------------------------------------------------
 
    procedure Set_Level (T : in out Tree; I : Valid_Node_Index;
-                        Node_Level : Level_Type);
-   --# pre  not Empty_Tree (T) and In_Tree (T, I);
-   --# post Bounds_Preserved (T, T~) and
-   --#      Contents_Preserved (T, T~) and
-   --#      Structure_Preserved_Except (T, T~, I) and
-   --#      not Empty_Tree (T) and In_Tree (T, I) and
-   --#      Left (T, I)  = Left (T~, I) and
-   --#      Right (T, I) = Right (T~, I) and
-   --#      Level (T, I) = Node_Level;
-   pragma Inline (Set_Level);
+                        Node_Level : Level_Type)  with
+   Pre  => not Empty_Tree (T) and In_Tree (T, I),
+   Post => Bounds_Preserved (T, T'Old) and
+           Contents_Preserved (T, T'Old) and
+           Structure_Preserved_Except (T, T'Old, I) and
+           not Empty_Tree (T) and In_Tree (T, I) and
+           Left (T, I)  = Left (T'Old, I) and
+           Right (T, I) = Right (T'Old, I) and
+           Level (T, I) = Node_Level,
+   Inline;
 
    procedure Set_Left  (T : in out Tree;
                         I : Valid_Node_Index;
-                        Branch : Valid_Node_Index);
-   --# pre  not Empty_Tree (T) and In_Tree (T, I);
-   --# post --  Bounds_Preserved (T, T~); -- and
-   --#      --  Contents_Preserved (T, T~); --  and
-   --#      --  Structure_Preserved_Except (T, T~, I) and
-   --#      not Empty_Tree (T) and In_Tree (T, I) and
-   --#      Left (T, I)  = Branch; -- and
-   --  --#      Right (T, I) = Right (T~, I) and
-   --  --#      Level (T, I) = Level (T~, I);
-   pragma Inline (Set_Left);
+                        Branch : Valid_Node_Index) with
+   Pre  => not Empty_Tree (T) and In_Tree (T, I),
+   Post =>  Bounds_Preserved (T, T'Old) and
+            Contents_Preserved (T, T'Old) and
+            Structure_Preserved_Except (T, T'Old, I) and
+            not Empty_Tree (T) and In_Tree (T, I) and
+            Left (T, I)  = Branch and
+            Right (T, I) = Right (T'Old, I) and
+            Level (T, I) = Level (T'Old, I),
+   Inline;
 
    procedure Set_Right (T : in out Tree;
                         I : Valid_Node_Index;
-                        Branch : Valid_Node_Index);
-   --# pre  not Empty_Tree (T) and In_Tree (T, I);
-   --  --# post Bounds_Preserved (T, T~) and
-   --  --#      Contents_Preserved (T, T~) and
-   --  --#      Structure_Preserved_Except (T, T~, I) and
-   --  --#      not Empty_Tree (T) and In_Tree (T, I) and
-   --  --#      Left (T, I)  = Left (T~, I) and
-   --  --#      Right (T, I) = Branch and
-   --  --#      Level (T, I) = Level (T~, I);
-   pragma Inline (Set_Right);
+                        Branch : Valid_Node_Index) with
+   Pre  => not Empty_Tree (T) and In_Tree (T, I),
+   Post => Bounds_Preserved (T, T'Old) and
+           Contents_Preserved (T, T'Old) and
+           Structure_Preserved_Except (T, T'Old, I) and
+           not Empty_Tree (T) and In_Tree (T, I) and
+           Left (T, I)  = Left (T'Old, I) and
+           Right (T, I) = Branch and
+           Level (T, I) = Level (T'Old, I),
+   Inline;
 
    procedure Set_Key (T : in out Tree;
                       I : Valid_Node_Index;
-                      The_Key : Key_Type);
-   --# pre  not Empty_Tree (T) and In_Tree (T, I);
-   --# post Bounds_Preserved (T, T~) and
-   --#      Structure_Preserved (T, T~) and
-   --#      Contents_Preserved_Except (T, T~, I) and
-   --#      not Empty_Tree (T) and In_Tree (T, I) and
-   --#      Key (T, I) = The_Key and
-   --#      Value (T, I) = Value (T~, I);
-   pragma Inline (Set_Key);
+                      The_Key : Key_Type) with
+   Pre  => not Empty_Tree (T) and In_Tree (T, I),
+   Post => Bounds_Preserved (T, T'Old) and
+           Structure_Preserved (T, T'Old) and
+           Contents_Preserved_Except (T, T'Old, I) and
+           not Empty_Tree (T) and In_Tree (T, I) and
+           Key (T, I) = The_Key and
+           Value (T, I) = Value (T'Old, I),
+  Inline;
 
    procedure Set_Value (T : in out Tree;
                         I : Valid_Node_Index;
-                        Node_Value : Value_Type);
-   --# pre  not Empty_Tree (T) and In_Tree (T, I);
-   --# post Bounds_Preserved (T, T~) and
-   --#      Structure_Preserved (T, T~) and
-   --#      Contents_Preserved_Except (T, T~, I) and
-   --#      not Empty_Tree (T) and In_Tree (T, I) and
-   --#      Key (T, I) = Key (T~, I) and
-   --#      Value (T, I) = Node_Value;
-   pragma Inline (Set_Value);
+                        Node_Value : Value_Type) with
+   Pre  => not Empty_Tree (T) and In_Tree (T, I),
+   Post => Bounds_Preserved (T, T'Old) and
+           Structure_Preserved (T, T'Old) and
+           Contents_Preserved_Except (T, T'Old, I) and
+           not Empty_Tree (T) and In_Tree (T, I) and
+           Key (T, I) = Key (T'Old, I) and
+           Value (T, I) = Node_Value,
+   Inline;
 
    procedure Add_Node  (T         : in out Tree;
                         New_Index : out Valid_Node_Index;
-                        The_Key   : Key_Type);
-   --# post (not Empty_Tree (T~) ->
-   --#          (Structure_Preserved_Except (T, T~, Last_Node_Index (T)) and
-   --#           Contents_Preserved_Except (T, T~, Last_Node_Index (T~)))) and
-   --#      Last_Index (T) = Last_Node_Index (T) and
-   --#      Last_Node_Index (T) = Last_Node_Index (T~) + 1 and
-   --#      Last_Node_Index (T) >= First_Node_Index and
-   --#      not Empty_Tree (T) and In_Tree (T, New_Index) and
-   --#      Key (T, Last_Node_Index (T)) = The_Key and
-   --#      Value (T, Last_Node_Index (T)) = Null_Value and
-   --#      Level (T, Last_Node_Index (T)) = Level_Type'First and
-   --#      Left (T, Last_Node_Index (T)) = Null_Index and
-   --#      Right (T, Last_Node_Index (T)) = Null_Index and
-   --#      New_Index = Last_Node_Index (T);
-   pragma Inline (Add_Node);
+                        The_Key   : Key_Type) with
+   Post => (if not Empty_Tree (T'Old) then
+             Structure_Preserved_Except (T, T'Old, Last_Node_Index (T)) and
+             Contents_Preserved_Except (T, T'Old, Last_Node_Index (T'Old))) and
+           Last_Index (T) = Last_Node_Index (T) and
+           Last_Node_Index (T) = Last_Node_Index (T'Old) + 1 and
+           Last_Node_Index (T) >= First_Node_Index and
+           not Empty_Tree (T) and In_Tree (T, New_Index) and
+           New_Index = Last_Node_Index (T) and
+           Key (T, New_Index) = The_Key and
+           Value (T, New_Index) = Null_Value and
+           Level (T, New_Index) = Level_Type'First and
+           Left (T, New_Index) = Null_Index and
+           Right (T, New_Index) = Null_Index,
+   Inline;
 
    procedure Clear_Tree_Below_Node (T : in out Tree;
-                                    Final_Node : Valid_Node_Index);
-   --# pre not Empty_Tree (T) and In_Tree (T, Final_Node);
-   --# post not Empty_Tree (T) and In_Tree (T, Final_Node) and
-   --#      Last_Node_Index (T) = Final_Node and
-   --#      Structure_Preserved_Between (T, T~,
-   --#                 First_Node_Index, Final_Node, Null_Index) and
-   --#      Contents_Preserved_Between (T, T~,
-   --#                 First_Node_Index, Final_Node, Null_Index);
-   pragma Inline (Clear_Tree_Below_Node);
+                                    Final_Node : Valid_Node_Index) with
+   Pre  => not Empty_Tree (T) and In_Tree (T, Final_Node),
+   Post => not Empty_Tree (T) and In_Tree (T, Final_Node) and
+           Last_Node_Index (T) = Final_Node and
+           Structure_Preserved_Between
+             (T, T'Old, First_Node_Index, Final_Node, Null_Index) and
+           Contents_Preserved_Between
+             (T, T'Old, First_Node_Index, Final_Node, Null_Index),
+   Inline;
    --  Removes all nodes from the Tree with Tree_Node values > IV (Final_Node).
 
 private
-   --# hide Basic_Tree;  -- Tree uses pointer type.
-                         -- Protected by making Tree a limited type.
-
    type Actual_Node is
       record
          Key   : Key_Type;
@@ -381,13 +388,21 @@ private
       Left  => Null_Index,
       Right => Null_Index);
 
-   package Table is new GNAT.Dynamic_Tables
-     (Table_Component_Type => Actual_Node,
-      Table_Index_Type     => Node_Index,
-      Table_Low_Bound      => First_Valid_Node_Index,
-      Table_Initial        => 100,
-      Table_Increment      => 100);
+--  The runnable version will use a dynamic table (vector) but not the
+--  proof version.
+--   package Table is new GNAT.Dynamic_Tables
+--     (Table_Component_Type => Actual_Node,
+--      Table_Index_Type     => Node_Index,
+--      Table_Low_Bound      => First_Valid_Node_Index,
+--      Table_Initial        => 100,
+--      Table_Increment      => 100);
 
-   type Tree is New Table.Instance;
+--   type Tree is New Table.Instance;
+
+   type Node_Array is array (Node_Index) of Actual_Node;
+   type Tree is record
+      Last  : Node_Index;
+      Table : Node_Array;
+   end record;
 
 end Basic_Tree;
