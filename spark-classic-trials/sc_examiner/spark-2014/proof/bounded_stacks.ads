@@ -33,6 +33,8 @@ is
    procedure New_Stack (S : out Stack)
      with Post => Is_Empty (S);
 
+   pragma Unevaluated_Use_Of_Old (Allow);
+
    procedure Push (S : in out Stack;
                    Value : Element_Type) with
      Pre => Count (S) < Stack_Size,

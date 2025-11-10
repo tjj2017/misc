@@ -49,7 +49,9 @@ generic
    Null_Key : Key_Type;
    Null_Value : Value_Type;
 
-package Basic_Tree is
+package Basic_Tree with
+SPARK_Mode
+is
 
    type Tree is private;  -- Should be Limited type because it uses pointers.
 
@@ -112,29 +114,29 @@ package Basic_Tree is
      Inline;
 
    function Level (T : Tree; I : Valid_Node_Index) return Level_Type with
-     Pre  => not Empty_Tree (T) and In_Tree (T, I),
+     Pre  => not Empty_Tree (T) and then In_Tree (T, I),
      Inline;
 
    -- Left returns Null_Index if the node referenced by the Node_Index has
    -- no left child otherwise it returns the Node_Index of the left child.
    function Left  (T : Tree; I : Valid_Node_Index) return Node_Index with
-     Pre  => not Empty_Tree (T) and In_Tree (T, I),
+     Pre  => not Empty_Tree (T) and then In_Tree (T, I),
      Post => (if Left'Result /= Null_Index then In_Tree (T, Left'Result)),
      Inline;
 
    -- Right returns Null_Index if the node referenced by the Node_Index has
    -- no right child otherwise it returns the Node_Index of the right child.
    function Right (T : Tree; I : Valid_Node_Index) return Node_Index with
-     Pre  => not Empty_Tree (T) and In_Tree (T, I),
+     Pre  => not Empty_Tree (T) and then In_Tree (T, I),
      Post => (if Right'Result /= Null_Index then In_Tree (T, Right'Result)),
      Inline;
 
    function Key (T : Tree; I : Valid_Node_Index) return Key_Type with
-     Pre  => not Empty_Tree (T) and In_Tree (T, I),
+     Pre  => not Empty_Tree (T) and then In_Tree (T, I),
      Inline;
 
    function Value (T : Tree; I : Valid_Node_Index) return Value_Type with
-     Pre  => not Empty_Tree (T) and In_Tree (T, I),
+     Pre  => not Empty_Tree (T) and then In_Tree (T, I),
      Inline;
 
    -----------------------------------------------------------------------------
@@ -145,8 +147,8 @@ package Basic_Tree is
    function Node_Contents_Equivalence
      (T1, T2 : Tree; I1, I2 : Valid_Node_Index) return Boolean is
      (Key (T1, I1) = Key (T2, I2) and Value (T1, I1) = Value (T2, I2)) with
-     Pre  =>  not Empty_Tree (T1) and not Empty_Tree (T2) and
-            In_Tree (T1, I1) and In_Tree (T2, I2),
+     Pre  => (not Empty_Tree (T1) and not Empty_Tree (T2)) and then
+             (In_Tree (T1, I1) and In_Tree (T2, I2)),
      Ghost;
 
    function Node_Structure_Equivalence
@@ -154,8 +156,8 @@ package Basic_Tree is
      (Level (T1, I1) = Level (T2, I2) and
           Left (T1, I1) = Left (T2, I2) and
           Right (T1, I1) = Right (T2, I2)) with
-      Pre  => not Empty_Tree (T1) and not Empty_Tree (T2) and
-              In_Tree (T1, I1) and In_Tree (T2, I2),
+      Pre  => (not Empty_Tree (T1) and not Empty_Tree (T2)) and then
+              (In_Tree (T1, I1) and In_Tree (T2, I2)),
       Ghost;
 
    --  The following proot functions are used to indicate the persistence of a
@@ -168,19 +170,19 @@ package Basic_Tree is
    --  apply.
    function Contents_Equal (T1, T2 : Tree; S, E : Valid_Node_Index)
       return Boolean is
-      (In_Tree (T1, S) and In_Tree (T2, S) and
-           In_Tree (T2, E) and In_Tree (T2, E)) and then
-          (for all I in Node_Index range S .. E =>
-               (Node_Contents_Equivalence (T1, T2, I, I))) with
+     (((In_Tree (T1, S) and In_Tree (T2, S) and
+        In_Tree (T1, E) and In_Tree (T2, E)) and then
+         (for all I in Node_Index range S .. E =>
+               (Node_Contents_Equivalence (T1, T2, I, I))))) with
       Pre  => not Empty_Tree (T1) and not Empty_Tree (T2),
       Ghost;
 
    function Structure_Equal (T1, T2 : Tree; S, E : Valid_Node_Index)
       return Boolean is
         ((In_Tree (T1, S) and In_Tree (T2, S) and
-              In_Tree (T2, E) and In_Tree (T2, E)) and then
-             (for all I in Node_Index range S .. E =>
-                  (Node_Structure_Equivalence (T1, T2, I, I)))) with
+          In_Tree (T1, E) and In_Tree (T2, E)) and then
+           (for all I in Node_Index range S .. E =>
+                 (Node_Structure_Equivalence (T1, T2, I, I)))) with
       Pre  => not Empty_Tree (T1) and not Empty_Tree (T2),
       Ghost;
 
@@ -198,10 +200,10 @@ package Basic_Tree is
         (if Except = Null_Index then
            Contents_Equal (T1, T2, S, E)
          elsif Except = S then
-           Contents_Equal (T1, T2, S + 1, E)
+           (if S < E then Contents_Equal (T1, T2, S + 1, E))
          elsif Except = E then
-           Contents_Equal (T1, T2, S, E - 1)
-        else
+           (if S < E then Contents_Equal (T1, T2, S, E - 1))
+         else
            Contents_Equal (T1, T2, S, Except - 1) and
            Contents_Equal (T1, T2, Except + 1, E))) with
    Pre  => not Empty_Tree (T1) and not Empty_Tree (T2) and
@@ -216,7 +218,7 @@ package Basic_Tree is
                                   First_Node_Index,
                                   Last_Node_Index (T1),
                                   Except)) with
-   Pre => not Empty_Tree (T1) and not Empty_Tree (T2)  and
+   Pre => (not Empty_Tree (T1) and not Empty_Tree (T2)) and then
      (Except = Null_Index or else
         (Except in Valid_Node_Index and
              Except <= Last_Node_Index (T1) and
@@ -242,13 +244,13 @@ package Basic_Tree is
         (if Except = Null_Index then
            Structure_Equal (T1, T2, S, E)
          elsif Except = S then
-           Structure_Equal (T1, T2, S + 1, E)
+           (if S < E then (Structure_Equal (T1, T2, S + 1, E))
          elsif Except = E then
-           Structure_Equal (T1, T2, S, E - 1)
+           (if S < E then Structure_Equal (T1, T2, S, E - 1))
         else
           Structure_Equal (T1, T2, S, Except - 1) and
-             Structure_Equal (T1, T2, Except + 1, E))) with
-   Pre => not Empty_Tree (T1) and not Empty_Tree (T2) and
+             Structure_Equal (T1, T2, Except + 1, E)))) with
+   Pre => (not Empty_Tree (T1) and not Empty_Tree (T2)) and then
          ((Except = Null_Index or else
             (S <= E and Except >= S and Except <= E))),
    Ghost;
@@ -259,7 +261,7 @@ package Basic_Tree is
                                    First_Node_Index,
                                    Last_Node_Index (T1),
                                    Except)) with
-   Pre => not Empty_Tree (T1) and not Empty_Tree (T2) and
+   Pre => (not Empty_Tree (T1) and not Empty_Tree (T2)) and then
           (Except = Null_Index or else
           (Except in Valid_Node_Index and
            Except <= Last_Node_Index (T1) and
@@ -273,6 +275,7 @@ package Basic_Tree is
 
    function Bounds_Preserved (T1, T2 : Tree) return Boolean is
      (Last_Node_Index  (T1) = Last_Node_Index (T2)) with
+   Pre => not Empty_Tree (T1) and not Empty_Tree (T2),
    Ghost;
 
    -----------------------------------------------------------------------------
@@ -281,7 +284,7 @@ package Basic_Tree is
 
    procedure Set_Level (T : in out Tree; I : Valid_Node_Index;
                         Node_Level : Level_Type)  with
-   Pre  => not Empty_Tree (T) and In_Tree (T, I),
+   Pre  => not Empty_Tree (T) and then In_Tree (T, I),
    Post => Bounds_Preserved (T, T'Old) and
            Contents_Preserved (T, T'Old) and
            Structure_Preserved_Except (T, T'Old, I) and
@@ -294,7 +297,8 @@ package Basic_Tree is
    procedure Set_Left  (T : in out Tree;
                         I : Valid_Node_Index;
                         Branch : Valid_Node_Index) with
-   Pre  => not Empty_Tree (T) and In_Tree (T, I),
+   Pre  => not Empty_Tree (T) and then In_Tree (T, I)
+           and then Branch <= Last_Node_Index (T),
    Post =>  Bounds_Preserved (T, T'Old) and
             Contents_Preserved (T, T'Old) and
             Structure_Preserved_Except (T, T'Old, I) and
@@ -307,7 +311,8 @@ package Basic_Tree is
    procedure Set_Right (T : in out Tree;
                         I : Valid_Node_Index;
                         Branch : Valid_Node_Index) with
-   Pre  => not Empty_Tree (T) and In_Tree (T, I),
+   Pre  => not Empty_Tree (T) and then In_Tree (T, I)
+           and then Branch <= Last_Node_Index (T),
    Post => Bounds_Preserved (T, T'Old) and
            Contents_Preserved (T, T'Old) and
            Structure_Preserved_Except (T, T'Old, I) and
@@ -320,7 +325,7 @@ package Basic_Tree is
    procedure Set_Key (T : in out Tree;
                       I : Valid_Node_Index;
                       The_Key : Key_Type) with
-   Pre  => not Empty_Tree (T) and In_Tree (T, I),
+   Pre  => not Empty_Tree (T) and then In_Tree (T, I),
    Post => Bounds_Preserved (T, T'Old) and
            Structure_Preserved (T, T'Old) and
            Contents_Preserved_Except (T, T'Old, I) and
@@ -332,7 +337,7 @@ package Basic_Tree is
    procedure Set_Value (T : in out Tree;
                         I : Valid_Node_Index;
                         Node_Value : Value_Type) with
-   Pre  => not Empty_Tree (T) and In_Tree (T, I),
+   Pre  => not Empty_Tree (T) and then In_Tree (T, I),
    Post => Bounds_Preserved (T, T'Old) and
            Structure_Preserved (T, T'Old) and
            Contents_Preserved_Except (T, T'Old, I) and
@@ -347,8 +352,8 @@ package Basic_Tree is
    Post => (if not Empty_Tree (T'Old) then
              Structure_Preserved_Except (T, T'Old, Last_Node_Index (T)) and
              Contents_Preserved_Except (T, T'Old, Last_Node_Index (T'Old))) and
-           Last_Index (T) = Last_Node_Index (T) and
-           Last_Node_Index (T) = Last_Node_Index (T'Old) + 1 and
+           Last_Index (T) = Last_Index (T'Old ) + 1 and
+           Last_Node_Index (T) = Last_Index (T) and
            Last_Node_Index (T) >= First_Node_Index and
            not Empty_Tree (T) and In_Tree (T, New_Index) and
            New_Index = Last_Node_Index (T) and
@@ -361,8 +366,8 @@ package Basic_Tree is
 
    procedure Clear_Tree_Below_Node (T : in out Tree;
                                     Final_Node : Valid_Node_Index) with
-   Pre  => not Empty_Tree (T) and In_Tree (T, Final_Node),
-   Post => not Empty_Tree (T) and In_Tree (T, Final_Node) and
+   Pre  => not Empty_Tree (T) and then In_Tree (T, Final_Node),
+   Post => (not Empty_Tree (T) and then In_Tree (T, Final_Node)) and
            Last_Node_Index (T) = Final_Node and
            Structure_Preserved_Between
              (T, T'Old, First_Node_Index, Final_Node, Null_Index) and
