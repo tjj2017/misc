@@ -13,7 +13,7 @@ is
 
    function Predecessor (S : Stack; Pred_Num : Stack_Count)
                          return Element_Type with
-     Refined_Post=> Predecessor'Result = S.Contents (S.Count - Pred_Num)
+     Refined_Post=> Predecessor'Result = S.Contents (Count (S) - Pred_Num)
    is
    begin
       return S.Contents (S.Count - Pred_Num);
