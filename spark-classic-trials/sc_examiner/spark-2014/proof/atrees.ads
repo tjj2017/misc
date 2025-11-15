@@ -15,22 +15,19 @@ generic
    type Key_Type is (<>);
    type Value_Type is private;
 
-   Null_Key : constant Key_Type;
-   Null_Value : constant Value_Type;
+   Null_Key : in Key_Type;
+   Null_Value : in Value_Type;
 
-   Stack_Size : constant Positive;
+   Max_Nodes_In_Tree : in Positive;
 
-package Atrees is
+   Stack_Size : in Positive;
 
-   package Tree is new Basic_Tree
-     (Node_Index => Node_Index,
-      Level_Type => Natural,
-      Key_Type   => Key_Type,
-      Value_Type => Value_Type,
-      Null_Key   => Null_Key,
-      Null_Value => Null_Value);
+package Atrees with
+SPARK_Mode
+is
+   type Host_Tree is private;  --  Should be a limited type.
 
-   subtype Host_Tree is Tree.Tree;
+   type A_Tree is private;
 
    --  function Count returns the number of nodes in the Atree.
    function Count (Atree : A_Tree) return Natural with
@@ -41,18 +38,19 @@ package Atrees is
    function In_Host (Atree : A_Tree; Host : Host_Tree) return Boolean with
      Ghost;
 
+   type Key_Index is new Natural with Ghost;
    --  Logically,each Key in he tree has an index.  Keys are indexed
    --  consecutively such that for all keys in the Atree the value of
    --  Indexed_Key (I + 1) > Indexed_Key (I).  The keys are ordered by index
    --  and there are no duplicate keys.
    function Indexed_Key (Atree : A_Tree;
                          Host  : Host_Tree;
-                         Index : Positive) return Key_Type with
+                         Index : Key_Index) return Key_Type with
      Pre => In_Host (Atree, Host),
      Ghost;
 
    function Ordered (Atree : A_Tree; Host : Host_Tree) return Boolean is
-      (for all I in Positive range 1 .. Count (Atree) - 1 =>
+      (for all I in Key_Index range 1 .. Key_Index (Count (Atree)) - 1 =>
            Indexed_Key (Atree, Host, I + 1) > Indexed_Key (Atree, Host, I)) with
        Pre => In_Host (Atree, Host),
        Ghost;
@@ -74,36 +72,39 @@ package Atrees is
 
    function Is_Present (Atree : A_Tree; Host : Host_Tree; Key : Key_Type)
                         return Boolean with
-     Pre  => In_Host (Atree, Host) and Populated (Atree, Host) and
-             Ordered (Atree, Host),
-     Post => (for some I in Positive range 1 .. Count (Atree) =>
+     Pre  => In_Host (Atree, Host) and then
+             (Populated (Atree, Host) and Ordered (Atree, Host)),
+     Post => Is_Present'Result =
+               (for some I in Key_Index range 1 .. Key_Index (Count (Atree)) =>
                 (Indexed_Key (Atree, Host, I) = Key));
 
-   function Value (ATree : A_Tree; Host : Host_Tree; Key : Key_Type)
+   function Value (Atree : A_Tree; Host : Host_Tree; Key : Key_Type)
                    return Value_Type with
-     Pre  => In_Host (Atree, Host) and Populated (Atree, Host) and
-             Ordered (Atree, Host),
-     Post => (for some I in Positive range 1 .. Count(Atree) =>
-                (Value_At_Key (Atree, Host, Key) = V);
+     Pre  => In_Host (Atree, Host) and then
+             (Populated (Atree, Host) and Ordered (Atree, Host)),
+     Post => (for some I in Key_Index range 1 .. Key_Index (Count(Atree)) =>
+                Indexed_Key (Atree, Host, I) = Key and then
+                  Value_At_Key (Atree, Host, Key) = Value'Result);
 
    function Equal_Keys (Atree_1, Atree_2 : A_Tree;
                         Host_1, Host_2 : Host_Tree) return Boolean with
-   Pre  => In_Host (Atree_1, Host_1) and In_Host (Atree_2, Host_2) and
-           Populated (Atree_1, Host_1) and Populated (Atree_2, Host_2) and
-           Ordered (Atree_1, Host_1) and Ordered (Atree_2, Host_2),
-   Post =>  (Count (Atree_1) = Count (Atree_2)) and then
-               (for all I in Positive range 1 .. Count (Atree_1) =>
+   Pre  => (In_Host (Atree_1, Host_1) and In_Host (Atree_2, Host_2)) and then
+           (Populated (Atree_1, Host_1) and Populated (Atree_2, Host_2) and
+            Ordered (Atree_1, Host_1) and Ordered (Atree_2, Host_2)),
+   Post =>  Equal_Keys'Result = (Count (Atree_1) = Count (Atree_2)) and then
+               (for all I in Key_Index range 1 .. Key_Index (Count (Atree_1)) =>
                   (Indexed_Key (Atree_1, Host_1, I) =
                      Indexed_Key (Atree_2, Host_2, I)));
 
    function Equal_Keys_And_Values (Atree_1, Atree_2 : A_Tree;
                                    Host_1, Host_2 : Host_Tree)
               return Boolean with
-   Pre  => In_Host (Atree_1, Host_1) and In_Host (Atree_2, Host_2) and
-           Populated (Atree_1, Host_1) and Populated (Atree_2, Host_2) and
-           Ordered (Atree_1, Host_1) and Ordered (Atree_2, Host_2),
-   Post => (Count (Atree_1) = Count (Atree_2)) and then
-              (for all I in Positive range 1 .. Count (Atree_1) =>
+     Pre  => (In_Host (Atree_1, Host_1) and In_Host (Atree_2, Host_2)) and then
+             (Populated (Atree_1, Host_1) and Populated (Atree_2, Host_2) and
+              Ordered (Atree_1, Host_1) and Ordered (Atree_2, Host_2)),
+     Post => Equal_Keys_And_Values'Result =
+              (Count (Atree_1) = Count (Atree_2)) and then
+               (for all I in Key_Index range 1 .. Key_Index (Count (Atree_1)) =>
                  ( Indexed_Key (Atree_1, Host_1, I) =
                      Indexed_Key (Atree_2, Host_2, I) and
                   Value_At_Key (Atree_1, Host_1,
@@ -112,95 +113,114 @@ package Atrees is
                                    Indexed_Key (Atree_2, Host_2, I))));
 
    procedure New_A_Tree (Atree : out A_Tree; Host : in out Host_Tree) with
-   Post => In_Host (Atree, Host) and Count (Atree) = 0 and
+   Post => (In_Host (Atree, Host) and Count (Atree) = 0) and then
            Ordered (Atree, Host);
 
    procedure Insert (Atree     : in out A_Tree;
                      Host      : in out Host_Tree;
                      Key       : Key_Type;
-                     Inserted  : out Boolean);
-   --# pre In_Host (Atree, Host) and Count (Atree) < Natural'Last and
-   --#     Ordered (Atree, Host);
-   --# post In_Host (Atree, Host) and Populated (Atree, Host) and
-   --#      (Inserted -> ((Count (Atree) = Count (Atree~) + 1))) and
-   --#      (not Inserted -> (Count (Atree) = Count (Atree~))) and
-   --#      Ordered (Atree, Host) and
-   --#      (for some I in Positive range 1 .. Count (Atree) =>
-   --#          (Indexed_Key (Atree, Host, I) = Key));
+                     Inserted  : out Boolean) with
+     Pre  => (In_Host (Atree, Host) and Count (Atree) < Natural'Last) and then
+              Ordered (Atree, Host),
+     Post => (In_Host (Atree, Host) and Populated (Atree, Host)) and then
+              (if Inserted then
+                 Count (Atree) = Count (Atree'Old) + 1
+               else
+                 Count (Atree) = Count (Atree'Old) and
+                 Ordered (Atree, Host) and
+                (for some I in Key_Index range 1 .. Key_Index (Count (Atree)) =>
+                     Indexed_Key (Atree, Host, I) = Key));
 
    procedure Insert_With_Value (Atree         : in out A_Tree;
                                 Host          : in out Host_Tree;
                                 Key           : Key_Type;
                                 Insert_Value  : Value_Type;
                                 Inserted      : out Boolean;
-                                Value_At_Node : out Value_Type);
-   --# pre In_Host (Atree, Host) and Count (Atree) < Natural'Last and
-   --#     Ordered (Atree, Host);
-   --# post In_Host (Atree, Host) and Populated (Atree, Host) and
-   --#      (Inserted -> ((Count (Atree) = Count (Atree~) + 1))) and
-   --#      (not Inserted -> (Count (Atree) = Count (Atree~))) and
-   --#      Ordered (Atree, Host) and
-   --#      (for some I in Positive range 1 .. Count (Atree) =>
-   --#          (Indexed_Key (Atree, Host, I) = Key)) and
-   --#      (Inserted -> (Value_At_Node = Insert_Value and
-   --#                      Value (Atree, Host, Key) = Insert_Value)) and
-   --#      (not Inserted -> (Value_At_Node = Value (Atree, Host, Key) and
-   --#                          Value (Atree, Host, Key) =
-   --#                             Value (Atree~, Host~, Key)));
+                                Value_At_Node : out Value_Type) with
+     Pre  => (In_Host (Atree, Host) and Count (Atree) < Natural'Last) and then
+              Ordered (Atree, Host),
+     Post => (In_Host (Atree, Host) and Populated (Atree, Host)) and then
+             (if Inserted then
+                Count (Atree) = Count (Atree'Old) + 1
+              else
+                Count (Atree) = Count (Atree'Old) and
+                Ordered (Atree, Host) and
+               (for some I in Key_Index range 1 .. Key_Index (Count (Atree)) =>
+                  (Indexed_Key (Atree, Host, I) = Key) and
+                  (if Inserted then
+                     Value_At_Node = Insert_Value and
+                       Value (Atree, Host, Key) = Insert_Value
+                   else
+                     Value_At_Node = Value (Atree, Host, Key) and
+                     Value (Atree, Host, Key) =
+                       Value (Atree'Old, Host'Old, Key))));
 
 
    ------------ Enumerators for Atree depth first traversal ---------------
    type Enumerator is private;
 
-   --# function Enumerator_Of_Tree (E : Enumerator;
-   --#                              A : A_Tree;
-   --#                              T : Host_Tree) return Boolean;
+   function Enumerator_Of_Tree (E : Enumerator;
+                                A : A_Tree;
+                                T : Host_Tree) return Boolean with
+     Ghost;
 
-   --# function Next_Indexed_Key (E : Enumerator;
-   --#                            A : A_Tree;
-   --#                            T : Host_Tree) return Natural;
-   --# pre Enumerator_Of_Tree (E, A, T);
+   function Next_Indexed_Key (E : Enumerator; Atree : A_Tree)
+                              return Key_Index with
+   Ghost;
 
-   function New_Enumerator (Atree : A_Tree; Host : Host_Tree) return Enumerator;
-   --# pre In_Host (Atree, Host) and Populated (Atree, Host) and
-   --#     Ordered (Atree, Host);
-   --# return E => Enumerator_Of_Tree (E, Atree, Host) and
-   --#             Next_Indexed_Key (E, Atree, Host) = 1;
+   function New_Enumerator (Atree : A_Tree; Host : Host_Tree)
+                            return Enumerator with
+     Pre  => (In_Host (Atree, Host) and Populated (Atree, Host)) and then
+              Ordered (Atree, Host),
+     Post => Enumerator_Of_Tree (New_Enumerator'Result, Atree, Host) and then
+             Next_Indexed_Key (New_Enumerator'Result, Atree) = 1;
 
    procedure Next_Key (E : in out Enumerator;
                        Atree : A_Tree;
                        Host : Host_Tree;
-                       Key : out Key_Type);
-   --# pre Enumerator_Of_Tree (E, Atree, Host) and Populated (Atree, Host) and
-   --#     Ordered (Atree, Host);
-   --# post Enumerator_Of_Tree (E, Atree, Host) and
-   --#      Key = Indexed_Key (Atree, Host,
-   --#                         Next_Indexed_Key (E~, Atree, Host)) and
-   --#      Next_Indexed_Key (E, Atree, Host) =
-   --#         Next_Indexed_Key (E~, Atree, Host) + 1;
+                       Key : out Key_Type) with
+     Pre  => (Enumerator_Of_Tree (E, Atree, Host) and Populated (Atree, Host))
+             and then Ordered (Atree, Host),
+     Post => Enumerator_Of_Tree (E, Atree, Host) and then
+             (Key = Indexed_Key (Atree, Host,
+                                 Next_Indexed_Key (E'Old, Atree)) and
+              Next_Indexed_Key (E, Atree) =
+                Next_Indexed_Key (E'Old, Atree) + 1);
 
    procedure Next_Key_And_Value (E         : in out Enumerator;
                                  Atree     : A_Tree;
                                  Host      : Host_Tree;
                                  Key       : out Key_Type;
-                                 Its_Value : out Value_Type);
-   --# pre Enumerator_Of_Tree (E, Atree, Host) and Populated (Atree, Host) and
-   --#     Ordered (Atree, Host);
-   --# post Enumerator_Of_Tree (E, Atree, Host) and
-   --#      Key = indexed_Key (Atree, Host,
-   --#                         Next_Indexed_Key (E~, Atree, Host)) and
-   --#      Its_Value = Value_At_Key (Atree, Host, Key) and
-   --#      Next_Indexed_Key (E, Atree, Host) =
-   --#         Next_Indexed_Key (E~, Atree, Host) + 1;
+                                 Its_Value : out Value_Type) with
+     Pre  => (Enumerator_Of_Tree (E, Atree, Host) and Populated (Atree, Host))
+              and then Ordered (Atree, Host),
+     Post => Enumerator_Of_Tree (E, Atree, Host) and then
+             (Key = indexed_Key (Atree, Host,
+                                 Next_Indexed_Key (E'Old, Atree)) and
+                Its_Value = Value_At_Key (Atree, Host, Key) and
+                Next_Indexed_Key (E, Atree) =
+                  Next_Indexed_Key (E'Old, Atree) + 1);
 
 
 private
-   subtype Node_Index is Basic_Tree.Node_Index;
-   subtype Valid_Node_Index is Basic_Tree.Valid_Node_Index;
+   subtype Node_Index is Natural range 0 .. Max_Nodes_In_Tree;
+   subtype Node_Count is Natural range 0 .. Max_Nodes_In_Tree;
+
+   package Tree is new Basic_Tree
+     (Node_Index => Node_Index,
+      Level_Type => Natural,
+      Key_Type   => Key_Type,
+      Value_Type => Value_Type,
+      Null_Key   => Null_Key,
+      Null_Value => Null_Value);
+
+   type Host_Tree is new Tree.Tree;
+
+   subtype Valid_Node_Index is Tree.Valid_Node_Index;
 
    type A_Tree is
       record
-         Count : Natural;
+         Count : Node_Count;
          Base  : Valid_Node_Index;
          Root  : Node_Index;
       end record;
@@ -212,12 +232,16 @@ private
    --  As the Atree will be balanced, the minimum Stack_Size must be greater
    --  than the maximum height of the tree, K.
    --  K = Log2 (N + 1) - 1.
-   --  Stack_Size : Positive
+
+   package Stack is new Bounded_Stacks
+     (Element_Type => Valid_Node_Index,
+      Stack_Size   => Stack_Size);
 
    type Enumerator is
       record
+         Nodes_Issued : Node_Count;
           --  A stack to record visited nodes when enumerating.
-         Visited : Bounded_Stacks.Stack;
+         Visited : Stack.Stack;
       end record;
 
 end Atrees;
