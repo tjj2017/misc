@@ -5,6 +5,13 @@ is
 
    Null_Index : constant Node_Index := Tree.Null_Index;
 
+   procedure Init_Host_Tree (Host : out Host_Tree) with
+     Refined_Post => Tree.Empty_Tree (Tree.Tree (Host))
+   is
+   begin
+      Tree.Init (Tree.Tree (Host));
+   end Init_Host_Tree;
+
    --  A proof function only use to show logical association between an
    --  A_Tree object and a Host_Tree_Object.
    --  The body is hidden from SPARK so that the proof does not assume
@@ -159,7 +166,10 @@ is
              Root_Index /= Null_Index,
      Post => not Stack.Is_Empty (Visited) and then
              (if Found then
-                Tree.Key (Tree.Tree (Host), Stack.Top (Visited)) = Key)
+                Tree.Key (Tree.Tree (Host), Stack.Top (Visited)) = Key and
+                  (for some N in Node_Index =>
+                       Tree.Key (Tree.Tree (Host), N) =
+                         Key and N = Stack.Top (Visited)))
    is
 
       Current_Index  : Node_Index;
@@ -382,13 +392,12 @@ is
    is
       Result : Enumerator;
    begin
+      Result.Node_Issue := 0;
       Stack.New_Stack (Result.Visited);
       Stack.Push (Result.Visited, Atree.Root);
       Trace_To_Left_Leaf (Host, Result);
       if not Stack.Is_Empty (Result.Visited) then
          Result.Node_Issue := 1;
-      else
-         Result.Node_Issue := 0;
       end if;
       return Result;
    end New_Enumerator;
@@ -469,12 +478,14 @@ is
                Set_Index => Child);
             Subroot_Index := Atree.Root;
 
-            --# accept F, 10, Visited, "Stack is not needed after rebalancing.";
+            pragma Warnings (Off, """Visited""",
+                             Reason =>
+                            "Visited stack is not needed after rebalancing");
             Rebalance
               (Host           => Host,
                Sub_Root_Index => Subroot_Index,
                Visited        => Visited);
-           --#  end accept;
+            pragma Warnings (On, """Visited""");
 
             Atree.Root := Subroot_Index;
          end if;
@@ -556,12 +567,14 @@ is
             Value_At_Node := Insert_Value;
             Subroot_Index := Atree.Root;
 
-            --# accept F, 10, Visited, "Stack is not needed after rebalancing.";
+            pragma Warnings (Off, """Visited""",
+                             Reason =>
+                            "Visited stack is not needed after rebalancing");
             Rebalance
               (Host           => Host,
                Sub_Root_Index => Subroot_Index,
                Visited        => Visited);
-            --# end accept;
+            pragma Warnings (On, """Visited""");
 
             Atree.Root := Subroot_Index;
          end if;
@@ -607,6 +620,8 @@ is
          else
             Key := Null_Key;
          end if;
+      else
+         Key := Null_Key;
       end if;
    end Next_Key;
    pragma Inline (Next_Key);
@@ -716,10 +731,15 @@ is
       Visited : Stack.Stack;
       Found   : Boolean;
    begin
-      --# accept F, 10, Visited, "Stack is not needed once presence is known." &
-      --#        F, 33, Visited, "Stack is not needed after rebalancing.";
-
+      pragma Warnings (Off, """Visited""",
+                             Reason =>
+                            "Visited stack is not needed after finding key");
       Find (Host, Atree.Root, Key, Found, Visited);
+      pragma Warnings (On, """Visited""");
+
+      pragma Assert (if Found then
+                        Tree.Key (Tree.Tree (Host), Stack.Top (Visited)) = Key);
+
       return Found;
    end Is_Present;
 
@@ -763,7 +783,7 @@ is
                          return Key_Type
    is
       E : Enumerator := New_Enumerator (Atree, Host);
-      The_Key : Key_Type;
+      The_Key : Key_Type := Null_Key;
    begin
       for I in 1 .. Index loop
          Next_Key (E, Atree, Host, The_Key);

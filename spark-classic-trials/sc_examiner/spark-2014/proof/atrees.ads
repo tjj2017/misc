@@ -1,12 +1,13 @@
 ----------------------------------  Atrees  -----------------------------------
---  This package provides an implementaion of Andersson balanced trees using  --
+--  This package provides an implementaion of Andersson balanced trees using --
 --  a Basic_Tree.Tree object to store the nodes of the tree.                 --
---  Anderson Trees are accessed via a type A_Tree object A new Anderson tree --
---  is established by calling the New_Atree procedure to associate the       --
+--  Andersson Trees are accessed via a type A_Tree object A new Andersson    --
+--  tree is established by calling the New_Atree procedure to associate the  --
 --  A_Tree object with the Basic_Tree.Tree object.                           --
---  All interactions with the Andersson tree are accomplished using the       --
+--  All interactions with the Andersson tree are accomplished using the      --
 --  subprograms in this package declaration using the Atree and Basic_Tree   --
 --  objects as parameters.                                                   --
+--  The host Basic Tree object must be initialized by a call Init_Host_Tree. --
 -------------------------------------------------------------------------------
 
 with Basic_Tree;
@@ -26,6 +27,8 @@ package Atrees with
 SPARK_Mode
 is
    type Host_Tree is private;  --  Should be a limited type.
+
+   procedure Init_Host_Tree (Host : out Host_Tree);
 
    type A_Tree is private;
 
