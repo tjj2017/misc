@@ -35,7 +35,7 @@ is
    -- Count --
    -----------
 
-   function Count (Atree : A_Tree) return Natural is (Atree.Count);
+   function Count (Atree : A_Tree) return Node_Count is (Atree.Count);
 
 
 --     --  --  Proof helper subprograms
@@ -378,8 +378,7 @@ is
    --------------------
 
    function New_Enumerator (Atree : A_Tree; Host : Host_Tree)
-                            return Enumerator with
-     Pre => not Tree.Empty_Tree (Tree.Tree (Host)) and Populated (Atree, Host)
+                            return Enumerator
    is
       Result : Enumerator;
    begin
@@ -387,9 +386,9 @@ is
       Stack.Push (Result.Visited, Atree.Root);
       Trace_To_Left_Leaf (Host, Result);
       if not Stack.Is_Empty (Result.Visited) then
-         Result.Nodes_Issued := 1;
+         Result.Node_Issue := 1;
       else
-         Result.Nodes_Issued := 0;
+         Result.Node_Issue := 0;
       end if;
       return Result;
    end New_Enumerator;
@@ -403,7 +402,7 @@ is
       New_Index : Node_Index;
    begin
       Tree.Add_Node
-        (T         => Host,
+        (T         => Tree.Tree (Host),
          New_Index => New_Index,
          The_Key   => Null_Key);
       Atree := A_Tree'
@@ -437,8 +436,8 @@ is
          --  New_A_Tree.  Its index is in Atree.Base.
          --  Update the node with the given key and make it the root.
          Atree.Root := Atree.Base;
-         Tree.Set_Key (Host, Atree.Root, Key);
-         Tree.Set_Level (Host, Atree.Root, 1);
+         Tree.Set_Key (Tree.Tree (Host), Atree.Root, Key);
+         Tree.Set_Level (Tree.Tree (Host), Atree.Root, 1);
       else
          --  Make sure that the tree does not already include the key.
          Find (Host       => Host,
@@ -456,11 +455,11 @@ is
             --  A right branch if the value of Key is greater
             --  to the Top Value, otherwise take the left branch.
             --  There are no duplicate Keys.
-            Is_Right := Key > Tree.Key (Host, Insert_Index);
+            Is_Right := Key > Tree.Key (Tree.Tree (Host), Insert_Index);
 
             --  Add a new child node to extend the tree
             Tree.Add_Node
-              (T         => Host,
+              (T         => Tree.Tree (Host),
                New_Index => Child,
                The_Key   => Key);
             Set_Branch
@@ -509,9 +508,9 @@ is
          --  New_A_Tree.  Its index is in Atree.Base.
          --  Update the node with the given key and make it the root.
          Atree.Root := Atree.Base;
-         Tree.Set_Key (Host, Atree.Root, Key);
-         Tree.Set_Value (Host, Atree.Root, Insert_Value);
-         Basic_Tree.Set_Level (Host, Atree.Root, 1);
+         Tree.Set_Key (Tree.Tree (Host), Atree.Root, Key);
+         Tree.Set_Value (Tree.Tree (Host), Atree.Root, Insert_Value);
+         Tree.Set_Level (Tree.Tree (Host), Atree.Root, 1);
          Value_At_Node := Insert_Value;
       else
          --  Make sure that the tree does not already include the key.
@@ -526,7 +525,7 @@ is
             --  The index to the node with the key is on the top of the
             --  visited stack. Get its value.
             Value_At_Node :=
-              Tree.Value (Host, Stack.Top (Visited));
+              Tree.Value (Tree.Tree (Host), Stack.Top (Visited));
          else
             Inserted := True;
             Atree.Count := Atree.Count + 1;
@@ -534,16 +533,16 @@ is
             --  A right branch if the value of Key is greater
             --  to the Top Value, otherwise take the left branch.
             --  There are no duplicate Keys.
-            Is_Right := Key > Tree.Key (Host, Insert_Index);
+            Is_Right := Key > Tree.Key (Tree.Tree (Host), Insert_Index);
 
             --  Add a new child node to extend the tree
             Tree.Add_Node
-              (T         => Host,
+              (T         => Tree.Tree (Host),
                New_Index => Child,
                The_Key   => Key);
             --  Add the Value to the node.
             Tree.Set_Value
-              (T          => Host,
+              (T          => Tree.Tree (Host),
                I          => Child,
                Node_Value => Insert_Value);
             --  Make the new Child node a child of the node indexed by
@@ -575,16 +574,16 @@ is
    is
       Right_Child : Node_Index;
    begin
-      if Stack.Not_Empty (E.Visited) then
+      if not Stack.Is_Empty (E.Visited) then
          Stack.Pop (E.Visited, Index);
-         Right_Child := Tree.Right (Host, Index);
+         Right_Child := Tree.Right (Tree.Tree (Host), Index);
          if Right_Child /= Null_Index then
             Stack.Push (E.Visited, Right_Child);
             Trace_To_Left_Leaf (Host, E);
          end if;
-         E.Node_Count := E.Node_Count + 1;
+         E.Node_Issue := E.Node_Issue + 1;
       else
-         E.Node_Count := 0;
+         E.Node_Issue := 0;
          Index := Null_Index;
       end if;
    end Next_Node_Index;
@@ -601,14 +600,14 @@ is
    is
       Next_Index : Node_Index;
    begin
-      Next_Node_Index (Host, E, Next_Index);
-      if Next_Index /= Null_Index then
-         Key := Tree.Key (Host, Next_Index);
-      else
-         Key := Null_Key;
+      if E.Node_Issue > 0 and E.Node_Issue < Atree.Count then
+         Next_Node_Index (Host, E, Next_Index);
+         if Next_Index /= Null_Index then
+            Key := Tree.Key (Tree.Tree (Host), Next_Index);
+         else
+            Key := Null_Key;
+         end if;
       end if;
-
-      --# accept F, 30, Atree, "Atree is used in pre and post condition.";
    end Next_Key;
    pragma Inline (Next_Key);
 
@@ -626,8 +625,8 @@ is
    begin
       Next_Node_Index (Host, E, Next_Index);
       if Next_Index /= Null_Index then
-         Key := Tree.Key (Host, Next_Index);
-         Its_Value := Basic_Tree.Value (Host, Next_Index);
+         Key := Tree.Key (Tree.Tree (Host), Next_Index);
+         Its_Value := Tree.Value (Tree.Tree (Host), Next_Index);
       else
          Key := Null_Key;
          Its_Value := Null_Value;
@@ -737,7 +736,7 @@ is
    begin
       Find (Host, Atree.Root, Key, Found, Visited);
       if Found then
-         Result := Tree.Value (Host, Stack.Top (Visited));
+         Result := Tree.Value (Tree.Tree (Host), Stack.Top (Visited));
       else
          Result := Null_Value;
       end if;
@@ -755,7 +754,7 @@ is
       if Atree.Count = 0 then
          Result := 0;
       else
-         Result := Tree.Level (Host, Atree.Root);
+         Result := Tree.Level (Tree.Tree (Host), Atree.Root);
       end if;
       return Result;
    end Tree_Depth;
@@ -772,19 +771,10 @@ is
       return The_Key;
    end Indexed_Key;
 
-   function Next_Indexed_Key (E : Enumerator;
-                              A : A_Tree;
-                              T : Host_Tree) return Key_Index
-   is
-      E_Local : Enumerator := E;
-      The_Index : Index;
-   begin
-      Next_Node_Index
-        (Host  => Host,
-         E     => E_Local,
-         Index => The_Index);
-      return Key_Index (The_Index);
-   end Next_Indexed_Key;
+   function Current_Indexed_Key (E : Enumerator;
+                                 A : A_Tree;
+                                 T : Host_Tree) return Key_Index is
+      (Key_Index (E.Node_Issue));
 
    function Value_At_Key (Atree : A_Tree; Host : Host_Tree; Key : Key_type)
                           return Value_Type
@@ -799,7 +789,7 @@ is
          Found      => Found,
          Visited    => Visited);
       return (if Found then
-                 Tree.Value (Host, Stack.Top (Visited))
+                 Tree.Value (Tree.Tree (Host), Stack.Top (Visited))
               else
                  Null_Value);
    end Value_At_Key;

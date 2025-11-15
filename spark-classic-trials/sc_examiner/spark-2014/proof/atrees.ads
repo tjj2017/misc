@@ -29,8 +29,10 @@ is
 
    type A_Tree is private;
 
+    subtype Node_Count is Natural range 0 .. Max_Nodes_In_Tree;
+
    --  function Count returns the number of nodes in the Atree.
-   function Count (Atree : A_Tree) return Natural with
+   function Count (Atree : A_Tree) return Node_Count with
    Inline;
 
    --  Proof function to assert that the contents of Atree are maintained
@@ -164,16 +166,18 @@ is
                                 T : Host_Tree) return Boolean with
      Ghost;
 
-   function Next_Indexed_Key (E : Enumerator; Atree : A_Tree)
-                              return Key_Index with
-   Ghost;
+   function Current_Indexed_Key (E: Enumerator;
+                                 A: A_Tree;
+                                 T : Host_Tree) return Key_Index with
+     Pre => Populated (A, T) and then Ordered (A, T),
+     Ghost;
 
    function New_Enumerator (Atree : A_Tree; Host : Host_Tree)
                             return Enumerator with
      Pre  => (In_Host (Atree, Host) and Populated (Atree, Host)) and then
               Ordered (Atree, Host),
      Post => Enumerator_Of_Tree (New_Enumerator'Result, Atree, Host) and then
-             Next_Indexed_Key (New_Enumerator'Result, Atree) = 1;
+             Current_Indexed_Key (New_Enumerator'Result, Atree, Host) = 1;
 
    procedure Next_Key (E : in out Enumerator;
                        Atree : A_Tree;
@@ -183,9 +187,9 @@ is
              and then Ordered (Atree, Host),
      Post => Enumerator_Of_Tree (E, Atree, Host) and then
              (Key = Indexed_Key (Atree, Host,
-                                 Next_Indexed_Key (E'Old, Atree)) and
-              Next_Indexed_Key (E, Atree) =
-                Next_Indexed_Key (E'Old, Atree) + 1);
+                                 Current_Indexed_Key (E'Old, Atree, Host)) and
+              Current_Indexed_Key (E, Atree, Host) =
+                Current_Indexed_Key (E'Old, Atree, Host) + 1);
 
    procedure Next_Key_And_Value (E         : in out Enumerator;
                                  Atree     : A_Tree;
@@ -195,16 +199,15 @@ is
      Pre  => (Enumerator_Of_Tree (E, Atree, Host) and Populated (Atree, Host))
               and then Ordered (Atree, Host),
      Post => Enumerator_Of_Tree (E, Atree, Host) and then
-             (Key = indexed_Key (Atree, Host,
-                                 Next_Indexed_Key (E'Old, Atree)) and
+             (Key = Indexed_Key (Atree, Host,
+                                 Current_Indexed_Key (E'Old, Atree, Host)) and
                 Its_Value = Value_At_Key (Atree, Host, Key) and
-                Next_Indexed_Key (E, Atree) =
-                  Next_Indexed_Key (E'Old, Atree) + 1);
+                Current_Indexed_Key (E, Atree, Host) =
+                  Current_Indexed_Key (E'Old, Atree, Host) + 1);
 
 
 private
    subtype Node_Index is Natural range 0 .. Max_Nodes_In_Tree;
-   subtype Node_Count is Natural range 0 .. Max_Nodes_In_Tree;
 
    package Tree is new Basic_Tree
      (Node_Index => Node_Index,
@@ -239,7 +242,7 @@ private
 
    type Enumerator is
       record
-         Nodes_Issued : Node_Count;
+         Node_Issue : Node_Count;
           --  A stack to record visited nodes when enumerating.
          Visited : Stack.Stack;
       end record;
