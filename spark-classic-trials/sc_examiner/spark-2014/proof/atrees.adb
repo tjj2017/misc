@@ -16,12 +16,9 @@ is
    --  A_Tree object and a Host_Tree_Object.
    --  The body is hidden from SPARK so that the proof does not assume
    --  that In_Host is always True.
-   function In_Host (Atree : A_Tree; Host : Host_Tree) return Boolean with
-     SPARK_Mode => Off
-   is
-   begin
-      return (True);
-   end In_Host;
+   function In_Host (Atree : A_Tree; Host : Host_Tree) return Boolean is
+     (not Tree.Empty_Tree (Tree.Tree (Host)) and then
+      Tree.In_Tree (Tree.Tree (Host), Atree.Root));
 
 
    --  A proof function only use to show logical association between an
@@ -44,6 +41,9 @@ is
 
    function Count (Atree : A_Tree) return Node_Count is (Atree.Count);
 
+
+   function Populated (Atree : A_Tree; Host : Host_Tree) return Boolean is
+     (Count (Atree) > 0 and Atree.Root /= Null_Index);
 
 --     --  --  Proof helper subprograms
 --     --
@@ -162,8 +162,9 @@ is
                    Key        : Key_Type;
                    Found      : out Boolean;
                    Visited    : out Stack.Stack) with
-     Pre  => not Tree.Empty_Tree (Tree.Tree (Host)) and
-             Root_Index /= Null_Index,
+     Pre  => (not Tree.Empty_Tree (Tree.Tree (Host)) and
+              Root_Index /= Null_Index) and then
+             In_Tree (Host, Root_Index),
      Post => not Stack.Is_Empty (Visited) and then
              (if Found then
                 Tree.Key (Tree.Tree (Host), Stack.Top (Visited)) = Key and
@@ -406,7 +407,9 @@ is
    -- New_A_Tree --
    ----------------
 
-   procedure New_A_Tree (Atree : out A_Tree; Host : in out Host_Tree)
+   procedure New_A_Tree (Atree : out A_Tree; Host : in out Host_Tree) with
+     Refined_Post => not Tree.Empty_Tree (Tree.Tree (Host)) and
+                     In_Host (Atree, Host)
    is
       New_Index : Node_Index;
    begin
@@ -733,9 +736,12 @@ is
    begin
       pragma Warnings (Off, """Visited""",
                              Reason =>
-                            "Visited stack is not needed after finding key");
+                         "Visited stack is not needed after finding key");
       Find (Host, Atree.Root, Key, Found, Visited);
       pragma Warnings (On, """Visited""");
+
+      pragma Assert (if Found then Tree.In_Tree (Tree.Tree (Host),
+                       Stack.Top (Visited)));
 
       pragma Assert (if Found then
                         Tree.Key (Tree.Tree (Host), Stack.Top (Visited)) = Key);

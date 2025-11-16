@@ -65,10 +65,9 @@ is
      Pre => In_Host (Atree, Host),
      Ghost;
 
-   function Populated (Atree : A_Tree; Host : Host_Tree) return Boolean is
-      (Count (Atree) > 0) with
-       Pre => In_Host (Atree, Host),
-       Ghost;
+   function Populated (Atree : A_Tree; Host : Host_Tree) return Boolean with
+     Pre  => In_Host (Atree, Host),
+     Ghost;
 
    -----------------------------------------------------------------------
 
