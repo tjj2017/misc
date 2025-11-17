@@ -740,6 +740,8 @@ is
       Find (Host, Atree.Root, Key, Found, Visited);
       pragma Warnings (On, """Visited""");
 
+      pragma Assert (if Found then
+                        Tree.In_Tree (Tree.Tree  (Host), Stack.Top (Visited)));
       pragma Assert (if Found then Tree.In_Tree (Tree.Tree (Host),
                        Stack.Top (Visited)));
 
