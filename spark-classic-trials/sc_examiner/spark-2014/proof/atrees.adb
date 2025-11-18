@@ -43,7 +43,9 @@ is
 
 
    function Populated (Atree : A_Tree; Host : Host_Tree) return Boolean is
-     (Count (Atree) > 0 and Atree.Root /= Null_Index);
+     (not Tree.Empty_Tree (Tree.Tree (Host)) and then In_Host (Atree, Host)
+          and then
+        (Count (Atree) > 0 and Atree.Root /= Null_Index));
 
    --  A logical function to state that a Node_Index references a node
    --  within the given A_Tree.
@@ -798,11 +800,18 @@ is
       pragma Warnings (On, """Visited""");
 
       pragma Assert (if Found then
-                        In_ATree (Atree, Host,
-                                 Top_In_Atree_Index (Visited, Atree, Host)));
-      pragma Assert (if Found then
                         Tree.Key (Tree.Tree (Host),
-                          Top_In_Atree_Index (Visited, Atree, Host)) = Key);
+                       Top_In_Atree_Index (Visited, Atree, Host)) = Key);
+      pragma Assume (Found =
+                       (for some I in Key_Index range
+                          1 .. Key_Index (Count (Atree)) =>
+                            Indexed_Key (Atree, Host, I) = Key),
+                    "The Key has been found it must have a Key_Index");
+
+      pragma Assert (Found =
+                       (for some I in Key_Index range
+                          1 .. Key_Index (Count (Atree)) =>
+                       Indexed_Key (Atree, Host, I) = Key));
 
       return Found;
    end Is_Present;
