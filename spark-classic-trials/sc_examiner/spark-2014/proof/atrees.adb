@@ -54,6 +54,22 @@ is
      (Tree.In_Tree (Tree.Tree (Host), Node) and Count (Atree) > 0) with
    Ghost;
 
+   function Key_Index_Of_Node (Atree : A_Tree;
+                               Host  : Host_Tree;
+                               Index : Node_Index) return Key_Index with
+     Pre  => In_Atree (Atree, Host, Index) and then Count (Atree) > 0,
+     Post => (for some I in Key_Index range 1 .. Key_Index (Count (Atree)) =>
+                Indexed_Key (Atree, Host, I) =
+                  Tree.Key (Tree.Tree (Host), Index) and then
+                Key_Index_Of_Node'Result = I)
+   is
+      E : Enumerator := New_Enumerator (Atree, Host);
+   begin
+
+      for I in Key_Index range 1 .. Key_Index (Count (Atree)) loop
+
+
+
    --  Proof helper subprograms
 
    --  Pushing exclusively using Push_In_Tree_Node ensures that
@@ -450,6 +466,9 @@ is
       if not Stack.Is_Empty (Result.Visited) then
          Result.Node_Issue := 1;
       end if;
+      pragma Assume (Enumerator_Of_Tree (Result, Atree, Host),
+                     "The New_Enumerator is associated with the given " &
+                    "A_Tree and Host_Tree.");
       return Result;
    end New_Enumerator;
 
@@ -685,6 +704,10 @@ is
       else
          Key := Null_Key;
       end if;
+      pragma Assume (Enumerator_Of_Tree (E, Atree, Host),
+                     "Obtaining the next key does not affect " &
+                       "the association with Atree and Host.");
+
    end Next_Key;
    pragma Inline (Next_Key);
 
@@ -829,10 +852,23 @@ is
    begin
       Find (Atree, Host, Atree.Root, Key, Found, Visited);
       if Found then
-         Result := Tree.Value (Tree.Tree (Host), Stack.Top (Visited));
+         Result := Tree.Value (Tree.Tree (Host),
+                               Top_In_Atree_Index (Visited, Atree, Host));
+      pragma Assert (for all I in Key_Index range
+                       1 .. Key_Index (Count(Atree)) =>
+                         Indexed_Key (Atree, Host, I) /= Null_Key);
+      pragma Assert (for some I in Key_Index range
+                       1 .. Key_Index (Count(Atree)) =>
+                         Value_At_Key
+                       (Atree => Atree,
+                        Host  => Host,
+                        Key   => Indexed_Key (Atree, Host, I)) = Result);
       else
          Result := Null_Value;
       end if;
+      pragma Assert (Result = Null_Value or else
+                     Result = Tree.Value (Tree.Tree (Host),
+                       Top_In_Atree_Index (Visited, Atree, Host)));
       return Result;
    end Value;
 
@@ -858,9 +894,14 @@ is
       E : Enumerator := New_Enumerator (Atree, Host);
       The_Key : Key_Type := Null_Key;
    begin
+      pragma Assert (Count (Atree) > 0 and Index > 0 and
+                       Index <= Key_Index (Count (Atree)));
       for I in 1 .. Index loop
+         pragma Loop_Invariant (Enumerator_Of_Tree (E, Atree, Host));
          Next_Key (E, Atree, Host, The_Key);
       end loop;
+      pragma Assert (Count (Atree) > 0 and Index > 0 and
+                       Index <= Key_Index (Count (Atree)));
       return The_Key;
    end Indexed_Key;
 

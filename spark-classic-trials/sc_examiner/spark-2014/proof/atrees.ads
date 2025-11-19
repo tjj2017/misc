@@ -43,7 +43,7 @@ is
    function In_Host (Atree : A_Tree; Host : Host_Tree) return Boolean with
      Ghost;
 
-   type Key_Index is new Natural with Ghost;
+   type Key_Index is new Natural;
    --  Logically,each Key in he tree has an index.  Keys are indexed
    --  consecutively such that for all keys in the Atree the value of
    --  Indexed_Key (I + 1) > Indexed_Key (I).  The keys are ordered by index
@@ -51,7 +51,10 @@ is
    function Indexed_Key (Atree : A_Tree;
                          Host  : Host_Tree;
                          Index : Key_Index) return Key_Type with
-     Pre => In_Host (Atree, Host),
+     Pre => In_Host (Atree, Host) and then Count (Atree) > 0 and then
+            (Index > 0 and Index <= Key_Index (Count (Atree))) and then
+            Ordered (Atree, Host),
+     Post => Indexed_Key'Result /= Null_Key,
      Ghost;
 
    function Ordered (Atree : A_Tree; Host : Host_Tree) return Boolean is
@@ -60,13 +63,14 @@ is
        Pre => In_Host (Atree, Host),
        Ghost;
 
-   function Value_At_Key (Atree : A_Tree; Host : Host_Tree; Key : Key_type)
-                          return Value_Type with
-     Pre => In_Host (Atree, Host),
-     Ghost;
-
    function Populated (Atree : A_Tree; Host : Host_Tree) return Boolean with
      Pre  => In_Host (Atree, Host),
+     Ghost;
+
+   function Value_At_Key (Atree : A_Tree; Host : Host_Tree; Key : Key_type)
+                          return Value_Type with
+     Pre => In_Host (Atree, Host) and then Populated (Atree, Host) and then
+            Key /= Null_Key,
      Ghost;
 
    -----------------------------------------------------------------------
@@ -86,7 +90,8 @@ is
                    return Value_Type with
      Pre  => In_Host (Atree, Host) and then
              (Populated (Atree, Host) and Ordered (Atree, Host)),
-     Post => (for some I in Key_Index range 1 .. Key_Index (Count(Atree)) =>
+     Post => Value'Result = Null_Value or else
+             (for some I in Key_Index range 1 .. Key_Index (Count(Atree)) =>
                 Indexed_Key (Atree, Host, I) = Key and then
                   Value_At_Key (Atree, Host, Key) = Value'Result);
 
@@ -176,7 +181,7 @@ is
 
    function New_Enumerator (Atree : A_Tree; Host : Host_Tree)
                             return Enumerator with
-     Pre  => (In_Host (Atree, Host) and Populated (Atree, Host)) and then
+     Pre  => (In_Host (Atree, Host) and then Populated (Atree, Host)) and then
               Ordered (Atree, Host),
      Post => Enumerator_Of_Tree (New_Enumerator'Result, Atree, Host) and then
              Current_Indexed_Key (New_Enumerator'Result, Atree, Host) = 1;
@@ -185,13 +190,15 @@ is
                        Atree : A_Tree;
                        Host : Host_Tree;
                        Key : out Key_Type) with
-     Pre  => (Enumerator_Of_Tree (E, Atree, Host) and Populated (Atree, Host))
-             and then Ordered (Atree, Host),
+     Pre  => (Enumerator_Of_Tree (E, Atree, Host) and then
+                In_Host (Atree, Host) and then
+                Populated (Atree, Host)) and then Ordered (Atree, Host),
      Post => Enumerator_Of_Tree (E, Atree, Host) and then
-             (Key = Indexed_Key (Atree, Host,
-                                 Current_Indexed_Key (E'Old, Atree, Host)) and
-              Current_Indexed_Key (E, Atree, Host) =
-                Current_Indexed_Key (E'Old, Atree, Host) + 1);
+             (if Current_Indexed_Key (E, Atree, Host) /= 0 then
+                Key = Indexed_Key (Atree, Host,
+                                   Current_Indexed_Key (E'Old, Atree, Host)) and
+                  Current_Indexed_Key (E, Atree, Host) =
+                       Current_Indexed_Key (E'Old, Atree, Host) + 1);
 
    procedure Next_Key_And_Value (E         : in out Enumerator;
                                  Atree     : A_Tree;
