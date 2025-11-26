@@ -52,8 +52,7 @@ is
                          Host  : Host_Tree;
                          Index : Key_Index) return Key_Type with
      Pre => In_Host (Atree, Host) and then Count (Atree) > 0 and then
-            (Index > 0 and Index <= Key_Index (Count (Atree))) and then
-            Ordered (Atree, Host),
+            (Index > 0 and Index <= Key_Index (Count (Atree))),
      Post => Indexed_Key'Result /= Null_Key,
      Ghost;
 
@@ -194,7 +193,9 @@ is
                 In_Host (Atree, Host) and then
                 Populated (Atree, Host)) and then Ordered (Atree, Host),
      Post => Enumerator_Of_Tree (E, Atree, Host) and then
-             (if Current_Indexed_Key (E, Atree, Host) /= 0 then
+             (if Current_Indexed_Key (E, Atree, Host) in
+                1 .. Key_Index (Count (Atree) - 1)
+              then
                 Key = Indexed_Key (Atree, Host,
                                    Current_Indexed_Key (E'Old, Atree, Host)) and
                   Current_Indexed_Key (E, Atree, Host) =

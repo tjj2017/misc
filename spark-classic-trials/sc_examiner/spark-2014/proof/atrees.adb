@@ -54,22 +54,6 @@ is
      (Tree.In_Tree (Tree.Tree (Host), Node) and Count (Atree) > 0) with
    Ghost;
 
-   function Key_Index_Of_Node (Atree : A_Tree;
-                               Host  : Host_Tree;
-                               Index : Node_Index) return Key_Index with
-     Pre  => In_Atree (Atree, Host, Index) and then Count (Atree) > 0,
-     Post => (for some I in Key_Index range 1 .. Key_Index (Count (Atree)) =>
-                Indexed_Key (Atree, Host, I) =
-                  Tree.Key (Tree.Tree (Host), Index) and then
-                Key_Index_Of_Node'Result = I)
-   is
-      E : Enumerator := New_Enumerator (Atree, Host);
-   begin
-
-      for I in Key_Index range 1 .. Key_Index (Count (Atree)) loop
-
-
-
    --  Proof helper subprograms
 
    --  Pushing exclusively using Push_In_Tree_Node ensures that
@@ -463,9 +447,7 @@ is
       Stack.New_Stack (Result.Visited);
       Push_In_Atree_Index (Result.Visited, Atree, Host, Atree.Root);
       Trace_To_Left_Leaf (Atree, Host, Result);
-      if not Stack.Is_Empty (Result.Visited) then
-         Result.Node_Issue := 1;
-      end if;
+      pragma Assert (not Stack.Is_Empty (Result.Visited));
       pragma Assume (Enumerator_Of_Tree (Result, Atree, Host),
                      "The New_Enumerator is associated with the given " &
                     "A_Tree and Host_Tree.");
@@ -664,14 +646,21 @@ is
                               Host  : Host_Tree;
                               E     : in out Enumerator;
                               Index : out Node_Index) with
-     Pre => In_Host (Atree, Host),
+     Pre  => In_Host (Atree, Host) and Populated (Atree, Host),
+     Post => (if E.Node_Issue'Old <= Count (Atree) then
+                Index /= Null_Index
+                  else
+                    Index = Null_Index),
      Inline
    is
       Right_Child : Node_Index;
    begin
+      pragma Assert (if E.Node_Issue <= Count (Atree)
+                     then not Stack.Is_Empty (E.Visited));
       if not Stack.Is_Empty (E.Visited) then
          Pop_In_Atree_Index (E.Visited, Atree, Host, Index);
          Right_Child := Tree.Right (Tree.Tree (Host), Index);
+         pragma Assert (Index /= Null_Index);
          if Right_Child /= Null_Index then
             Push_In_Atree_Index (E.Visited, Atree, Host, Right_Child);
             Trace_To_Left_Leaf (Atree, Host, E);
@@ -682,6 +671,38 @@ is
          Index := Null_Index;
       end if;
    end Next_Node_Index;
+
+   function Key_Index_Of_Node (Atree : A_Tree;
+                               Host  : Host_Tree;
+                               Index : Node_Index) return Key_Index with
+     Pre  => In_Atree (Atree, Host, Index) and then Count (Atree) > 0,
+     Post => (for some I in Key_Index range 1 .. Key_Index (Count (Atree)) =>
+                Indexed_Key (Atree, Host, I) =
+                  Tree.Key (Tree.Tree (Host), Index) and then
+                Key_Index_Of_Node'Result = I),
+     Ghost
+   is
+      E : Enumerator := New_Enumerator (Atree, Host);
+      N : Node_Index;
+      K : Key_Index;
+   begin
+      loop
+         K := Current_Indexed_Key (E, Atree, Host);
+         Next_Node_Index
+           (Atree => Atree,
+            Host  => Host,
+            E     => E,
+            Index => N);
+         exit when N = Index or else N = Null_Index;
+      end loop;
+      pragma Assert (N = Index);
+      return K;
+   end Key_Index_Of_Node;
+
+
+
+
+
 
    --------------
    -- Next_Key --
@@ -854,15 +875,15 @@ is
       if Found then
          Result := Tree.Value (Tree.Tree (Host),
                                Top_In_Atree_Index (Visited, Atree, Host));
-      pragma Assert (for all I in Key_Index range
-                       1 .. Key_Index (Count(Atree)) =>
-                         Indexed_Key (Atree, Host, I) /= Null_Key);
-      pragma Assert (for some I in Key_Index range
-                       1 .. Key_Index (Count(Atree)) =>
-                         Value_At_Key
-                       (Atree => Atree,
-                        Host  => Host,
-                        Key   => Indexed_Key (Atree, Host, I)) = Result);
+         --  pragma Assert (for all I in Key_Index range
+         --                   1 .. Key_Index (Count(Atree)) =>
+         --                     Indexed_Key (Atree, Host, I) /= Null_Key);
+         pragma Assert (for some I in Key_Index range
+                          1 .. Key_Index (Count(Atree)) =>
+                            Value_At_Key
+                          (Atree => Atree,
+                           Host  => Host,
+                           Key   => Indexed_Key (Atree, Host, I)) = Result);
       else
          Result := Null_Value;
       end if;
@@ -896,12 +917,17 @@ is
    begin
       pragma Assert (Count (Atree) > 0 and Index > 0 and
                        Index <= Key_Index (Count (Atree)));
+      pragma Assert (Current_Indexed_Key (E, Atree, Host) = 1);
       for I in 1 .. Index loop
-         pragma Loop_Invariant (Enumerator_Of_Tree (E, Atree, Host));
          Next_Key (E, Atree, Host, The_Key);
+         pragma Loop_Invariant (Enumerator_Of_Tree (E, Atree, Host));
       end loop;
+      --  pragma Assume (The_Key /= Null_Key,
+      --                 "As Index is in the range of Count (Atree) " &
+      --                   "
       pragma Assert (Count (Atree) > 0 and Index > 0 and
                        Index <= Key_Index (Count (Atree)));
+      pragma Assert (The_Key /= Null_Key);
       return The_Key;
    end Indexed_Key;
 
