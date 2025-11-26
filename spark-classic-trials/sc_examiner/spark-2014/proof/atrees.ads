@@ -66,10 +66,11 @@ is
      Pre  => In_Host (Atree, Host),
      Ghost;
 
-   function Value_At_Key (Atree : A_Tree; Host : Host_Tree; Key : Key_type)
+   function Value_At_Key_Index (Atree : A_Tree;
+                                Host  : Host_Tree;
+                                Index : Key_Index)
                           return Value_Type with
-     Pre => In_Host (Atree, Host) and then Populated (Atree, Host) and then
-            Key /= Null_Key,
+     Pre => In_Host (Atree, Host) and then Populated (Atree, Host),
      Ghost;
 
    -----------------------------------------------------------------------
@@ -92,7 +93,7 @@ is
      Post => Value'Result = Null_Value or else
              (for some I in Key_Index range 1 .. Key_Index (Count(Atree)) =>
                 Indexed_Key (Atree, Host, I) = Key and then
-                  Value_At_Key (Atree, Host, Key) = Value'Result);
+                  Value_At_Key_Index (Atree, Host, I) = Value'Result);
 
    function Equal_Keys (Atree_1, Atree_2 : A_Tree;
                         Host_1, Host_2 : Host_Tree) return Boolean with
@@ -115,10 +116,8 @@ is
                (for all I in Key_Index range 1 .. Key_Index (Count (Atree_1)) =>
                  ( Indexed_Key (Atree_1, Host_1, I) =
                      Indexed_Key (Atree_2, Host_2, I) and
-                  Value_At_Key (Atree_1, Host_1,
-                                Indexed_Key (Atree_1, Host_1, I)) =
-                     Value_At_Key (Atree_2, Host_2,
-                                   Indexed_Key (Atree_2, Host_2, I))));
+                  Value_At_Key_Index (Atree_1, Host_1, I) =
+                     Value_At_Key_Index (Atree_2, Host_2, I)));
 
    procedure New_A_Tree (Atree : out A_Tree; Host : in out Host_Tree) with
    Post => (In_Host (Atree, Host) and Count (Atree) = 0) and then
@@ -211,7 +210,9 @@ is
      Post => Enumerator_Of_Tree (E, Atree, Host) and then
              (Key = Indexed_Key (Atree, Host,
                                  Current_Indexed_Key (E'Old, Atree, Host)) and
-                Its_Value = Value_At_Key (Atree, Host, Key) and
+                Its_Value = Value_At_Key_Index
+                  (Atree, Host,
+                   Current_Indexed_Key (E'Old, Atree, Host)) and
                 Current_Indexed_Key (E, Atree, Host) =
                   Current_Indexed_Key (E'Old, Atree, Host) + 1);
 

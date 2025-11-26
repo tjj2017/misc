@@ -699,11 +699,6 @@ is
       return K;
    end Key_Index_Of_Node;
 
-
-
-
-
-
    --------------
    -- Next_Key --
    --------------
@@ -880,10 +875,10 @@ is
          --                     Indexed_Key (Atree, Host, I) /= Null_Key);
          pragma Assert (for some I in Key_Index range
                           1 .. Key_Index (Count(Atree)) =>
-                            Value_At_Key
+                            Value_At_Key_Index
                           (Atree => Atree,
                            Host  => Host,
-                           Key   => Indexed_Key (Atree, Host, I)) = Result);
+                           Index   => I) = Result);
       else
          Result := Null_Value;
       end if;
@@ -936,24 +931,25 @@ is
                                  T : Host_Tree) return Key_Index is
       (Key_Index (E.Node_Issue));
 
-   function Value_At_Key (Atree : A_Tree; Host : Host_Tree; Key : Key_type)
+   function Value_At_Key_Index (Atree : A_Tree;
+                                Host  : Host_Tree;
+                                Index : Key_Index)
                           return Value_Type
    is
-      Visited : Stack.Stack;
-      Found : Boolean;
+      E : Enumerator := New_Enumerator (Atree, Host);
+      Current_Key_Index  : Key_Index;
+      Current_Node_Index : Node_Index;
    begin
-      Find
-        (Atree      => Atree,
-         Host       => Host,
-         Root_Index => Atree.Root,
-         Key        => Key,
-         Found      => Found,
-         Visited    => Visited);
-      return (if Found then
-                 Tree.Value (Tree.Tree (Host), Stack.Top (Visited))
-              else
-                 Null_Value);
-   end Value_At_Key;
-
+      loop
+         Current_Key_Index := Current_Indexed_Key (E, Atree, Host);
+         Next_Node_Index
+           (Atree => Atree,
+            Host  => Host,
+            E     => E,
+            Index => Current_Node_Index);
+         exit when Current_Key_Index = Index;
+      end loop;
+      return Tree.Value (Tree.Tree (Host), Current_Node_Index);
+   end Value_At_Key_Index;
 
 end Atrees;
