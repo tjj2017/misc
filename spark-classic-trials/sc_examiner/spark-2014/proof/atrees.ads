@@ -32,10 +32,10 @@ is
 
    type A_Tree is private;
 
-    subtype Node_Count is Natural range 0 .. Max_Nodes_In_Tree;
+    subtype Key_Count is Natural range 0 .. Max_Nodes_In_Tree;
 
    --  function Count returns the number of nodes in the Atree.
-   function Count (Atree : A_Tree) return Node_Count with
+   function Count (Atree : A_Tree) return Key_Count with
    Inline;
 
    --  Proof function to assert that the contents of Atree are maintained
@@ -43,7 +43,7 @@ is
    function In_Host (Atree : A_Tree; Host : Host_Tree) return Boolean with
      Ghost;
 
-   type Key_Index is new Natural;
+   subtype Key_Index is Key_Count;
    --  Logically,each Key in he tree has an index.  Keys are indexed
    --  consecutively such that for all keys in the Atree the value of
    --  Indexed_Key (I + 1) > Indexed_Key (I).  The keys are ordered by index
@@ -52,12 +52,12 @@ is
                          Host  : Host_Tree;
                          Index : Key_Index) return Key_Type with
      Pre => In_Host (Atree, Host) and then Count (Atree) > 0 and then
-            (Index > 0 and Index <= Key_Index (Count (Atree))),
+            (Index > 0 and Index <= Count (Atree)),
      Post => Indexed_Key'Result /= Null_Key,
      Ghost;
 
    function Ordered (Atree : A_Tree; Host : Host_Tree) return Boolean is
-      (for all I in Key_Index range 1 .. Key_Index (Count (Atree)) - 1 =>
+      (for all I in Key_Index range 1 .. Count (Atree) - 1 =>
            Indexed_Key (Atree, Host, I + 1) > Indexed_Key (Atree, Host, I)) with
        Pre => In_Host (Atree, Host),
        Ghost;
@@ -82,18 +82,18 @@ is
                         return Boolean with
      Pre  => In_Host (Atree, Host) and then
              (Populated (Atree, Host) and Ordered (Atree, Host)),
-     Post => Is_Present'Result =
-               (for some I in Key_Index range 1 .. Key_Index (Count (Atree)) =>
-                (Indexed_Key (Atree, Host, I) = Key));
+     Post => (if Is_Present'Result then
+                  (for some I in Key_Count range 1 .. Count (Atree) =>
+                     (Indexed_Key (Atree, Host, I) = Key)));
 
    function Value (Atree : A_Tree; Host : Host_Tree; Key : Key_Type)
                    return Value_Type with
      Pre  => In_Host (Atree, Host) and then
              (Populated (Atree, Host) and Ordered (Atree, Host)),
-     Post => Value'Result = Null_Value or else
-             (for some I in Key_Index range 1 .. Key_Index (Count(Atree)) =>
-                Indexed_Key (Atree, Host, I) = Key and then
-                  Value_At_Key_Index (Atree, Host, I) = Value'Result);
+     Post => (if Value'Result /= Null_Value then
+                (for some I in Key_Count range 1 .. Count(Atree) =>
+                     Indexed_Key (Atree, Host, I) = Key and then
+                   Value_At_Key_Index (Atree, Host, I) = Value'Result));
 
    function Equal_Keys (Atree_1, Atree_2 : A_Tree;
                         Host_1, Host_2 : Host_Tree) return Boolean with
@@ -101,7 +101,7 @@ is
            (Populated (Atree_1, Host_1) and Populated (Atree_2, Host_2) and
             Ordered (Atree_1, Host_1) and Ordered (Atree_2, Host_2)),
    Post =>  Equal_Keys'Result = (Count (Atree_1) = Count (Atree_2)) and then
-               (for all I in Key_Index range 1 .. Key_Index (Count (Atree_1)) =>
+               (for all I in Key_Count range 1 .. Count (Atree_1) =>
                   (Indexed_Key (Atree_1, Host_1, I) =
                      Indexed_Key (Atree_2, Host_2, I)));
 
@@ -113,7 +113,7 @@ is
               Ordered (Atree_1, Host_1) and Ordered (Atree_2, Host_2)),
      Post => Equal_Keys_And_Values'Result =
               (Count (Atree_1) = Count (Atree_2)) and then
-               (for all I in Key_Index range 1 .. Key_Index (Count (Atree_1)) =>
+               (for all I in Key_Count range 1 .. Count (Atree_1) =>
                  ( Indexed_Key (Atree_1, Host_1, I) =
                      Indexed_Key (Atree_2, Host_2, I) and
                   Value_At_Key_Index (Atree_1, Host_1, I) =
@@ -135,7 +135,7 @@ is
                else
                  Count (Atree) = Count (Atree'Old) and
                  Ordered (Atree, Host) and
-                (for some I in Key_Index range 1 .. Key_Index (Count (Atree)) =>
+                (for some I in Key_Count range 1 .. Count (Atree) =>
                      Indexed_Key (Atree, Host, I) = Key));
 
    procedure Insert_With_Value (Atree         : in out A_Tree;
@@ -152,7 +152,7 @@ is
               else
                 Count (Atree) = Count (Atree'Old) and
                 Ordered (Atree, Host) and
-               (for some I in Key_Index range 1 .. Key_Index (Count (Atree)) =>
+               (for some I in Key_Count range 1 .. Count (Atree) =>
                   (Indexed_Key (Atree, Host, I) = Key) and
                   (if Inserted then
                      Value_At_Node = Insert_Value and
@@ -234,7 +234,7 @@ private
 
    type A_Tree is
       record
-         Count : Node_Count;
+         Count : Key_Count;
          Base  : Valid_Node_Index;
          Root  : Node_Index;
       end record;
@@ -253,7 +253,7 @@ private
 
    type Enumerator is
       record
-         Node_Issue : Node_Count;
+         Key_Issue : Key_Index;
           --  A stack to record visited nodes when enumerating.
          Visited : Stack.Stack;
       end record;

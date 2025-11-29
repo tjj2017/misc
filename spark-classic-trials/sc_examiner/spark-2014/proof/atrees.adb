@@ -39,7 +39,7 @@ is
    -- Count --
    -----------
 
-   function Count (Atree : A_Tree) return Node_Count is (Atree.Count);
+   function Count (Atree : A_Tree) return Key_Count is (Atree.Count);
 
 
    function Populated (Atree : A_Tree; Host : Host_Tree) return Boolean is
@@ -271,7 +271,11 @@ is
              Atree.Root /= Null_Index and then
              In_Atree (Atree, Host, Atree.Root),
      Post => (if Find_Node_Index'Result /= Null_Index then
-                Tree.Key (Tree.Tree (Host), Find_Node_Index'Result) = Key)
+                In_Atree (Atree, Host, Find_Node_Index'Result) and then
+                  Tree.Key (Tree.Tree (Host), Find_Node_Index'Result) = Key
+              and then
+                (for some I in Key_Count range 1 .. Count (Atree) =>
+                     Indexed_Key (Atree, Host, I) = Key))
    is
       Visited : Stack.Stack;
       Found   : Boolean;
@@ -287,6 +291,9 @@ is
 
       if Found then
          Result := Top_In_Atree_Index (Visited, Atree, Host);
+         pragma Assume ((for some I in Key_Count range 1 .. Count (Atree) =>
+                          Indexed_Key (Atree, Host, I) = Key),
+                        "The key exists in Atree so it has a key.");
       else
          Result := Null_Index;
       end if;
@@ -472,7 +479,7 @@ is
    is
       Result : Enumerator;
    begin
-      Result.Node_Issue := 0;
+      Result.Key_Issue := 0;
       Stack.New_Stack (Result.Visited);
       Push_In_Atree_Index (Result.Visited, Atree, Host, Atree.Root);
       Trace_To_Left_Leaf (Atree, Host, Result);
@@ -676,7 +683,7 @@ is
                               E     : in out Enumerator;
                               Index : out Node_Index) with
      Pre  => In_Host (Atree, Host) and Populated (Atree, Host),
-     Post => (if E.Node_Issue'Old <= Count (Atree) then
+     Post => (if E.Key_Issue'Old <= Count (Atree) then
                 Index /= Null_Index
                   else
                     Index = Null_Index),
@@ -684,7 +691,7 @@ is
    is
       Right_Child : Node_Index;
    begin
-      pragma Assert (if E.Node_Issue <= Count (Atree)
+      pragma Assert (if E.Key_Issue <= Count (Atree)
                      then not Stack.Is_Empty (E.Visited));
       if not Stack.Is_Empty (E.Visited) then
          Pop_In_Atree_Index (E.Visited, Atree, Host, Index);
@@ -694,9 +701,9 @@ is
             Push_In_Atree_Index (E.Visited, Atree, Host, Right_Child);
             Trace_To_Left_Leaf (Atree, Host, E);
          end if;
-         E.Node_Issue := E.Node_Issue + 1;
+         E.Key_Issue := E.Key_Issue + 1;
       else
-         E.Node_Issue := 0;
+         E.Key_Issue := 0;
          Index := Null_Index;
       end if;
    end Next_Node_Index;
@@ -739,7 +746,7 @@ is
    is
       Next_Index : Node_Index;
    begin
-      if E.Node_Issue > 0 and E.Node_Issue < Atree.Count then
+      if E.Key_Issue > 0 and E.Key_Issue < Atree.Count then
          Next_Node_Index (Atree, Host, E, Next_Index);
          if Next_Index /= Null_Index then
             Key := Tree.Key (Tree.Tree (Host), Next_Index);
@@ -856,8 +863,22 @@ is
    ----------------
 
    function Is_Present (Atree : A_Tree; Host : Host_Tree; Key : Key_Type)
-                        return Boolean is
-     (Find_Node_Index (Atree, Host, Key) /= Null_Index);
+                        return Boolean
+   is
+      Index  : Node_Index;
+      Result : Boolean;
+   begin
+      Index := Find_Node_Index (Atree, Host, Key);
+      Result := Index /= Null_Index;
+      if Result then
+         pragma Assert (Tree.Key (Tree.Tree (Host), Index) = Key);
+      end if;
+      pragma Assert (if Result then
+                        (for some I in Key_Count range 1 .. Count (Atree) =>
+                          Indexed_Key (Atree, Host, I) = Key));
+      return Result;
+   end Is_Present;
+
 
    ------------
    -- Value --
@@ -872,6 +893,9 @@ is
       Index := Find_Node_Index (Atree, Host, Key);
       if Index /= Null_Index then
          Result := Tree.Value (Tree.Tree (Host), Index);
+         pragma Assert (for some I in Key_Count range 1 .. Count (Atree) =>
+                          Indexed_Key (Atree, Host, I) = Key and then
+                       Value_At_Key_Index (Atree, Host, I) = Result);
       else
          Result := Null_Value;
       end if;
@@ -919,7 +943,7 @@ is
    function Current_Indexed_Key (E : Enumerator;
                                  A : A_Tree;
                                  T : Host_Tree) return Key_Index is
-      (Key_Index (E.Node_Issue));
+      (Key_Index (E.Key_Issue));
 
    function Value_At_Key_Index (Atree : A_Tree;
                                 Host  : Host_Tree;
