@@ -264,6 +264,36 @@ is
       end loop;
    end Find;
 
+   function Find_Node_Index (Atree : A_Tree;
+                             Host  : Host_Tree;
+                             Key   : Key_Type) return Node_Index with
+     Pre  => not Tree.Empty_Tree (Tree.Tree (Host)) and then
+             Atree.Root /= Null_Index and then
+             In_Atree (Atree, Host, Atree.Root),
+     Post => (if Find_Node_Index'Result /= Null_Index then
+                Tree.Key (Tree.Tree (Host), Find_Node_Index'Result) = Key),
+     Ghost
+   is
+      Visited : Stack.Stack;
+      Found   : Boolean;
+      Result  : Node_Index;
+   begin
+      Find
+        (Atree      => Atree,
+         Host       => Host,
+         Root_Index => Atree.Root,
+         Key        => Key,
+         Found      => Found,
+         Visited    => Visited);
+
+      if Found then
+         Result := Top_In_Atree_Index (Visited, Atree, Host);
+      else
+         Result := Null_Index;
+      end if;
+      return Result;
+   end Find_Node_Index;
+
    --  The Skew operation on an Andersson tree after inserting a node.
    procedure Skew (Atree          : A_Tree;
                    Host           : in out Host_Tree;
