@@ -271,8 +271,7 @@ is
              Atree.Root /= Null_Index and then
              In_Atree (Atree, Host, Atree.Root),
      Post => (if Find_Node_Index'Result /= Null_Index then
-                Tree.Key (Tree.Tree (Host), Find_Node_Index'Result) = Key),
-     Ghost
+                Tree.Key (Tree.Tree (Host), Find_Node_Index'Result) = Key)
    is
       Visited : Stack.Stack;
       Found   : Boolean;
@@ -857,33 +856,8 @@ is
    ----------------
 
    function Is_Present (Atree : A_Tree; Host : Host_Tree; Key : Key_Type)
-                        return Boolean
-   is
-      Visited : Stack.Stack;
-      Found   : Boolean;
-   begin
-      pragma Warnings (Off, """Visited""",
-                             Reason =>
-                         "Visited stack is not needed after finding key");
-      Find (Atree, Host, Atree.Root, Key, Found, Visited);
-      pragma Warnings (On, """Visited""");
-
-      pragma Assert (if Found then
-                        Tree.Key (Tree.Tree (Host),
-                       Top_In_Atree_Index (Visited, Atree, Host)) = Key);
-      pragma Assume (Found =
-                       (for some I in Key_Index range
-                          1 .. Key_Index (Count (Atree)) =>
-                            Indexed_Key (Atree, Host, I) = Key),
-                    "The Key has been found it must have a Key_Index");
-
-      pragma Assert (Found =
-                       (for some I in Key_Index range
-                          1 .. Key_Index (Count (Atree)) =>
-                       Indexed_Key (Atree, Host, I) = Key));
-
-      return Found;
-   end Is_Present;
+                        return Boolean is
+     (Find_Node_Index (Atree, Host, Key) /= Null_Index);
 
    ------------
    -- Value --
@@ -892,29 +866,15 @@ is
    function Value (ATree : A_Tree; Host : Host_Tree; Key : Key_Type)
                    return Value_Type
    is
-      Visited : Stack.Stack;
-      Found   : Boolean;
-      Result  : Value_Type;
+      Index  : Node_Index;
+      Result : Value_Type;
    begin
-      Find (Atree, Host, Atree.Root, Key, Found, Visited);
-      if Found then
-         Result := Tree.Value (Tree.Tree (Host),
-                               Top_In_Atree_Index (Visited, Atree, Host));
-         --  pragma Assert (for all I in Key_Index range
-         --                   1 .. Key_Index (Count(Atree)) =>
-         --                     Indexed_Key (Atree, Host, I) /= Null_Key);
-         pragma Assert (for some I in Key_Index range
-                          1 .. Key_Index (Count(Atree)) =>
-                            Value_At_Key_Index
-                          (Atree => Atree,
-                           Host  => Host,
-                           Index   => I) = Result);
+      Index := Find_Node_Index (Atree, Host, Key);
+      if Index /= Null_Index then
+         Result := Tree.Value (Tree.Tree (Host), Index);
       else
          Result := Null_Value;
       end if;
-      pragma Assert (Result = Null_Value or else
-                     Result = Tree.Value (Tree.Tree (Host),
-                       Top_In_Atree_Index (Visited, Atree, Host)));
       return Result;
    end Value;
 
