@@ -100,10 +100,11 @@ is
    Pre  => (In_Host (Atree_1, Host_1) and In_Host (Atree_2, Host_2)) and then
            (Populated (Atree_1, Host_1) and Populated (Atree_2, Host_2) and
             Ordered (Atree_1, Host_1) and Ordered (Atree_2, Host_2)),
-   Post =>  Equal_Keys'Result = (Count (Atree_1) = Count (Atree_2)) and then
-               (for all I in Key_Count range 1 .. Count (Atree_1) =>
+     Post =>  (if Equal_Keys'Result then
+          (Count (Atree_1) = Count (Atree_2)) and then
+          (for all I in Key_Count range 1 .. Count (Atree_1) =>
                   (Indexed_Key (Atree_1, Host_1, I) =
-                     Indexed_Key (Atree_2, Host_2, I)));
+                     Indexed_Key (Atree_2, Host_2, I))));
 
    function Equal_Keys_And_Values (Atree_1, Atree_2 : A_Tree;
                                    Host_1, Host_2 : Host_Tree)
@@ -174,7 +175,8 @@ is
    function Current_Indexed_Key (E: Enumerator;
                                  A: A_Tree;
                                  T : Host_Tree) return Key_Index with
-     Pre => Populated (A, T) and then Ordered (A, T),
+     Pre  => Populated (A, T) and then Ordered (A, T),
+     Post => Current_Indexed_Key'Result <= Count (A),
      Ghost;
 
    function New_Enumerator (Atree : A_Tree; Host : Host_Tree)

@@ -804,18 +804,52 @@ is
       if Equal then
          Enum_1 := New_Enumerator (Atree_1, Host_1);
          Enum_2 := New_Enumerator (Atree_2, Host_2);
-         loop
-            Next_Key (E     => Enum_1,
-                      Atree => Atree_1,
-                      Host  => Host_1,
-                      Key   => Key_1);
-            Next_Key (E     => Enum_2,
-                      Atree => Atree_2,
-                      Host  => Host_2,
-                      Key   => Key_2);
-            Equal := Key_1 = Key_2;
-            exit when not Equal or else Key_1 = Null_Key;
+         for I in Key_Count range 1 .. Atree_1.Count loop
+            declare
+               CKI_1 : constant Key_Index :=
+                 Current_Indexed_Key
+                   (E => Enum_1,
+                    A => Atree_1,
+                    T => Host_1) with Ghost;
+               CKI_2 : constant Key_Index :=
+                 Current_Indexed_Key
+                   (E => Enum_2,
+                    A => Atree_2,
+                    T => Host_2) with Ghost;
+            begin
+               pragma Assert (CKI_1 = Current_Indexed_Key
+                              (E => Enum_1,
+                               A => Atree_1,
+                               T => Host_1) and
+                                CKI_2 = Current_Indexed_Key
+                                  (E => Enum_2,
+                                   A => Atree_2,
+                                   T => Host_2));
+               Next_Key (E     => Enum_1,
+                         Atree => Atree_1,
+                         Host  => Host_1,
+                         Key   => Key_1);
+               pragma Assert (if CKI_1 /= Null_Index then
+                                 Indexed_Key (Atree_1, Host_1, CKI_1) = Key_1);
+               Next_Key (E     => Enum_2,
+                         Atree => Atree_2,
+                         Host  => Host_2,
+                         Key   => Key_2);
+               pragma Assert (if CKI_2 /= Null_Index then
+                                 Indexed_Key (Atree_2, Host_2, CKI_2) = Key_2);
+               Equal := Key_1 = Key_2;
+               pragma Loop_Invariant
+                 ((Enumerator_Of_Tree (Enum_1, Atree_1, Host_1) and
+                    Enumerator_Of_Tree (Enum_2, Atree_2, Host_2)) and then
+                    (if Equal then
+                         (for all KI in Key_Count range 1 .. I =>
+                              Indexed_Key (Atree_1, Host_1, KI) = Key_1 and
+                                Indexed_Key (Atree_2, Host_2, KI) = Key_1)));
+               exit when not Equal or else Key_1 = Null_Key;
+            end;
          end loop;
+         pragma Assert (if Equal then Key_1 = Key_2);
+         pragma Assert (Atree_1.Count = Atree_2.Count);
       end if;
       return Equal;
    end Equal_Keys;
@@ -943,7 +977,8 @@ is
    function Current_Indexed_Key (E : Enumerator;
                                  A : A_Tree;
                                  T : Host_Tree) return Key_Index is
-      (Key_Index (E.Key_Issue));
+     (Key_Index (E.Key_Issue));
+
 
    function Value_At_Key_Index (Atree : A_Tree;
                                 Host  : Host_Tree;
