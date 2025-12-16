@@ -181,8 +181,7 @@ is
 
    function New_Enumerator (Atree : A_Tree; Host : Host_Tree)
                             return Enumerator with
-     Pre  => (In_Host (Atree, Host) and then Populated (Atree, Host)) and then
-              Ordered (Atree, Host),
+     Pre  => (In_Host (Atree, Host) and then Populated (Atree, Host)),
      Post => Enumerator_Of_Tree (New_Enumerator'Result, Atree, Host) and then
              Current_Indexed_Key (New_Enumerator'Result, Atree, Host) = 1;
 

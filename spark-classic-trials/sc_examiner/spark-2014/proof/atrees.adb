@@ -51,7 +51,8 @@ is
    --  within the given A_Tree.
    function In_Atree (Atree : A_Tree; Host : Host_Tree; Node : Node_Index)
                        return Boolean is
-     (Tree.In_Tree (Tree.Tree (Host), Node) and Count (Atree) > 0) with
+     (In_Host (Atree, Host) and then
+      Tree.In_Tree (Tree.Tree (Host), Node) and then Count (Atree) > 0) with
    Ghost;
 
    --  Proof helper subprograms
@@ -684,8 +685,10 @@ is
                               Index : out Node_Index) with
      Pre  => In_Host (Atree, Host) and then Populated (Atree, Host),
      Post => (if E.Key_Issue'Old in 1 .. Count (Atree) then
-                Index /= Null_Index and
-                  In_Atree (Atree, Host, Index)
+                Index /= Null_Index and then
+                  In_Atree (Atree, Host, Index) and then
+                  E.Key_Issue = E.Key_Issue'Old + 1 and then
+                  Current_Indexed_Key (E, Atree, Host) = E.Key_Issue
                 else
                   Index = Null_Index),
      Inline
@@ -703,23 +706,19 @@ is
                           "have not all issued so the stack cannot be empty.");
          pragma Assert (not Stack.Is_Empty (E.Visited));
          Pop_In_Atree_Index (E.Visited, Atree, Host, Index);
-         if E.Key_Issue < Nodes_In_Atree then
-            --  Get the next Node_Index.
-            Right_Child := Tree.Right (Tree.Tree (Host), Index);
-            pragma Assert (Index /= Null_Index);
-            if Right_Child /= Null_Index then
-               Push_In_Atree_Index (E.Visited, Atree, Host, Right_Child);
-               Trace_To_Left_Leaf (Atree, Host, E);
-            end if;
-            --  Increase the number of nodes (keys) issued.
-            E.Key_Issue := Current_Issue + 1;
-         else
-            --  All Node_Indices (keys) have been issued.
-            --  Mark issue count as exhausted.
-            E.Key_Issue := 0;
+         --  Get the next Node_Index.
+         Right_Child := Tree.Right (Tree.Tree (Host), Index);
+         pragma Assert (Index /= Null_Index);
+         if Right_Child /= Null_Index then
+            Push_In_Atree_Index (E.Visited, Atree, Host, Right_Child);
+            Trace_To_Left_Leaf (Atree, Host, E);
          end if;
+         --  Increase the number of nodes (keys) issued.
+         E.Key_Issue := Current_Issue + 1;
       else
-         --  This cannot happen - just satisfying flow analysis.
+         --  All Node_Indices (keys) have been issued.
+         --  Mark issue count as exhausted.
+         E.Key_Issue := 0;
          Index := Null_Index;
       end if;
    end Next_Node_Index;
@@ -770,11 +769,20 @@ is
 
    is
       Next_Index : Node_Index;
+      Key_Index : constant Key_Count := Current_Indexed_Key (E, Atree, Host)
+        with Ghost;
    begin
       if E.Key_Issue > 0 and E.Key_Issue < Atree.Count then
          Next_Node_Index (Atree, Host, E, Next_Index);
          if Next_Index /= Null_Index then
             Key := Tree.Key (Tree.Tree (Host), Next_Index);
+
+            pragma Assert (if Key /= Null_Key then
+                              Current_Indexed_Key (E, Atree, Host) =
+                             Key_Index + 1
+                           and
+                             Key = Indexed_Key (Atree, Host, Key_Index));
+
          else
             Key := Null_Key;
          end if;
@@ -829,6 +837,7 @@ is
       if Equal then
          Enum_1 := New_Enumerator (Atree_1, Host_1);
          Enum_2 := New_Enumerator (Atree_2, Host_2);
+         pragma Assert (Atree_1.Count > 0);
          for I in Key_Count range 1 .. Atree_1.Count loop
             declare
                CKI_1 : constant Key_Index :=
