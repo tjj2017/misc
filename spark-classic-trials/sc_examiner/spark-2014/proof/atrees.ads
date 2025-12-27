@@ -175,7 +175,7 @@ is
    function Current_Indexed_Key (E: Enumerator;
                                  A: A_Tree;
                                  T : Host_Tree) return Key_Index with
-     Pre  => Populated (A, T) and then Ordered (A, T),
+     Pre  => Populated (A, T),
      Post => Current_Indexed_Key'Result <= Count (A),
      Ghost;
 
@@ -254,9 +254,14 @@ private
 
    type Enumerator is
       record
-         Key_Issue : Key_Index;
-          --  A stack to record visited nodes when enumerating.
+         Key_Issue  : Key_Index;
+         --  A stack to record visited nodes when enumerating.
          Visited : Stack.Stack;
       end record;
+
+   function Current_Node_Index (E    : Enumerator;
+                                Atree : A_Tree;
+                                Host : Host_Tree) return Node_Index with
+     Pre => not Stack.Is_Empty (E.Visited);
 
 end Atrees;

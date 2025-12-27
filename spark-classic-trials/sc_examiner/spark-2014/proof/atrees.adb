@@ -1,7 +1,9 @@
 package body Atrees with
 SPARK_Mode
 is
-   type Direction is (Left, Right);
+   --  Direction - Right = True, Left = False;
+   Right : constant Boolean := True;
+   Left  : constant Boolean := False;
 
    Null_Index : constant Node_Index := Tree.Null_Index;
 
@@ -14,15 +16,13 @@ is
 
    --  A proof function only use to show logical association between an
    --  A_Tree object and a Host_Tree_Object.
-   --  The body is hidden from SPARK so that the proof does not assume
-   --  that In_Host is always True.
    function In_Host (Atree : A_Tree; Host : Host_Tree) return Boolean is
      (not Tree.Empty_Tree (Tree.Tree (Host)) and then
-      Tree.In_Tree (Tree.Tree (Host), Atree.Root));
+      Tree.In_Tree (Tree.Tree (Host), Atree.Base));
 
 
    --  A proof function only use to show logical association between an
-   --  An Enumerator an A_Tree objec and its Host_Tree_Object.
+   --  An Enumerator an A_Tree object and its Host_Tree_Object.
    --  The body is hidden from SPARK so that the proof does not assume
    --  that In_Host is always True.
    function Enumerator_Of_Tree (E : Enumerator;
@@ -35,6 +35,31 @@ is
       return (True);
    end Enumerator_Of_Tree;
 
+   --  A proof function only used to assert the Key equivalence between the
+   --  the Current_Node_Index and the Current_Key_Index.
+   --  An Enumerator an A_Tree object and its Host_Tree_Object.
+   --  The body is hidden from SPARK so that the proof does not assume
+   --  that In_Host is always True.
+   function Key_Equivalence (E : Enumerator;
+                             A : A_Tree;
+                             T : Host_Tree)
+                             return Boolean with
+     Pre  => not Stack.Is_Empty (E.Visited),
+     Post => Key_Equivalence'Result =
+       (Tree.Key (Tree.Tree (T), Current_Node_Index (E, A, T)) =
+          Indexed_Key (A, T, E.Key_Issue));
+
+
+   function Key_Equivalence (E : Enumerator;
+                             A : A_Tree;
+                             T : Host_Tree)
+                             return Boolean with
+     SPARK_Mode => Off
+   is
+   begin
+      return (True);
+   end Key_Equivalence;
+
    -----------
    -- Count --
    -----------
@@ -42,28 +67,30 @@ is
    function Count (Atree : A_Tree) return Key_Count is (Atree.Count);
 
 
-   function Populated (Atree : A_Tree; Host : Host_Tree) return Boolean is
-     (not Tree.Empty_Tree (Tree.Tree (Host)) and then In_Host (Atree, Host)
-          and then
-        (Count (Atree) > 0 and Atree.Root /= Null_Index));
-
    --  A logical function to state that a Node_Index references a node
    --  within the given A_Tree.
    function In_Atree (Atree : A_Tree; Host : Host_Tree; Node : Node_Index)
                        return Boolean is
      (In_Host (Atree, Host) and then
-      Tree.In_Tree (Tree.Tree (Host), Node) and then Count (Atree) > 0) with
+      Tree.In_Tree (Tree.Tree (Host), Node) and then Count (Atree) > 0 )with
    Ghost;
+
+   function Populated (Atree : A_Tree; Host : Host_Tree) return Boolean is
+     (not Tree.Empty_Tree (Tree.Tree (Host)) and then
+        (Count (Atree) > 0 and Atree.Root /= Null_Index) and then
+      In_Atree (Atree, Host, Atree.Root));
 
    --  Proof helper subprograms
 
+   function Is_Empty (S : Stack.Stack) return Boolean renames Stack.Is_Empty;
+
    --  Pushing exclusively using Push_In_Tree_Node ensures that
    --  every Node on the stack is in the Tree.
-   function Top_In_Atree_Index (S     : Stack.Stack;
-                                Atree : A_Tree;
-                                Host  : Host_Tree) return Node_Index with
-     Pre  => not Stack.Is_Empty (S),
-     Post => In_Atree (Atree, Host, Top_In_Atree_Index'Result),
+   function Top (S     : Stack.Stack;
+                 Atree : A_Tree;
+                 Host  : Host_Tree) return Node_Index with
+     Pre  => not Is_Empty (S),
+     Post => In_Atree (Atree, Host, Top'Result),
      Inline
    is
       Result : Node_Index;
@@ -76,23 +103,20 @@ is
                        "In_Atree.");
 
       return Result;
---        pragma Warnings (Off, "unused variable ""Tree""",
---                        Reason => "Tree is only used in proof context");
-   end Top_In_Atree_Index;
---     pragma Warnings (On, "unused variable ""Tree""");
+   end Top;
 
    --  Ensures that each Node pushed on the stack is in the A_Tree.
    --  It is assumed the Stack_Size Parameter of this generic package is
    --  large enough to traverse a balanced tree.
    --  A Stack_Size of 32 should be sufficient to traverse a tree containing
    --  2**32-1 nodes.
-   procedure Push_In_Atree_Index (S     : in out Stack.Stack;
-                                  Atree : A_Tree;
-                                  Host  : Host_Tree;
-                                  Index : Node_Index) with
+   procedure Push (S     : in out Stack.Stack;
+                   Atree : A_Tree;
+                   Host  : Host_Tree;
+                   Index : Node_Index) with
      Pre  => In_Atree (Atree, Host, Index),
-     Post => not Stack.Is_Empty (S) and
-             Top_In_Atree_Index (S, Atree, Host) = Index,
+     Post => not Is_Empty (S) and then
+             Top (S, Atree, Host) = Index,
      Inline
    is
    begin
@@ -101,45 +125,43 @@ is
                      "balanced tree with more distinct nodes " &
                      "than can be handled by the gnat front-end");
       Stack.Push (S, Index);
-      pragma Assume (Top_In_Atree_Index (S, Atree, Host) = Index,
+      pragma Assume (Top (S, Atree, Host) = Index,
                      "The Node_Index pushed on the stack is the " &
                        "top of the stack");
---        pragma Warnings (Off, "unused variable ""Tree""",
---                        Reason => "Tree is only used in proof context");
-   end Push_In_Atree_Index;
+   end Push;
 
    --  Pushing exclusively using Push_In_Tree_Index ensures that
    --  every Node_Index on the stack is in the A_Tree.
-   procedure Pop_In_Atree_Index (S     : in out Stack.Stack;
-                                 Atree : A_Tree;
-                                 Host  : Host_Tree;
-                                 Index : out Node_Index) with
-     Pre  => not Stack.Is_Empty (S),
+   procedure Pop (S     : in out Stack.Stack;
+                  Atree : A_Tree;
+                  Host  : Host_Tree;
+                  Index : out Node_Index) with
+     Pre  => not Is_Empty (S),
      Post => In_Atree (Atree, Host, Index) and
-             Stack.Count (S) = Stack.Count (S'Old) - 1,
+             Stack.Count (S) = Stack.Count (S'Old) - 1 and
+             Index = Top (S'Old, Atree, Host),
      Inline
    is
+      Entry_Stack : constant Stack.Stack := S with Ghost;
    begin
       Stack.Pop (S, Index);
-      pragma Assume (In_Atree (Atree, Host, Index),
+      pragma Assume (In_Atree (Atree, Host, Index) and
+                       Index = Top (Entry_Stack, Atree, Host),
                      "The exclusive use of Push_In_ATree_Index ensures " &
                      "all pushed node indices are In_ATree, so, " &
                      "all nodes popped by Pop_In_ATree_Index will also be.");
---
---        pragma Warnings (Off, "unused variable ""Tree""",
---                        Reason => "Tree is only used in proof context");
-   end Pop_In_Atree_Index;
---     pragma Warnings (On, "unused variable ""Tree""");
---     pragma Inline (Pop_In_Atree_Node);
+   end Pop;
 
    --  Local subprograms
 
    function Get_Child (Is_Right : Boolean;
                        Atree    : A_Tree;
                        Host     : Host_Tree;
-                       Index    : Node_Index)
+                       Index    : Valid_Node_Index)
                        return Node_Index with
-     Pre => In_Atree (Atree, Host, Index),
+     Pre  => In_Atree (Atree, Host, Index),
+     Post => (if Get_Child'Result /= Null_Index then
+                In_Atree (Atree, Host, Get_Child'Result)),
      Inline
    is
       Result : Node_Index;
@@ -149,6 +171,11 @@ is
       else
          Result := Tree.Left (Tree.Tree (Host), Index);
       end if;
+      pragma Assume ((if Result /= Null_Index then
+                       In_Atree (Atree, Host, Result)),
+                     "A child node index is either null or in the Atree. " &
+                       "Set_Branch ensures all node indices inserted into " &
+                       "the Atree are already indices in the Atree.");
       return Result;
    end Get_Child;
 
@@ -157,7 +184,8 @@ is
                          Host       : in out Host_Tree;
                          Index      : Valid_Node_Index;
                          Set_Index  : Valid_Node_Index) with
-     Pre  => In_Atree (Atree, Host, Index),
+     Pre  => In_Atree (Atree, Host, Index) and
+             In_Atree (Atree, Host, Set_Index),
      Post => In_Atree (Atree, Host, Index) and In_Atree (Atree, Host, Index),
      Inline
    is
@@ -208,10 +236,10 @@ is
      Post => not Stack.Is_Empty (Visited) and then
              (if Found then
                 Tree.Key (Tree.Tree (Host),
-                          Top_In_Atree_Index(Visited, Atree, Host)) = Key and
+                          Top (Visited, Atree, Host)) = Key and
                   (for some N in Node_Index =>
                        Tree.Key (Tree.Tree (Host), N) =
-                     Key and N = Top_In_Atree_Index (Visited, Atree, Host)))
+                     Key and N = Top (Visited, Atree, Host)))
    is
 
       Current_Index : Node_Index;
@@ -220,9 +248,7 @@ is
 
       --  A Child of the current node.
       Child         : Node_Index;
-      --  Direction: Left = False, Right = True
       Is_Right      : Boolean;
-
    begin
       --  Clear the visited stack - the Tree is being searced from its root.
       Stack.Clear (Visited);
@@ -241,7 +267,7 @@ is
          --  Avoid a conditional flow error.
          Child := Null_Index;
          --  A record of nodes visited is held in the Visited stack.
-         Push_In_Atree_Index (Visited, Atree, Host, Current_Index);
+         Push (Visited, Atree, Host, Current_Index);
 
          -- Loop_Invariant
          --# assert Bounded_Stacks.Not_Empty (Visited) and
@@ -291,7 +317,7 @@ is
          Visited    => Visited);
 
       if Found then
-         Result := Top_In_Atree_Index (Visited, Atree, Host);
+         Result := Top (Visited, Atree, Host);
          pragma Assume ((for some I in Key_Count range 1 .. Count (Atree) =>
                           Indexed_Key (Atree, Host, I) = Key),
                         "The key exists in Atree so it has a key.");
@@ -310,7 +336,7 @@ is
    is
       Left_Child : Node_Index;
    begin
-      Left_Child := Tree.Left (Tree.Tree (Host), Sub_Root_Index);
+      Left_Child := Get_Child (Left, Atree, Host, Sub_Root_Index);
       --  No action is performed if the levels of the sub-root and left nodes
       --  are not equal.
       if Tree.Level (Tree.Tree (Host), Left_Child) =
@@ -325,7 +351,7 @@ is
          Tree.Set_Left
            (T      => Tree.Tree (Host),
             I      => Left_Child,
-            Branch => Tree.Right (Tree.Tree (Host), Left_Child));
+            Branch => Get_Child (Right, Atree, Host, Left_Child));
          --  The root_index now becomes the left child.
          Sub_Root_Index := Left_Child;
       end if;
@@ -341,9 +367,9 @@ is
       Right_Child       : Node_Index;
       Right_Right_Child : Node_Index;
    begin
-      Right_Child  := Tree.Right (Tree.Tree (Host), Sub_Root_Index);
+      Right_Child  := Get_Child (Right, Atree, Host, Sub_Root_Index);
       if Right_Child /= Null_Index then
-         Right_Right_Child := Tree.Right (Tree.Tree (Host), Right_Child);
+         Right_Right_Child := Get_Child (Right, Atree, Host, Right_Child);
       else
          Right_Right_Child := Null_Index;
       end if;
@@ -366,7 +392,7 @@ is
          Tree.Set_Right
            (T      => Tree.Tree (Host),
             I      => Sub_Root_Index,
-            Branch => Tree.Left (Tree.Tree (Host), Right_Child));
+            Branch => Get_Child (Left, Atree, Host, Right_Child));
          Tree.Set_Left
            (T      => Tree.Tree (Host),
             I      => Right_Child,
@@ -408,7 +434,7 @@ is
          --#            Stack_Top = Bounded_Stacks.Count (Visited));
          --  Make the Current_Index equal to the Node_Index at the top of
          --  the stack.
-         Pop_In_Atree_Index (Visited, Atree, Host, Top_Index);
+         Pop (Visited, Atree, Host, Top_Index);
          Current_Index := Top_Index;
 
          if Stack_Top > 1 then
@@ -418,14 +444,14 @@ is
             --  As the current node has a parent, determine
             --  whether the current node is a left or right child of
             --  its parent.
-            Parent := Top_In_Atree_Index (Visited, Atree, Host);
+            Parent := Top (Visited, Atree, Host);
             --  This boolean expression determines which branch of
             --  the parent has the the Current_Node as its child.
             --  False => Left, True => Right.
             --  The value of Is_Right has to be determined before the
             --  call of Skew and Split as these may change the
             --  Current_Node.
-            Is_Right := Tree.Right (Tree.Tree (Host), Parent) = Top_Index;
+            Is_Right := Get_Child (Right, Atree, Host, Parent) = Top_Index;
          end if;
 
          --  Perform the Andersosn Tree Skew and Split operations on
@@ -454,20 +480,29 @@ is
       Sub_Root_Index := Current_Index;
    end Rebalance;
 
+   function Current_Node_Index (E    : Enumerator;
+                                Atree : A_Tree;
+                                Host : Host_Tree) return Node_Index is
+     (Top (E.Visited, Atree, Host));
+
    --  Trace the Atree to locate its lowest value Key which is its leftmost
    --  node.
    procedure Trace_To_Left_Leaf (Atree : A_Tree;
                                  Host  : Host_Tree;
                                  E     : in out Enumerator) with
-     Pre => not Stack.Is_Empty (E.Visited)
+     Pre  => not Stack.Is_Empty (E.Visited),
+     Post => not Stack.Is_Empty (E.Visited) and
+             E.Key_Issue = E.Key_Issue'Old and
+             Key_Equivalence (E, Atree, Host)
    is
       Current_Index : Node_Index;
    begin
-      Current_Index := Tree.Left (Tree.Tree (Host),
-                                  Top_In_Atree_Index (E.Visited, Atree, Host));
+      Current_Index := Get_Child (Left, Atree, Host,
+                                  Top (E.Visited, Atree, Host));
       while Current_Index /= Null_Index loop
-            Push_In_Atree_Index (E.Visited, Atree, Host, Current_Index);
-            Current_Index := Tree.Left (Tree.Tree (Host), Current_Index);
+         pragma Loop_Invariant (In_Atree (Atree, Host, Current_Index));
+            Push (E.Visited, Atree, Host, Current_Index);
+            Current_Index := Get_Child (Left, Atree, Host, Current_Index);
       end loop;
    end Trace_To_Left_Leaf;
 
@@ -476,13 +511,21 @@ is
    --------------------
 
    function New_Enumerator (Atree : A_Tree; Host : Host_Tree)
-                            return Enumerator
+                            return Enumerator with
+     Refined_Post =>
+       Enumerator_Of_Tree (New_Enumerator'Result, Atree, Host) and then
+       Current_Indexed_Key (New_Enumerator'Result, Atree, Host) = 1 and then
+       not Is_Empty (New_Enumerator'Result.Visited) and then
+       Indexed_Key (Atree, Host, 1) =
+         Tree.Key (Tree.Tree (Host), Top (New_Enumerator'Result.Visited,
+                                          Atree, Host))
+
    is
       Result : Enumerator;
    begin
-      Result.Key_Issue := 0;
+      Result.Key_Issue := 1;
       Stack.New_Stack (Result.Visited);
-      Push_In_Atree_Index (Result.Visited, Atree, Host, Atree.Root);
+      Push (Result.Visited, Atree, Host, Atree.Root);
       Trace_To_Left_Leaf (Atree, Host, Result);
       pragma Assert (not Stack.Is_Empty (Result.Visited));
       pragma Assume (Enumerator_Of_Tree (Result, Atree, Host),
@@ -551,7 +594,7 @@ is
             Inserted := False;
           else
             Inserted := True;
-            Insert_Index := Top_In_Atree_Index (Visited, Atree, Host);
+            Insert_Index := Top (Visited, Atree, Host);
             --  A right branch if the value of Key is greater
             --  to the Top Value, otherwise take the left branch.
             --  There are no duplicate Keys.
@@ -632,10 +675,10 @@ is
             --  visited stack. Get its value.
             Value_At_Node :=
               Tree.Value (Tree.Tree (Host),
-                          Top_In_Atree_Index (Visited, Atree, Host));
+                          Top(Visited, Atree, Host));
          else
             Inserted := True;
-            Insert_Index := Top_In_Atree_Index (Visited, Atree, Host);
+            Insert_Index := Top (Visited, Atree, Host);
             --  A right branch if the value of Key is greater
             --  to the Top Value, otherwise take the left branch.
             --  There are no duplicate Keys.
@@ -684,33 +727,33 @@ is
                               E     : in out Enumerator;
                               Index : out Node_Index) with
      Pre  => In_Host (Atree, Host) and then Populated (Atree, Host),
-     Post => (if E.Key_Issue'Old in 1 .. Count (Atree) then
-                Index /= Null_Index and then
-                  In_Atree (Atree, Host, Index) and then
-                  E.Key_Issue = E.Key_Issue'Old + 1 and then
-                  Current_Indexed_Key (E, Atree, Host) = E.Key_Issue
+     Post => (if E.Key_Issue'Old in 1 .. Count (Atree) - 1 and then
+                not Stack.Is_Empty (E.Visited'Old)
+              then
+                Index = Top (E.Visited'Old, Atree, Host) and then
+                In_Atree (Atree, Host, Index) and then
+                E.Key_Issue = E.Key_Issue'Old + 1
                 else
                   Index = Null_Index),
      Inline
    is
-      Right_Child : Node_Index;
-      Nodes_In_Atree : constant Key_Count := Count (Atree);
+      Right_Child    : Node_Index;
       Current_Issue  : constant Key_Count := E.Key_Issue;
    begin
       if E.Key_Issue = 0 then
          -- The Node_Index of every node has been issued - no more to come!
          Index := Null_Index;
-      elsif E.Key_Issue <= Nodes_In_Atree then
+      elsif E.Key_Issue in 1 .. Count (Atree) - 1 then
          pragma Assume (not Stack.Is_Empty (E.Visited),
                         "At least one more Node_index exists as they " &
                           "have not all issued so the stack cannot be empty.");
          pragma Assert (not Stack.Is_Empty (E.Visited));
-         Pop_In_Atree_Index (E.Visited, Atree, Host, Index);
+         Pop (E.Visited, Atree, Host, Index);
          --  Get the next Node_Index.
          Right_Child := Tree.Right (Tree.Tree (Host), Index);
          pragma Assert (Index /= Null_Index);
          if Right_Child /= Null_Index then
-            Push_In_Atree_Index (E.Visited, Atree, Host, Right_Child);
+            Push (E.Visited, Atree, Host, Right_Child);
             Trace_To_Left_Leaf (Atree, Host, E);
          end if;
          --  Increase the number of nodes (keys) issued.
@@ -725,8 +768,9 @@ is
 
    function Key_Index_Of_Node (Atree : A_Tree;
                                Host  : Host_Tree;
-                               Index : Node_Index) return Key_Index with
-     Pre  => In_Atree (Atree, Host, Index) and then Count (Atree) > 0,
+                               Index : Valid_Node_Index) return Key_Index with
+     Pre  => In_Host (Atree, Host) and then Populated (Atree, Host) and then
+             In_Atree (Atree, Host, Index),
      Post => (for some I in Key_Index range 1 .. Key_Index (Count (Atree)) =>
                 Indexed_Key (Atree, Host, I) =
                   Tree.Key (Tree.Tree (Host), Index) and then
@@ -734,11 +778,13 @@ is
      Ghost
    is
       E : Enumerator := New_Enumerator (Atree, Host);
-      N : Node_Index;
+      N : Node_Index := Top (E.Visited, Atree, Host);
       K : Key_Index;
    begin
       loop
          K := Current_Indexed_Key (E, Atree, Host);
+         pragma Loop_Invariant (Tree.Key (Tree.Tree (Host), N) =
+                                  Indexed_Key (Atree, Host, K));
          Next_Node_Index
            (Atree => Atree,
             Host  => Host,
@@ -746,7 +792,7 @@ is
             Index => N);
          exit when N = Index or else N = Null_Index;
       end loop;
-      pragma Assert (N = Index);
+      pragma Assert (N = Index or else N = Null_Index);
       return K;
    end Key_Index_Of_Node;
 
