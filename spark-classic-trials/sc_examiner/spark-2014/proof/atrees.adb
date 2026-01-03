@@ -2,28 +2,40 @@ with Atrees.Proof;
 package body Atrees with
 SPARK_Mode
 is
-   function Host (Atree : A_Tree) return Host_Tree is (Host_Tree (Atree.Host));
-   function Enumerated_Tree (E : Enumerator) return A_Tree is (E.Atree);
-   function Current_Key_Index (E : Enumerator) return Key_Index is
-     (E.Key_Issue);
-
-   --  The body of In_Atree is hidden as, in proof, it acts as an axiomatic
-   --  function.
-   function In_Atree (Atree : A_Tree; Node : Node_Index) return Boolean is
-      (Tree.In_Tree (Atree.Host, Node) and then Count (Atree) > 0) with
+   --  The bodies of the following subprograms are hidden as they are purely
+   --  logical proof functions.
+   function Hosted (Atree : A_Tree; Host : Host_Tree) return Boolean is
+     (True) with
+     SPARK_Mode => Off;
+   function Enumerated (Atree : A_Tree;
+                        Host : Host_Tree;
+                        E    : Enumerator) return Boolean is
+     (True) with
+     SPARK_Mode => Off;
+   function In_Atree (Atree : A_Tree;
+                      Host : Host_Tree;
+                      Node : Node_Index) return Boolean is
+      (Tree.In_Tree (Tree.Tree (Host), Node) and then Count (Atree) > 0) with
    SPARK_Mode => Off;
 
-   function Populated (Atree : A_Tree) return Boolean is
-     (not Tree.Empty_Tree (Atree.Host) and then
-        (Count (Atree) > 0 and Atree.Root /= Null_Index) and then
-      In_Atree (Atree, Atree.Root));
+   function Current_Key_Index (E     : Enumerator;
+                               Atree : A_Tree;
+                               Host  : Host_Tree) return Key_Index is
+     (E.Key_Issue);
 
-   function Current_Node_Index (E : Enumerator) return Node_Index with
-     Refined_Post=> In_Atree (E.Atree, Current_Node_Index'Result)
+   function Populated (Atree : A_Tree; Host : Host_Tree) return Boolean is
+     (not Tree.Empty_Tree (Tree.Tree (Host)) and then
+        (Count (Atree) > 0 and Atree.Root /= Null_Index) and then
+      In_Atree (Atree, Host, Atree.Root));
+
+   function Current_Node_Index (E      : Enumerator;
+                                Atreee : A_Tree;
+                                Host   : Host_Tree) return Node_Index with
+     Refined_Post=> In_Atree (E.Atree, Host, Current_Node_Index'Result)
    is
       Result : Node_Index;
    begin
-      Result := Stack.Top (E.Visited);
+      Result := Top (E.Visited, Atree, Host);
       pragma Assume (In_Atree (E.Atree, Result),
                      "Using Atrees.Push ensures all Node_Indices on the " &
                        "stack are In_Atree.");

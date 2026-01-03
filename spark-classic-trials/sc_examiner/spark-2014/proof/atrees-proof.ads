@@ -4,7 +4,7 @@ package Atrees.Proof is
    --  A proof function stating that the structure (i.e., the connection of
    --  the nodes of the tree) of an A_Tree after an operation has been
    --  performed on the A_Tree is unchanged.
-   function Preserved_Structue (Pre_Atree, Post_Atree : A_Tree) return Boolean;
+   function Preserved_Structure (Pre_Atree, Post_Atree : A_Tree) return Boolean;
 
    --  A proof function stating that the structure (i.e., the connection of
    --  the nodes) of an A_Tree after an operation has been
