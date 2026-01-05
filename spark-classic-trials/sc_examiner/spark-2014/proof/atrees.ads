@@ -183,7 +183,7 @@ is
    function Enumerated (Atree : A_Tree; Host : Host_Tree; E : Enumerator)
                         return Boolean with Ghost;
 
-   function Current_Key_Index (E: Enumerator; Atree : A_Tree; Host : Host_Tree)
+   function Current_key_Index (E: Enumerator; Atree : A_Tree; Host : Host_Tree)
                                return Key_Index with
      Pre  => Hosted (Atree, Host),
      Post => Current_Key_index'Result <= Count (Atree),
@@ -292,10 +292,7 @@ private
          Key_Issue  : Key_Count;
          --  A stack to record visited nodes when enumerating.
          Visited : Stack.Stack;
-      end record with
-     Type_Invariant => Key_Equivalence (Enumerator);
-
-   function Key_Equivalence (E : Enumerator) return Boolean with Ghost;
+      end record;
 
    function Current_Node_Index (Atree : A_Tree;
                                 Host  : Host_Tree;

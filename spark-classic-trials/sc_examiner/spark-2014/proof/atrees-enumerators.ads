@@ -1,2 +1,3 @@
-private package Atrees.Enumerators is
+private generic
+package Atrees.Enumerators is
 end Atrees.Enumerators;

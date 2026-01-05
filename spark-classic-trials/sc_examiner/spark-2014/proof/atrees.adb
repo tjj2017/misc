@@ -28,29 +28,8 @@ is
         (Count (Atree) > 0 and Atree.Root /= Null_Index) and then
       In_Atree (Atree, Host, Atree.Root));
 
-   function Current_Node_Index (E      : Enumerator;
-                                Atreee : A_Tree;
-                                Host   : Host_Tree) return Node_Index with
-     Refined_Post=> In_Atree (E.Atree, Host, Current_Node_Index'Result)
-   is
-      Result : Node_Index;
-   begin
-      Result := Top (E.Visited, Atree, Host);
-      pragma Assume (In_Atree (E.Atree, Result),
-                     "Using Atrees.Push ensures all Node_Indices on the " &
-                       "stack are In_Atree.");
-      pragma Assert (In_Atree (E.Atree, Result));
-      return Result;
-   end Current_Node_Index;
-
- package Proof_Functions is new Atrees.Proof;
+   package Proof_Functions is new Atrees.Proof;
    use Proof_Functions;
-
-   function Key_Equivalence (E : Enumerator) return Boolean is
-   begin
-      pragma Assert (Proof_Functions.Key_Equivalence (E));
-      return True;
-   end Key_Equivalence;
 
    procedure Init_Host_Tree (Host : out Host_Tree) with
      Refined_Post => Tree.Empty_Tree (Tree.Tree (Host))
@@ -73,15 +52,16 @@ is
    --  Pushing exclusively using Push_In_Tree_Node ensures that
    --  every Node on the stack is in the Tree.
    function Top (S     : Stack.Stack;
-                 Atree : A_Tree) return Node_Index with
+                 Atree : A_Tree;
+                 Host  : Host_Tree) return Node_Index with
      Pre  => not Is_Empty (S),
-     Post => In_Atree (Atree, Top'Result),
+     Post => In_Atree (Atree, Host, Top'Result),
      Inline
    is
       Result : Node_Index;
    begin
       Result := Stack.Top (S);
-      pragma Assume (In_Atree (Atree, Result),
+      pragma Assume (In_Atree (Atree, Host, Result),
                      "The exclusive use of Push_In_Atree_Index ensures all " &
                      "pushed node indices are In_Atreeree, so, " &
                       "all node indices at the top of the stack will be " &
@@ -97,10 +77,11 @@ is
    --  2**32-1 nodes.
    procedure Push (S     : in out Stack.Stack;
                    Atree : A_Tree;
+                   Host  : Host_Tree;
                    Index : Node_Index) with
-     Pre  => In_Atree (Atree, Index),
+     Pre  => In_Atree (Atree, Host, Index),
      Post => not Is_Empty (S) and then
-             Top (S, Atree) = Index,
+             Top (S, Atree, Host) = Index,
      Inline
    is
    begin
@@ -109,7 +90,7 @@ is
                      "balanced tree with more distinct nodes " &
                      "than can be handled by the gnat front-end");
       Stack.Push (S, Index);
-      pragma Assume (Top (S, Atree) = Index,
+      pragma Assume (Top (S, Atree, Host) = Index,
                      "The Node_Index pushed on the stack is the " &
                        "top of the stack");
    end Push;
@@ -118,80 +99,90 @@ is
    --  every Node_Index on the stack is in the A_Tree.
    procedure Pop (S     : in out Stack.Stack;
                   Atree : A_Tree;
+                  Host  : Host_Tree;
                   Index : out Node_Index) with
      Pre  => not Is_Empty (S),
-     Post => In_Atree (Atree, Index) and
+     Post => In_Atree (Atree, Host, Index) and
              Stack.Count (S) = Stack.Count (S'Old) - 1 and
-             Index = Top (S'Old, Atree),
+             Index = Top (S'Old, Atree, Host),
      Inline
    is
       Entry_Stack : constant Stack.Stack := S with Ghost;
    begin
       Stack.Pop (S, Index);
-      pragma Assume (In_Atree (Atree, Index) and
-                       Index = Top (Entry_Stack, Atree),
+      pragma Assume (In_Atree (Atree, Host, Index) and
+                       Index = Top (Entry_Stack, Atree, Host),
                      "The exclusive use of Push_In_ATree_Index ensures " &
                      "all pushed node indices are In_ATree, so, " &
                      "all nodes popped by Pop_In_ATree_Index will also be.");
    end Pop;
 
+   function Current_Node_Index (Atree : A_Tree;
+                                Host  : Host_Tree;
+                                E     : Enumerator) return Node_Index
+   is (Top (E.Visited, Atree, Host)) with
+     Refined_Post=> In_Atree (Atree, Host, Current_Node_Index'Result);
+
    --  Local subprograms
 
    function Get_Child (Is_Right : Boolean;
                        Atree    : A_Tree;
+                       Host     : Host_Tree;
                        Index    : Valid_Node_Index)
                        return Node_Index with
-     Pre  => In_Atree (Atree, Index),
+     Pre  => In_Atree (Atree, Host, Index),
      Post => (if Get_Child'Result /= Null_Index then
-                In_Atree (Atree, Get_Child'Result)),
+                In_Atree (Atree, Host, Get_Child'Result)),
      Inline
    is
       Result : Node_Index;
    begin
       if Is_Right then
-         Result := Tree.Right (Atree.Host, Index);
+         Result := Tree.Right (Tree.Tree (Host), Index);
       else
-         Result := Tree.Left (Atree.Host, Index);
+         Result := Tree.Left (Tree.Tree (Host), Index);
       end if;
       pragma Assume ((if Result /= Null_Index then
-                       In_Atree (Atree, Result)),
+                       In_Atree (Atree, Host, Result)),
                      "A child node index is either null or in the Atree. " &
                        "Set_Branch ensures all node indices inserted into " &
                        "the Atree are already indices in the Atree.");
+      pragma Assert (In_Atree (Atree, Host, Result));
       return Result;
    end Get_Child;
 
    procedure Set_Branch (Is_Right   : Boolean;
                          Atree      : in out A_Tree;
+                         Host       : in out Host_Tree;
                          Index      : Valid_Node_Index;
                          Set_Index  : Valid_Node_Index) with
-     Pre  => In_Atree (Atree, Index) and
-             In_Atree (Atree, Set_Index),
-     Post => Host (Atree) = Host (Atree'Old) and
-             In_Atree (Atree, Index) and In_Atree (Atree, Set_Index) and
-             (Preserved_Contents (Atree'Old, Atree) and
-              Preserved_Structure_Except
-                (Atree'Old, Atree, (if Is_Right then
-                                      Tree.Right (Atree.Host'Old, Index)
-                                    else
-                                        Tree.Left (Atree.Host'Old, Index)))
+     Pre  => In_Atree (Atree, Host, Index) and
+             In_Atree (Atree, Host, Set_Index),
+     Post => In_Atree (Atree, Host, Index) and In_Atree (Atree, Host, Set_Index) and
+             Preserved_Contents (Atree'Old, Atree, Host) and
+             Preserved_Structure_Except
+               (Atree'Old, Atree, Host,
+                (if Is_Right then
+                    Tree.Right (Tree.Tree (Host), Index)
+                 else
+                    Tree.Left (Tree.Tree (Host), Index)))
               and
                  Set_Index = (if Is_Right then
-                                  Tree.Right (Atree.Host, Index)
+                                  Tree.Right (Tree.Tree (Host), Index)
                                 else
-                                  Tree.Left (ATree.Host, Index))),
+                                  Tree.Left (Tree.Tree (Host), Index)),
 
      Inline
    is
    begin
       if Is_Right then
          Tree.Set_Right
-           (T      => Atree.Host,
+           (T      => Tree.Tree (Host),
             I      => Index,
             Branch => Set_Index);
       else
          Tree.Set_Left
-           (T      => Atree.Host,
+           (T      => Tree.Tree (Host),
             I      => Index,
             Branch => Set_Index);
       end if;
@@ -201,14 +192,19 @@ is
                               Host        : in out Host_Tree;
                               Key         : Key_Type;
                               Added_Index : out Node_Index) with
-     Post => Preserved ... In_Atree (Atree, Added_Index) and
-             Tree.Key (Atree.Host, Added_Index) = Key and
+     Post => In_Atree (Atree, Host, Added_Index) and then
+             --  The contents and structure of the A_Tree has not been
+             --  changed. An unconnected node has been added to the Host tree.
+             Preserved_Contents (Atree'Old, Atree, Host) and then
+             Preserved_Structure (Atree'Old, Atree, Host) and then
+             Tree.Key (Tree.Tree (Host), Added_Index) = Key and then
              Count (Atree) = Count (Atree'Old) + 1,
      Inline
    is
    begin
       Tree.Add_Node (Tree.Tree (Host), Added_Index, Key);
       Atree.Count := Atree.Count + 1;
+      Atree.Last := Added_Index;
    end Add_Atree_Index;
 
    --  If Found, the top of the Visited stack is the Node_Index
@@ -400,7 +396,7 @@ is
    end Split;
 
    --  Rebalance Andersson tree after am insertion.
-   procedure Rebalance (Atree          : A_Tree;
+   procedure Rebalance (Atree          : in out A_Tree;
                         Host           : in out Host_Tree;
                         Sub_Root_Index : in out Node_Index;
                         Visited        : in out Stack.Stack)
@@ -506,8 +502,8 @@ is
    function New_Enumerator (Atree : A_Tree; Host : Host_Tree)
                             return Enumerator with
      Refined_Post =>
-       Enumerator_Of_Tree (New_Enumerator'Result, Atree, Host) and then
-       Current_Indexed_Key (New_Enumerator'Result, Atree, Host) = 1 and then
+       Enumerated (Atree, Host, New_Enumerator'Result) and then
+       Current_Key_Index (New_Enumerator'Result, Atree, Host) = 1 and then
        not Is_Empty (New_Enumerator'Result.Visited) and then
        Indexed_Key (Atree, Host, 1) =
          Tree.Key (Tree.Tree (Host), Top (New_Enumerator'Result.Visited,
@@ -521,7 +517,7 @@ is
       Push (Result.Visited, Atree, Host, Atree.Root);
       Trace_To_Left_Leaf (Atree, Host, Result);
       pragma Assert (not Stack.Is_Empty (Result.Visited));
-      pragma Assume (Enumerator_Of_Tree (Result, Atree, Host),
+      pragma Assume (Enumerated (Atree, Host, Result),
                      "The New_Enumerator is associated with the given " &
                     "A_Tree and Host_Tree.");
       return Result;
@@ -533,7 +529,7 @@ is
 
    procedure New_A_Tree (Atree : out A_Tree; Host : in out Host_Tree) with
      Refined_Post => not Tree.Empty_Tree (Tree.Tree (Host)) and
-                     In_Host (Atree, Host)
+                     Hosted (Atree, Host)
    is
       New_Index : Node_Index;
    begin
@@ -544,7 +540,8 @@ is
       Atree := A_Tree'
         (Count => 0,
          Base  => New_Index,
-         Root  => Null_Index);
+         Root  => Null_Index,
+         Last => New_Index);
    end New_A_Tree;
 
    ------------
@@ -719,7 +716,7 @@ is
                               Host  : Host_Tree;
                               E     : in out Enumerator;
                               Index : out Node_Index) with
-     Pre  => In_Host (Atree, Host) and then Populated (Atree, Host),
+     Pre  => Hosted (Atree, Host) and then Populated (Atree, Host),
      Post => (if E.Key_Issue'Old in 1 .. Count (Atree) - 1 and then
                 not Stack.Is_Empty (E.Visited'Old)
               then
@@ -762,7 +759,7 @@ is
    function Key_Index_Of_Node (Atree : A_Tree;
                                Host  : Host_Tree;
                                Index : Valid_Node_Index) return Key_Index with
-     Pre  => In_Host (Atree, Host) and then Populated (Atree, Host) and then
+     Pre  => Hosted (Atree, Host) and then Populated (Atree, Host) and then
              In_Atree (Atree, Host, Index),
      Post => (for some I in Key_Index range 1 .. Key_Index (Count (Atree)) =>
                 Indexed_Key (Atree, Host, I) =
@@ -775,7 +772,7 @@ is
       K : Key_Index;
    begin
       loop
-         K := Current_Indexed_Key (E, Atree, Host);
+         K := Current_Key_Index (E, Atree, Host);
          pragma Loop_Invariant (Tree.Key (Tree.Tree (Host), N) =
                                   Indexed_Key (Atree, Host, K));
          Next_Node_Index
@@ -797,18 +794,18 @@ is
                        Atree : A_Tree;
                        Host : Host_Tree;
                        Key : out Key_Type) with
-     Refined_Post => Enumerator_Of_Tree (E, Atree, Host) and then
-             (if Current_Indexed_Key (E, Atree, Host) in
+     Refined_Post => Enumerated (Atree, Host, E) and then
+             (if Current_Key_Index (E, Atree, Host) in
                 1 .. Key_Index (Count (Atree) - 1)
               then
                 Key = Indexed_Key (Atree, Host,
-                                   Current_Indexed_Key (E'Old, Atree, Host)) and
-                  Current_Indexed_Key (E, Atree, Host) =
-                  Current_Indexed_Key (E'Old, Atree, Host) + 1)
+                                   Current_Key_Index (E'Old, Atree, Host)) and
+                  Current_Key_Index (E, Atree, Host) =
+                  Current_Key_Index (E'Old, Atree, Host) + 1)
 
    is
       Next_Index : Node_Index;
-      Key_Index : constant Key_Count := Current_Indexed_Key (E, Atree, Host)
+      Key_Index : constant Key_Count := Current_Key_Index (E, Atree, Host)
         with Ghost;
    begin
       if E.Key_Issue > 0 and E.Key_Issue < Atree.Count then
@@ -817,7 +814,7 @@ is
             Key := Tree.Key (Tree.Tree (Host), Next_Index);
 
             pragma Assert (if Key /= Null_Key then
-                              Current_Indexed_Key (E, Atree, Host) =
+                              Current_Key_Index (E, Atree, Host) =
                              Key_Index + 1
                            and
                              Key = Indexed_Key (Atree, Host, Key_Index));
@@ -828,7 +825,7 @@ is
       else
          Key := Null_Key;
       end if;
-      pragma Assume (Enumerator_Of_Tree (E, Atree, Host),
+      pragma Assume (Enumerated (Atree, Host, E),
                      "Obtaining the next key does not affect " &
                        "the association with Atree and Host.");
 
@@ -880,24 +877,24 @@ is
          for I in Key_Count range 1 .. Atree_1.Count loop
             declare
                CKI_1 : constant Key_Index :=
-                 Current_Indexed_Key
-                   (E => Enum_1,
-                    A => Atree_1,
-                    T => Host_1) with Ghost;
+                 Current_Key_Index
+                   (E     => Enum_1,
+                    Atree => Atree_1,
+                    Host  => Host_1) with Ghost;
                CKI_2 : constant Key_Index :=
-                 Current_Indexed_Key
-                   (E => Enum_2,
-                    A => Atree_2,
-                    T => Host_2) with Ghost;
+                 Current_Key_Index
+                   (E     => Enum_2,
+                    Atree => Atree_2,
+                    Host  => Host_2) with Ghost;
             begin
-               pragma Assert (CKI_1 = Current_Indexed_Key
+               pragma Assert (CKI_1 = Current_Key_Index
                               (E => Enum_1,
-                               A => Atree_1,
-                               T => Host_1) and
-                                CKI_2 = Current_Indexed_Key
-                                  (E => Enum_2,
-                                   A => Atree_2,
-                                   T => Host_2));
+                               Atree => Atree_1,
+                               Host  => Host_1) and
+                                CKI_2 = Current_Key_Index
+                                  (E     => Enum_2,
+                                   Atree => Atree_2,
+                                   Host  => Host_2));
                Next_Key (E     => Enum_1,
                          Atree => Atree_1,
                          Host  => Host_1,
@@ -912,8 +909,8 @@ is
                                  Indexed_Key (Atree_2, Host_2, CKI_2) = Key_2);
                Equal := Key_1 = Key_2;
                pragma Loop_Invariant
-                 ((Enumerator_Of_Tree (Enum_1, Atree_1, Host_1) and
-                    Enumerator_Of_Tree (Enum_2, Atree_2, Host_2)) and then
+                 ((Enumerated (Atree_1, Host_1, Enum_1) and
+                    Enumerated (Atree_2, Host_2, Enum_2)) and then
                     (if Equal then
                          (for all KI in Key_Count range 1 .. I =>
                               Indexed_Key (Atree_1, Host_1, KI) = Key_1 and
@@ -1025,18 +1022,18 @@ is
       return Result;
    end Tree_Depth;
 
-   function Indexed_Key (Atree : A_Tree; Host : Host_Tree; Index : Key_Index)
-                         return Key_Type
+   function Indexed_Key (Atree : A_Tree; Host : Host_Tree;
+                         Index : Valid_Key_Index) return Key_Type
    is
       E : Enumerator := New_Enumerator (Atree, Host);
       The_Key : Key_Type := Null_Key;
    begin
       pragma Assert (Count (Atree) > 0 and Index > 0 and
                        Index <= Key_Index (Count (Atree)));
-      pragma Assert (Current_Indexed_Key (E, Atree, Host) = 1);
+      pragma Assert (Current_Key_Index (E, Atree, Host) = 1);
       for I in 1 .. Index loop
          Next_Key (E, Atree, Host, The_Key);
-         pragma Loop_Invariant (Enumerator_Of_Tree (E, Atree, Host));
+         pragma Loop_Invariant (Enumerated (Atree, Host, E));
       end loop;
       --  pragma Assume (The_Key /= Null_Key,
       --                 "As Index is in the range of Count (Atree) " &
@@ -1047,29 +1044,23 @@ is
       return The_Key;
    end Indexed_Key;
 
-   function Current_Indexed_Key (E : Enumerator;
-                                 A : A_Tree;
-                                 T : Host_Tree) return Key_Index is
-     (Key_Index (E.Key_Issue));
-
-
    function Value_At_Key_Index (Atree : A_Tree;
                                 Host  : Host_Tree;
-                                Index : Key_Index)
+                                Index : Valid_Key_Index)
                           return Value_Type
    is
       E : Enumerator := New_Enumerator (Atree, Host);
-      Current_Key_Index  : Key_Index;
+      Current_K_Index  : Key_Index;
       Current_Node_Index : Node_Index;
    begin
       loop
-         Current_Key_Index := Current_Indexed_Key (E, Atree, Host);
+         Current_K_Index := Current_Key_Index (E, Atree, Host);
          Next_Node_Index
            (Atree => Atree,
             Host  => Host,
             E     => E,
             Index => Current_Node_Index);
-         exit when Current_Key_Index = Index;
+         exit when Current_K_Index = Index;
       end loop;
       return Tree.Value (Tree.Tree (Host), Current_Node_Index);
    end Value_At_Key_Index;
