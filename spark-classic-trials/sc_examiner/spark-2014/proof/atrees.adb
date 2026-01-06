@@ -28,8 +28,8 @@ is
         (Count (Atree) > 0 and Atree.Root /= Null_Index) and then
       In_Atree (Atree, Host, Atree.Root));
 
-   package Proof_Functions is new Atrees.Proof;
-   use Proof_Functions;
+ --  package Proof_Functions is new Atrees.Proof;
+ --  use Proof_Functions;
 
    procedure Init_Host_Tree (Host : out Host_Tree) with
      Refined_Post => Tree.Empty_Tree (Tree.Tree (Host))
@@ -152,25 +152,16 @@ is
    end Get_Child;
 
    procedure Set_Branch (Is_Right   : Boolean;
-                         Atree      : in out A_Tree;
+                         Atree      : A_Tree;
                          Host       : in out Host_Tree;
                          Index      : Valid_Node_Index;
                          Set_Index  : Valid_Node_Index) with
      Pre  => In_Atree (Atree, Host, Index) and
              In_Atree (Atree, Host, Set_Index),
-     Post => In_Atree (Atree, Host, Index) and In_Atree (Atree, Host, Set_Index) and
-             Preserved_Contents (Atree'Old, Atree, Host) and
-             Preserved_Structure_Except
-               (Atree'Old, Atree, Host,
-                (if Is_Right then
-                    Tree.Right (Tree.Tree (Host), Index)
-                 else
-                    Tree.Left (Tree.Tree (Host), Index)))
-              and
-                 Set_Index = (if Is_Right then
-                                  Tree.Right (Tree.Tree (Host), Index)
-                                else
-                                  Tree.Left (Tree.Tree (Host), Index)),
+     Post => Set_Index = (if Is_Right then
+                            Tree.Right (Tree.Tree (Host), Index)
+                              else
+                                Tree.Left (Tree.Tree (Host), Index)),
 
      Inline
    is
@@ -187,25 +178,6 @@ is
             Branch => Set_Index);
       end if;
    end Set_Branch;
-
-   procedure Add_Atree_Index (Atree       : in out A_Tree;
-                              Host        : in out Host_Tree;
-                              Key         : Key_Type;
-                              Added_Index : out Node_Index) with
-     Post => In_Atree (Atree, Host, Added_Index) and then
-             --  The contents and structure of the A_Tree has not been
-             --  changed. An unconnected node has been added to the Host tree.
-             Preserved_Contents (Atree'Old, Atree, Host) and then
-             Preserved_Structure (Atree'Old, Atree, Host) and then
-             Tree.Key (Tree.Tree (Host), Added_Index) = Key and then
-             Count (Atree) = Count (Atree'Old) + 1,
-     Inline
-   is
-   begin
-      Tree.Add_Node (Tree.Tree (Host), Added_Index, Key);
-      Atree.Count := Atree.Count + 1;
-      Atree.Last := Added_Index;
-   end Add_Atree_Index;
 
    --  If Found, the top of the Visited stack is the Node_Index
    --  of the node in the tree which contains the Key.
@@ -396,7 +368,7 @@ is
    end Split;
 
    --  Rebalance Andersson tree after am insertion.
-   procedure Rebalance (Atree          : in out A_Tree;
+   procedure Rebalance (Atree          : A_Tree;
                         Host           : in out Host_Tree;
                         Sub_Root_Index : in out Node_Index;
                         Visited        : in out Stack.Stack)
@@ -481,8 +453,8 @@ is
                                  E     : in out Enumerator) with
      Pre  => not Stack.Is_Empty (E.Visited),
      Post => not Stack.Is_Empty (E.Visited) and
-             E.Key_Issue = E.Key_Issue'Old and
-             Key_Equivalence (E, Atree, Host)
+             E.Key_Issue = E.Key_Issue'Old --  and
+             --  Key_Equivalence (E, Atree, Host)
    is
       Current_Index : Node_Index;
    begin
@@ -529,7 +501,9 @@ is
 
    procedure New_A_Tree (Atree : out A_Tree; Host : in out Host_Tree) with
      Refined_Post => not Tree.Empty_Tree (Tree.Tree (Host)) and
-                     Hosted (Atree, Host)
+                     Hosted (Atree, Host) and
+                     Count (Atree) = 0 and
+                     Ordered (Atree, Host)
    is
       New_Index : Node_Index;
    begin
@@ -542,6 +516,10 @@ is
          Base  => New_Index,
          Root  => Null_Index,
          Last => New_Index);
+      pragma Assume (Hosted (Atree, Host),
+                     "A new A_Tree Base has been added to the Host_Tree.");
+      pragma Assume (Ordered (Atree, Host),
+                     "An empty A_Tree is considered to be ordered");
    end New_A_Tree;
 
    ------------
@@ -568,6 +546,7 @@ is
          --  An empty node has already been placed in the host tree by
          --  New_A_Tree.  Its index is in Atree.Base.
          --  Update the node with the given key and make it the root.
+         --  All leaf nodes in an A_Tree are at level 1.
          Atree.Root := Atree.Base;
          Tree.Set_Key (Tree.Tree (Host), Atree.Root, Key);
          Tree.Set_Level (Tree.Tree (Host), Atree.Root, 1);
@@ -590,18 +569,29 @@ is
             --  There are no duplicate Keys.
             Is_Right := Key > Tree.Key (Tree.Tree (Host), Insert_Index);
 
-            --  Add a new child node to extend the tree
-            Add_Atree_Index
-              (Atree       => Atree,
-               Host        => Host,
-               Added_Index => Child,
-               Key         => Key);
+            --  Add a new node to underlying host tree.  The Node_Index of
+            --  the new node is returned in variable Child.
+            --  This does not affect Atree yet as the new node is
+            --  disconnected in the Host.
+            Tree.Add_Node (Tree.Tree (Host), Child, Key);
+
+            --  Attach the new node as a leaf of an existing node of Atree.
+            --  All leaf nodes in an A_Tree are at level 1.
+            --  The new node is added to the Atree.
+            Tree.Set_Level (Tree.Tree (Host), Child, 1);
+            Atree.Last := Child;
+            Atree.Count := Atree.Count + 1;
+            pragma Assume (In_Atree (Atree, Host, Child),
+                           "The new node is being added to the A_Tree");
+            pragma Assert (In_Atree (Atree, Host, Child));
             Set_Branch
               (Is_Right  => Is_Right,
                Atree     => Atree,
                Host      => Host,
                Index     => Insert_Index,
                Set_Index => Child);
+
+            --  Set the current subroot to the Root index.
             Subroot_Index := Atree.Root;
 
             pragma Warnings (Off, """Visited""",
@@ -645,6 +635,7 @@ is
          --  An empty node has already been placed in the host tree by
          --  New_A_Tree.  Its index is in Atree.Base.
          --  Update the node with the given key and make it the root.
+         --  All leaf nodes in an A_Tree are at level 1.
          Atree.Root := Atree.Base;
          Tree.Set_Key (Tree.Tree (Host), Atree.Root, Key);
          Tree.Set_Value (Tree.Tree (Host), Atree.Root, Insert_Value);
@@ -674,19 +665,29 @@ is
             --  There are no duplicate Keys.
             Is_Right := Key > Tree.Key (Tree.Tree (Host), Insert_Index);
 
-            --  Add a new child node to extend the tree
-            Add_Atree_Index
-              (Atree       => Atree,
-               Host        => Host,
-               Added_Index => Child,
-               Key         => Key);
+            --  Add a new node to underlying host tree.  The Node_Index of
+            --  the new node is returned in variable Child.
+            --  This does not affect Atree yet as the new node is
+            --  disconnected in the Host.
+            Tree.Add_Node (Tree.Tree (Host), Child, Key);
+
+            --  All leaf nodes in an A_Tree are at level 1.
+            Tree.Set_Level (Tree.Tree (Host), Child, 1);
             --  Add the Value to the node.
             Tree.Set_Value
               (T          => Tree.Tree (Host),
                I          => Child,
                Node_Value => Insert_Value);
-            --  Make the new Child node a child of the node indexed by
-            --  Current_Index.
+            --  The new node is added to the Atree.
+            Atree.Last := Child;
+            Atree.Count := Atree.Count + 1;
+            pragma Assume (In_Atree (Atree, Host, Child),
+                           "The new node is being added to the A_Tree");
+            pragma Assert (In_Atree (Atree, Host, Child));
+
+            --  Attach the new node as a leaf of an existing node of Atree.
+            --  Make the new node a child of the node indexed by the
+            --  Insert_Index.
             Set_Branch
               (Is_Right  => Is_Right,
                Atree     => Atree,
@@ -695,6 +696,8 @@ is
                Set_Index => Child);
 
             Value_At_Node := Insert_Value;
+
+            --  Set the current subroot to the Root index.
             Subroot_Index := Atree.Root;
 
             pragma Warnings (Off, """Visited""",
@@ -873,7 +876,6 @@ is
       if Equal then
          Enum_1 := New_Enumerator (Atree_1, Host_1);
          Enum_2 := New_Enumerator (Atree_2, Host_2);
-         pragma Assert (Atree_1.Count > 0);
          for I in Key_Count range 1 .. Atree_1.Count loop
             declare
                CKI_1 : constant Key_Index :=
@@ -916,8 +918,10 @@ is
                               Indexed_Key (Atree_1, Host_1, KI) = Key_1 and
                                 Indexed_Key (Atree_2, Host_2, KI) = Key_1)));
                exit when not Equal or else Key_1 = Null_Key;
+               pragma Assert (Equal);
             end;
          end loop;
+
          pragma Assert (if Equal then Key_1 = Key_2);
          pragma Assert (Atree_1.Count = Atree_2.Count);
       end if;

@@ -26,7 +26,7 @@ generic
 package Atrees with
 SPARK_Mode
 is
-   type Host_Tree is private;  --  Should be a limited type.
+   type Host_Tree is limited private;
 
    procedure Init_Host_Tree (Host : out Host_Tree);
 
@@ -86,7 +86,8 @@ is
                                 Host  : Host_Tree;
                                 Index : Valid_Key_Index)
                           return Value_Type with
-     Pre => Populated (Atree, Host) and then Index <= Count (Atree),
+     Pre => Hosted (Atree, Host) and then Populated (Atree, Host) and then
+            Index <= Count (Atree),
      Ghost;
 
    --                    A_Tree Subprograms                            --
@@ -96,7 +97,8 @@ is
 
    function Is_Present (Atree : A_Tree; Host : Host_Tree; Key : Key_Type)
                         return Boolean with
-     Pre  => Populated (Atree, Host) and Ordered (Atree, Host),
+     Pre  => Hosted (Atree, Host) and then Populated (Atree, Host) and then
+             Ordered (Atree, Host),
      Post => (if Is_Present'Result then
                 (for some I in Valid_Key_Index range
                      First_Index .. Count (Atree) =>
@@ -104,7 +106,8 @@ is
 
    function Value (Atree : A_Tree; Host : Host_Tree; Key : Key_Type)
                    return Value_Type with
-     Pre  => Populated (Atree, Host) and Ordered (Atree, Host),
+     Pre  => Hosted (Atree, Host) and then Populated (Atree, Host) and then
+             Ordered (Atree, Host),
      Post => (if Value'Result /= Null_Value then
                 (for some I in Valid_Key_Index range
                      First_Index .. Count(Atree) =>
@@ -114,8 +117,10 @@ is
    function Equal_Keys (Atree_1, Atree_2 : A_Tree;
                         Host_1, Host_2 : Host_Tree)
                         return Boolean with
-   Pre  => Populated (Atree_1, Host_1) and Populated (Atree_2, Host_2) and
-            Ordered (Atree_1, Host_1) and Ordered (Atree_2, Host_2),
+     Pre  => Hosted (Atree_1, Host_1) and then Hosted (Atree_2, Host_2) and then
+             Populated (Atree_1, Host_1) and then Populated (Atree_2, Host_2)
+             and then
+             Ordered (Atree_1, Host_1) and then Ordered (Atree_2, Host_2),
      Post =>  (if Equal_Keys'Result then
                  (Count (Atree_1) = Count (Atree_2)) and then
                    (for all I in Valid_Key_Index range
@@ -126,8 +131,10 @@ is
    function Equal_Keys_And_Values (Atree_1, Atree_2 : A_Tree;
                                    Host_1, Host_2 : Host_Tree)
               return Boolean with
-     Pre  => Populated (Atree_1, Host_1) and Populated (Atree_2, Host_2) and
-              Ordered (Atree_1, Host_1) and Ordered (Atree_2, Host_2),
+     Pre  => Hosted (Atree_1, Host_1) and then  Hosted (Atree_2, Host_2) and then
+             Populated (Atree_1, Host_1) and then Populated (Atree_2, Host_2)
+             and then
+              Ordered (Atree_1, Host_1) and then Ordered (Atree_2, Host_2),
      Post => Equal_Keys_And_Values'Result =
               (Count (Atree_1) = Count (Atree_2)) and then
                  (for all I in Valid_Key_Index range
@@ -191,7 +198,7 @@ is
 
    function New_Enumerator (Atree : A_Tree; Host : Host_Tree)
                             return Enumerator with
-     Pre  => Populated (Atree, Host),
+     Pre  => Hosted (Atree, Host) and then Populated (Atree, Host),
      Post => Enumerated (Atree, Host, New_Enumerator'Result) and then
              Current_Key_Index (New_Enumerator'Result, Atree, Host) = 1;
 
@@ -199,7 +206,7 @@ is
                        Atree : A_Tree;
                        Host  : Host_Tree;
                        Key : out Key_Type) with
-     Pre  => Populated (Atree, Host) and then
+     Pre  => Hosted (Atree, Host) and then Populated (Atree, Host) and then
              Ordered (Atree, Host) and then
              Enumerated (Atree, Host, E),
      Post => Enumerated (Atree, Host, E) and then
@@ -220,7 +227,7 @@ is
                                  Host      : Host_Tree;
                                  Key       : out Key_Type;
                                  Its_Value : out Value_Type) with
-     Pre  => Populated (Atree, Host) and then
+     Pre  => Hosted (Atree, Host) and then Populated (Atree, Host) and then
              Ordered (Atree, Host) and then
              Enumerated (Atree, Host, E),
      Post => Enumerated (Atree, Host, E) and then

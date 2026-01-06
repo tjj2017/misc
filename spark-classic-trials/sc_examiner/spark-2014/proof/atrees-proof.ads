@@ -20,7 +20,7 @@ package Atrees.Proof is
    --  of an A_Tree after an operation has been performed on the A_Tree
    --  are unchanged.
    function Preserved_Contents (Pre_Atree, Post_Atree : A_Tree;
-                               Host : Host_Tree) return Boolean;
+                                Host : Host_Tree) return Boolean;
 
    --  A proof function stating that the values (i.e., the Value of each node)
    --  of an A_Tree after an operation has been performed on the A_Tree are
