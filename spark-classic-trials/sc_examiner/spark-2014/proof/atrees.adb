@@ -18,11 +18,6 @@ is
       (Tree.In_Tree (Tree.Tree (Host), Node) and then Count (Atree) > 0) with
    SPARK_Mode => Off;
 
-   function Current_Key_Index (E     : Enumerator;
-                               Atree : A_Tree;
-                               Host  : Host_Tree) return Key_Index is
-     (E.Key_Issue);
-
    function Populated (Atree : A_Tree; Host : Host_Tree) return Boolean is
      (not Tree.Empty_Tree (Tree.Tree (Host)) and then
         (Count (Atree) > 0 and Atree.Root /= Null_Index) and then
@@ -43,7 +38,6 @@ is
    -----------
 
    function Count (Atree : A_Tree) return Key_Count is (Atree.Count);
-
 
    --  Proof helper subprograms
 
@@ -102,8 +96,9 @@ is
                   Host  : Host_Tree;
                   Index : out Node_Index) with
      Pre  => not Is_Empty (S),
-     Post => In_Atree (Atree, Host, Index) and
-             Stack.Count (S) = Stack.Count (S'Old) - 1 and
+     Post => In_Atree (Atree, Host, Index) and then
+             Tree.In_Tree (Tree.Tree (Host), Index) and then
+             Stack.Count (S) = Stack.Count (S'Old) - 1 and then
              Index = Top (S'Old, Atree, Host),
      Inline
    is
@@ -122,6 +117,33 @@ is
                                 E     : Enumerator) return Node_Index
    is (Top (E.Visited, Atree, Host)) with
      Refined_Post=> In_Atree (Atree, Host, Current_Node_Index'Result);
+
+  -----------------------
+   -- Current_Key_Index --
+    ----------------------
+
+   function Current_Key_Index (E     : Enumerator;
+                               Atree : A_Tree;
+                               Host  : Host_Tree) return Key_Index is
+     (E.Key_Issue);
+
+   -----------------
+   -- Current_Key --
+    ----------------
+
+   function Current_Key (E     : Enumerator;
+                         Atree : A_Tree;
+                         Host  : Host_Tree) return Key_Type is
+     (Tree.Key (Tree.Tree (Host), Current_Key_Index (E, Atree, Host)));
+
+   -------------------
+   -- Current_Value --
+    ------------------
+
+   function Current_Value (E     : Enumerator;
+                           Atree : A_Tree;
+                           Host  : Host_Tree) return Value_Type is
+     (Tree.Value (Tree.Tree (Host), Current_Key_Index (E, Atree, Host)));
 
    --  Local subprograms
 
@@ -444,7 +466,10 @@ is
    function Current_Node_Index (E    : Enumerator;
                                 Atree : A_Tree;
                                 Host : Host_Tree) return Node_Index is
-     (Top (E.Visited, Atree, Host));
+     (if Is_Empty (E.Visited) or else E.Key_Issue = Key_Count'First then
+           Null_Index
+      else
+         Top (E.Visited, Atree, Host));
 
    --  Trace the Atree to locate its lowest value Key which is its leftmost
    --  node.
@@ -715,37 +740,41 @@ is
       end if;
    end Insert_With_Value;
 
-   procedure Next_Node_Index (Atree : A_Tree;
-                              Host  : Host_Tree;
-                              E     : in out Enumerator;
-                              Index : out Node_Index) with
-     Pre  => Hosted (Atree, Host) and then Populated (Atree, Host),
-     Post => (if E.Key_Issue'Old in 1 .. Count (Atree) - 1 and then
-                not Stack.Is_Empty (E.Visited'Old)
+   procedure Next_Node_Index (E     : in out Enumerator;
+                              Atree : A_Tree;
+                              Host  : Host_Tree) with
+     Pre  => Hosted (Atree, Host) and then Populated (Atree, Host) and then
+             Enumerated (Atree, Host, E),
+     Post => Enumerated(Atree, Host, E) and then
+             (if Current_Node_Index (E'Old, Atree, Host) in
+                 1 .. Count (Atree) - 1 and
+                 not Stack.Is_Empty (E.Visited'Old)
               then
-                Index = Top (E.Visited'Old, Atree, Host) and then
-                In_Atree (Atree, Host, Index) and then
-                E.Key_Issue = E.Key_Issue'Old + 1
-                else
-                  Index = Null_Index),
-     Inline
+                 In_Atree (Atree, Host,
+                           Current_Node_Index (E, Atree, Host)) and
+                Current_Node_Index (E, Atree, Host) =
+                   Current_Key_Index (E'Old, Atree, Host) + 1
+              else
+                  Current_Key_Index (E, Atree, Host) = Null_Key_Index),
+       Inline
    is
+      Index          : Node_Index;
       Right_Child    : Node_Index;
       Current_Issue  : constant Key_Count := E.Key_Issue;
    begin
-      if E.Key_Issue = 0 then
+      if Is_Empty (E.Visited) or else E.Key_Issue = Key_Count'First then
          -- The Node_Index of every node has been issued - no more to come!
-         Index := Null_Index;
+         E.Key_Issue := Key_Count'First;
       elsif E.Key_Issue in 1 .. Count (Atree) - 1 then
-         pragma Assume (not Stack.Is_Empty (E.Visited),
-                        "At least one more Node_index exists as they " &
-                          "have not all issued so the stack cannot be empty.");
-         pragma Assert (not Stack.Is_Empty (E.Visited));
          Pop (E.Visited, Atree, Host, Index);
          --  Get the next Node_Index.
          Right_Child := Tree.Right (Tree.Tree (Host), Index);
-         pragma Assert (Index /= Null_Index);
          if Right_Child /= Null_Index then
+            pragma Assume
+              (In_Atree (Atree, Host, Index),
+               "A child of a node in an A_Tree is ether a leaf " &
+                 "(a Null_Index) or it is another node in the A_Tree.");
+            pragma Assert (In_Atree (Atree, Host, Index));
             Push (E.Visited, Atree, Host, Right_Child);
             Trace_To_Left_Leaf (Atree, Host, E);
          end if;
@@ -754,8 +783,7 @@ is
       else
          --  All Node_Indices (keys) have been issued.
          --  Mark issue count as exhausted.
-         E.Key_Issue := 0;
-         Index := Null_Index;
+         E.Key_Issue := Key_Count'First;
       end if;
    end Next_Node_Index;
 
@@ -771,93 +799,36 @@ is
      Ghost
    is
       E : Enumerator := New_Enumerator (Atree, Host);
-      N : Node_Index := Top (E.Visited, Atree, Host);
-      K : Key_Index;
+      N : Node_Index;
    begin
       loop
-         K := Current_Key_Index (E, Atree, Host);
-         pragma Loop_Invariant (Tree.Key (Tree.Tree (Host), N) =
-                                  Indexed_Key (Atree, Host, K));
+         N := Current_Node_Index (E, Atree, Host);
+         exit when N = Index or else N = Null_Index;
          Next_Node_Index
            (Atree => Atree,
             Host  => Host,
-            E     => E,
-            Index => N);
-         exit when N = Index or else N = Null_Index;
+            E     => E);
       end loop;
       pragma Assert (N = Index or else N = Null_Index);
-      return K;
+      return E.Key_Issue;
    end Key_Index_Of_Node;
 
-   --------------
-   -- Next_Key --
-   --------------
+   --------------------
+   -- Next_Key_Index --
+   --------------------
 
-   procedure Next_Key (E : in out Enumerator;
-                       Atree : A_Tree;
-                       Host : Host_Tree;
-                       Key : out Key_Type) with
-     Refined_Post => Enumerated (Atree, Host, E) and then
-             (if Current_Key_Index (E, Atree, Host) in
-                1 .. Key_Index (Count (Atree) - 1)
-              then
-                Key = Indexed_Key (Atree, Host,
-                                   Current_Key_Index (E'Old, Atree, Host)) and
-                  Current_Key_Index (E, Atree, Host) =
-                  Current_Key_Index (E'Old, Atree, Host) + 1)
-
+   procedure Next_Key_Index (E : in out Enumerator;
+                             Atree : A_Tree;
+                             Host : Host_Tree)
    is
-      Next_Index : Node_Index;
-      Key_Index : constant Key_Count := Current_Key_Index (E, Atree, Host)
-        with Ghost;
    begin
-      if E.Key_Issue > 0 and E.Key_Issue < Atree.Count then
-         Next_Node_Index (Atree, Host, E, Next_Index);
-         if Next_Index /= Null_Index then
-            Key := Tree.Key (Tree.Tree (Host), Next_Index);
-
-            pragma Assert (if Key /= Null_Key then
-                              Current_Key_Index (E, Atree, Host) =
-                             Key_Index + 1
-                           and
-                             Key = Indexed_Key (Atree, Host, Key_Index));
-
-         else
-            Key := Null_Key;
-         end if;
-      else
-         Key := Null_Key;
-      end if;
+      Next_Node_Index (E, Atree, Host);
       pragma Assume (Enumerated (Atree, Host, E),
                      "Obtaining the next key does not affect " &
                        "the association with Atree and Host.");
 
-   end Next_Key;
-   pragma Inline (Next_Key);
-
-   ------------------------
-   -- Next_Key_And_Value --
-   ------------------------
-
-   procedure Next_Key_And_Value (E         : in out Enumerator;
-                                 Atree     : A_Tree;
-                                 Host      : Host_Tree;
-                                 Key       : out Key_Type;
-                                 Its_Value : out Value_Type)
-   is
-      Next_Index : Node_Index;
-   begin
-      Next_Node_Index (Atree, Host, E, Next_Index);
-      if Next_Index /= Null_Index then
-         Key := Tree.Key (Tree.Tree (Host), Next_Index);
-         Its_Value := Tree.Value (Tree.Tree (Host), Next_Index);
-      else
-         Key := Null_Key;
-         Its_Value := Null_Value;
-      end if;
-      --# accept F, 30, Atree, "Atree is used in pre and post condition.";
-   end Next_Key_And_Value;
-   pragma Inline (Next_Key_And_Value);
+   end Next_Key_Index;
+   pragma Inline (Next_Key_index);
 
    ----------------
    -- Equal_Keys --
@@ -872,67 +843,50 @@ is
       Key_2        : Key_Type;
       Equal        : Boolean;
    begin
-      Equal := Atree_1.Count = Atree_2.Count;
+      Equal := Count (Atree_1) = Count (Atree_2);
       if Equal then
          Enum_1 := New_Enumerator (Atree_1, Host_1);
          Enum_2 := New_Enumerator (Atree_2, Host_2);
-         for I in Key_Count range 1 .. Atree_1.Count loop
-            declare
-               CKI_1 : constant Key_Index :=
-                 Current_Key_Index
-                   (E     => Enum_1,
-                    Atree => Atree_1,
-                    Host  => Host_1) with Ghost;
-               CKI_2 : constant Key_Index :=
-                 Current_Key_Index
-                   (E     => Enum_2,
-                    Atree => Atree_2,
-                    Host  => Host_2) with Ghost;
-            begin
-               pragma Assert (CKI_1 = Current_Key_Index
-                              (E => Enum_1,
-                               Atree => Atree_1,
-                               Host  => Host_1) and
-                                CKI_2 = Current_Key_Index
-                                  (E     => Enum_2,
-                                   Atree => Atree_2,
-                                   Host  => Host_2));
-               Next_Key (E     => Enum_1,
-                         Atree => Atree_1,
-                         Host  => Host_1,
-                         Key   => Key_1);
-               pragma Assert (if CKI_1 /= Null_Index then
-                                 Indexed_Key (Atree_1, Host_1, CKI_1) = Key_1);
-               Next_Key (E     => Enum_2,
-                         Atree => Atree_2,
-                         Host  => Host_2,
-                         Key   => Key_2);
-               pragma Assert (if CKI_2 /= Null_Index then
-                                 Indexed_Key (Atree_2, Host_2, CKI_2) = Key_2);
-               Equal := Key_1 = Key_2;
-               pragma Loop_Invariant
-                 ((Enumerated (Atree_1, Host_1, Enum_1) and
-                    Enumerated (Atree_2, Host_2, Enum_2)) and then
-                    (if Equal then
-                         (for all KI in Key_Count range 1 .. I =>
-                              Indexed_Key (Atree_1, Host_1, KI) = Key_1 and
-                                Indexed_Key (Atree_2, Host_2, KI) = Key_1)));
-               exit when not Equal or else Key_1 = Null_Key;
-               pragma Assert (Equal);
-            end;
-         end loop;
+         for I in Valid_Key_Index range 1 .. Count (Atree_1) loop
+            --  This check is for eqaulity of the keys in the A_Tree,
+            --  therefore they should have identical key indices.
+            Key_1 := Current_Key (Enum_1, Atree_1, Host_1);
+            Key_2 := Current_Key (Enum_2, Atree_2, Host_2);
+            Equal := Key_1 = Key_2;
 
-         pragma Assert (if Equal then Key_1 = Key_2);
-         pragma Assert (Atree_1.Count = Atree_2.Count);
-      end if;
+            exit when not Equal;
+
+            pragma Loop_Invariant
+              ((Enumerated (Atree_1, Host_1, Enum_1) and
+                 Enumerated (Atree_2, Host_2, Enum_2)) and then
+               Indexed_Key (Atree_1, Host_1, I) = Key_1 and then
+               Indexed_Key (Atree_2, Host_2, I) = Key_2 and then
+               Key_1 = Key_2 and then
+               (for all KI in Valid_Key_Index range 1 .. I =>
+                    Indexed_Key (Atree_1, Host_1, KI) =
+                    Indexed_Key (Atree_2, Host_2, KI)));
+
+            Next_Key_Index (E     => Enum_1,
+                            Atree => Atree_1,
+                            Host  => Host_1);
+            Next_Key_Index (E     => Enum_2,
+                            Atree => Atree_2,
+                            Host  => Host_2);
+            pragma Assert (if I < Count (Atree_1) then
+                              Current_Key_Index (Enum_1, Atree_1, Host_1) in
+                             Valid_Key_Index and
+                               Current_Key_Index (Enum_2, Atree_2, Host_2) in
+                             Valid_Key_Index);
+        end loop;
+     end if;
       return Equal;
    end Equal_Keys;
 
-   ---------------------------
+  ----------------------------
    -- Equal_Keys_And_Values --
    ---------------------------
 
-  function Equal_Keys_And_Values (Atree_1, Atree_2 : A_Tree;
+   function Equal_Keys_And_Values (Atree_1, Atree_2 : A_Tree;
                                    Host_1, Host_2 : Host_Tree) return Boolean
    is
       Enum_1       : Enumerator;
@@ -943,26 +897,39 @@ is
       Value_2      : Value_Type;
       Equal        : Boolean;
    begin
-      Equal := ATree_1.Count = ATree_2.Count;
+      Equal := Atree_1.Count = Atree_2.Count;
       if Equal then
          Enum_1 := New_Enumerator (Atree_1, Host_1);
          Enum_2 := New_Enumerator (Atree_2, Host_2);
-         loop
-            Next_Key_And_Value (E     => Enum_1,
-                                Atree => Atree_1,
-                                Host  => Host_1,
-                                Key   => Key_1,
-                                Its_Value => Value_1);
-            Next_Key_And_Value (E     => Enum_2,
-                                Atree => Atree_2,
-                                Host  => Host_2,
-                                Key   => Key_2,
-                                Its_Value => Value_2);
-
+         for I in Valid_Key_Index range 1 .. Atree_1.Count loop
+            --  This check is for eqaulity of the keys in the A_Tree,
+            --  therefore they should have identical key indices.
+            Key_1 := Current_Key (Enum_1, Atree_1, Host_1);
+            Key_2 := Current_Key (Enum_2, Atree_2, Host_2);
+            Value_1 := Current_Value (Enum_1, Atree_1, Host_1);
+            Value_2 := Current_Value (Enum_2, Atree_2, Host_2);
             Equal := Key_1 = Key_2 and then Value_1 = Value_2;
+
             exit when not Equal or else Key_1 = Null_Key;
+
+            Next_Key_Index (E     => Enum_1,
+                            Atree => Atree_1,
+                            Host  => Host_1);
+            Next_Key_Index (E     => Enum_2,
+                            Atree => Atree_2,
+                            Host  => Host_2);
+
+            pragma Loop_Invariant
+              ((Enumerated (Atree_1, Host_1, Enum_1) and
+                 Enumerated (Atree_2, Host_2, Enum_2)) and then
+                 (if Equal then
+                       Indexed_Key (Atree_1, Host_1, I) =
+                      Indexed_Key (Atree_2, Host_2, I)) and then
+                 (for all KI in Valid_Key_Index range 1 .. I =>
+                     Indexed_Key (Atree_1, Host_1, KI) =
+                         Indexed_Key (Atree_2, Host_2, KI)));
          end loop;
-      end if;
+     end if;
       return Equal;
    end Equal_Keys_And_Values;
 
@@ -1030,22 +997,12 @@ is
                          Index : Valid_Key_Index) return Key_Type
    is
       E : Enumerator := New_Enumerator (Atree, Host);
-      The_Key : Key_Type := Null_Key;
    begin
-      pragma Assert (Count (Atree) > 0 and Index > 0 and
-                       Index <= Key_Index (Count (Atree)));
-      pragma Assert (Current_Key_Index (E, Atree, Host) = 1);
-      for I in 1 .. Index loop
-         Next_Key (E, Atree, Host, The_Key);
+      for I in Valid_Key_Index range First_Index .. Index loop
+         Next_Key_Index (E, Atree, Host);
          pragma Loop_Invariant (Enumerated (Atree, Host, E));
       end loop;
-      --  pragma Assume (The_Key /= Null_Key,
-      --                 "As Index is in the range of Count (Atree) " &
-      --                   "
-      pragma Assert (Count (Atree) > 0 and Index > 0 and
-                       Index <= Key_Index (Count (Atree)));
-      pragma Assert (The_Key /= Null_Key);
-      return The_Key;
+      return Tree.Key (Tree.Tree (Host), Current_Node_Index (E, Atree, Host));
    end Indexed_Key;
 
    function Value_At_Key_Index (Atree : A_Tree;
@@ -1054,19 +1011,20 @@ is
                           return Value_Type
    is
       E : Enumerator := New_Enumerator (Atree, Host);
-      Current_K_Index  : Key_Index;
-      Current_Node_Index : Node_Index;
    begin
-      loop
-         Current_K_Index := Current_Key_Index (E, Atree, Host);
+      --  Step through the Key indices until we reach tho one specified.
+      --  On each iteration the Node_Index of the key associated with
+      --  Key_Index KI becomes the Current_Node_Index.
+      for KI in Valid_Key_Index range First_Index .. Index loop
          Next_Node_Index
            (Atree => Atree,
             Host  => Host,
-            E     => E,
-            Index => Current_Node_Index);
-         exit when Current_K_Index = Index;
+            E     => E);
       end loop;
-      return Tree.Value (Tree.Tree (Host), Current_Node_Index);
+      --  The Node_Index associated with the specified Key_Index, Index,
+      --  is now the Current_Node_Index.
+      --  Get its value.
+      return Tree.Value (Tree.Tree (Host), Current_Node_Index (E, Atree, Host));
    end Value_At_Key_Index;
 
 end Atrees;

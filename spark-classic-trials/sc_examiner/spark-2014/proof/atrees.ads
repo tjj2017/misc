@@ -38,6 +38,12 @@ is
    function Count (Atree : A_Tree) return Key_Count with
    Inline;
 
+   --  Logically,each Key in he tree has an index.  Keys are indexed
+   --  consecutively such that for all keys in the Atree the value of
+   --  Indexed_Key (I + 1) > Indexed_Key (I).  The keys are ordered by index
+   --  and there are no duplicate keys.
+   subtype Key_Index is Key_Count;
+
    --                          Proof Functions                             --
    --------------------------------------------------------------------------
    --  The following proof functions are used in specifying the A_Tree
@@ -46,12 +52,6 @@ is
    --  Proof function denoting that Atree is hosted by Host.
    function Hosted (Atree : A_Tree; Host : Host_Tree) return Boolean with Ghost;
 
-   --  Logically,each Key in he tree has an index.  Keys are indexed
-   --  consecutively such that for all keys in the Atree the value of
-   --  Indexed_Key (I + 1) > Indexed_Key (I).  The keys are ordered by index
-   --  and there are no duplicate keys.
-   subtype Key_Index is Key_Count with
-     Ghost;
    First_Index : constant Key_Index := Key_Index'Succ (Key_Index'First) with
      Ghost;
    subtype Valid_Key_Index is Key_Count range First_Index .. Key_Index'Last with
@@ -62,16 +62,15 @@ is
    function Indexed_Key (Atree : A_Tree;
                          Host  : Host_Tree;
                          Index : Valid_Key_Index) return Key_Type with
-     Pre => Hosted (Atree, Host) and then
-            Count (Atree) > 0 and then Index <= Count (Atree),
-     Post => Indexed_Key'Result /= Null_Key,
+     Pre => Hosted (Atree, Host) and then Populated (Atree, Host) and then
+            Index <= Count (Atree),
      Ghost;
 
    --  Defines the ordering of an A_Tree.
    function Ordered (Atree : A_Tree; Host : Host_Tree) return Boolean is
      (for all I in Valid_Key_Index range First_Index .. Count (Atree) - 1 =>
            Indexed_Key (Atree, Host, I + 1) > Indexed_Key (Atree, Host, I)) with
-       Pre => Hosted (Atree, Host),
+       Pre => Hosted (Atree, Host) and then Populated (Atree, Host),
        Ghost;
 
    --  Indicates that an A_Tree is non empty.
@@ -190,22 +189,41 @@ is
    function Enumerated (Atree : A_Tree; Host : Host_Tree; E : Enumerator)
                         return Boolean with Ghost;
 
-   function Current_key_Index (E: Enumerator; Atree : A_Tree; Host : Host_Tree)
+   function Current_Key_Index (E: Enumerator; Atree : A_Tree; Host : Host_Tree)
                                return Key_Index with
-     Pre  => Hosted (Atree, Host),
-     Post => Current_Key_index'Result <= Count (Atree),
-     Ghost;
+     Pre  => Hosted (Atree, Host) and then Enumerated (Atree, Host, E),
+     Post => (if Count (Atree) in Valid_Key_Index then
+                Current_Key_Index'Result in 1 .. Count (Atree)
+              else
+                Current_Key_Index'Result = Null_Key_Index),
+     Inline;
+
+   function Current_Key (E : Enumerator; Atree :  A_Tree; Host : Host_Tree)
+                         return Key_Type with
+     Pre  => Hosted (Atree, Host) and then Enumerated (Atree, Host, E) and then
+             Current_Key_Index (E, Atree, Host) in Valid_Key_Index,
+     Post => Current_Key'Result =
+             Indexed_Key (Atree, Host, Current_Key_Index (E, Atree, Host)),
+       Inline;
+
+   function Current_Value (E : Enumerator; Atree : A_Tree; Host : Host_Tree)
+                           return Value_Type with
+     Pre  => Hosted (Atree, Host) and then Enumerated (Atree, Host, E) and then
+             Current_Key_Index (E, Atree, Host) in Valid_Key_Index,
+     Post => Current_Value'Result =
+             Value (Atree, Host, Current_Key (E, Atree, Host)),
+             Inline;
 
    function New_Enumerator (Atree : A_Tree; Host : Host_Tree)
                             return Enumerator with
      Pre  => Hosted (Atree, Host) and then Populated (Atree, Host),
      Post => Enumerated (Atree, Host, New_Enumerator'Result) and then
-             Current_Key_Index (New_Enumerator'Result, Atree, Host) = 1;
+     Current_Key_Index (New_Enumerator'Result, Atree, Host) = 1;
 
-   procedure Next_Key (E : in out Enumerator;
-                       Atree : A_Tree;
-                       Host  : Host_Tree;
-                       Key : out Key_Type) with
+
+   procedure Next_Key_Index (E : in out Enumerator;
+                             Atree : A_Tree;
+                             Host  : Host_Tree) with
      Pre  => Hosted (Atree, Host) and then Populated (Atree, Host) and then
              Ordered (Atree, Host) and then
              Enumerated (Atree, Host, E),
@@ -213,36 +231,12 @@ is
              (if Current_Key_Index (E'Old, Atree, Host) in
                 First_Index .. Count (Atree) - 1
               then
-                Key = Indexed_Key (Atree, Host,
-                                   Current_Key_Index (E'Old, Atree, Host)) and
                 Current_Key_Index (E, Atree, Host) =
-                  Current_Key_Index (E'Old, Atree, Host) + 1
-                  else
-                    Current_Key_Index (E, Atree, Host) = Null_Key_Index and
-                    Key = Null_Key);
-
-
-   procedure Next_Key_And_Value (E         : in out Enumerator;
-                                 Atree     : A_Tree;
-                                 Host      : Host_Tree;
-                                 Key       : out Key_Type;
-                                 Its_Value : out Value_Type) with
-     Pre  => Hosted (Atree, Host) and then Populated (Atree, Host) and then
-             Ordered (Atree, Host) and then
-             Enumerated (Atree, Host, E),
-     Post => Enumerated (Atree, Host, E) and then
-             (if Current_Key_Index (E, Atree, Host) in
-                First_Index .. Count (Atree) - 1
-              then
-                Key = Indexed_Key (Atree, Host,
-                                   Current_Key_Index (E'Old, Atree, Host)) and
-                Its_Value = Value (Atree, Host, Key) and
-                  Current_Key_Index (E, Atree, Host) =
-                    Current_Key_Index (E'Old, Atree, Host) + 1
-                  else
-                    Current_Key_Index (E, Atree, Host) = Null_Key_Index and
-                    Key = Null_Key and
-                    Its_Value = Null_Value);
+                Current_Key_Index (E'Old, Atree, Host) + 1 and then
+                  Current_Key_Index (E, Atree, Host) in
+                  First_Index .. Count (Atree)
+              else
+                Current_Key_Index (E, Atree, Host) = Null_Key_Index);
 
 private
    subtype Node_Index is Natural range 0 .. Max_Nodes_In_Tree;
@@ -304,6 +298,9 @@ private
    function Current_Node_Index (Atree : A_Tree;
                                 Host  : Host_Tree;
                                 E     : Enumerator) return Node_Index with
-     Pre => not Stack.Is_Empty (E.Visited);
+     Pre => Hosted (Atree, Host) and then Enumerated (Atree, Host, E),
+     Post=> (if Current_Node_Index'Result /= Null_Index then
+               In_Atree (Atree, Host, Current_Node_Index'Result)),
+     Inline;
 
 end Atrees;
