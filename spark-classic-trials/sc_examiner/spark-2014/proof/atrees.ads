@@ -66,18 +66,19 @@ is
             Index <= Count (Atree),
      Ghost;
 
-   --  Defines the ordering of an A_Tree.
-   function Ordered (Atree : A_Tree; Host : Host_Tree) return Boolean is
-     (for all I in Valid_Key_Index range First_Index .. Count (Atree) - 1 =>
-           Indexed_Key (Atree, Host, I + 1) > Indexed_Key (Atree, Host, I)) with
-       Pre => Hosted (Atree, Host) and then Populated (Atree, Host),
-       Ghost;
-
    --  Indicates that an A_Tree is non empty.
    function Populated (Atree : A_Tree; Host : Host_Tree) return Boolean with
      Pre  => Hosted (Atree, Host),
      Post => (if Populated'Result then Count (Atree) > 0),
      Ghost;
+
+   --  Defines the ordering of an A_Tree.
+   function Ordered (Atree : A_Tree; Host : Host_Tree) return Boolean is
+     (if Populated (Atree, Host) then
+        (for all I in Valid_Key_Index range First_Index .. Count (Atree) - 1 =>
+          Indexed_Key (Atree, Host, I + 1) > Indexed_Key (Atree, Host, I))) with
+       Pre => Hosted (Atree, Host),
+       Ghost;
 
    --  Given a Key_Index returns the Value associated with the A_Tree node
    --  with the Key indexed by the Key_Index.
@@ -152,6 +153,7 @@ is
                      Key       : Key_Type;
                      Inserted  : out Boolean) with
      Pre  => Hosted (Atree, Host) and then
+             (if Count (Atree) > 0 then Populated (Atree, Host)) and then
              Count (Atree) < Max_Nodes_In_Tree and then Ordered (Atree, Host),
      Post => Hosted (Atree, Host) and then Populated (Atree, Host) and then
              Ordered (Atree, Host) and then
@@ -211,7 +213,10 @@ is
      Pre  => Hosted (Atree, Host) and then Enumerated (Atree, Host, E) and then
              Current_Key_Index (E, Atree, Host) in Valid_Key_Index,
      Post => Current_Value'Result =
-             Value (Atree, Host, Current_Key (E, Atree, Host)),
+             Value (Atree, Host, Current_Key (E, Atree, Host)) and
+             Current_Value'Result =
+             Value_At_Key_Index (Atree, Host,
+                                 Current_Key_Index (E, Atree, Host)),
              Inline;
 
    function New_Enumerator (Atree : A_Tree; Host : Host_Tree)

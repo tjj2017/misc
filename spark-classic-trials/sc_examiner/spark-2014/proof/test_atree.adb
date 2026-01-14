@@ -1,3 +1,4 @@
+pragma Ada_2022;
 with Atrees;
 procedure Test_Atree with
   SPARK_Mode

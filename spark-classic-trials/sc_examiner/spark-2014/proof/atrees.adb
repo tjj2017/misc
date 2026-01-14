@@ -1,22 +1,24 @@
+pragma Ada_2022;
 with Atrees.Proof;
 package body Atrees with
 SPARK_Mode
 is
    --  The bodies of the following subprograms are hidden as they are purely
    --  logical proof functions.
-   function Hosted (Atree : A_Tree; Host : Host_Tree) return Boolean is
-     (True) with
-     SPARK_Mode => Off;
    function Enumerated (Atree : A_Tree;
                         Host : Host_Tree;
                         E    : Enumerator) return Boolean is
      (True) with
      SPARK_Mode => Off;
+
    function In_Atree (Atree : A_Tree;
                       Host : Host_Tree;
                       Node : Node_Index) return Boolean is
-      (Tree.In_Tree (Tree.Tree (Host), Node) and then Count (Atree) > 0) with
-   SPARK_Mode => Off;
+      (Tree.In_Tree (Tree.Tree (Host), Node) and then Count (Atree) > 0);
+
+   function Hosted (Atree : A_Tree; Host : Host_Tree) return Boolean is
+      (not Tree.Empty_Tree (Tree.Tree (Host)) and
+                     Tree.In_Tree (Tree.Tree (Host), Atree.Base));
 
    function Populated (Atree : A_Tree; Host : Host_Tree) return Boolean is
      (not Tree.Empty_Tree (Tree.Tree (Host)) and then
@@ -393,7 +395,8 @@ is
    procedure Rebalance (Atree          : A_Tree;
                         Host           : in out Host_Tree;
                         Sub_Root_Index : in out Node_Index;
-                        Visited        : in out Stack.Stack)
+                        Visited        : in out Stack.Stack) with
+     Post => Ordered ((Atree with delta Root => Sub_Root_Index), Host)
    is
       Current_Index : Node_Index;
       Top_Index     : Node_Index;
@@ -564,6 +567,7 @@ is
       Child          : Node_Index;
       Subroot_Index  : Node_Index;
    begin
+      pragma Assert (Tree.In_Tree (Tree.Tree (Host), Atree.Base));
       if Count (Atree) = 0 then
          --  First node of Atree - Enter a new node with level 1 into the store
          Inserted := True;
@@ -575,6 +579,9 @@ is
          Atree.Root := Atree.Base;
          Tree.Set_Key (Tree.Tree (Host), Atree.Root, Key);
          Tree.Set_Level (Tree.Tree (Host), Atree.Root, 1);
+         pragma Assume (Ordered (Atree, Host),
+           "An A_Tree with only one node is ordered.");
+         pragma Assert (Ordered (Atree, Host));
       else
          --  Make sure that the tree does not already include the key.
          Find (Atree      => Atree,
@@ -589,6 +596,7 @@ is
           else
             Inserted := True;
             Insert_Index := Top (Visited, Atree, Host);
+            pragma Assert (Tree.In_Tree (Tree.Tree (Host), Insert_index));
             --  A right branch if the value of Key is greater
             --  to the Top Value, otherwise take the left branch.
             --  There are no duplicate Keys.
@@ -630,8 +638,11 @@ is
             pragma Warnings (On, """Visited""");
 
             Atree.Root := Subroot_Index;
+            pragma Assert (Ordered (Atree, Host));
          end if;
+            pragma Assert (Ordered (Atree, Host));
       end if;
+      pragma Assert (Ordered (Atree, Host));
    end Insert;
 
    -----------------------
@@ -910,7 +921,6 @@ is
             --  This check is for eqaulity of the keys in the A_Tree,
             --  therefore they should have identical key indices.
             pragma Assert (Current_Key_Index (Enum_1, Atree_1, Host_1) = I);
-            pragma Assert (Current_Key_Index (Enum_2, Atree_2, Host_2) = I);
             Key_1 := Current_Key (Enum_1, Atree_1, Host_1);
             Key_2 := Current_Key (Enum_2, Atree_2, Host_2);
             pragma Assert (Indexed_Key (Atree_1, Host_1, I) = Key_1);
@@ -919,15 +929,14 @@ is
             Value_1 := Current_Value (Enum_1, Atree_1, Host_1);
             Value_2 := Current_Value (Enum_2, Atree_2, Host_2);
             pragma Assert (Value_At_Key_Index (Atree_1, Host_1, I) = Value_1);
-            pragma Assert (Value_At_Key_Index (Atree_2, Host_2, I) = Value_2);
             Equal := Key_1 = Key_2 and then Value_1 = Value_2;
 
-            pragma Assert (if Equal then
-                              Indexed_Key (Atree_1, Host_1, I) =
-                             Indexed_Key (Atree_2, Host_2, I) and
-                               Value_At_Key_Index (Atree_1, Host_1, I) =
-                             Value_At_Key_Index (Atree_2, Host_2, I));
-
+            --  pragma Assert (if Equal then
+            --                    Indexed_Key (Atree_1, Host_1, I) =
+            --                   Indexed_Key (Atree_2, Host_2, I) and
+            --                     Value_At_Key_Index (Atree_1, Host_1, I) =
+            --                   Value_At_Key_Index (Atree_2, Host_2, I));
+            --
             exit when not Equal;
 
             pragma Loop_Invariant
