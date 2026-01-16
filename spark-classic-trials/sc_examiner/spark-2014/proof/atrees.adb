@@ -395,8 +395,8 @@ is
    procedure Rebalance (Atree          : A_Tree;
                         Host           : in out Host_Tree;
                         Sub_Root_Index : in out Node_Index;
-                        Visited        : in out Stack.Stack) with
-     Post => Ordered ((Atree with delta Root => Sub_Root_Index), Host)
+                        Visited        : in out Stack.Stack) --  with
+   --  Post => Ordered ((Atree with delta Root => Sub_Root_Index), Host)
    is
       Current_Index : Node_Index;
       Top_Index     : Node_Index;
@@ -640,7 +640,7 @@ is
             Atree.Root := Subroot_Index;
             pragma Assert (Ordered (Atree, Host));
          end if;
-            pragma Assert (Ordered (Atree, Host));
+         pragma Assert (Ordered (Atree, Host));
       end if;
       pragma Assert (Ordered (Atree, Host));
    end Insert;
