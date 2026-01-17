@@ -43,6 +43,10 @@ is
    --  Indexed_Key (I + 1) > Indexed_Key (I).  The keys are ordered by index
    --  and there are no duplicate keys.
    subtype Key_Index is Key_Count;
+   First_Index : constant Key_Index := Key_Index'Succ (Key_Index'First);
+   subtype Valid_Key_Index is Key_Count range First_Index .. Key_Index'Last;
+   Null_Key_Index : constant Key_Index := Key_Index'First;
+
 
    --                          Proof Functions                             --
    --------------------------------------------------------------------------
@@ -51,12 +55,6 @@ is
 
    --  Proof function denoting that Atree is hosted by Host.
    function Hosted (Atree : A_Tree; Host : Host_Tree) return Boolean with Ghost;
-
-   First_Index : constant Key_Index := Key_Index'Succ (Key_Index'First) with
-     Ghost;
-   subtype Valid_Key_Index is Key_Count range First_Index .. Key_Index'Last with
-     Ghost;
-   Null_Key_Index : constant Key_Index := Key_Index'First with Ghost;
 
    --  Given a Key_Index returns the corresponding Key.
    function Indexed_Key (Atree : A_Tree;

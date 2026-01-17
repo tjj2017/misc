@@ -953,8 +953,8 @@ is
                (for all KI in Valid_Key_Index range 1 .. I =>
                     Indexed_Key (Atree_1, Host_1, KI) =
                     Indexed_Key (Atree_2, Host_2, KI) and
-                    Value_At_Key_Index (Atree_1, Host_1, I) =
-                    Value_At_Key_Index (Atree_2, Host_2,I)));
+                    Value_At_Key_Index (Atree_1, Host_1, KI) =
+                    Value_At_Key_Index (Atree_2, Host_2, KI)));
 
             Next_Key_Index (E     => Enum_1,
                             Atree => Atree_1,
